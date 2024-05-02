@@ -111,7 +111,7 @@ This section should list any major frameworks/libraries used to bootstrap your p
 * [![Svelte][Svelte.dev]][Svelte-url]  -->
 * [![Laravel][Laravel.com]][Laravel-url]
 <!-- * [![Bootstrap][Bootstrap.com]][Bootstrap-url] -->
-* [![Tailwind][tailwindcss.com]][tailwind-url]
+* [![Tailwind][Tailwindcss.com]][Tailwind-url]
 * [![JQuery][JQuery.com]][JQuery-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -267,5 +267,7 @@ Use this space to list resources you find helpful and would like to give credit 
 [Laravel-url]: https://laravel.com
 [Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
 [Bootstrap-url]: https://getbootstrap.com
+[Tailwind.com]: https://img.shields.io/badge/Tailwind-4287f5?style=for-the-badge&logo=tailwind&logoColor=white
+[Tailwind-url]: https://tailwindcss.com/
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
