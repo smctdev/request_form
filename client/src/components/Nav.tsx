@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import { useSpring, animated } from "@react-spring/web"; // Import useSpring and animated from @react-spring/web
 import Pusher from "pusher-js";
 import { set } from "react-hook-form";
+import Swal from "sweetalert2";
 
 interface NavProps {
   darkMode: boolean;
@@ -106,87 +107,61 @@ const Nav: React.FC<NavProps> = ({
       setIsOpenNotif(false);
     }
   };
-  // const handleOpenNotification = async () => {
-  //   if (isOpenNotif) {
-  //     try {
-  //       const response = await axios.put(
-  //         `http://122.53.61.91:6002/api/notifications/mark-all-as-read`
-  //       );
-  //       if (response.data.success) {
-  //         setNotifications((prevNotifications) =>
-  //           prevNotifications.map((notif) => ({
-  //             ...notif,
-  //             read_at: new Date().toISOString(),
-  //           }))
-  //         );
-  //         setUnreadCount(0);
-  //       } else {
-  //         alert(
-  //           "Failed to mark all notifications as read. Please try again later."
-  //         );
-  //       }
-  //     } catch (error) {
-  //       console.error("Error marking all notifications as read: ", error);
-  //       alert(
-  //         "Failed to mark all notifications as read. Please try again later."
-  //       );
-  //     }
-  //   }
-  // };
-  
+
   const handleMarkAllAsRead = async () => {
+    const unreadNotifications = notifications.filter((notif) => !notif.read_at);
+
+    if (unreadNotifications.length === 0) {
+      Swal.fire({
+        html: `
+        <div style="text-align: center; margin-bottom: 15px;">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l9 6 9-6V4a2 2 0 00-2-2H5a2 2 0 00-2 2v4z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8v10a2 2 0 002 2h14a2 2 0 002-2V8l-9 6-9-6z" />
+          </svg>
+          <br/>
+          <p>No unread notifications to mark as read.</p>
+        </div>
+      `,
+      confirmButtonColor: "#007bff",
+      confirmButtonText: "Close",
+      });
+      return; // Exit early if there are no unread notifications
+    }
+
     try {
+      const id = localStorage.getItem("id");
       const response = await axios.put(
-        `http://122.53.61.91:6002/api/notifications/mark-all-as-read`
+        `http://122.53.61.91:6002/api/notifications/mark-all-as-read/${id}`
       );
+
       if (response.data.success) {
+        // Update all notifications as read in local state
         setNotifications((prevNotifications) =>
           prevNotifications.map((notif) => ({
             ...notif,
             read_at: new Date().toISOString(),
           }))
         );
+
+        // Update unread count to 0
         setUnreadCount(0);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'All notifications marked as read.',
+          confirmButtonColor: "#007bff",
+          confirmButtonText: "Close",
+        });
       } else {
-        alert(
-          "Failed to mark all notifications as read. Please try again later."
-        );
+        console.error("Failed to mark all notifications as read");
       }
     } catch (error) {
-      console.error("Error marking all notifications as read: ", error);
+      console.error("Error marking all notifications as read:", error);
       alert(
         "Failed to mark all notifications as read. Please try again later."
-      ) ;
-    }
-  };
-
-  const handleNotificationClick = async (notifId: string) => {
-    if (!notifId) {
-      console.error("Notification ID is undefined");
-      return;
-    }
-
-    try {
-      const url = `http://122.53.61.91:6002/api/notifications/${notifId}/mark-as-read`;
-
-      const response = await axios.put(url);
-      if (response.data.success) {
-        setNotifications((prevNotifications) =>
-          prevNotifications.map((notif) =>
-            notif.notification_id === notifId
-              ? { ...notif, read_at: new Date().toISOString() }
-              : notif
-          )
-        );
-
-        setUnreadCount((prevCount) => prevCount - 1);
-        setIsOpenNotif(false);
-      } else {
-        alert("Failed to mark notification as read. Please try again later.");
-      }
-    } catch (error) {
-      console.error("Error marking notification as read: ", error);
-      alert("Failed to mark notification as read. Please try again later.");
+      );
     }
   };
 
@@ -232,7 +207,7 @@ const Nav: React.FC<NavProps> = ({
         const response = await axios.get(
           `http://122.53.61.91:6002/api/notifications/${id}/all`
         );
-        const notificationsData = response.data.notifications;
+        const notificationsData = response.data.unread_notification;
         setNotifications(notificationsData);
 
         // Count unread notifications
@@ -328,53 +303,6 @@ const Nav: React.FC<NavProps> = ({
   const profilePictureUrl = profilePicture
     ? `http://122.53.61.91:6002/storage/${profilePicture.replace(/\\/g, "/")}`
     : Avatar;
-  const markAllAsRead = async () => {
-    try {
-      const id = localStorage.getItem("id");
-      const unreadNotifications = notifications.filter(
-        (notif) => !notif.read_at
-      );
-
-      // Loop through unread notifications and mark them as read
-      await Promise.all(
-        unreadNotifications.map(async (notif) => {
-          const response = await axios.put(
-            `http://122.53.61.91:6002/api/notifications/mark-all-as-read/${id}`
-          );
-
-          if (response.data.success) {
-            // Update the notification's `read_at` in the local state
-            setNotifications((prevNotifications) =>
-              prevNotifications.map((n) =>
-                n.notification_id === notif.notification_id
-                  ? { ...n, read_at: new Date().toISOString() }
-                  : n
-              )
-            );
-          } else {
-            console.error(
-              `Failed to mark notification ${notif.notification_id} as read`
-            );
-          }
-        })
-      );
-
-      // Update unread count to 0
-      setUnreadCount(0);
-    } catch (error) {
-      console.error("Error marking all notifications as read:", error);
-      alert(
-        "Failed to mark all notifications as read. Please try again later."
-      );
-    }
-  };
-
-  // Use effect to mark all as read when the dropdown is opened
-  useEffect(() => {
-    if (isOpenNotif) {
-      markAllAsRead();
-    }
-  }, [isOpenNotif]);
 
   return (
     <div className={`nav-container ${darkMode ? "dark" : "white"}`}>
@@ -522,72 +450,92 @@ const Nav: React.FC<NavProps> = ({
             </div>
             {/* Notification */}
             {isOpenNotif && (
-             <div className="flex flex-row">
-             <div
-               className="w-96 md:w-[500px] bg-white absolute top-11 right-0 border-2 border-black z-40 overflow-y-auto max-h-[500px] rounded-lg shadow-lg flex flex-col"
-               ref={dropdownRef}
-             >
-               <ul className="flex-1 overflow-y-auto">
-                 {notifications.length === 0 ? (
-                   <li className="px-4 py-4 text-center text-gray-500">
-                     No notifications yet
-                   </li>
-                 ) : (
-                   notifications.map((notif) => {
-                     const message = notif.data?.message || "No message available";
-                     const createdAt = notif.data?.created_at || new Date().toISOString();
-                     const notificationId = notif.notification_id || "unknown-id";
-           
-                     const linkTo = notif.type === "App\\Notifications\\ApprovalProcessNotification" ||
-                                    notif.type === "App\\Notifications\\PreviousReturnRequestNotification"
-                       ? "/request/approver"
-                       : notif.type === "App\\Notifications\\EmployeeNotification" ||
-                         notif.type === "App\\Notifications\\ReturnRequestNotification"
-                       ? "/request"
-                       : "/profile";
-           
-                     const textColor = notif.type === "App\\Notifications\\EmployeeNotification"
-                       ? "text-green"
-                       : notif.type === "App\\Notifications\\PreviousReturnRequestNotification" ||
-                         notif.type === "App\\Notifications\\ReturnRequestNotification"
-                       ? "text-red-500"
-                       : "text-primary";
-           
-                     return (
-                       <Link to={linkTo} key={notificationId}>
-                         <li
-                           className={`px-4 py-4 hover:bg-[#E0E0F9] cursor-pointer border-b flex items-center`}
-                           onClick={() => setIsOpenNotif(false)}
-                           aria-label={`Notification: ${message}`}
-                         >
-                           <div className="w-12 h-12 flex items-center justify-center bg-black rounded-full">
-                             {notif.read_at ? (
-                               <EnvelopeOpenIcon className="size-5 text-white" />
-                             ) : (
-                               <EnvelopeIcon className="size-5 text-white" />
-                             )}
-                           </div>
-                           <div className="ml-4 flex-1">
-                             <p className={`${textColor} text-sm ${notif.read_at ? "" : "font-bold"} text-center`}>
-                               {message}
-                             </p>
-                             <p className="text-gray-400 text-sm text-center">
-                               {formatDate(createdAt)}
-                             </p>
-                           </div>
-                         </li>
-                       </Link>
-                     );
-                   })
-                 )}
-               </ul>
-               <hr />
-               <div className="py-5 text-center text-gray-500 cursor-pointer" onClick={handleMarkAllAsRead}>
-                 Mark All As Read
-               </div>
-             </div>
-           </div>
-           
+              <div className="flex flex-row">
+                <div
+                  className="w-96 md:w-[500px] bg-white absolute top-11 right-0 border-2 border-black z-40 overflow-y-auto max-h-[500px] rounded-lg shadow-lg flex flex-col"
+                  ref={dropdownRef}
+                >
+                  <ul className="flex-1 overflow-y-auto">
+                    {notifications.length === 0 ? (
+                      <li className="px-4 py-4 text-center text-gray-500">
+                        No notifications yet
+                      </li>
+                    ) : (
+                      notifications.map((notif) => {
+                        const message =
+                          notif.data?.message || "No message available";
+                        const createdAt =
+                          notif.data?.created_at || new Date().toISOString();
+                        const notificationId =
+                          notif.notification_id || "unknown-id";
+
+                        const linkTo =
+                          notif.type ===
+                            "App\\Notifications\\ApprovalProcessNotification" ||
+                          notif.type ===
+                            "App\\Notifications\\PreviousReturnRequestNotification"
+                            ? "/request/approver"
+                            : notif.type ===
+                                "App\\Notifications\\EmployeeNotification" ||
+                              notif.type ===
+                                "App\\Notifications\\ReturnRequestNotification"
+                            ? "/request"
+                            : "/profile";
+
+                        const textColor =
+                          notif.type ===
+                          "App\\Notifications\\EmployeeNotification"
+                            ? "text-green"
+                            : notif.type ===
+                                "App\\Notifications\\PreviousReturnRequestNotification" ||
+                              notif.type ===
+                                "App\\Notifications\\ReturnRequestNotification"
+                            ? "text-red-500"
+                            : "text-primary";
+
+                        return (
+                          <Link to={linkTo} key={notificationId}>
+                            <li
+                              className={`px-4 py-4 hover:bg-[#E0E0F9] cursor-pointer border-b flex items-center`}
+                              onClick={() => setIsOpenNotif(false)}
+                              aria-label={`Notification: ${message}`}
+                            >
+                              <div className="w-12 h-12 flex items-center justify-center bg-black rounded-full">
+                                {notif.read_at ? (
+                                  <EnvelopeOpenIcon className="size-5 text-white" />
+                                ) : (
+                                  <EnvelopeIcon className="size-5 text-white" />
+                                )}
+                              </div>
+                              <div className="ml-4 flex-1">
+                                <p
+                                  className={`${textColor} text-sm ${
+                                    notif.read_at ? "" : "font-bold"
+                                  } text-center`}
+                                >
+                                  {message}
+                                </p>
+                                <p className="text-gray-400 text-sm text-center">
+                                  {formatDate(createdAt)}
+                                </p>
+                              </div>
+                            </li>
+                          </Link>
+                        );
+                      })
+                    )}
+                  </ul>
+                  <hr />
+                  {notifications.length > 0 && ( // Conditionally render this section
+      <div
+        className="py-5 text-center text-gray-500 cursor-pointer"
+        onClick={handleMarkAllAsRead}
+      >
+        Mark All As Read
+      </div>
+    )}
+                </div>
+              </div>
             )}
           </div>
         </div>

@@ -214,7 +214,6 @@ const ApproversStock: React.FC<Props> = ({
     setAvpstaff(record.avp_staff);
     setApprovedBy(record.approved_by);
     setCheckedPurpose(record.form_data[0].purpose);
-
     try {
       // Handle record.attachment if it is a JSON string
       if (typeof record.attachment === "string") {
@@ -419,6 +418,7 @@ const ApproversStock: React.FC<Props> = ({
       approvedBy: approvedBy,
       notedBy: notedBy,
       user: user,
+      purpose: checkedPurpose
     };
 
     localStorage.setItem("printData", JSON.stringify(data));
@@ -498,9 +498,9 @@ const ApproversStock: React.FC<Props> = ({
             </p>
           </div>
 
-          <p className="font-medium text-[14px]">Purpose:</p>
+          <p className="font-medium text-[14px]">Purpose: {record.form_data[0].purpose}</p>
 
-          <div className="flex flex-col md:flex-row md:space-x-2">
+          {/* <div className="flex flex-col md:flex-row md:space-x-2">
             <label>
               Repo. Recon
               <input
@@ -528,7 +528,7 @@ const ApproversStock: React.FC<Props> = ({
                 className="size-4"
               />
             </label>
-          </div>
+          </div> */}
 
           <div className="mt-4 w-full overflow-x-auto">
             <div className="w-full border-collapse ">

@@ -10,7 +10,7 @@ import axios from "axios";
 import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ClipLoader from "react-spinners/ClipLoader";
 import AddCustomModal from "./AddCustomModal";
-
+import Swal from "sweetalert2";
 
 type Props = {};
 
@@ -37,7 +37,7 @@ const requestType = [
   { title: "Request for Refund", path: "/request/rfr" },
   { title: "Discount Request", path: "/request/dr" },
 ];
-const schema = z.object({ 
+const schema = z.object({
   approver_list_id: z.number(),
   items: z.array(
     z.object({
@@ -51,7 +51,8 @@ const schema = z.object({
 });
 
 type FormData = z.infer<typeof schema>;
-const inputStyle = "w-full  border-2 border-black rounded-[12px] pl-[10px] bg-white  autofill-input";
+const inputStyle =
+  "w-full  border-2 border-black rounded-[12px] pl-[10px] bg-white  autofill-input";
 const itemDiv = "flex flex-col ";
 const buttonStyle = "h-[45px] w-[150px] rounded-[12px] text-white";
 const CreateCashDisbursement = (props: Props) => {
@@ -77,8 +78,8 @@ const CreateCashDisbursement = (props: Props) => {
   >({});
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
-  const [initialNotedBy, setInitialNotedBy] =useState<Approver[]>([]);
-  const [initialApprovedBy, setInitialApprovedBy] =useState<Approver[]>([]);
+  const [initialNotedBy, setInitialNotedBy] = useState<Approver[]>([]);
+  const [initialApprovedBy, setInitialApprovedBy] = useState<Approver[]>([]);
   const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,12 +115,12 @@ const CreateCashDisbursement = (props: Props) => {
   const handleOpenConfirmationModal = () => {
     setShowConfirmationModal(true);
   };
- 
+
   useEffect(() => {
     setInitialNotedBy(notedBy);
     setInitialApprovedBy(approvedBy);
   }, [notedBy, approvedBy]);
- /*  const fetchCustomApprovers = async () => {
+  /*  const fetchCustomApprovers = async () => {
     try {
       const id = localStorage.getItem("id");
       const token = localStorage.getItem("token");
@@ -165,8 +166,13 @@ const CreateCashDisbursement = (props: Props) => {
         return;
       }
       if (notedBy.length === 0 || approvedBy.length === 0) {
-      
-        alert("Please select an approver.");
+        Swal.fire({
+          icon: "error",
+          title: "No approver selected",
+          text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        })
         setLoading(false); // Stop loading state
         return; // Prevent form submission
       }
@@ -196,11 +202,15 @@ const CreateCashDisbursement = (props: Props) => {
       file.forEach((file) => {
         formData.append("attachment[]", file); // Use "attachment[]" to handle multiple files
       });
-      const notedByIds = Array.isArray(notedBy) ? notedBy.map(person => person.id) : [];
-      const approvedByIds = Array.isArray(approvedBy) ? approvedBy.map(person => person.id) : [];
+      const notedByIds = Array.isArray(notedBy)
+        ? notedBy.map((person) => person.id)
+        : [];
+      const approvedByIds = Array.isArray(approvedBy)
+        ? approvedBy.map((person) => person.id)
+        : [];
       formData.append("noted_by", JSON.stringify(notedByIds));
       formData.append("approved_by", JSON.stringify(approvedByIds));
-      formData.append("form_type", "Cash Disbursement Requisition Slip");    
+      formData.append("form_type", "Cash Disbursement Requisition Slip");
       formData.append("user_id", userId);
 
       formData.append(
@@ -223,7 +233,6 @@ const CreateCashDisbursement = (props: Props) => {
       setShowConfirmationModal(true);
       setFormData(formData);
       // Set form data to be submitted after confirmation
-     
     } catch (error) {
       console.error("An error occurred while submitting the request:", error);
     } finally {
@@ -239,7 +248,7 @@ const CreateCashDisbursement = (props: Props) => {
   const closeAddCustomModal = () => {
     setIsModalOpen(false);
   };
- const handleOpenAddCustomModal = () => {
+  const handleOpenAddCustomModal = () => {
     setShowAddCustomModal(true);
   };
 
@@ -258,13 +267,17 @@ const CreateCashDisbursement = (props: Props) => {
     const token = localStorage.getItem("token");
 
     if (!notedBy && !approvedBy) {
-      alert("Please select an approver.");
+      Swal.fire({
+        icon: "error",
+        title: "No approver selected",
+        text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
+        confirmButtonText: "Close",
+        confirmButtonColor: "#007bff",
+      })
       return; // Prevent form submission
     }
     try {
       setLoading(true);
-
-
 
       // Perform the actual form submission
       const response = await axios.post(
@@ -287,8 +300,6 @@ const CreateCashDisbursement = (props: Props) => {
       setLoading(false);
     }
   };
-
- 
 
   const handleCancelSubmit = () => {
     // Close the confirmation modal
@@ -371,6 +382,11 @@ const CreateCashDisbursement = (props: Props) => {
   };
   return (
     <div className="bg-graybg dark:bg-blackbg h-full pt-[15px] px-[30px] pb-[15px]">
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+          <ClipLoader color="#007bff" />
+        </div>
+      )}
       <h1 className="text-primary text-[32px] font-bold">Create Request</h1>
       <select
         className="w-2/5 lg:h-[56px] md:h-10 p-2 bg-gray-200 pl-[30px] border-2 border-black rounded-xl mb-2"
@@ -400,19 +416,17 @@ const CreateCashDisbursement = (props: Props) => {
             </h1>
           </div>
           <div className="my-2  ">
-          <button
-          onClick={openAddCustomModal}
-          className="bg-primary text-white p-2 rounded"
-        >
-          Add Approver
-        </button>
+            <button
+              onClick={openAddCustomModal}
+              className="bg-primary text-white p-2 rounded"
+            >
+              Add Approver
+            </button>
           </div>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="px-[35px] mt-4">
-            <div className="grid grid-cols-1 gap-2 w-full md:grid-cols-2 md:flex md:justify-start md:gap-2">
-             
-            </div>
+            <div className="grid grid-cols-1 gap-2 w-full md:grid-cols-2 md:flex md:justify-start md:gap-2"></div>
             {items.map((item, index) => (
               <div key={index} className="flex flex-col mt-5 mb-4">
                 <label className="font-semibold">ITEM {index + 1}</label>
@@ -549,62 +563,60 @@ const CreateCashDisbursement = (props: Props) => {
               </div>
             </div>
             <div className="mb-4 ml-5 mt-10">
-                  <h3 className="font-bold mb-3">Noted By:</h3>
-                  <ul className="flex flex-wrap gap-6">
+              <h3 className="font-bold mb-3">Noted By:</h3>
+              <ul className="flex flex-wrap gap-6">
+                {" "}
+                {/* Use gap instead of space-x */}
+                {notedBy.map((user, index) => (
+                  <li
+                    className="flex flex-col items-center justify-center text-center relative w-auto"
+                    key={index}
+                  >
                     {" "}
-                    {/* Use gap instead of space-x */}
-                    {notedBy.map((user, index) => (
-                      <li
-                        className="flex flex-col items-center justify-center text-center relative w-auto"
-                        key={index}
-                      >
-                        {" "}
-                        {/* Adjust width as needed */}
-                        <div className="relative flex flex-col items-center justify-center">
-                          <p className="relative inline-block uppercase font-medium text-center pt-6">
-                            <span className="relative z-10 px-2">
-                              {user.firstName} {user.lastName}
-                            </span>
-                            <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-black"></span>
-                          </p>
-                          <p className="font-bold text-[12px] text-center">
-                            {user.position}
-                          </p>
-                         
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="mb-4 ml-5">
-                  <h3 className="font-bold mb-3">Approved By:</h3>
-                  <ul className="flex flex-wrap gap-6">
-                    {" "}
-                    {/* Use gap instead of space-x */}
-                    {approvedBy.map((user, index) => (
-                      <li
-                        className="flex flex-col items-center justify-center text-center relative"
-                        key={index}
-                      >
-                        <div className="relative flex flex-col items-center justify-center">
-                          <p className="relative inline-block uppercase font-medium text-center pt-6">
-                            <span className="relative z-10 px-2">
-                              {user.firstName} {user.lastName}
-                            </span>
-                            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-black"></span>
-                          </p>
-                          <p className="font-bold text-[12px] text-center">
-                            {user.position}
-                          </p>
-                        
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                    {/* Adjust width as needed */}
+                    <div className="relative flex flex-col items-center justify-center">
+                      <p className="relative inline-block uppercase font-medium text-center pt-6">
+                        <span className="relative z-10 px-2">
+                          {user.firstName} {user.lastName}
+                        </span>
+                        <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-black"></span>
+                      </p>
+                      <p className="font-bold text-[12px] text-center">
+                        {user.position}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="mb-4 ml-5">
+              <h3 className="font-bold mb-3">Approved By:</h3>
+              <ul className="flex flex-wrap gap-6">
+                {" "}
+                {/* Use gap instead of space-x */}
+                {approvedBy.map((user, index) => (
+                  <li
+                    className="flex flex-col items-center justify-center text-center relative"
+                    key={index}
+                  >
+                    <div className="relative flex flex-col items-center justify-center">
+                      <p className="relative inline-block uppercase font-medium text-center pt-6">
+                        <span className="relative z-10 px-2">
+                          {user.firstName} {user.lastName}
+                        </span>
+                        <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-black"></span>
+                      </p>
+                      <p className="font-bold text-[12px] text-center">
+                        {user.position}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
             <div className="space-x-3 flex justify-end mt-20 pb-10">
               <button
-               type="button"
+                type="button"
                 className={`bg-yellow ${buttonStyle}`}
                 onClick={handleAddItem}
               >
@@ -612,7 +624,7 @@ const CreateCashDisbursement = (props: Props) => {
               </button>
               {items.length > 1 && (
                 <button
-                 type="button"
+                  type="button"
                   className={`${buttonStyle} bg-pink`}
                   onClick={handleRemoveItem}
                 >
@@ -625,7 +637,7 @@ const CreateCashDisbursement = (props: Props) => {
                 onClick={handleFormSubmit}
                 disabled={loading}
               >
-                {loading ? <ClipLoader color="#36d7b7" /> : "Send Request"}
+                {loading ? "Please wait..." : "Send Request"}
               </button>
             </div>
           </div>
@@ -655,7 +667,7 @@ const CreateCashDisbursement = (props: Props) => {
       {showSuccessModal && (
         <RequestSuccessModal onClose={handleCloseSuccessModal} />
       )}
-       <AddCustomModal
+      <AddCustomModal
         modalIsOpen={isModalOpen}
         closeModal={closeModal}
         openCompleteModal={() => {}}
@@ -663,7 +675,7 @@ const CreateCashDisbursement = (props: Props) => {
         initialNotedBy={notedBy}
         initialApprovedBy={approvedBy}
         refreshData={() => {}}
-         handleAddCustomData = {handleAddCustomData}
+        handleAddCustomData={handleAddCustomData}
       />
     </div>
   );

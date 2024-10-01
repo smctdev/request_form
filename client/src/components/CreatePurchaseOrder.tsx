@@ -10,6 +10,7 @@ import axios from "axios";
 import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ClipLoader from "react-spinners/ClipLoader";
 import AddCustomModal from "./AddCustomModal";
+import Swal from "sweetalert2";
 type Props = {};
 const requestType = [
   { title: "Stock Requisition", path: "/request/sr" },
@@ -34,7 +35,7 @@ interface Approver {
   lastName: string;
   position: string;
 }
-const schema = z.object({ 
+const schema = z.object({
   approver_list_id: z.number(),
   approver: z.string(),
   supplier: z.string(),
@@ -51,7 +52,8 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const inputStyle = "w-full   border-2 border-black rounded-[12px] bg-white  autofill-input";
+const inputStyle =
+  "w-full   border-2 border-black rounded-[12px] bg-white  autofill-input";
 const itemDiv = "flex flex-col  ";
 const buttonStyle = "h-[45px] w-[150px] rounded-[12px] text-white";
 
@@ -75,8 +77,8 @@ const CreatePurchaseOrder = (props: Props) => {
   >({});
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
-  const [initialNotedBy, setInitialNotedBy] =useState<Approver[]>([]);
-  const [initialApprovedBy, setInitialApprovedBy] =useState<Approver[]>([]);
+  const [initialNotedBy, setInitialNotedBy] = useState<Approver[]>([]);
+  const [initialApprovedBy, setInitialApprovedBy] = useState<Approver[]>([]);
   const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {
@@ -84,12 +86,12 @@ const CreatePurchaseOrder = (props: Props) => {
   } = useForm<FormData>();
   const [selectedRequestType, setSelectedRequestType] =
     useState("/request/pors");
-    
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files) {
-          // Convert FileList to array and set it
-          setFile(Array.from(e.target.files));
-      }
+    if (e.target.files) {
+      // Convert FileList to array and set it
+      setFile(Array.from(e.target.files));
+    }
   };
   useEffect(() => {
     setInitialNotedBy(notedBy);
@@ -119,7 +121,7 @@ const CreatePurchaseOrder = (props: Props) => {
     formState: { errors },
   } = useForm<FormData>();
 
- /*  useEffect(() => {
+  /*  useEffect(() => {
     fetchCustomApprovers();
   }, []);
 
@@ -152,19 +154,24 @@ const CreatePurchaseOrder = (props: Props) => {
     }
 };
  */
-const onSubmit = async (data: any) => {
+  const onSubmit = async (data: any) => {
     try {
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("id");
       const branch_code = localStorage.getItem("branch_code");
-  
+
       if (!token || !userId) {
         console.error("Token or userId not found");
         return;
       }
       if (notedBy.length === 0 || approvedBy.length === 0) {
-      
-        alert("Please select an approver.");
+        Swal.fire({
+          icon: "error",
+          title: "No approver selected",
+          text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        });
         setLoading(false); // Stop loading state
         return; // Prevent form submission
       }
@@ -188,24 +195,26 @@ const onSubmit = async (data: any) => {
         }
       });
 
-    
+      const formData = new FormData();
 
-    const formData = new FormData();
-
-    // Append each file to FormData
-    file.forEach((file) => {
+      // Append each file to FormData
+      file.forEach((file) => {
         formData.append("attachment[]", file); // Use "attachment[]" to handle multiple files
-    });
-    const notedByIds = Array.isArray(notedBy) ? notedBy.map(person => person.id) : [];
-    const approvedByIds = Array.isArray(approvedBy) ? approvedBy.map(person => person.id) : [];
-    formData.append("noted_by", JSON.stringify(notedByIds));
-    formData.append("approved_by", JSON.stringify(approvedByIds));
-    formData.append("form_type", "Purchase Order Requisition Slip");  
-    formData.append("user_id", userId);
+      });
+      const notedByIds = Array.isArray(notedBy)
+        ? notedBy.map((person) => person.id)
+        : [];
+      const approvedByIds = Array.isArray(approvedBy)
+        ? approvedBy.map((person) => person.id)
+        : [];
+      formData.append("noted_by", JSON.stringify(notedByIds));
+      formData.append("approved_by", JSON.stringify(approvedByIds));
+      formData.append("form_type", "Purchase Order Requisition Slip");
+      formData.append("user_id", userId);
 
-    formData.append(
-      "form_data",
-      JSON.stringify([
+      formData.append(
+        "form_data",
+        JSON.stringify([
           {
             branch: branch_code,
             supplier: data.supplier,
@@ -219,18 +228,17 @@ const onSubmit = async (data: any) => {
               remarks: item.remarks,
             })),
           },
-      ])
-  );
+        ])
+      );
 
       setShowConfirmationModal(true);
       setLoading(false);
-        // Log formData content
-      
-        setFormData(formData);
+      // Log formData content
+
+      setFormData(formData);
     } catch (error) {
       console.error("An error occurred while submitting the request:", error);
       setLoading(false);
-    
     } finally {
     }
   };
@@ -253,7 +261,7 @@ const onSubmit = async (data: any) => {
   const closeAddCustomModal = () => {
     setIsModalOpen(false);
   };
- const handleOpenAddCustomModal = () => {
+  const handleOpenAddCustomModal = () => {
     setShowAddCustomModal(true);
   };
 
@@ -271,12 +279,18 @@ const onSubmit = async (data: any) => {
     setShowConfirmationModal(false);
     const token = localStorage.getItem("token");
     if (!notedBy && !approvedBy) {
-      alert("Please select an approver.");
+      Swal.fire({
+        icon: "error",
+        title: "No approver selected",
+        text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
+        confirmButtonText: "Close",
+        confirmButtonColor: "#007bff",
+      })
       return; // Prevent form submission
     }
-  
+
     try {
-      setLoading(true);  
+      setLoading(true);
       // Perform the actual form submission
       const response = await axios.post(
         "http://122.53.61.91:6002/api/create-request",
@@ -290,10 +304,9 @@ const onSubmit = async (data: any) => {
       );
       setLoading(false);
       setShowSuccessModal(true);
-      setValidationErrors(response.data.message)
+      setValidationErrors(response.data.message);
       setFormSubmitted(true);
     } catch (error) {
-   
       console.error("An error occurred while submitting the request:", error);
     } finally {
       setLoading(false);
@@ -391,6 +404,11 @@ const onSubmit = async (data: any) => {
   };
   return (
     <div className="bg-graybg dark:bg-blackbg h-full pt-[15px] px-[30px] pb-[15px]">
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+          <ClipLoader color="#007bff" />
+        </div>
+      )}
       <h1 className="text-primary text-[32px] font-bold">Create Request</h1>
       <select
         className="w-2/5 lg:h-[56px] md:h-10 p-2 bg-gray-200 pl-[30px] border-2 border-black rounded-xl mb-2"
@@ -420,22 +438,21 @@ const onSubmit = async (data: any) => {
             </h1>
           </div>
           <div className="my-2  ">
-          <button
-          onClick={openAddCustomModal}
-          className="bg-primary text-white p-2 rounded"
-        >
-          Add Approver
-        </button>
+            <button
+              onClick={openAddCustomModal}
+              className="bg-primary text-white p-2 rounded"
+            >
+              Add Approver
+            </button>
           </div>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="px-[35px] mt-4 ">                 
+          <div className="px-[35px] mt-4 ">
             <div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4  mt-2 sm:mt-0 flex-row  justify-start space-y-2 sm:space-y-0 sm:gap-4 lg:gap-0 lg:space-x-4">
                 <div className={`${itemDiv}`}>
                   <p className="font-semibold">Supplier</p>
                   <textarea
-               
                     {...register("supplier", { required: true })}
                     className={`${inputStyle} h-[44px] p-1`}
                   />
@@ -447,7 +464,6 @@ const onSubmit = async (data: any) => {
                 <div className={`${itemDiv}`}>
                   <p className="font-semibold">Address</p>
                   <textarea
-               
                     {...register("address", { required: true })}
                     className={`${inputStyle} h-[44px] p-1`}
                   />
@@ -570,8 +586,8 @@ const onSubmit = async (data: any) => {
                 </div>
               </div>
             ))}
-            
-                <div className="flex justify-between flex-col md:flex-row">
+
+            <div className="flex justify-between flex-col md:flex-row">
               <div className="w-full max-w-md  p-4">
                 <p className="font-semibold">Attachments:</p>
                 <input
@@ -590,62 +606,60 @@ const onSubmit = async (data: any) => {
               </div>
             </div>
             <div className="mb-4 ml-5 mt-10">
-                  <h3 className="font-bold mb-3">Noted By:</h3>
-                  <ul className="flex flex-wrap gap-6">
+              <h3 className="font-bold mb-3">Noted By:</h3>
+              <ul className="flex flex-wrap gap-6">
+                {" "}
+                {/* Use gap instead of space-x */}
+                {notedBy.map((user, index) => (
+                  <li
+                    className="flex flex-col items-center justify-center text-center relative w-auto"
+                    key={index}
+                  >
                     {" "}
-                    {/* Use gap instead of space-x */}
-                    {notedBy.map((user, index) => (
-                      <li
-                        className="flex flex-col items-center justify-center text-center relative w-auto"
-                        key={index}
-                      >
-                        {" "}
-                        {/* Adjust width as needed */}
-                        <div className="relative flex flex-col items-center justify-center">
-                          <p className="relative inline-block uppercase font-medium text-center pt-6">
-                            <span className="relative z-10 px-2">
-                              {user.firstName} {user.lastName}
-                            </span>
-                            <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-black"></span>
-                          </p>
-                          <p className="font-bold text-[12px] text-center">
-                            {user.position}
-                          </p>
-                         
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="mb-4 ml-5">
-                  <h3 className="font-bold mb-3">Approved By:</h3>
-                  <ul className="flex flex-wrap gap-6">
-                    {" "}
-                    {/* Use gap instead of space-x */}
-                    {approvedBy.map((user, index) => (
-                      <li
-                        className="flex flex-col items-center justify-center text-center relative"
-                        key={index}
-                      >
-                        <div className="relative flex flex-col items-center justify-center">
-                          <p className="relative inline-block uppercase font-medium text-center pt-6">
-                            <span className="relative z-10 px-2">
-                              {user.firstName} {user.lastName}
-                            </span>
-                            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-black"></span>
-                          </p>
-                          <p className="font-bold text-[12px] text-center">
-                            {user.position}
-                          </p>
-                        
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                    {/* Adjust width as needed */}
+                    <div className="relative flex flex-col items-center justify-center">
+                      <p className="relative inline-block uppercase font-medium text-center pt-6">
+                        <span className="relative z-10 px-2">
+                          {user.firstName} {user.lastName}
+                        </span>
+                        <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-black"></span>
+                      </p>
+                      <p className="font-bold text-[12px] text-center">
+                        {user.position}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="mb-4 ml-5">
+              <h3 className="font-bold mb-3">Approved By:</h3>
+              <ul className="flex flex-wrap gap-6">
+                {" "}
+                {/* Use gap instead of space-x */}
+                {approvedBy.map((user, index) => (
+                  <li
+                    className="flex flex-col items-center justify-center text-center relative"
+                    key={index}
+                  >
+                    <div className="relative flex flex-col items-center justify-center">
+                      <p className="relative inline-block uppercase font-medium text-center pt-6">
+                        <span className="relative z-10 px-2">
+                          {user.firstName} {user.lastName}
+                        </span>
+                        <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-black"></span>
+                      </p>
+                      <p className="font-bold text-[12px] text-center">
+                        {user.position}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
             <div className="space-x-3 flex justify-end mt-20 pb-10">
               <button
-               type="button"
+                type="button"
                 className={`bg-yellow ${buttonStyle}`}
                 onClick={handleAddItem}
               >
@@ -653,7 +667,7 @@ const onSubmit = async (data: any) => {
               </button>
               {items.length > 1 && (
                 <button
-                 type="button"
+                  type="button"
                   className={`${buttonStyle} bg-pink`}
                   onClick={handleRemoveItem}
                 >
@@ -666,7 +680,7 @@ const onSubmit = async (data: any) => {
                 onClick={handleFormSubmit}
                 disabled={loading}
               >
-                {loading ? <ClipLoader color="#36d7b7" /> : "Send Request"}
+                {loading ? "Please wait..." : "Send Request"}
               </button>
             </div>
           </div>
@@ -696,7 +710,7 @@ const onSubmit = async (data: any) => {
       {showSuccessModal && (
         <RequestSuccessModal onClose={handleCloseSuccessModal} />
       )}
-         <AddCustomModal
+      <AddCustomModal
         modalIsOpen={isModalOpen}
         closeModal={closeModal}
         openCompleteModal={() => {}}
@@ -704,7 +718,7 @@ const onSubmit = async (data: any) => {
         initialNotedBy={notedBy}
         initialApprovedBy={approvedBy}
         refreshData={() => {}}
-        handleAddCustomData = {handleAddCustomData}
+        handleAddCustomData={handleAddCustomData}
       />
     </div>
   );

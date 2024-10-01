@@ -121,6 +121,7 @@ const Dashboard: React.FC = () => {
     fetchBranchData();
   }, []);
 
+  const linkTo = '/request';
   const NoDataComponent = () => (
     <div className="flex justify-center items-center h-64 text-gray-500">
       <p className="text-lg">No records found</p>
@@ -347,6 +348,11 @@ const Dashboard: React.FC = () => {
         <h1 className="py-[16px] px-[25px] font-bold text-[20px]">
           Recent requests
         </h1>
+        <p className="flex justify-end px-[25px] -mt-10 mb-1">
+    <a href={linkTo}>
+      <span className="bg-primary px-3 py-1 rounded-[12px] text-white">See all</span>
+    </a>
+  </p>
         {/* {loading ? (
           <div className="flex items-center justify-center h-full">
             <ClipLoader color={"#123abc"} loading={loading} size={50} />
@@ -360,7 +366,6 @@ const Dashboard: React.FC = () => {
           noDataComponent={<NoDataComponent />}
           progressPending={loading}
           progressComponent={<LoadingSpinner />}
-          // striped
           pagination
         />
       </div>

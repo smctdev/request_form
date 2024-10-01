@@ -14,6 +14,7 @@ import PropogateLoader from "react-spinners/PropagateLoader";
 import { set } from "react-hook-form";
 import SignatureCanvas from "react-signature-canvas";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 interface User {
   firstName: string;
@@ -41,7 +42,6 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
-  const [successModal, setSuccessModal] = useState(false);
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [newProfilePic, setNewProfilePic] = useState<File | null>(null);
@@ -157,7 +157,14 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
         }
       );
 
-      setSuccessModal(true);
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Password changed successfully",
+        confirmButtonText: "Close",
+        confirmButtonColor: "#007bff",
+      })
+      // alert("Password changed successfully");
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -186,9 +193,13 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
 
   if (!user) {
     return (
-      <div className="flex bg-white justify-center items-center h-full">
-        <SquareLoader color="#ADD8E6" />
-      </div>
+<div className="fixed inset-0 flex bg-gray-200 justify-center items-center">
+  <div className="flex flex-col items-center">
+    <ClipLoader color="#007bff" size={80} />
+    <p className="mt-2 text-lg text-gray-700">Please wait...</p>
+  </div>
+</div>
+
     );
   }
 
@@ -499,6 +510,8 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
                 src={user.signature}
                 alt="User Signature"
                 className="sigCanvas border border-black h-28 w-full"
+                draggable="false"
+                onContextMenu={(e) => e.preventDefault()}
               />
             ) : (
               <SignatureCanvas

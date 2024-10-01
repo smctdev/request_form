@@ -74,7 +74,7 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
     <div className="print-container bg-white h-lvh text-black  ">
       <div className="border-2 border-black px-4 pt-2">
         <div className="flex flex-col justify-center items-center">
-          <div className="justify-center w-1/2 mt-10 ">{logo}</div>
+          <div className="justify-center w-1/2 ">{logo}</div>
 
           <h1 className="font-bold text-lg uppercase">
             Stock Requisition Slip
@@ -85,6 +85,11 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
             </h1>
             <h1 className="text-lg">BRANCH</h1>
           </div>
+        </div>
+        <div className="flex absolute justify-start pr-6">
+          <p className=" mb-2 flex font-bold ">
+            Purpose: {printData?.purpose}
+            </p>
         </div>
         <div className="flex justify-end pr-6">
           <p className=" mb-2 flex font-bold ">

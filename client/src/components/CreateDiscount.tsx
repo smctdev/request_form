@@ -12,6 +12,7 @@ import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ClipLoader from "react-spinners/ClipLoader";
 import AddCustomModal from "./AddCustomModal";
 import { table } from "console";
+import Swal from "sweetalert2";
 type CustomApprover = {
   id: number;
   name: string;
@@ -345,12 +346,24 @@ const CreateDiscount = (props: Props) => {
         return;
       }
       if (notedBy.length === 0 || approvedBy.length === 0) {
-        alert("Please select an approver.");
+        Swal.fire({
+          icon: "error",
+          title: "No approver selected",
+          text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        })
         setLoading(false); // Stop loading state
         return; // Prevent form submission
       }
         if (notedBy.length === 0 || approvedBy.length === 0) {
-        alert("Please select an approver.");
+          Swal.fire({
+            icon: "error",
+            title: "No approver selected",
+            text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
+            confirmButtonText: "Close",
+            confirmButtonColor: "#007bff",
+          })
         setLoading(false); // Stop loading state
         return; // Prevent form submission
       }
@@ -439,7 +452,13 @@ const CreateDiscount = (props: Props) => {
     const token = localStorage.getItem("token");
 
     if (!notedBy && !approvedBy) {
-      alert("Please select an approver.");
+      Swal.fire({
+        icon: "error",
+        title: "No approver selected",
+        text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
+        confirmButtonText: "Close",
+        confirmButtonColor: "#007bff",
+      })
       return; // Prevent form submission
     }
 
@@ -521,6 +540,11 @@ const CreateDiscount = (props: Props) => {
 
   return (
     <div className="bg-graybg dark:bg-blackbg w-full h-full pt-[15px] inline-flex flex-col px-[30px] pb-[15px]">
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+          <ClipLoader color="#007bff" />
+        </div>
+      )}
       <h1 className="text-primary text-[32px] font-bold inline-block">
         Create Request
       </h1>
@@ -911,7 +935,7 @@ const CreateDiscount = (props: Props) => {
                 onClick={handleFormSubmit}
                 disabled={loading}
               >
-                {loading ? <ClipLoader color="#36d7b7" /> : "Send Request"}
+                {loading ? "Please Wait..." : "Send Request"}
               </button>
             </div>
           </div>

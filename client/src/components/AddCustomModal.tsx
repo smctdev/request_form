@@ -209,7 +209,9 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
                     />
                     <label
                       htmlFor={`noted_by_${approver.id}`}
-                      className={highlightClass}
+                      className={`${highlightClass} ${
+                        isApproved ? "text-gray-400" : ""
+                      }`}
                     >
                       {approver.firstName} {approver.lastName}
                     </label>
@@ -230,15 +232,15 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
                   <div key={approver.id} className="flex items-center mb-2">
                     {isApproved && (
                       <span
-                      className="mr-2 rounded-full text-center px-2 py-1 text-white font-bold text-xs flex items-center justify-center"
-                      style={{
-                        background: "#007bff",
-                        height: "20px",
-                        width: "20px",
-                      }} // Set fixed height and width
-                    >
-                      {approvedBy.indexOf(approver) + 1}
-                    </span>
+                        className="mr-2 rounded-full text-center px-2 py-1 text-white font-bold text-xs flex items-center justify-center"
+                        style={{
+                          background: "#007bff",
+                          height: "20px",
+                          width: "20px",
+                        }} // Set fixed height and width
+                      >
+                        {approvedBy.indexOf(approver) + 1}
+                      </span>
                     )}
                     <input
                       type="checkbox"
@@ -256,7 +258,9 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
                     />
                     <label
                       htmlFor={`approved_by_${approver.id}`}
-                      className={highlightClass}
+                      className={`${highlightClass} ${
+                        isNoted ? "text-gray-400" : ""
+                      }`}
                     >
                       {approver.firstName} {approver.lastName}
                     </label>
