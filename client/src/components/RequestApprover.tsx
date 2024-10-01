@@ -217,7 +217,7 @@ const RequestApprover = (props: Props) => {
         )
         .then((response) => {
           setRequests(response.data.request_forms);
-          console.log('req', requests);
+   
         })
         .catch((error) => {
           console.error("Error fetching requests data:", error);

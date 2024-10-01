@@ -314,7 +314,7 @@ const CreateLiquidation = (props: Props) => {
   const handleCloseConfirmationModal = () => {
     setShowConfirmationModal(false);
   };
-console.log(employeeID)
+
   const onSubmit = async (data: FormData) => {
     try {
       if (!cashAdvance && errors.cashAdvance) {
@@ -405,8 +405,7 @@ console.log(employeeID)
           },
         ])
       );
-      console.log('tableData:', tableData);
-      console.log('form_data:', JSON.stringify(formData.get('form_data')));
+
       // Display confirmation modal
       setShowConfirmationModal(true);
 

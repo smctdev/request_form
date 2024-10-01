@@ -254,7 +254,7 @@ const ApproverCashAdvance: React.FC<Props> = ({
       ) {
         const approvedAttachmentString = record.approved_attachment[0]; // Access the first element
         const parsedApprovedAttachment = JSON.parse(approvedAttachmentString); // Parse the string to get the actual array
-        console.log("Parsed approved attachment:", parsedApprovedAttachment); // Log parsed attachment
+       
 
         if (
           Array.isArray(parsedApprovedAttachment) &&
@@ -263,7 +263,7 @@ const ApproverCashAdvance: React.FC<Props> = ({
           // Access the first element of the array
           const formattedAttachment = parsedApprovedAttachment[0];
           setAttachment(formattedAttachment); // Set the state with the string
-          console.log("Formatted approved attachment:", formattedAttachment); // Log the formatted attachment
+        
         } else {
           console.warn(
             "Parsed approved attachment is not an array or is empty:",
@@ -310,9 +310,7 @@ const ApproverCashAdvance: React.FC<Props> = ({
       requestData.append("comment", comments);
 
       // Log the contents of requestData for debugging
-      for (const [key, value] of requestData.entries()) {
-        console.log(`${key}:`, value);
-      }
+  
       const response = await axios.post(
         `http://122.53.61.91:6002/api/request-forms/${record.id}/process`,
         requestData,
@@ -357,9 +355,7 @@ const ApproverCashAdvance: React.FC<Props> = ({
     requestData.append("comment", comments);
 
     // Log the contents of requestData for debugging
-    for (const [key, value] of requestData.entries()) {
-      console.log(`${key}:`, value);
-    }
+   
 
     try {
       setApprovedLoading(true);

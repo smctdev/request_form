@@ -73,7 +73,6 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
     }
   }, [printData]); */
 
-  console.log(printData);
   const tableStyle = " border-black border py-4 font-bold";
   return (
     <div className="print-container p-2 parent ">

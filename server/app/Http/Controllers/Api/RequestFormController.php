@@ -25,44 +25,44 @@ class RequestFormController extends Controller
 
     //CREATE REQUEST    
     public function createRequest(Request $request)
-{
-    try {
-        // Validate request data
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'form_type' => 'required|string',
-            'form_data' => 'required|string', // Temporarily string for decoding
-          'noted_by' => 'required|string',
+    {
+        try {
+            // Validate request data
+            $validated = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'form_type' => 'required|string',
+                'form_data' => 'required|string', // Temporarily string for decoding
+                'noted_by' => 'required|string',
                 'approved_by' => 'required|string',
-            'attachment.*' => 'file|mimes:pdf,png,jpg,jpeg',
-        ]);
+                'attachment.*' => 'file|mimes:pdf,png,jpg,jpeg',
+            ]);
 
-        $userID = $validated['user_id'];
-        $formType = $validated['form_type'];
-        $formDataArray = json_decode($validated['form_data'], true);
-        $notedByIds = json_decode($validated['noted_by'], true);
-        $approvedByIds = json_decode($validated['approved_by'], true); 
-       /*  $formDataArray = $validated['form_data'];
-        $notedByIds = $validated['noted_by'];
-        $approvedByIds = $validated['approved_by'];  */
+            $userID = $validated['user_id'];
+            $formType = $validated['form_type'];
+            $formDataArray = json_decode($validated['form_data'], true);
+            $notedByIds = json_decode($validated['noted_by'], true);
+            $approvedByIds = json_decode($validated['approved_by'], true);
+            /*  $formDataArray = $validated['form_data'];
+             $notedByIds = $validated['noted_by'];
+             $approvedByIds = $validated['approved_by'];  */
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            return response()->json([
-                'message' => 'Invalid JSON format in input data',
-            ], 400);
-        }
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return response()->json([
+                    'message' => 'Invalid JSON format in input data',
+                ], 400);
+            }
 
-        $user = DB::table('users')->where('id', $userID)->first();
-        if (!$user) {
-            return response()->json([
-                'message' => 'User not found',
-            ], 404);
-        }
-        $branchCode = $user->branch_code;
-          
+            $user = DB::table('users')->where('id', $userID)->first();
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not found',
+                ], 404);
+            }
+            $branchCode = $user->branch_code;
 
-        // Define form-specific validation rules
-             $validationRules = [
+
+            // Define form-specific validation rules
+            $validationRules = [
                 'Application For Cash Advance' => [
                     "date" => 'required|date',
                     "department" => 'required',
@@ -152,7 +152,7 @@ class RequestFormController extends Controller
                     'employement_status' => 'required',
                     //'branch' => 'required',
                     'date' => 'required|date',
-                   
+
                     "items" => [
                         'brand' => 'required|numeric',
                         'model' => 'required',
@@ -168,83 +168,83 @@ class RequestFormController extends Controller
                 ],
             ];
 
-        if (!isset($validationRules[$formType])) {
-            return response()->json([
-                'message' => 'Invalid form type',
-            ], 400);
-        }
-
-        // Begin transaction
-        DB::beginTransaction();
-
-        // Validate form data against rules
-        $encodedFormData = [];
-        foreach ($formDataArray as $key => $formData) {
-            if ($key !== 'items') {
-                $encodedFormData[$key] = $formData;
-                continue;
+            if (!isset($validationRules[$formType])) {
+                return response()->json([
+                    'message' => 'Invalid form type',
+                ], 400);
             }
 
-            $items = [];
-            foreach ($formData as $item) {
-                $validator = Validator::make($item, $validationRules[$formType]['items']);
-                if ($validator->fails()) {
-                    DB::rollBack();
-                    return response()->json([
-                        'errors' => $validator->errors(),
-                    ], 400);
+            // Begin transaction
+            DB::beginTransaction();
+
+            // Validate form data against rules
+            $encodedFormData = [];
+            foreach ($formDataArray as $key => $formData) {
+                if ($key !== 'items') {
+                    $encodedFormData[$key] = $formData;
+                    continue;
                 }
-                $items[] = $item;
-            }
 
-            $encodedFormData['items'] = $items;
-        }
-
-        // Handle file uploads
-        $filePaths = [];
-        if ($request->hasFile('attachment')) {
-            $files = is_array($request->file('attachment')) ? $request->file('attachment') : [$request->file('attachment')];
-
-            foreach ($files as $file) {
-                $filePath = $file->store('attachments', 'public');
-                if (!$filePath) {
-                    DB::rollBack();
-                    return response()->json([
-                        'message' => 'File upload failed',
-                    ], 500);
+                $items = [];
+                foreach ($formData as $item) {
+                    $validator = Validator::make($item, $validationRules[$formType]['items']);
+                    if ($validator->fails()) {
+                        DB::rollBack();
+                        return response()->json([
+                            'errors' => $validator->errors(),
+                        ], 400);
+                    }
+                    $items[] = $item;
                 }
-                $filePaths[] = $filePath;
+
+                $encodedFormData['items'] = $items;
             }
-        }
 
-        $uniqueCode = $this->generateUniqueCode($formType,$branchCode);
+            // Handle file uploads
+            $filePaths = [];
+            if ($request->hasFile('attachment')) {
+                $files = is_array($request->file('attachment')) ? $request->file('attachment') : [$request->file('attachment')];
+
+                foreach ($files as $file) {
+                    $filePath = $file->store('attachments', 'public');
+                    if (!$filePath) {
+                        DB::rollBack();
+                        return response()->json([
+                            'message' => 'File upload failed',
+                        ], 500);
+                    }
+                    $filePaths[] = $filePath;
+                }
+            }
+
+            $uniqueCode = $this->generateUniqueCode($formType, $branchCode);
 
 
-        // Create the request form
-        $requestForm = RequestForm::create([
-            'user_id' => $userID,
-            'form_type' => $formType,
-            'form_data' => $encodedFormData, // Ensure it's JSON encoded,
-            'noted_by' => $notedByIds,
-            'approved_by' => $approvedByIds, // Ensure it's JSON encoded
-            'attachment' => json_encode($filePaths), // Ensure it's JSON encoded
-            'request_code' => $uniqueCode,
-            'branch_code' => $branchCode,
-        ]);
- 
-    
-        // Helper function to handle AVPFinance users and their staff
-        function handleAvpFinanceApproval($userId, &$approvalProcesses, &$level, $requestFormId, $branchId)
-        {
-            // Check if the user is an AVPFinance
-            $user = DB::table('users')->where('id', $userId)->first();
-            if ($user && $user->position === 'AVP - Finance') {
-                // Fetch AVPFinance staff
-                $avpFinanceRecord = DB::table('a_v_p_finance_staff')->where('user_id', $userId)->first();
-                if ($avpFinanceRecord) {
-                    $avpStaffs = json_decode($avpFinanceRecord->staff_id, true); // Decode staff_id JSON
+            // Create the request form
+            $requestForm = RequestForm::create([
+                'user_id' => $userID,
+                'form_type' => $formType,
+                'form_data' => $encodedFormData, // Ensure it's JSON encoded,
+                'noted_by' => $notedByIds,
+                'approved_by' => $approvedByIds, // Ensure it's JSON encoded
+                'attachment' => json_encode($filePaths), // Ensure it's JSON encoded
+                'request_code' => $uniqueCode,
+                'branch_code' => $branchCode,
+            ]);
 
-                  
+
+            // Helper function to handle AVPFinance users and their staff
+            function handleAvpFinanceApproval($userId, &$approvalProcesses, &$level, $requestFormId, $branchId)
+            {
+                // Check if the user is an AVPFinance
+                $user = DB::table('users')->where('id', $userId)->first();
+                if ($user && $user->position === 'AVP - Finance') {
+                    // Fetch AVPFinance staff
+                    $avpFinanceRecord = DB::table('a_v_p_finance_staff')->where('user_id', $userId)->first();
+                    if ($avpFinanceRecord) {
+                        $avpStaffs = json_decode($avpFinanceRecord->staff_id, true); // Decode staff_id JSON
+
+
                         // Fetch staff's branch assignments
                         $staffBranchAssignments = DB::table('a_v_p_finance_staff')
                             ->where('staff_id', $avpStaffs)
@@ -261,173 +261,177 @@ class RequestFormController extends Controller
                                     'request_form_id' => $requestFormId,
                                     'level' => $level,
                                     'status' => 'Pending',
-                                    'created_at' =>now(),
+                                    'created_at' => now(),
                                     'updated_at' => now(),
                                 ];
                                 $level++;
                             }
                         }
-                    
+
+                    }
+                }
+
+                // Add the AVPFinance user to the approval process
+                $approvalProcesses[] = [
+                    'user_id' => $userId,
+                    'request_form_id' => $requestFormId,
+                    'level' => $level,
+                    'status' => 'Pending',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+                $level++;
+            }
+
+            // Initialize approval process variables
+            $level = 1;
+            $approvalProcesses = [];
+
+            // Combine noted_by and approved_by into one array with labels
+            $approvers = [
+                ['type' => 'noted_by', 'ids' => $notedByIds],
+                ['type' => 'approved_by', 'ids' => $approvedByIds]
+            ];
+
+            // Process each approver (noted_by and approved_by)
+            foreach ($approvers as $approverGroup) {
+                foreach ($approverGroup['ids'] as $approverId) {
+                    // Use the helper function to handle AVPFinance and their staff
+                    handleAvpFinanceApproval($approverId, $approvalProcesses, $level, $requestForm->id, $branchCode);
                 }
             }
 
-            // Add the AVPFinance user to the approval process
-            $approvalProcesses[] = [
-                'user_id' => $userId,
-                'request_form_id' => $requestFormId,
-                'level' => $level,
-                'status' => 'Pending',
-                'created_at' =>now(),
-                'updated_at' => now(),
-            ];
-            $level++;
+            // Insert all approval processes into the database
+            ApprovalProcess::insert($approvalProcesses);
+
+            // Notify the first approver (user 3 in this case)
+            $firstApproverId = $notedByIds[0];
+            $firstApprover = User::find($firstApproverId);
+            if ($firstApprover) {
+                $firstApprovalProcess = ApprovalProcess::where('request_form_id', $requestForm->id)
+                    ->where('user_id', $firstApproverId)
+                    ->where('level', 1)
+                    ->first();
+
+                $firstApprover->notify(new ApprovalProcessNotification(
+                    $firstApprovalProcess,
+                    $firstApprover->firstName,
+                    $requestForm,
+                    $user->firstName,
+                    $user->lastName
+                ));
+
+                // Broadcast notification event
+                $message = 'You have a request form to approve';
+                $date = now();
+                $type = 'App\Notifications\ApprovalProcessNotification';
+                $read_at = null;
+                event(new NotificationEvent($firstApprover->id, $message, $date,$type,$read_at));
+            }
+
+            // Commit transaction
+            DB::commit();
+            return response()->json([
+                'message' => 'Request form created successfully',
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Request form creation failed', ['error' => $e->getMessage()]);
+            return response()->json([
+                'message' => 'An error occurred',
+                'error' => $e->getMessage()
+            ], 500);
         }
+    }
 
-        // Initialize approval process variables
-        $level = 1;
-        $approvalProcesses = [];
-
-        // Combine noted_by and approved_by into one array with labels
-        $approvers = [
-            ['type' => 'noted_by', 'ids' => $notedByIds],
-            ['type' => 'approved_by', 'ids' => $approvedByIds]
+    private function generateUniqueCode($formType, $branchId)
+    {
+        $prefixes = [
+            'Application For Cash Advance' => 'CA',
+            'Cash Disbursement Requisition Slip' => 'CD',
+            'Liquidation of Actual Expense' => 'LAE',
+            'Purchase Order Requisition Slip' => 'PO',
+            'Refund Request' => 'RR-',
+            'Stock Requisition Slip' => 'SRL',
+            'Discount Requisition Form' => 'DRF',
         ];
 
-        // Process each approver (noted_by and approved_by)
-        foreach ($approvers as $approverGroup) {
-            foreach ($approverGroup['ids'] as $approverId) {
-                // Use the helper function to handle AVPFinance and their staff
-                handleAvpFinanceApproval($approverId, $approvalProcesses, $level, $requestForm->id, $branchCode);
-            }
+        if (isset($prefixes[$formType]) && $branchId) {
+            $count = RequestForm::where('form_type', $formType)
+                ->where('branch_code', $branchId)
+                ->count();
+            $nextNumber = str_pad($count + 1, 7, '0', STR_PAD_LEFT);
+            return $prefixes[$formType] . $nextNumber;
         }
 
-        // Insert all approval processes into the database
-        ApprovalProcess::insert($approvalProcesses); 
-
-        // Notify the first approver (user 3 in this case)
-         $firstApproverId = $notedByIds[0];
-         $firstApprover = User::find($firstApproverId);
-         if ($firstApprover) {
-             $firstApprovalProcess = ApprovalProcess::where('request_form_id', $requestForm->id)
-                 ->where('user_id', $firstApproverId)
-                 ->where('level', 1)
-                 ->first();
- 
-             $firstApprover->notify(new ApprovalProcessNotification(
-                 $firstApprovalProcess, 
-                 $firstApprover->firstName, 
-                 $requestForm, 
-                 $user->firstName, 
-                 $user->lastName
-             ));
- 
-             // Broadcast notification event
-             $notificationCount = $firstApprover->unreadNotifications()->count();
-             NotificationEvent::dispatch($firstApproverId, $notificationCount);
-         }
-
-        // Commit transaction
-        DB::commit();
-        return response()->json([
-            'message' => 'Request form created successfully',
-        ], 200);
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error('Request form creation failed', ['error' => $e->getMessage()]);
-        return response()->json([
-            'message' => 'An error occurred',
-            'error' => $e->getMessage()
-        ], 500);
+        return null;
     }
-} 
+    public function updateRequest(Request $request, $id)
+    {
+        DB::beginTransaction(); // Start transaction
 
-private function generateUniqueCode($formType, $branchId) {
-    $prefixes = [
-        'Application For Cash Advance' => 'CA',
-        'Cash Disbursement Requisition Slip' => 'CD',
-        'Liquidation of Actual Expense' => 'LAE',
-        'Purchase Order Requisition Slip' => 'PO',
-        'Refund Request' => 'RR-',
-        'Stock Requisition Slip' => 'SRL',
-        'Discount Requisition Form' => 'DRF',
-    ];
+        try {
+            // Find the request form by ID
+            $form_data = RequestForm::with('approvalProcess')->findOrFail($id);
 
-    if (isset($prefixes[$formType]) && $branchId) {
-        $count = RequestForm::where('form_type', $formType)
-            ->where('branch_code', $branchId)
-            ->count();
-        $nextNumber = str_pad($count + 1, 7, '0', STR_PAD_LEFT);
-        return $prefixes[$formType] . $nextNumber;
-    }
+            // Decode JSON strings
+            $form_data_content = json_decode($request->input('form_data'), true);
+            $noted_by = json_decode($request->input('noted_by'), true);
+            $approved_by = json_decode($request->input('approved_by'), true);
 
-    return null;
-}
-public function updateRequest(Request $request, $id)
-{
-    DB::beginTransaction(); // Start transaction
+            // Initialize attachment paths
+            $attachment_paths = [];
 
-    try {
-        // Find the request form by ID
-        $form_data = RequestForm::with('approvalProcess')->findOrFail($id);
-
-        // Decode JSON strings
-        $form_data_content = json_decode($request->input('form_data'),true);
-        $noted_by = json_decode($request->input('noted_by'),true);
-        $approved_by = json_decode($request->input('approved_by'),true);
-
-        // Initialize attachment paths
-        $attachment_paths = [];
-
-        // Process existing and new attachments
-        if ($request->hasFile('new_attachments')) {
-            foreach ($request->file('new_attachments') as $file) {
-                $attachment_paths[] = $file->store('attachments', 'public');
+            // Process existing and new attachments
+            if ($request->hasFile('new_attachments')) {
+                foreach ($request->file('new_attachments') as $file) {
+                    $attachment_paths[] = $file->store('attachments', 'public');
+                }
             }
-        }
 
-        // Add existing attachment paths from the request
-        foreach ($request->input('attachment_urls', []) as $value) {
-            $attachment_paths[] = 'attachments/' . $value;
-        }
+            // Add existing attachment paths from the request
+            foreach ($request->input('attachment_urls', []) as $value) {
+                $attachment_paths[] = 'attachments/' . $value;
+            }
 
-        // Process removed attachments
-        $removed_attachments = $request->input('removed_attachments', []);
-        foreach ($removed_attachments as $path) {
-            Storage::disk('public')->delete('attachments/' . $path);
-        }
+            // Process removed attachments
+            $removed_attachments = $request->input('removed_attachments', []);
+            foreach ($removed_attachments as $path) {
+                Storage::disk('public')->delete('attachments/' . $path);
+            }
 
-        // Update the request form data including attachment
-        $form_data->update([
-            'form_data' => $form_data_content,
-            'noted_by' => $noted_by,
-            'approved_by' => $approved_by,
-            'attachment' => json_encode($attachment_paths),
-            'updated_at' => now(), // Use now() for the current timestamp
-        ]);
+            // Update the request form data including attachment
+            $form_data->update([
+                'form_data' => $form_data_content,
+                'noted_by' => $noted_by,
+                'approved_by' => $approved_by,
+                'attachment' => json_encode($attachment_paths),
+                'updated_at' => now(), // Use now() for the current timestamp
+            ]);
 
-        // Delete existing approval processes
-        $form_data->approvalProcess()->delete();
+            // Delete existing approval processes
+            $form_data->approvalProcess()->delete();
 
-        // Initialize approval process variables
-        $level = 1;
-        $approvalProcesses = [];
+            // Initialize approval process variables
+            $level = 1;
+            $approvalProcesses = [];
 
-        // Function to handle AVPFinance users and their staff
-        function handleAvpFinanceApprovals($userId, &$approvalProcesses, &$level, $requestFormId, $branchId)
-        {
-            // Check if the user is an AVPFinance
-            $user = DB::table('users')->where('id', $userId)->first();
-            if ($user && $user->position === 'AVP - Finance') {
-                // Fetch AVPFinance staff
-                $avpFinanceRecord = DB::table('a_v_p_finance_staff')->where('user_id', $userId)->first();
-                if ($avpFinanceRecord) {
-                    $avpStaffs = json_decode($avpFinanceRecord->staff_id, true); // Decode staff_id JSON
+            // Function to handle AVPFinance users and their staff
+            function handleAvpFinanceApprovals($userId, &$approvalProcesses, &$level, $requestFormId, $branchId)
+            {
+                // Check if the user is an AVPFinance
+                $user = DB::table('users')->where('id', $userId)->first();
+                if ($user && $user->position === 'AVP - Finance') {
+                    // Fetch AVPFinance staff
+                    $avpFinanceRecord = DB::table('a_v_p_finance_staff')->where('user_id', $userId)->first();
+                    if ($avpFinanceRecord) {
+                        $avpStaffs = json_decode($avpFinanceRecord->staff_id, true); // Decode staff_id JSON
 
-                  
+
                         // Fetch staff's branch assignments
                         $staffBranchAssignments = DB::table('a_v_p_finance_staff')
-                            ->where('staff_id',  $avpStaffs)
+                            ->where('staff_id', $avpStaffs)
                             ->pluck('branch_id')
                             ->first();
 
@@ -437,7 +441,7 @@ public function updateRequest(Request $request, $id)
                             // Check if the staff's branches include the request form branch
                             if (in_array($branchId, $staffBranches)) {
                                 $approvalProcesses[] = [
-                                    'user_id' =>  $avpStaffs,
+                                    'user_id' => $avpStaffs,
                                     'request_form_id' => $requestFormId,
                                     'level' => $level,
                                     'status' => 'Pending',
@@ -447,85 +451,86 @@ public function updateRequest(Request $request, $id)
                                 $level++;
                             }
                         }
-                    
+
+                    }
+                }
+
+                // Add the AVPFinance user to the approval process
+                $approvalProcesses[] = [
+                    'user_id' => $userId,
+                    'request_form_id' => $requestFormId,
+                    'level' => $level,
+                    'status' => 'Pending',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+                $level++;
+            }
+
+            // Process each approver (noted_by and approved_by)
+            $approvers = [
+                ['type' => 'noted_by', 'ids' => $noted_by],
+                ['type' => 'approved_by', 'ids' => $approved_by]
+            ];
+
+            foreach ($approvers as $approverGroup) {
+                foreach ($approverGroup['ids'] as $approverId) {
+                    // Use the helper function to handle AVPFinance and their staff
+                    handleAvpFinanceApprovals($approverId, $approvalProcesses, $level, $form_data->id, $form_data->branch_code);
                 }
             }
 
-            // Add the AVPFinance user to the approval process
-            $approvalProcesses[] = [
-                'user_id' => $userId,
-                'request_form_id' => $requestFormId,
-                'level' => $level,
-                'status' => 'Pending',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-            $level++;
-        }
+            // Insert all approval processes into the database
+            ApprovalProcess::insert($approvalProcesses);
 
-        // Process each approver (noted_by and approved_by)
-        $approvers = [
-            ['type' => 'noted_by', 'ids' => $noted_by],
-            ['type' => 'approved_by', 'ids' => $approved_by]
-        ];
+            // Notify first approver
+            $firstApprover = $noted_by[0] ?? null;
+            if ($firstApprover) {
+                $firstApproverUser = User::find($firstApprover);
+                if ($firstApproverUser) {
+                    $firstApprovalProcess = ApprovalProcess::where('request_form_id', $form_data->id)
+                        ->where('user_id', $firstApprover)
+                        ->first();
 
-        foreach ($approvers as $approverGroup) {
-            foreach ($approverGroup['ids'] as $approverId) {
-                // Use the helper function to handle AVPFinance and their staff
-                handleAvpFinanceApprovals($approverId, $approvalProcesses, $level, $form_data->id, $form_data->branch_code);
+                    $requester = User::find($form_data->user_id);
+                    $requesterFirstName = $requester->firstName ?? 'N/A';
+                    $requesterLastName = $requester->lastName ?? 'N/A';
+
+                    $firstApproverUser->notify(new ApprovalProcessNotification(
+                        $firstApprovalProcess,
+                        $firstApproverUser->firstName,
+                        $form_data,
+                        $requesterFirstName,
+                        $requesterLastName
+                    ));
+
+                    // Broadcast notification count update
+                    $message = 'You have a request form to approve';
+                    $date = now();
+                    $type = 'App\Notifications\ApprovalProcessNotification';
+                    $read_at = null;
+                    event(new NotificationEvent($firstApproverUser->id, $message, $date,$type,$read_at));
+                }
             }
+
+            DB::commit(); // Commit transaction
+
+            return response()->json(['message' => 'Request form updated successfully'], 200);
+
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack(); // Rollback transaction on error
+            return response()->json([
+                'message' => 'Request form not found',
+                'error' => $e->getMessage(),
+            ], 404);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback transaction on error
+            return response()->json([
+                'message' => 'Failed to update request form',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        // Insert all approval processes into the database
-        ApprovalProcess::insert($approvalProcesses);
-
-        // Notify first approver
-        $firstApprover = $noted_by[0] ?? null;
-        if ($firstApprover) {
-            $firstApproverUser = User::find($firstApprover);
-            if ($firstApproverUser) {
-                $firstApprovalProcess = ApprovalProcess::where('request_form_id', $form_data->id)
-                    ->where('user_id', $firstApprover)
-                    ->first();
-
-                $requester = User::find($form_data->user_id);
-                $requesterFirstName = $requester->firstName ?? 'N/A';
-                $requesterLastName = $requester->lastName ?? 'N/A';
-
-                $firstApproverUser->notify(new ApprovalProcessNotification(
-                    $firstApprovalProcess, 
-                    $firstApproverUser->firstName, 
-                    $form_data, 
-                    $requesterFirstName, 
-                    $requesterLastName
-                ));
-
-                // Broadcast notification count update
-                broadcast(new NotificationEvent(
-                    $firstApproverUser->id, 
-                    $firstApproverUser->unreadNotifications()->count()
-                ));
-            }
-        }
-
-        DB::commit(); // Commit transaction
-
-        return response()->json(['message' => 'Request form updated successfully'], 200);
-
-    } catch (ModelNotFoundException $e) {
-        DB::rollBack(); // Rollback transaction on error
-        return response()->json([
-            'message' => 'Request form not found',
-            'error' => $e->getMessage(),
-        ], 404);
-    } catch (\Exception $e) {
-        DB::rollBack(); // Rollback transaction on error
-        return response()->json([
-            'message' => 'Failed to update request form',
-            'error' => $e->getMessage(),
-        ], 500);
     }
-}
 
     public function uploadAttachments(Request $request, $requestFormId)
     {
@@ -594,117 +599,117 @@ public function updateRequest(Request $request, $id)
     //VIEW REQUEST FORM CREATED BY SPECIFIC USER
 
     public function index()
-{
-    try {
-        $currentUserId = auth()->user()->id;
-        $current_branch = auth()->user()->branch_code;
-       
+    {
+        try {
+            $currentUserId = auth()->user()->id;
+            $current_branch = auth()->user()->branch_code;
 
-        // Fetch request forms where user_id matches the current user's ID
-        $requestForms = RequestForm::where('user_id', $currentUserId)
-            ->select('id', 'user_id', 'form_type', 'form_data', 'status', 'noted_by', 'approved_by', 'attachment','request_code','created_at')
-            ->with('approvalProcess')
-            ->get();
- 
 
-        // Initialize an array to hold the response data
-        $response = $requestForms->map(function ($requestForm) use($current_branch){
-            $branch = Branch::find($current_branch);
-            $branchName =$branch->branch_code;
- 
-            // Decode the approvers_id fields, defaulting to empty arrays if null
-            $notedByIds = $requestForm->noted_by ?? [];
-            $approvedByIds = $requestForm->approved_by ?? [];
+            // Fetch request forms where user_id matches the current user's ID
+            $requestForms = RequestForm::where('user_id', $currentUserId)
+                ->select('id', 'user_id', 'form_type', 'form_data', 'status', 'noted_by', 'approved_by', 'attachment', 'request_code', 'created_at')
+                ->with('approvalProcess')
+                ->get();
 
-            $allApproversIds = array_merge($notedByIds, $approvedByIds);
 
-            // Fetch all approvers in one query
-            $allApprovers = User::whereIn('id', $allApproversIds)
-                ->select('id', 'firstName', 'lastName', 'position', 'signature', 'branch')
-                ->get()
-                ->keyBy('id');
-    
-            // Fetch all approval statuses and comments in one query
-            $approvalData = ApprovalProcess::whereIn('user_id', $allApproversIds)
-                ->where('request_form_id', $requestForm->id)
-                ->get()
-                ->keyBy('user_id');
+            // Initialize an array to hold the response data
+            $response = $requestForms->map(function ($requestForm) use ($current_branch) {
+                $branch = Branch::find($current_branch);
+                $branchName = $branch->branch_code;
 
-            // Format noted_by users
-            $formattedNotedBy = $notedByIds
-                ? collect($notedByIds)->map(function ($userId) use ($allApprovers, $approvalData) {
-                    if (isset($allApprovers[$userId])) {
-                        $user = $allApprovers[$userId];
-                        $approval = $approvalData[$userId] ?? null;
+                // Decode the approvers_id fields, defaulting to empty arrays if null
+                $notedByIds = $requestForm->noted_by ?? [];
+                $approvedByIds = $requestForm->approved_by ?? [];
 
-                        return [
-                            'id' => $user->id,
-                            'firstName' => $user->firstName,
-                            'lastName' => $user->lastName,
-                            'status' => $approval->status ?? '',
-                            'comment' => $approval->comment ?? '',
-                            'position' => $user->position,
-                            'signature' => $user->signature,
-                        ];
-                    }
-                })->filter()->values()->all()
-                : [];
+                $allApproversIds = array_merge($notedByIds, $approvedByIds);
 
-            // Format approved_by users
-            $formattedApprovedBy = $approvedByIds
-                ? collect($approvedByIds)->map(function ($userId) use ($allApprovers, $approvalData) {
-                    if (isset($allApprovers[$userId])) {
-                        $user = $allApprovers[$userId];
-                        $approval = $approvalData[$userId] ?? null;
+                // Fetch all approvers in one query
+                $allApprovers = User::whereIn('id', $allApproversIds)
+                    ->select('id', 'firstName', 'lastName', 'position', 'signature', 'branch')
+                    ->get()
+                    ->keyBy('id');
 
-                        return [
-                            'id' => $user->id,
-                            'firstName' => $user->firstName,
-                            'lastName' => $user->lastName,
-                            'status' => $approval->status ?? '',
-                            'comment' => $approval->comment ?? '',
-                            'position' => $user->position,
-                            'signature' => $user->signature,
-                        ];
-                    }
-                })->filter()->values()->all()
-                : [];
+                // Fetch all approval statuses and comments in one query
+                $approvalData = ApprovalProcess::whereIn('user_id', $allApproversIds)
+                    ->where('request_form_id', $requestForm->id)
+                    ->get()
+                    ->keyBy('user_id');
 
-            // Get the pending approver
-            $pendingApprover = $requestForm->approvalProcess()
-                ->where('status', 'Pending')
-                ->orderBy('level')
-                ->first()?->user;
-                
+                // Format noted_by users
+                $formattedNotedBy = $notedByIds
+                    ? collect($notedByIds)->map(function ($userId) use ($allApprovers, $approvalData) {
+                        if (isset($allApprovers[$userId])) {
+                            $user = $allApprovers[$userId];
+                            $approval = $approvalData[$userId] ?? null;
 
-            return [
-                'id' => $requestForm->id,
-                'user_id' => $requestForm->user_id,
-                'form_type' => $requestForm->form_type,
-                'form_data' => $requestForm->form_data,
-                'created_at' => $requestForm->created_at,
-                'status' => $requestForm->status,
-                'noted_by' =>  $formattedNotedBy,
-                'approved_by' => $formattedApprovedBy,
-                'attachment' => $requestForm->attachment,
-                'pending_approver' => $pendingApprover ? [
-                    'approver_name' => "{$pendingApprover->firstName} {$pendingApprover->lastName}",
-                ] : "No Pending Approver",
-                'request_code' => "$branchName-$requestForm->request_code" ,
-            ];
-        });
+                            return [
+                                'id' => $user->id,
+                                'firstName' => $user->firstName,
+                                'lastName' => $user->lastName,
+                                'status' => $approval->status ?? '',
+                                'comment' => $approval->comment ?? '',
+                                'position' => $user->position,
+                                'signature' => $user->signature,
+                            ];
+                        }
+                    })->filter()->values()->all()
+                    : [];
 
-        return response()->json([
-            'message' => 'Request forms retrieved successfully',
-            'data' => $response
-        ], 200);
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'An error occurred while retrieving request forms',
-            'error' => $e->getMessage()
-        ], 500);
+                // Format approved_by users
+                $formattedApprovedBy = $approvedByIds
+                    ? collect($approvedByIds)->map(function ($userId) use ($allApprovers, $approvalData) {
+                        if (isset($allApprovers[$userId])) {
+                            $user = $allApprovers[$userId];
+                            $approval = $approvalData[$userId] ?? null;
+
+                            return [
+                                'id' => $user->id,
+                                'firstName' => $user->firstName,
+                                'lastName' => $user->lastName,
+                                'status' => $approval->status ?? '',
+                                'comment' => $approval->comment ?? '',
+                                'position' => $user->position,
+                                'signature' => $user->signature,
+                            ];
+                        }
+                    })->filter()->values()->all()
+                    : [];
+
+                // Get the pending approver
+                $pendingApprover = $requestForm->approvalProcess()
+                    ->where('status', 'Pending')
+                    ->orderBy('level')
+                    ->first()?->user;
+
+
+                return [
+                    'id' => $requestForm->id,
+                    'user_id' => $requestForm->user_id,
+                    'form_type' => $requestForm->form_type,
+                    'form_data' => $requestForm->form_data,
+                    'created_at' => $requestForm->created_at,
+                    'status' => $requestForm->status,
+                    'noted_by' => $formattedNotedBy,
+                    'approved_by' => $formattedApprovedBy,
+                    'attachment' => $requestForm->attachment,
+                    'pending_approver' => $pendingApprover ? [
+                        'approver_name' => "{$pendingApprover->firstName} {$pendingApprover->lastName}",
+                    ] : "No Pending Approver",
+                    'request_code' => "$branchName-$requestForm->request_code",
+                ];
+            });
+
+            return response()->json([
+                'message' => 'Request forms retrieved successfully',
+                'data' => $response
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while retrieving request forms',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
     //VIEW ALL REQUEST FORM OF ALL USERS
     public function viewAllRequests()

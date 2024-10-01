@@ -70,7 +70,7 @@ const PrintLiquidation: React.FC<PrintRefundProps> = ({ data }) => {
       };
     }
   }, [printData]);
-  console.log(printData);
+
   return (
     <div className="print-container  ">
       <style>

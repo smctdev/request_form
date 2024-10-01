@@ -66,7 +66,7 @@ const EditAVPStaff = ({
 
   useEffect(() => {
     const fetchAreaManagerData = async () => {
-      console.log("Fetching area manager data...");
+     
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -78,7 +78,7 @@ const EditAVPStaff = ({
         };
   
         if (!selectedUser || !selectedUser.id) {
-          console.log("Selected user or user ID is missing. Skipping API call.");
+       
           return;
         }
   
@@ -158,7 +158,7 @@ const EditAVPStaff = ({
   if (!editModal) {
     return null;
   }
-  console.log(selectedUser)
+ 
   const handleConfirmSelection = async () => {
     if (selectedBranches.length > 0) {
       setIsLoading(true);

@@ -121,8 +121,11 @@ class ApprovalProcessController extends Controller
                     $nextApprover->notify(new ApprovalProcessNotification($nextApprovalProcess, $firstname, $requestForm, $requesterFirstname, $requesterLasttname));
 
                     // Broadcast the notification count update
-                    $notificationCount = $nextApprover->unreadNotifications()->count();
-                    broadcast(new NotificationEvent($nextApprover, $notificationCount));
+                    $message = 'You have a request form to approve';
+                    $date = now();
+                    $type = 'App\Notifications\ApprovalProcessNotification';
+                    $read_at = null;
+                    event(new NotificationEvent($nextApprover->id, $message, $date,$type, $read_at));
                 } else {
                     $requestForm->status = 'Approved';
                     $formtype = $requestForm->form_type;
@@ -132,8 +135,11 @@ class ApprovalProcessController extends Controller
                     $employee->notify(new EmployeeNotification($requestForm, 'approved', $firstname, $formtype));
 
                     // Broadcast the notification count update
-                    $notificationCount = $employee->unreadNotifications()->count();
-                    broadcast(new NotificationEvent($employee, $notificationCount));
+                    $message = 'Your request has been ' . $requestForm->status;
+                    $date = now();
+                    $type = 'App\Notifications\EmployeeNotification';
+                    $read_at = null;
+                    event(new NotificationEvent($employee->id, $message, $date, $type, $read_at));
                 }
             } else {
                 $requestForm->status = 'Disapproved';
@@ -146,8 +152,11 @@ class ApprovalProcessController extends Controller
                 $employee->notify(new ReturnRequestNotification($requestForm, 'disapproved', $firstname, $approverFirstname, $approverLastname, $comment));
 
                 // Broadcast the notification count update
-                $notificationCount = $employee->unreadNotifications()->count();
-                event(new NotificationEvent($employee, $notificationCount));
+                $message = 'Your request has been returned because it is ' . $requestForm->status;
+                $date = now();
+                $type = 'App\Notifications\ReturnRequestNotification';
+                $read_at = null;
+                event(new NotificationEvent($employee->id, $message, $date,$type, $read_at));
 
                 // Notify all previous approvers and update their status to "Rejected by [name]"
                 $previousApprovalProcesses = ApprovalProcess::where('request_form_id', $request_form_id)
@@ -169,8 +178,11 @@ class ApprovalProcessController extends Controller
                     $previousApprover->notify(new PreviousReturnRequestNotification($requestForm, 'disapproved', $prevFirstName, $approverFirstname, $approverLastname, $comment, $requesterFirstname, $requesterLastname));
 
                     // Broadcast the notification count update
-                    $notificationCount = $previousApprover->unreadNotifications()->count();
-                    event(new NotificationEvent($previousApprover, $notificationCount));
+                    $message = 'The ' . $requestForm->form_type . ' requested by ' . $requesterFirstname . ' ' . $requesterLastname . ' has been disapproved by ' . $approverFirstname . ' ' . $approverLastname;
+                    $date = now();
+                    $type = 'App\Notifications\PreviousReturnRequestNotification';
+                    $read_at = null;
+                    event(new NotificationEvent($employee->id, $message, $date,$type, $read_at));
                 }
             }
 

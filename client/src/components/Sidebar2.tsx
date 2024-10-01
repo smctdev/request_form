@@ -13,6 +13,7 @@ import {
   UserIcon,
   BuildingOfficeIcon,
   UserPlusIcon,
+  Bars3Icon,
 } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -26,10 +27,11 @@ type NavItem = {
 interface SidebarProps {
   darkMode: boolean;
   role: string;
+  open: boolean; // Add this
+  toggleSidebar: () => void; // Add this
 }
 
-const Sidebar2: React.FC<SidebarProps> = ({ darkMode, role }) => {
-  const [open, setOpen] = useState(false);
+const Sidebar2: React.FC<SidebarProps> = ({ darkMode, role, open, toggleSidebar }) => {
   const navigate = useNavigate();
 
   const navItems: NavItem[] =
@@ -122,34 +124,29 @@ const Sidebar2: React.FC<SidebarProps> = ({ darkMode, role }) => {
   const iconStyle = "size-[32px] group-hover:text-primary";
 
   return (
-    <div className={`${darkMode ? "dark" : "light"} dark:bg-blackD h-full`}>
-      <div
-        className={`bg-white dark:bg-blackD ${open ? "w-60" : "w-20"} h-full`}
-      >
+<div className={`${darkMode ? "dark" : "light"} dark:bg-blackD h-full`}>
+      <div className={`bg-white dark:bg-blackD ${open ? "w-60" : "w-20"} h-full`}>
         <div className="px-2 py-3 h-[68px] flex justify-between items-center border-b-[0.5px] border-gray">
           <img
             src={Logo}
             height={34}
             width={75}
             className="cursor-pointer"
-            onClick={() => setOpen(!open)}
+            onClick={toggleSidebar} // Use the prop to toggle
           />
-          <h1
-            className={`text-primary font-bold mr-7 ${
-              open ? "visible" : "invisible"
-            }`}
-          >
+          <h1 className={`text-primary font-bold mr-7 ${open ? "visible" : "invisible"}`}>
             Request Form
           </h1>
-          <ArrowLeftCircleIcon
-            className={`size-[34px] text-black dark:text-white -right-2 ml-2 absolute cursor-pointer ${
-              open ? "block" : "hidden"
-            }`}
-            onClick={() => setOpen(false)}
-          />
         </div>
-        <ul className="mt-[65px] flex-1 w-full">
-          <p className="text-[12px] text-gray-400 px-3 w-fit">MENU</p>
+        {/* <div className="mt-2 flex items-center justify-center">
+          <Bars3Icon
+            className={`size-[34px] text-gray-400 dark:text-white -right-2 ml-2 cursor-pointer`}
+            onClick={toggleSidebar} // Use the prop to toggle
+          />
+        </div> */}
+        <ul className="mt-6 flex-1 w-full">
+        
+          {/* <p className=" text-gray-400 mt-2 flex items-center justify-center">MENU</p> */}
           <div className="gap-2 w-full">
             {navItems.map((item) => (
               <Link to={item.path} key={item.title}>

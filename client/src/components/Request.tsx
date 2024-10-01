@@ -11,41 +11,42 @@ import ViewRequestModal from "./Modals/ViewRequestModal";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import ViewDiscountModal from "./Modals/ViewDiscountModal";
+import { ClipLoader } from "react-spinners";
 type Props = {};
 
 type Record = {
-  total_labor:number;
-  total_discount:number;
-  total_spotcash:number;
+  total_labor: number;
+  total_discount: number;
+  total_spotcash: number;
   pending_approver: {
     approver_name: string;
   };
   id: number;
   noted_by: {
     id: number;
-  firstName: string;
-  lastName: string;
-  firstname:string;
-  lastname:string;
-  comment: string;
-  position: string;
-  signature: string;
-  status: string;
+    firstName: string;
+    lastName: string;
+    firstname: string;
+    lastname: string;
+    comment: string;
+    position: string;
+    signature: string;
+    status: string;
   }[];
   approved_by: {
     id: number;
-  firstName: string;
-  lastName: string;
-  comment: string;
-  firstname:string;
-  lastname:string;
-  position: string;
-  signature: string;
-  status: string;
+    firstName: string;
+    lastName: string;
+    comment: string;
+    firstname: string;
+    lastname: string;
+    position: string;
+    signature: string;
+    status: string;
   }[];
   user_id: number;
   request_code: string;
-  
+
   form_type: string;
   form_data: MyFormData[];
   date: Date;
@@ -62,52 +63,52 @@ type Record = {
 };
 
 type MyFormData = {
-  total_labor:number;
-  total_discount:number;
-  total_spotcash:number;
+  total_labor: number;
+  total_discount: number;
+  total_spotcash: number;
   approvers_id: number;
-  employeeID:string;
+  employeeID: string;
   purpose: string;
   items: MyItem[];
   noted_by: {
     id: number;
-  firstName: string;
-  firstname:string;
-  lastname:string;
-  lastName: string;
-  comment: string;
-  position: string;
-  signature: string;
-  status: string;
+    firstName: string;
+    firstname: string;
+    lastname: string;
+    lastName: string;
+    comment: string;
+    position: string;
+    signature: string;
+    status: string;
   }[];
   approved_by: {
     id: number;
-  firstName: string;
-  lastName: string;
-  comment: string;
-  position: string;
-  signature: string;
-  status: string;
+    firstName: string;
+    lastName: string;
+    comment: string;
+    position: string;
+    signature: string;
+    status: string;
   }[];
 
   approvers: {
     noted_by: {
       id: number;
-    firstName: string;
-    lastName: string;
-    comment: string;
-    position: string;
-    signature: string;
-    status: string;
+      firstName: string;
+      lastName: string;
+      comment: string;
+      position: string;
+      signature: string;
+      status: string;
     }[];
     approved_by: {
       id: number;
-    firstName: string;
-    lastName: string;
-    comment: string;
-    position: string;
-    signature: string;
-    status: string;
+      firstName: string;
+      lastName: string;
+      comment: string;
+      position: string;
+      signature: string;
+      status: string;
     }[];
   };
   date: string;
@@ -130,7 +131,6 @@ type MyFormData = {
 };
 
 type MyItem = {
-
   brand: string;
   model: string;
   unit: string;
@@ -194,6 +194,7 @@ const Request = (props: Props) => {
   const userId = localStorage.getItem("id");
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -223,25 +224,26 @@ const Request = (props: Props) => {
 
   useEffect(() => {
     if (userId) {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        return;
-      }
+      const fetchRequests = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
 
-      const headers = {
-        Authorization: `Bearer ${token}`,
+        try {
+          setLoading(true);
+          const headers = { Authorization: `Bearer ${token}` };
+          const response = await axios.get(
+            `http://122.53.61.91:6002/api/view-request`,
+            { headers }
+          );
+          setRequests(response.data.data);
+        } catch (error) {
+          console.error("Error fetching requests data:", error);
+        } finally {
+          setLoading(false);
+        }
       };
 
-      axios
-        .get(`http://122.53.61.91:6002/api/view-request`, {
-          headers,
-        })
-        .then((response) => {
-          setRequests(response.data.data); // Assuming response.data.data contains your array of data
-        })
-        .catch((error) => {
-          console.error("Error fetching requests data:", error);
-        });
+      fetchRequests();
     }
   }, [userId]);
 
@@ -275,6 +277,19 @@ const Request = (props: Props) => {
         return requests;
     }
   };
+
+  const NoDataComponent = () => (
+    <div className="flex justify-center items-center h-64 text-gray-500">
+      <p className="text-lg">No records found</p>
+    </div>
+  );
+  const LoadingSpinner = () => (
+    <div className="flex flex-col justify-center items-center h-64">
+      {/* <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div> */}
+      <ClipLoader color="#007bff" loading={loading} size={50} />
+      <p className="mt-2 text-gray-700 text-center">Please wait</p>
+    </div>
+  );
 
   const refreshData = () => {
     if (userId) {
@@ -395,7 +410,7 @@ const Request = (props: Props) => {
   const closeModal = () => {
     setModalIsOpen(false);
   };
-console.log(requests)
+
   return (
     <div className="bg-graybg dark:bg-blackbg w-full h-lvh pt-4 px-10 md:px-10 lg:px-30">
       <Link to="/request/sr">
@@ -433,6 +448,9 @@ console.log(requests)
                   }))
                   .sort((a, b) => b.id - a.id) // Sorts by id in descending order
               }
+              noDataComponent={<NoDataComponent />}
+              progressPending={loading}
+              progressComponent={<LoadingSpinner />}
               pagination
               striped
               customStyles={tableCustomStyles}
@@ -449,7 +467,7 @@ console.log(requests)
             refreshData={refreshData}
           />
         )}
-          {modalIsOpen &&
+      {modalIsOpen &&
         selectedRecord &&
         selectedRecord.form_type === "Discount Requisition Form" && (
           <ViewDiscountModal

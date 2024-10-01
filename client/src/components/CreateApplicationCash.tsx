@@ -241,7 +241,7 @@ const CreateApplicationCash = (props: Props) => {
   const [tableData, setTableData] = useState<TableDataItem[]>(initialTableData);
   const [selectedRequestType, setSelectedRequestType] =
     useState("/request/afca");
-  console.log(validationErrors);
+
   const handleChange = (
     index: number,
     field: keyof TableDataItem,
@@ -536,8 +536,7 @@ const CreateApplicationCash = (props: Props) => {
       textarea.style.height = `${Math.max(textarea.scrollHeight, 100)}px`; // Set to scroll height or minimum 100px
     }
   };
-  console.log(formErrors);
-  console.log(errors);
+
   return (
     <div className="bg-graybg dark:bg-blackbg w-full h-full pt-[15px] inline-flex flex-col px-[30px] pb-[15px]">
       <h1 className="text-primary text-[32px] font-bold inline-block">

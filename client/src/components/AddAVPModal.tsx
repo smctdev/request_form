@@ -72,9 +72,9 @@ const AddAVPModal = ({
             headers,
           }
         );
-        console.log("avp", response);
+   
         setAvpList(response.data.HOApprovers);
-        console.log(users);
+        
       } catch (error) {
         console.error("Error fetching users data:", error);
       }
@@ -105,7 +105,7 @@ const AddAVPModal = ({
         );
 
         setUsers(response.data.HOApprovers);
-        console.log(users);
+    
       } catch (error) {
         console.error("Error fetching users data:", error);
       }

@@ -29,7 +29,22 @@ class NotificationController extends Controller
             'notifications' => $formattedNotifications,
         ]);
     }
-
+    public function markAllAsRead($userId)
+    {
+    // Attempt to update all unread notifications for the specific user
+    $updatedRows = DB::table('notifications')
+    ->where('notifiable_id', $userId) // or 'user_id', depending on your table structure
+    ->whereNull('read_at')
+    ->update(['read_at' => now()]);
+    
+    // Check if any rows were affected
+    if ($updatedRows > 0) {
+    return response()->json(['success' => true, 'updated' => $updatedRows]);
+    }
+    
+    return response()->json(['success' => false, 'message' => 'No unread notifications found for this user.'], 404);
+    }
+    
     public function getNotifications($id)
     {
         $user = User::findOrFail($id);

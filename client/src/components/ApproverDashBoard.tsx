@@ -224,8 +224,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
     
     // Set endDate to the last day of the current month
     endDate = endOfMonth(today);
-  
-    console.log(`Start Date: ${startDate}, End Date: ${endDate}`);
+
   
     const aggregatedData: {
       [key: string]: {

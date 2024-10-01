@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import BounceLoader from "react-spinners/ClipLoader";
 import { useUser } from "../context/UserContext";
+import Swal from "sweetalert2";
 
 type UserCredentials = z.infer<typeof schema>;
 
@@ -43,7 +44,7 @@ const Login: React.FC = () => {
     margin: "0 auto",
     borderColor: "red",
   };
-/*   useEffect(() => {
+  /*   useEffect(() => {
     const checkAuthRedirect = () => {
       const token = localStorage.getItem('token');
       
@@ -63,7 +64,7 @@ const Login: React.FC = () => {
         email: data.email,
         password: data.password,
       });
-  
+
       if (response.data.status) {
         updateUser(
           response.data.id,
@@ -75,7 +76,7 @@ const Login: React.FC = () => {
           response.data.contact,
           response.data.signature
         );
-  
+
         localStorage.setItem("token", response.data.token);
         // Save other relevant user data
         localStorage.setItem("id", response.data.id);
@@ -86,25 +87,41 @@ const Login: React.FC = () => {
         localStorage.setItem("signature", response.data.signature);
         localStorage.setItem("profile_picture", response.data.profile_picture);
         localStorage.setItem("employee_id", response.data.employee_id);
-     
-        localStorage.setItem('expires_at', response.data.expires_at);
+
+        localStorage.setItem("expires_at", response.data.expires_at);
         if (response.data.role === "approver") {
           navigate("/dashboard/approver");
         } else {
           navigate("/dashboard");
         }
       } else {
-        alert(JSON.stringify(response.data.message));
+        Swal.fire({
+          icon: "error",
+          iconColor: "#dc3545",
+          title: "Oops...",
+          text: response.data.message || "Something went wrong!",
+          confirmButtonText: "Close",
+          confirmButtonColor: "#dc3545",
+        });
+        // alert(JSON.stringify(response.data.message));
         setLoading(false);
       }
     } catch (error) {
-      console.error(error);
-      alert("An error occurred while logging in. Please try again later.");
+      // console.error(error);
+      // alert("An error occurred while logging in. Please try again later.");
+      Swal.fire({
+        icon: "error",
+        iconColor: "#dc3545",
+        title: "Oops...",
+        text: "An error occurred while logging in. Please try again later.",
+        confirmButtonText: "Close",
+        confirmButtonColor: "#dc3545",
+      });
+      // alert(JSON.stringify(response.data.message));
       setLoading(false);
     }
   };
-  
-  
+
   const inputStyle =
     "w-full lg:max-w-[417px] lg:h-[56px] md:h-10  p-2 bg-gray-300 rounded-lg text-black";
   return (
@@ -124,7 +141,6 @@ const Login: React.FC = () => {
             <div className="mb-4">
               <h1 className="lg:text-lg text-base mb-2">Email</h1>
               <input
-               
                 {...register("email", {
                   required: "Email is required",
                   pattern: {
@@ -136,7 +152,10 @@ const Login: React.FC = () => {
                 className={`${inputStyle} autofill-input`}
               />
               {errors.email && (
-                <p className="text-red-500 text-xs mt-1"> {errors.email.message}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {" "}
+                  {errors.email.message}
+                </p>
               )}
             </div>
             <div className="mb-4">

@@ -204,7 +204,7 @@ const ApproversStock: React.FC<Props> = ({
 
   useEffect(() => {
     // Log the entire record object to understand its structure
-    console.log("Record data:", record);
+   
 
     // Fetch user data based on user_id
     fetchUser(record.user_id);
@@ -224,7 +224,7 @@ const ApproversStock: React.FC<Props> = ({
             `http://122.53.61.91:6002/storage/${filePath.replace(/\\/g, "/")}`
         );
         setAttachmentUrl(fileUrls);
-        console.log("Parsed attachment URLs:", fileUrls); // Log parsed URLs
+       
       } else {
         console.warn("Attachment is not a JSON string:", record.attachment);
       }
@@ -236,8 +236,7 @@ const ApproversStock: React.FC<Props> = ({
       ) {
         const approvedAttachmentString = record.approved_attachment[0]; // Access the first element
         const parsedApprovedAttachment = JSON.parse(approvedAttachmentString); // Parse the string to get the actual array
-        console.log("Parsed approved attachment:", parsedApprovedAttachment); // Log parsed attachment
-
+      
         if (
           Array.isArray(parsedApprovedAttachment) &&
           parsedApprovedAttachment.length > 0
@@ -245,7 +244,7 @@ const ApproversStock: React.FC<Props> = ({
           // Access the first element of the array
           const formattedAttachment = parsedApprovedAttachment[0];
           setAttachment(formattedAttachment); // Set the state with the string
-          console.log("Formatted approved attachment:", formattedAttachment); // Log the formatted attachment
+
         } else {
           console.warn(
             "Parsed approved attachment is not an array or is empty:",
@@ -263,7 +262,7 @@ const ApproversStock: React.FC<Props> = ({
     }
   }, [record]); // Dependency on record
 
-  console.log("est", attachment);
+
   const handleRemoveAttachment = (index: number) => {
     // Get the path of the attachment to be removed
     const attachmentPath = attachmentUrl[index].split(
@@ -319,7 +318,6 @@ const ApproversStock: React.FC<Props> = ({
     };
     return date.toLocaleDateString("en-US", options);
   };
-  console.log(record);
 
   const handleApprove = async () => {
     const userId = localStorage.getItem("id") ?? "";
@@ -342,11 +340,6 @@ const ApproversStock: React.FC<Props> = ({
     requestData.append("user_id", parseInt(userId).toString());
     requestData.append("action", "approve");
     requestData.append("comment", comments);
-
-    // Log the contents of requestData for debugging
-    for (const [key, value] of requestData.entries()) {
-      console.log(`${key}:`, value);
-    }
 
     try {
       setApprovedLoading(true);
@@ -396,10 +389,8 @@ const ApproversStock: React.FC<Props> = ({
       requestData.append("action", "disapprove");
       requestData.append("comment", comments);
   
-      // Log the contents of requestData for debugging
-      for (const [key, value] of requestData.entries()) {
-        console.log(`${key}:`, value);
-      }
+   
+
       const response = await axios.post(
         `http://122.53.61.91:6002/api/request-forms/${record.id}/process`,
         requestData,

@@ -558,7 +558,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
       newWindow.focus();
     }
   };
-  console.log(record);
+  
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="p-4 relative w-full px-10 md:mx-0 z-10 md:w-1/2 lg:w-2/3 space-y-auto h-4/5 overflow-scroll bg-white border-black rounded-t-lg shadow-lg">
@@ -715,11 +715,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
                                 type="text"
                                 value={item.to}
                                 onChange={(e) =>
-                                  handleItemChange(
-                                    index,
-                                    "to",
-                                    e.target.value
-                                  )
+                                  handleItemChange(index, "to", e.target.value)
                                 }
                                 className={`${tableStyle2} w-20`}
                               />
@@ -851,38 +847,50 @@ const ViewLiquidationModal: React.FC<Props> = ({
                             <td className={tableCellStyle}>
                               {formatDate2(item.liquidationDate)}
                             </td>
-                            <td className={tableCellStyle}>
-                              {item.from}
-                            </td>
-                            <td className={`${tableCellStyle}`}>
-                              {item.to}
-                            </td>
+                            <td className={tableCellStyle}>{item.from}</td>
+                            <td className={`${tableCellStyle}`}>{item.to}</td>
                             <td className={tableCellStyle}>
                               {item.transportation}
                             </td>
                             <td className={tableCellStyle}>
-                            {parseFloat(item.transportationAmount).toFixed(2)} 
+                              {item.transportationAmount
+                                ? parseFloat(item.transportationAmount).toFixed(
+                                    2
+                                  )
+                                : ""}
+                            </td>
+                            <td className={tableCellStyle}>{item.hotel}</td>
+                            <td className={tableCellStyle}>
+                              {item.hotelAddress}
                             </td>
                             <td className={tableCellStyle}>
-                            {parseFloat(item.hotel).toFixed(2)} 
-                              </td>
-                            <td className={tableCellStyle}>
-                            {parseFloat(item.hotelAddress).toFixed(2)} 
+                              {item.hotelAmount &&
+                              !isNaN(parseFloat(item.hotelAmount))
+                                ? parseFloat(item.hotelAmount).toFixed(2)
+                                : ""}
                             </td>
                             <td className={tableCellStyle}>
-                            {parseFloat(item.hotelAmount).toFixed(2)} 
+                              {item.perDiem && !isNaN(parseFloat(item.perDiem))
+                                ? parseFloat(item.perDiem).toFixed(2)
+                                : ""}
                             </td>
                             <td className={tableCellStyle}>
-                            {parseFloat(item.perDiem).toFixed(2)} 
+                              {item.particulars &&
+                              !isNaN(parseFloat(item.particulars))
+                                ? parseFloat(item.particulars).toFixed(2)
+                                : ""}
                             </td>
                             <td className={tableCellStyle}>
-                            {parseFloat(item.particulars).toFixed(2)} 
+                              {item.particularsAmount &&
+                              !isNaN(parseFloat(item.particularsAmount))
+                                ? parseFloat(item.particularsAmount).toFixed(2)
+                                : ""}
                             </td>
                             <td className={tableCellStyle}>
-                            {parseFloat(item.particularsAmount).toFixed(2)} 
-                            </td>
-                            <td className={tableCellStyle}>
-                            {parseFloat(item.grandTotal).toFixed(2)}
+                              {item.grandTotal &&
+                              !isNaN(parseFloat(item.grandTotal))
+                                ? parseFloat(item.grandTotal).toFixed(2)
+                                : ""}
                             </td>
                           </tr>
                         ))}

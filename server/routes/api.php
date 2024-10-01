@@ -16,7 +16,7 @@ use App\Http\Controllers\API\AreaManagerController;
 use App\Http\Controllers\API\ApprovalProcessController;
 use App\Http\Controllers\API\AttachmentController;
 use App\Http\Controllers\API\NotificationController;
-
+use App\Http\Controllers\Test\PusherController;
 
 
 Route::get('edit-branch/{branch_id}', function ($branch_id) {
@@ -104,3 +104,5 @@ Route::get('notifications/{id}/unread', [NotificationController::class, 'getUnre
 Route::put('notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('get.mark.as.read.notification');
 Route::get('notifications/{id}/count-unread-notification', [NotificationController::class, 'countUnreadNotifications'])->name('count.unread.notification');
 
+Route::get('test', action: [PusherController::class, 'index']);
+Route::put('notifications/mark-all-as-read/{userId}', [NotificationController::class, 'markAllAsRead'])->name('get.mark.all.as.read.notification');

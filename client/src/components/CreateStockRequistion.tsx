@@ -380,6 +380,11 @@ const CreateStockRequistion = (props: Props) => {
   };
   return (
     <div className="bg-graybg dark:bg-blackbg h-full pt-[15px] px-[30px] pb-[15px]">
+       {loading && (
+            <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+                <ClipLoader color="#007bff" />
+            </div>
+        )}
       <h1 className="text-primary dark:text-primaryD text-[32px] font-bold">
         Create Request
       </h1>
@@ -679,15 +684,14 @@ const CreateStockRequistion = (props: Props) => {
                   Remove Item
                 </button>
               )}
-              <button
-              
-                className={`bg-primary ${buttonStyle}`}
-                type="submit"
-                onClick={handleFormSubmit}
-                disabled={loading}
-              >
-                {loading ? <ClipLoader color="#36d7b7" /> : "Send Request"}
-              </button>
+<button
+    className={`bg-primary ${buttonStyle} ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+    type="submit"
+    onClick={handleFormSubmit}
+    disabled={loading}
+>
+    {loading ? "Loading..." : "Send Request"}
+</button>
             </div>
             {showConfirmationModal && (
               <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">

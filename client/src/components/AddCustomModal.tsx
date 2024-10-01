@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
+import Swal from "sweetalert2";
 
 interface AddCustomModalProps {
   modalIsOpen: boolean;
@@ -23,7 +24,6 @@ interface Approver {
   signature?: string;
   status?: string;
 }
-
 
 const AddCustomModal: React.FC<AddCustomModalProps> = ({
   modalIsOpen,
@@ -69,7 +69,9 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
             (approver) => approver.id !== currentUserId
           );
 
-          const uniqueIds = new Set(currentUsers.map((approver) => approver.id));
+          const uniqueIds = new Set(
+            currentUsers.map((approver) => approver.id)
+          );
           const uniqueApprovers = allApprovers.filter(
             (approver) =>
               uniqueIds.has(approver.id) && uniqueIds.delete(approver.id)
@@ -79,6 +81,14 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
           setLoading(false);
         } catch (error) {
           console.error("Error fetching approvers:", error);
+          Swal.fire({
+            icon: "error",
+            iconColor: "#dc3545",
+            title: "Error",
+            text: "An error occurred while fetching approvers. Please try again or reload the page. If the error persists, please contact support.",
+            confirmButtonText: "Close",
+            confirmButtonColor: "#dc3545",
+          });
           setLoading(false);
         }
       };
@@ -87,8 +97,8 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
     }
   }, [modalIsOpen]);
 
-  const filteredApprovers = approvers.filter(approver =>
-    Object.values(approver).some(value =>
+  const filteredApprovers = approvers.filter((approver) =>
+    Object.values(approver).some((value) =>
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
@@ -97,19 +107,19 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
     setApprovedBy([]);
   };
   const toggleNotedBy = (approver: Approver) => {
-    const isApproved = approvedBy.some(a => a.id === approver.id);
-    setNotedBy(prevNotedBy =>
-      prevNotedBy.some(a => a.id === approver.id)
-        ? prevNotedBy.filter(a => a.id !== approver.id)
+    const isApproved = approvedBy.some((a) => a.id === approver.id);
+    setNotedBy((prevNotedBy) =>
+      prevNotedBy.some((a) => a.id === approver.id)
+        ? prevNotedBy.filter((a) => a.id !== approver.id)
         : [...prevNotedBy, approver]
     );
   };
 
   const toggleApprovedBy = (approver: Approver) => {
-    const isNoted = notedBy.some(a => a.id === approver.id);
-    setApprovedBy(prevApprovedBy =>
-      prevApprovedBy.some(a => a.id === approver.id)
-        ? prevApprovedBy.filter(a => a.id !== approver.id)
+    const isNoted = notedBy.some((a) => a.id === approver.id);
+    setApprovedBy((prevApprovedBy) =>
+      prevApprovedBy.some((a) => a.id === approver.id)
+        ? prevApprovedBy.filter((a) => a.id !== approver.id)
         : [...prevApprovedBy, approver]
     );
   };
@@ -123,7 +133,9 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
 
   const handleAddCustomRequest = () => {
     if (notedBy.length === 0 || approvedBy.length === 0) {
-      setErrorMessage("You must select at least one noted by and one approved by.");
+      setErrorMessage(
+        "You must select at least one noted by and one approved by."
+      );
       return;
     }
 
@@ -161,17 +173,32 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
             <div>
               <h1 className="text-lg font-medium">Noted By</h1>
               {filteredApprovers.map((approver, index) => {
-                const isNoted = notedBy.some(a => a.id === approver.id);
-                const isApproved = approvedBy.some(a => a.id === approver.id);
+                const isNoted = notedBy.some((a) => a.id === approver.id);
+                const isApproved = approvedBy.some((a) => a.id === approver.id);
                 const isDisabled = isNoted || isApproved;
-                const highlightClass = isNoted && isApproved ? "bg-yellow-100" : "";
+                const highlightClass =
+                  isNoted && isApproved ? "bg-yellow-100" : "";
 
                 return (
-                  <div key={index} className="flex items-center mb-2">
+                  <div key={approver.id} className="flex items-center mb-2">
+                    {isNoted && (
+                      <span
+                        className="mr-2 rounded-full text-center px-2 py-1 text-white font-bold text-xs flex items-center justify-center"
+                        style={{
+                          background: "#007bff",
+                          height: "20px",
+                          width: "20px",
+                        }} // Set fixed height and width
+                      >
+                        {notedBy.indexOf(approver) + 1}
+                      </span>
+                    )}
                     <input
                       type="checkbox"
-                      className={`h-5 w-5 mr-2 ${isDisabled ? "cursor-not-allowed" : ""}`}
-                      id={`noted_by_${index}`}
+                      className={`h-5 w-5 mr-2 ${
+                        isDisabled ? "cursor-not-allowed" : ""
+                      }`}
+                      id={`noted_by_${approver.id}`}
                       checked={isNoted}
                       onChange={() => {
                         if (!isApproved) {
@@ -181,7 +208,7 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
                       disabled={isApproved}
                     />
                     <label
-                      htmlFor={`noted_by_${index}`}
+                      htmlFor={`noted_by_${approver.id}`}
                       className={highlightClass}
                     >
                       {approver.firstName} {approver.lastName}
@@ -193,17 +220,32 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
             <div>
               <h1 className="text-lg font-medium">Approved By</h1>
               {filteredApprovers.map((approver, index) => {
-                const isNoted = notedBy.some(a => a.id === approver.id);
-                const isApproved = approvedBy.some(a => a.id === approver.id);
+                const isNoted = notedBy.some((a) => a.id === approver.id);
+                const isApproved = approvedBy.some((a) => a.id === approver.id);
                 const isDisabled = isNoted || isApproved;
-                const highlightClass = isNoted && isApproved ? "bg-yellow-100" : "";
+                const highlightClass =
+                  isNoted && isApproved ? "bg-yellow-100" : "";
 
                 return (
-                  <div key={index} className="flex items-center mb-2">
+                  <div key={approver.id} className="flex items-center mb-2">
+                    {isApproved && (
+                      <span
+                      className="mr-2 rounded-full text-center px-2 py-1 text-white font-bold text-xs flex items-center justify-center"
+                      style={{
+                        background: "#007bff",
+                        height: "20px",
+                        width: "20px",
+                      }} // Set fixed height and width
+                    >
+                      {approvedBy.indexOf(approver) + 1}
+                    </span>
+                    )}
                     <input
                       type="checkbox"
-                      className={`h-5 w-5 mr-2 ${isDisabled ? "cursor-not-allowed" : ""}`}
-                      id={`approved_by_${index}`}
+                      className={`h-5 w-5 mr-2 ${
+                        isDisabled ? "cursor-not-allowed" : ""
+                      }`}
+                      id={`approved_by_${approver.id}`}
                       checked={isApproved}
                       onChange={() => {
                         if (!isNoted) {
@@ -213,7 +255,7 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
                       disabled={isNoted}
                     />
                     <label
-                      htmlFor={`approved_by_${index}`}
+                      htmlFor={`approved_by_${approver.id}`}
                       className={highlightClass}
                     >
                       {approver.firstName} {approver.lastName}
@@ -228,7 +270,7 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
           )}
         </div>
         <div className="p-4 flex-col md:flex-row gap-2 bg-gray-100 flex justify-end rounded-b-lg">
-        <button
+          <button
             type="button"
             onClick={handleResetSelection}
             className="bg-gray-300 px-2 hover:bg-gray-400 text-gray-800 font-medium py-2  rounded "

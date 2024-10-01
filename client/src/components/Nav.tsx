@@ -8,6 +8,7 @@ import {
   EnvelopeIcon,
   Bars3Icon,
   EnvelopeOpenIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/solid";
 import Avatar from "./assets/avatar.png";
 import { Link, useNavigate } from "react-router-dom";
@@ -15,6 +16,8 @@ import { useUser } from "../context/UserContext";
 import axios from "axios";
 import { format } from "date-fns";
 import { useSpring, animated } from "@react-spring/web"; // Import useSpring and animated from @react-spring/web
+import Pusher from "pusher-js";
+import { set } from "react-hook-form";
 
 interface NavProps {
   darkMode: boolean;
@@ -22,6 +25,7 @@ interface NavProps {
   toggleSidebar: () => void;
   currentPage: string;
   isSidebarVisible: boolean;
+  isSidebarOpen: boolean;
   updateUserInfo: () => void; // Function to update user info
 }
 
@@ -31,6 +35,7 @@ const Nav: React.FC<NavProps> = ({
   currentPage,
   toggleSidebar,
   isSidebarVisible,
+  isSidebarOpen,
   updateUserInfo,
 }) => {
   const flexBetween = "flex items-center justify-between";
@@ -60,25 +65,25 @@ const Nav: React.FC<NavProps> = ({
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem('token');
-      const expiresAt = localStorage.getItem('expires_at');
+      const token = localStorage.getItem("token");
+      const expiresAt = localStorage.getItem("expires_at");
 
       if (!token || !expiresAt) {
         // Token or expiration time is missing, clear data and redirect to login
-        localStorage.removeItem('token');
-        localStorage.removeItem('expires_at');
-        navigate('/login'); // Redirect to login page
+        localStorage.removeItem("token");
+        localStorage.removeItem("expires_at");
+        navigate("/login"); // Redirect to login page
         return;
       }
 
       // Check if the token has expired
       const expirationDate = new Date(expiresAt);
       if (new Date() > expirationDate) {
-        alert('Your token has expired. Please log in again.'); 
-     
-        localStorage.removeItem('token');
-        localStorage.removeItem('expires_at');
-        navigate('/login'); // Redirect to login page
+        alert("Your token has expired. Please log in again.");
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("expires_at");
+        navigate("/login"); // Redirect to login page
       }
     };
 
@@ -101,19 +106,70 @@ const Nav: React.FC<NavProps> = ({
       setIsOpenNotif(false);
     }
   };
+  // const handleOpenNotification = async () => {
+  //   if (isOpenNotif) {
+  //     try {
+  //       const response = await axios.put(
+  //         `http://122.53.61.91:6002/api/notifications/mark-all-as-read`
+  //       );
+  //       if (response.data.success) {
+  //         setNotifications((prevNotifications) =>
+  //           prevNotifications.map((notif) => ({
+  //             ...notif,
+  //             read_at: new Date().toISOString(),
+  //           }))
+  //         );
+  //         setUnreadCount(0);
+  //       } else {
+  //         alert(
+  //           "Failed to mark all notifications as read. Please try again later."
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("Error marking all notifications as read: ", error);
+  //       alert(
+  //         "Failed to mark all notifications as read. Please try again later."
+  //       );
+  //     }
+  //   }
+  // };
+  
+  const handleMarkAllAsRead = async () => {
+    try {
+      const response = await axios.put(
+        `http://122.53.61.91:6002/api/notifications/mark-all-as-read`
+      );
+      if (response.data.success) {
+        setNotifications((prevNotifications) =>
+          prevNotifications.map((notif) => ({
+            ...notif,
+            read_at: new Date().toISOString(),
+          }))
+        );
+        setUnreadCount(0);
+      } else {
+        alert(
+          "Failed to mark all notifications as read. Please try again later."
+        );
+      }
+    } catch (error) {
+      console.error("Error marking all notifications as read: ", error);
+      alert(
+        "Failed to mark all notifications as read. Please try again later."
+      ) ;
+    }
+  };
 
   const handleNotificationClick = async (notifId: string) => {
-   
     if (!notifId) {
       console.error("Notification ID is undefined");
       return;
     }
 
     try {
-      const response = await axios.put(
-        `http://122.53.61.91:6002/api/notifications/${notifId}/mark-as-read`
-      );
+      const url = `http://122.53.61.91:6002/api/notifications/${notifId}/mark-as-read`;
 
+      const response = await axios.put(url);
       if (response.data.success) {
         setNotifications((prevNotifications) =>
           prevNotifications.map((notif) =>
@@ -168,9 +224,10 @@ const Nav: React.FC<NavProps> = ({
   }, [updateUserInfo]);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      const id = localStorage.getItem("id");
+    const id = localStorage.getItem("id");
 
+    // Fetch initial notifications
+    const fetchNotifications = async () => {
       try {
         const response = await axios.get(
           `http://122.53.61.91:6002/api/notifications/${id}/all`
@@ -188,13 +245,50 @@ const Nav: React.FC<NavProps> = ({
       }
     };
 
-    // Initial fetch
+    // Fetch initial notifications on mount
     fetchNotifications();
 
-    // Set up polling interval
-    const intervalId = setInterval(fetchNotifications, 5000); // Poll every 5 seconds
+    // Enable Pusher logging for debugging
+    Pusher.logToConsole = true;
 
-    return () => clearInterval(intervalId);
+    // Initialize Pusher instance
+    const pusher = new Pusher("dd9d4765fc958213199b", {
+      cluster: "ap1",
+    });
+
+    // Subscribe to the user's notification channel
+    const channel = pusher.subscribe(`notification${id}`);
+
+    // Listen for notification-event
+    channel.bind("notification-event", (newNotification: any) => {
+      // Destructure the required properties from newNotification
+      const { message, user_id, date, type, read_at } = newNotification;
+
+      // Update the notifications state with the new notification
+      setNotifications((prevNotifications) => [
+        {
+          notification_id: `notif-${Date.now()}`, // Generate a unique ID
+          read_at,
+          type,
+          data: {
+            message,
+            user_id,
+            created_at: date,
+          },
+        },
+        ...prevNotifications,
+      ]);
+      // Increment unread count if it's unread
+      if (!newNotification.read_at) {
+        setUnreadCount((prevCount) => prevCount + 1);
+      }
+    });
+
+    // Cleanup function to unsubscribe from Pusher when component unmounts
+    return () => {
+      channel.unbind("notification-event"); // Unbind the specific event listener
+      pusher.unsubscribe(`notification${id}`); // Unsubscribe from the channel
+    };
   }, []);
 
   useEffect(() => {
@@ -234,6 +328,53 @@ const Nav: React.FC<NavProps> = ({
   const profilePictureUrl = profilePicture
     ? `http://122.53.61.91:6002/storage/${profilePicture.replace(/\\/g, "/")}`
     : Avatar;
+  const markAllAsRead = async () => {
+    try {
+      const id = localStorage.getItem("id");
+      const unreadNotifications = notifications.filter(
+        (notif) => !notif.read_at
+      );
+
+      // Loop through unread notifications and mark them as read
+      await Promise.all(
+        unreadNotifications.map(async (notif) => {
+          const response = await axios.put(
+            `http://122.53.61.91:6002/api/notifications/mark-all-as-read/${id}`
+          );
+
+          if (response.data.success) {
+            // Update the notification's `read_at` in the local state
+            setNotifications((prevNotifications) =>
+              prevNotifications.map((n) =>
+                n.notification_id === notif.notification_id
+                  ? { ...n, read_at: new Date().toISOString() }
+                  : n
+              )
+            );
+          } else {
+            console.error(
+              `Failed to mark notification ${notif.notification_id} as read`
+            );
+          }
+        })
+      );
+
+      // Update unread count to 0
+      setUnreadCount(0);
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      alert(
+        "Failed to mark all notifications as read. Please try again later."
+      );
+    }
+  };
+
+  // Use effect to mark all as read when the dropdown is opened
+  useEffect(() => {
+    if (isOpenNotif) {
+      markAllAsRead();
+    }
+  }, [isOpenNotif]);
 
   return (
     <div className={`nav-container ${darkMode ? "dark" : "white"}`}>
@@ -242,13 +383,39 @@ const Nav: React.FC<NavProps> = ({
         <div className={`h-[67px] flex items-center bg-white dark:bg-blackD`}>
           {isMobileView ? (
             <div onClick={toggleSidebar}>
-              <Bars3Icon
-                className={`size-[36px] font-bold cursor-pointer pl-4 ${
-                  darkMode ? "dark:text-white" : ""
-                } ${isSidebarVisible ? "ml-20" : ""}`}
-              />
+              {isSidebarOpen ? (
+                <XMarkIcon
+                  title="Close Menu"
+                  className={`size-[36px] font-bold cursor-pointer pl-4 ml-60 ${
+                    darkMode ? "dark:text-white" : "text-black"
+                  }`}
+                />
+              ) : (
+                <Bars3Icon
+                  className={`size-[36px] font-bold cursor-pointer pl-4 ${
+                    darkMode ? "dark:text-white" : "text-black"
+                  }`}
+                />
+              )}
             </div>
-          ) : null}
+          ) : (
+            <div onClick={toggleSidebar}>
+              {isSidebarOpen ? (
+                <XMarkIcon
+                  title="Close Menu"
+                  className={`size-[36px] font-bold cursor-pointer pl-4 ${
+                    darkMode ? "dark:text-white" : "text-black"
+                  }`}
+                />
+              ) : (
+                <Bars3Icon
+                  className={`size-[36px] font-bold cursor-pointer pl-4 ${
+                    darkMode ? "dark:text-white" : "text-black"
+                  }`}
+                />
+              )}
+            </div>
+          )}
 
           <h1
             className={`lg:text-[32px] md:text-[28px] sm:text-[20px] font-bold text-primary ${
@@ -258,6 +425,7 @@ const Nav: React.FC<NavProps> = ({
             {currentPage}
           </h1>
         </div>
+
         <div className="flex items-center justify-between pr-12">
           <div className="pr-2 sm:pr-8">
             {darkMode ? (
@@ -323,7 +491,10 @@ const Nav: React.FC<NavProps> = ({
                 className={`size-[30px] cursor-pointer ${
                   isOpenNotif ? "text-yellow" : "text-gray-400"
                 }`}
-                onClick={() => setIsOpenNotif(!isOpenNotif)}
+                onClick={() => {
+                  setIsOpenNotif(!isOpenNotif);
+                  // handleOpenNotification();
+                }}
               />
               {/* Notification Count */}
               {unreadCount > 0 && (
@@ -351,62 +522,72 @@ const Nav: React.FC<NavProps> = ({
             </div>
             {/* Notification */}
             {isOpenNotif && (
-              <div
-                className="w-96 md:w-[500px] bg-white absolute top-11 right-0 border-2 border-black z-40 overflow-y-auto max-h-80 rounded-lg shadow-lg"
-                ref={dropdownRef}
-              >
-                <ul>
-                  {notifications.length === 0 ? (
-                    <li className="px-4 py-4 text-center text-gray-500">
-                      No notifications yet
-                    </li>
-                  ) : (
-                    notifications.map((notif) => {
-                      // Determine the URL based on notif.type
-                      const linkTo =
-                        notif.type === "App\\Notifications\\ApprovalProcessNotification" ||
-                        notif.type === "App\\Notifications\\PreviousReturnRequestNotification"
-                          ? "/request/approver"
-                          : notif.type === "App\\Notifications\\EmployeeNotification" ||
-                            notif.type === "App\\Notifications\\ReturnRequestNotification"
-                          ? "/request"
-                          : "/profile";
-
-                      return (
-                        <Link to={linkTo} key={notif.notification_id}>
-                          <li
-                            className={`px-4 py-4 hover:bg-[#E0E0F9] cursor-pointer border-b flex items-center`}
-                            onClick={() =>
-                              handleNotificationClick(notif.notification_id)
-                            }
-                            aria-label={`Notification: ${notif.data.message}`}
-                          >
-                            <div className="w-12 h-12 flex items-center justify-center bg-black rounded-full">
-                              {notif.read_at ? (
-                                <EnvelopeOpenIcon className="size-5 text-white" />
-                              ) : (
-                                <EnvelopeIcon className="size-5 text-white" />
-                              )}
-                            </div>
-                            <div className="ml-4 flex-1">
-                              <p
-                                className={` ${notif.type === "App\\Notifications\\EmployeeNotification"? "text-green" : notif.type === "App\\Notifications\\PreviousReturnRequestNotification" || notif.type === "App\\Notifications\\ReturnRequestNotification"? "text-red-500" :"text-primary" } text-sm ${
-                                  notif.read_at ? "" : "font-bold"
-                                } text-center`}
-                              >
-                                {notif.data.message}
-                              </p>
-                              <p className="text-gray-400 text-sm text-center">
-                                {formatDate(notif.data.created_at)}
-                              </p>
-                            </div>
-                          </li>
-                        </Link>
-                      );
-                    })
-                  )}
-                </ul>
-              </div>
+             <div className="flex flex-row">
+             <div
+               className="w-96 md:w-[500px] bg-white absolute top-11 right-0 border-2 border-black z-40 overflow-y-auto max-h-[500px] rounded-lg shadow-lg flex flex-col"
+               ref={dropdownRef}
+             >
+               <ul className="flex-1 overflow-y-auto">
+                 {notifications.length === 0 ? (
+                   <li className="px-4 py-4 text-center text-gray-500">
+                     No notifications yet
+                   </li>
+                 ) : (
+                   notifications.map((notif) => {
+                     const message = notif.data?.message || "No message available";
+                     const createdAt = notif.data?.created_at || new Date().toISOString();
+                     const notificationId = notif.notification_id || "unknown-id";
+           
+                     const linkTo = notif.type === "App\\Notifications\\ApprovalProcessNotification" ||
+                                    notif.type === "App\\Notifications\\PreviousReturnRequestNotification"
+                       ? "/request/approver"
+                       : notif.type === "App\\Notifications\\EmployeeNotification" ||
+                         notif.type === "App\\Notifications\\ReturnRequestNotification"
+                       ? "/request"
+                       : "/profile";
+           
+                     const textColor = notif.type === "App\\Notifications\\EmployeeNotification"
+                       ? "text-green"
+                       : notif.type === "App\\Notifications\\PreviousReturnRequestNotification" ||
+                         notif.type === "App\\Notifications\\ReturnRequestNotification"
+                       ? "text-red-500"
+                       : "text-primary";
+           
+                     return (
+                       <Link to={linkTo} key={notificationId}>
+                         <li
+                           className={`px-4 py-4 hover:bg-[#E0E0F9] cursor-pointer border-b flex items-center`}
+                           onClick={() => setIsOpenNotif(false)}
+                           aria-label={`Notification: ${message}`}
+                         >
+                           <div className="w-12 h-12 flex items-center justify-center bg-black rounded-full">
+                             {notif.read_at ? (
+                               <EnvelopeOpenIcon className="size-5 text-white" />
+                             ) : (
+                               <EnvelopeIcon className="size-5 text-white" />
+                             )}
+                           </div>
+                           <div className="ml-4 flex-1">
+                             <p className={`${textColor} text-sm ${notif.read_at ? "" : "font-bold"} text-center`}>
+                               {message}
+                             </p>
+                             <p className="text-gray-400 text-sm text-center">
+                               {formatDate(createdAt)}
+                             </p>
+                           </div>
+                         </li>
+                       </Link>
+                     );
+                   })
+                 )}
+               </ul>
+               <hr />
+               <div className="py-5 text-center text-gray-500 cursor-pointer" onClick={handleMarkAllAsRead}>
+                 Mark All As Read
+               </div>
+             </div>
+           </div>
+           
             )}
           </div>
         </div>

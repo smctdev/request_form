@@ -18,6 +18,7 @@ import {
   CheckCircleIcon,
 } from "@heroicons/react/24/solid";
 import { sign } from "crypto";
+import Swal from "sweetalert2";
 
 type UserCredentials = z.infer<typeof schema>;
 
@@ -184,9 +185,17 @@ const Registration: React.FC = () => {
     
       setErrorMessage(response.data.errors);
       if (response.data.status) {
+        
         setLoading(false);
         localStorage.setItem("token", response.data.token);
-        alert("Success");
+          Swal.fire({
+            icon: "success",
+            title: response.data.message || "Registration Successful",
+            iconColor: "#007bff",
+            text: "You will be redirected to the login page",
+            confirmButtonText: "Close",
+            confirmButtonColor: "#007bff",
+          });
         window.setTimeout(() => {
           navigate("/login"); // Navigate to login after successful registration
         }, 2000);
@@ -201,12 +210,27 @@ const Registration: React.FC = () => {
           message.push(...errors.employee_id);
         }
         setErrorMessage(message);
+        Swal.fire({
+          icon: "error",
+          title: "Registration Failed",
+          iconColor: "#dc3545",
+          text: message.join(", ") || "An error occurred during the registration process. Please try again.",
+          confirmButtonText: "Close",
+          confirmButtonColor: "#dc3545",
+        })
 
         setLoading(false);
       }
     } catch (error) {
-      console.error("Registration Error:", error);
-      alert("An error occurred during the registration process.");
+      // console.error("Registration Error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Registration Failed",
+        iconColor: "#dc3545",
+        text: "An error occurred during the registration process. Please try again.",
+        confirmButtonText: "Close",
+        confirmButtonColor: "#dc3545",
+      })
       setLoading(false);
     }
   };
