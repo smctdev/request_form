@@ -236,7 +236,7 @@ const CreateDiscount = (props: Props) => {
     "w-full max-w-[300px] border-2 border-black rounded-[12px] pl-[10px] bg-white";
   const [tableData, setTableData] = useState<TableDataItem[]>(initialTableData);
   const [selectedRequestType, setSelectedRequestType] =
-    useState("/request/afca");
+    useState("/request/dr");
 
 
   const handleChange = (
