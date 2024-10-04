@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select/dist/declarations/src/Select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { CalendarIcon } from "@heroicons/react/24/solid";
+import { CalendarIcon, MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
 import TextareaAutosize from "react-textarea-autosize";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -309,9 +309,22 @@ const CreateDiscount = (props: Props) => {
 
   const handleRemoveItem = () => {
     if (tableData.length > 1) {
-      const updatedItems = [...tableData];
-      updatedItems.pop();
-      setTableData(updatedItems);
+      Swal.fire({
+        title: "Are you sure?",
+        text: "This item will be removed!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, remove it!",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const updatedItems = [...tableData];
+          updatedItems.pop();
+          setTableData(updatedItems);
+        }
+      });
     }
   };
 
@@ -846,7 +859,31 @@ const CreateDiscount = (props: Props) => {
                 </div>
               </div>
             </div>
+            <div className="flex flex-col items-center justify-center mt-4">
+              <hr className="w-full border-t-4 border-dotted border-gray-400 my-2" />
 
+              <div className="flex flex-row items-center gap-2 mt-2">
+                {tableData.length > 1 && (
+                  <span
+                    className={`${buttonStyle} bg-pink flex items-center justify-center cursor-pointer hover:bg-white hover:border-4 hover:border-pink hover:text-pink`}
+                    onClick={handleRemoveItem}
+                  >
+                    <MinusCircleIcon
+                      className="h-5 w-5 mr-2"
+                      aria-hidden="true"
+                    />
+                    Remove Item
+                  </span>
+                )}
+                <span
+                  className={`bg-yellow flex items-center cursor-pointer hover:bg-white hover:border-4 hover:border-yellow hover:text-yellow text-gray-950 max-w-md justify-center ${buttonStyle}`}
+                  onClick={handleAddItem}
+                >
+                  <PlusCircleIcon className="h-5 w-5 mr-2" aria-hidden="true" />
+                  Add Item
+                </span>
+              </div>
+            </div>
             <div className="flex justify-between flex-col md:flex-row">
               <div className="w-full max-w-md  p-4">
                 <p className="font-semibold">Attachments:</p>
@@ -888,6 +925,13 @@ const CreateDiscount = (props: Props) => {
             </div>
             <div className="mb-4 ml-5">
               <h3 className="font-bold mb-3">Approved By:</h3>
+              {approvedBy.length === 0 ? (
+                <p className=" text-gray-500">
+                  Please select an approver!
+                  <br/> 
+                  <span className="italic text-sm">Note: You can add approvers by clicking the 'Add Approver' button above.</span>
+                </p>
+              ) : (
               <ul className="flex flex-wrap gap-6">
                 {" "}
                 {/* Use gap instead of space-x */}
@@ -910,9 +954,10 @@ const CreateDiscount = (props: Props) => {
                   </li>
                 ))}
               </ul>
+              )}
             </div>
             <div className="space-x-3 flex justify-end mt-20 pb-10">
-              <button
+              {/* <button
                 type="button"
                 className={`bg-yellow ${buttonStyle}`}
                 onClick={handleAddItem}
@@ -927,7 +972,7 @@ const CreateDiscount = (props: Props) => {
                 >
                   Remove Item
                 </button>
-              )}
+              )} */}
 
               <button
                 className={`bg-primary ${buttonStyle}`}

@@ -707,6 +707,9 @@ const ViewPurchaseModal: React.FC<Props> = ({
                               alt="avatar"
                               width={120}
                               className="relative z-20 pointer-events-none"
+                              draggable="false"
+                              onContextMenu={(e) => e.preventDefault()}
+                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                             />
                           </div>
                         )}
@@ -761,6 +764,9 @@ const ViewPurchaseModal: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                               />
                             </div>
                           )}
@@ -821,6 +827,9 @@ const ViewPurchaseModal: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                               />
                             </div>
                           )}

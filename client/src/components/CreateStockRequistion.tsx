@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select/dist/declarations/src/Select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { CalendarIcon } from "@heroicons/react/24/solid";
+import {
+  CalendarIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
+} from "@heroicons/react/24/solid";
 import path from "path";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm, Controller, set } from "react-hook-form";
@@ -285,7 +289,7 @@ const CreateStockRequistion = (props: Props) => {
         text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
         confirmButtonText: "Close",
         confirmButtonColor: "#007bff",
-      })
+      });
       return; // Prevent form submission
     }
 
@@ -329,11 +333,23 @@ const CreateStockRequistion = (props: Props) => {
     setFormSubmitted(true);
   };
 
-  const handleRemoveItem = () => {
+  const handleRemoveItem = (index: number) => {
     if (items.length > 1) {
-      const updatedItems = [...items];
-      updatedItems.pop();
-      setItems(updatedItems);
+      Swal.fire({
+        title: "Are you sure?",
+        text: "This item will be removed!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, remove it!",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const updatedItems = items.filter((_, i) => i !== index);
+          setItems(updatedItems);
+        }
+      });
     }
   };
 
@@ -490,6 +506,16 @@ const CreateStockRequistion = (props: Props) => {
                       onChange={(e) =>
                         handleInputChange(index, "quantity", e.target.value)
                       }
+                      onKeyDown={(e) => {
+                        // Prevent non-digit input
+                        if (
+                          !/[0-9]/.test(e.key) &&
+                          e.key !== "Backspace" &&
+                          e.key !== "Tab"
+                        ) {
+                          e.preventDefault();
+                        }
+                      }}
                       className={`${inputStyle} h-[44px]`}
                     />
                     {validationErrors[`items.${index}.quantity`] &&
@@ -538,6 +564,16 @@ const CreateStockRequistion = (props: Props) => {
                       onChange={(e) =>
                         handleInputChange(index, "unitCost", e.target.value)
                       }
+                      onKeyDown={(e) => {
+                        // Prevent non-digit input
+                        if (
+                          !/[0-9]/.test(e.key) &&
+                          e.key !== "Backspace" &&
+                          e.key !== "Tab"
+                        ) {
+                          e.preventDefault();
+                        }
+                      }}
                       placeholder="₱"
                       className={`${inputStyle} h-[44px]`}
                     />
@@ -591,10 +627,34 @@ const CreateStockRequistion = (props: Props) => {
                       onBlur={() => handleTextareaHeight(index, "remarks")} // Adjust height on blur
                       onInput={() => handleTextareaHeight(index, "remarks")} // Adjust height on input change
                     />
+                    <div className="flex justify-end gap-2 mt-2">
+                      {items.length > 1 && (
+                        <span
+                          className={`${buttonStyle} bg-pink flex items-center justify-center cursor-pointer hover:bg-white hover:border-4 hover:border-pink hover:text-pink`}
+                          onClick={() => handleRemoveItem(index)}
+                        >
+                          <MinusCircleIcon
+                            className="h-5 w-5 mr-2"
+                            aria-hidden="true"
+                          />
+                          Remove Item
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
+            <div className="flex flex-col items-center justify-center w-full mt-4">
+              <hr className="w-full border-t-4 border-dotted border-gray-400 my-2" />
+              <span
+                className={`bg-yellow flex items-center cursor-pointer hover:bg-white hover:border-4 hover:border-yellow hover:text-yellow text-gray-950 mt-2 max-w-md justify-center ${buttonStyle}`}
+                onClick={handleAddItem}
+              >
+                <PlusCircleIcon className="h-5 w-5 mr-2" aria-hidden="true" />
+                Add Item
+              </span>
+            </div>
             {errorMessage && <p className="text-red-600">{errorMessage}</p>}
             <div className="flex justify-between flex-col md:flex-row">
               <div className="w-full max-w-md  p-4">
@@ -643,31 +703,38 @@ const CreateStockRequistion = (props: Props) => {
             </div>
             <div className="mb-4 ml-5">
               <h3 className="font-bold mb-3">Approved By:</h3>
-              <ul className="flex flex-wrap gap-6">
-                {" "}
-                {/* Use gap instead of space-x */}
-                {approvedBy.map((user, index) => (
-                  <li
-                    className="flex flex-col items-center justify-center text-center relative"
-                    key={index}
-                  >
-                    <div className="relative flex flex-col items-center justify-center">
-                      <p className="relative inline-block uppercase font-medium text-center pt-6">
-                        <span className="relative z-10 px-2">
-                          {user.firstName} {user.lastName}
-                        </span>
-                        <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-black"></span>
-                      </p>
-                      <p className="font-bold text-[12px] text-center">
-                        {user.position}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              {approvedBy.length === 0 ? (
+                <p className=" text-gray-500">
+                  Please select an approver!
+                  <br/> 
+                  <span className="italic text-sm">Note: You can add approvers by clicking the 'Add Approver' button above.</span>
+                </p>
+              ) : (
+                <ul className="flex flex-wrap gap-6">
+                  {approvedBy.map((user, index) => (
+                    <li
+                      className="flex flex-col items-center justify-center text-center relative"
+                      key={index}
+                    >
+                      <div className="relative flex flex-col items-center justify-center">
+                        <p className="relative inline-block uppercase font-medium text-center pt-6">
+                          <span className="relative z-10 px-2">
+                            {user.firstName} {user.lastName}
+                          </span>
+                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-black"></span>
+                        </p>
+                        <p className="font-bold text-[12px] text-center">
+                          {user.position}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
+
             <div className="space-x-3 flex justify-end mt-20 pb-10">
-              <button
+              {/* <button
                 type="button"
                 className={`bg-yellow ${buttonStyle}`}
                 onClick={handleAddItem}
@@ -682,7 +749,7 @@ const CreateStockRequistion = (props: Props) => {
                 >
                   Remove Item
                 </button>
-              )}
+              )} */}
               <button
                 className={`bg-primary ${buttonStyle} ${
                   loading ? "opacity-50 cursor-not-allowed" : ""

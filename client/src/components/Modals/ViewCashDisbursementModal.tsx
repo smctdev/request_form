@@ -326,13 +326,13 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
       const formData = new FormData();
       formData.append("updated_at", new Date().toISOString());
       const notedByIds = Array.isArray(notedBy)
-      ? notedBy.map((person) => person.id)
-      : [];
-    const approvedByIds = Array.isArray(approvedBy)
-      ? approvedBy.map((person) => person.id)
-      : [];
-    formData.append("noted_by", JSON.stringify(notedByIds));
-    formData.append("approved_by", JSON.stringify(approvedByIds));
+        ? notedBy.map((person) => person.id)
+        : [];
+      const approvedByIds = Array.isArray(approvedBy)
+        ? approvedBy.map((person) => person.id)
+        : [];
+      formData.append("noted_by", JSON.stringify(notedByIds));
+      formData.append("approved_by", JSON.stringify(approvedByIds));
 
       formData.append(
         "form_data",
@@ -377,7 +377,7 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
       setLoading(false);
       setIsEditing(false);
       setSavedSuccessfully(true);
-      setRemovedAttachments([]);   
+      setRemovedAttachments([]);
       refreshData();
     } catch (error: any) {
       setLoading(false);
@@ -409,7 +409,6 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
     setNotedBy(notedBy);
     setApprovedBy(approvedBy);
   };
- 
 
   const handlePrint = () => {
     // Construct the data object to be passed
@@ -634,7 +633,7 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
               </button>
             </div>
           )}
-      <div className="w-full flex-col justify-center items-center">
+          <div className="w-full flex-col justify-center items-center">
             {isFetchingApprovers ? (
               <div className="flex items-center justify-center w-full h-40">
                 <h1>Fetching..</h1>
@@ -649,11 +648,14 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                         {/* Signature */}
                         {user.data?.signature && (
                           <div className="absolute -top-4">
-                            <img
+                           <img
                               src={user.data?.signature}
                               alt="avatar"
                               width={120}
                               className="relative z-20 pointer-events-none"
+                              draggable="false"
+                              onContextMenu={(e) => e.preventDefault()}
+                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                             />
                           </div>
                         )}
@@ -704,11 +706,14 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                               user.status.split(" ")[0] === "Rejected")) && (
                             <div className="absolute -top-4">
                               <img
-                                src={user.signature}
-                                alt="avatar"
-                                width={120}
-                                className="relative z-20 pointer-events-none"
-                              />
+                              src={user.signature}
+                              alt="avatar"
+                              width={120}
+                              className="relative z-20 pointer-events-none"
+                              draggable="false"
+                              onContextMenu={(e) => e.preventDefault()}
+                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
+                            />
                             </div>
                           )}
                           {/* Name */}
@@ -763,12 +768,15 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                             (typeof user.status === "string" &&
                               user.status.split(" ")[0] === "Rejected")) && (
                             <div className="absolute -top-4">
-                              <img
-                                src={user.signature}
-                                alt="avatar"
-                                width={120}
-                                className="relative z-20 pointer-events-none"
-                              />
+                             <img
+                              src={user.signature}
+                              alt="avatar"
+                              width={120}
+                              className="relative z-20 pointer-events-none"
+                              draggable="false"
+                              onContextMenu={(e) => e.preventDefault()}
+                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
+                            />
                             </div>
                           )}
                           {/* Name */}

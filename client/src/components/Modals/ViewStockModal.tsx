@@ -460,6 +460,7 @@ const ViewStockModal: React.FC<Props> = ({
       approvedBy: approvedBy,
       notedBy: notedBy,
       user: user,
+      purpose: checkedPurpose,
     };
 
     localStorage.setItem("printData", JSON.stringify(data));
@@ -537,41 +538,43 @@ const ViewStockModal: React.FC<Props> = ({
             </p>
           </div>
 
-          <p className="font-medium text-[14px]">Purpose:</p>
-
-          <div className="flex flex-col md:flex-row md:space-x-2">
-            <label>
-              Repo. Recon
-              <input
-                type="checkbox"
-                checked={checkedPurpose === "Repo. Recon"}
-                onChange={() => handlePurposeChange("Repo. Recon")}
-                disabled={!isEditing}
-                className="size-4"
-              />
-            </label>
-            <label>
-              Repair & Maintenance
-              <input
-                type="checkbox"
-                checked={checkedPurpose === "Repair & Maintenance"}
-                onChange={() => handlePurposeChange("Repair & Maintenance")}
-                disabled={!isEditing}
-                className="size-4"
-              />
-            </label>
-            <label>
-              Office/Service Used
-              <input
-                type="checkbox"
-                checked={checkedPurpose === "Office/Service Used"}
-                onChange={() => handlePurposeChange("Office/Service Used")}
-                disabled={!isEditing}
-                className="size-4"
-              />
-            </label>
-          </div>
-
+          <p className="font-medium text-[14px]">
+            Purpose: {record.form_data[0].purpose}
+          </p>
+          {isEditing && (
+            <div className="flex flex-col md:flex-row md:space-x-2">
+              <label>
+                Repo. Recon
+                <input
+                  type="checkbox"
+                  checked={checkedPurpose === "Repo. Recon"}
+                  onChange={() => handlePurposeChange("Repo. Recon")}
+                  disabled={!isEditing}
+                  className="size-4"
+                />
+              </label>
+              <label>
+                Repair & Maintenance
+                <input
+                  type="checkbox"
+                  checked={checkedPurpose === "Repair & Maintenance"}
+                  onChange={() => handlePurposeChange("Repair & Maintenance")}
+                  disabled={!isEditing}
+                  className="size-4"
+                />
+              </label>
+              <label>
+                Office/Service Used
+                <input
+                  type="checkbox"
+                  checked={checkedPurpose === "Office/Service Used"}
+                  onChange={() => handlePurposeChange("Office/Service Used")}
+                  disabled={!isEditing}
+                  className="size-4"
+                />
+              </label>
+            </div>
+          )}
           <div className="w-1/2  flex ">
             <h1 className="flex items-center">Branch: </h1>
             <p className=" bg-white rounded-md  w-full pl-1 font-bold">
@@ -763,6 +766,9 @@ const ViewStockModal: React.FC<Props> = ({
                               alt="avatar"
                               width={120}
                               className="relative z-20 pointer-events-none"
+                              draggable="false"
+                              onContextMenu={(e) => e.preventDefault()}
+                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                             />
                           </div>
                         )}
@@ -817,6 +823,9 @@ const ViewStockModal: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                               />
                             </div>
                           )}
@@ -877,6 +886,9 @@ const ViewStockModal: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                               />
                             </div>
                           )}
@@ -968,7 +980,7 @@ const ViewStockModal: React.FC<Props> = ({
           </div>
 
           <div className="w-full">
-            <h2 className="text-lg font-bold mb-2">Comments</h2>
+            <h2 className="text-lg font-bold mb-2">Comments:</h2>
 
             {/* Check if there are no comments in both notedBy and approvedBy */}
             {notedBy.filter((user) => user.comment).length === 0 &&

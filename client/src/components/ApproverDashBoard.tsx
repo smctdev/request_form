@@ -334,10 +334,15 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
           <p className="text-[15px] hidden sm:block text-white mb-4">
             Request products and services
           </p>
-          <div>
-            <Link to="/request">
-              <button className="bg-[#FF947D] text-[10px] w-full lg:h-[57px] h-[40px] rounded-[12px] font-semibold">
-                Approve Requests
+          <div className="flex flex-row gap-2">
+            <Link to="/request/sr">
+              <button className="bg-[#FF947D] text-[15px] w-full lg:h-[57px] h-[40px] rounded-[12px] font-semibold px-3">
+                Create a Request
+              </button>
+            </Link>
+            <Link to="/request/approver">
+              <button className="bg-[#FF947D] text-[15px] w-full lg:h-[57px] h-[40px] rounded-[12px] font-semibold px-3">
+                Process Request
               </button>
             </Link>
           </div>

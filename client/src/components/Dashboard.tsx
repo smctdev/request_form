@@ -123,7 +123,7 @@ const Dashboard: React.FC = () => {
 
   const linkTo = '/request';
   const NoDataComponent = () => (
-    <div className="flex justify-center items-center h-64 text-gray-500">
+    <div className="flex justify-center items-center h-64 text-gray-500 overflow-hidden">
       <p className="text-lg">No records found</p>
     </div>
   );
@@ -256,7 +256,7 @@ const Dashboard: React.FC = () => {
             Request products and services
           </p>
           <div>
-            <Link to="/request">
+            <Link to="/request/sr">
               <button className="bg-[#FF947D] text-[15px] w-full lg:h-[57px] h-[40px] rounded-[12px] font-semibold">
                 Create a Request
               </button>
@@ -344,7 +344,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="mt-[20px] mb-10 bg-white w-full h-72 drop-shadow-lg rounded-[12px] relative sm:w-full overflow-x-auto">
+      <div className={`mt-[20px] mb-10 bg-white w-full h-72 drop-shadow-lg rounded-[12px] relative sm:w-full ${latestRequests.length === 0 ? 'overflow-hidden' : 'overflow-x-auto'}`}>
         <h1 className="py-[16px] px-[25px] font-bold text-[20px]">
           Recent requests
         </h1>

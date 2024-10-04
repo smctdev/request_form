@@ -309,7 +309,7 @@ const ViewDiscountModal: React.FC<Props> = ({
       setErrorMessage("From, to and date cannot be empty.");
       return;
     }
-  
+
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
@@ -317,25 +317,34 @@ const ViewDiscountModal: React.FC<Props> = ({
         setErrorMessage("Token is missing");
         return;
       }
-  
+
       const formData = new FormData();
       formData.append("updated_at", new Date().toISOString());
-  
+
       const notedByIds = Array.isArray(notedBy)
         ? notedBy.map((person) => person.id)
         : [];
       const approvedByIds = Array.isArray(approvedBy)
         ? approvedBy.map((person) => person.id)
         : [];
-  
+
       formData.append("noted_by", JSON.stringify(notedByIds));
       formData.append("approved_by", JSON.stringify(approvedByIds));
-  
+
       // Calculate totals for labor, spotcash, and discount
-      const totalLabor = newData.reduce((sum, item) => sum + parseFloat(item.labor || "0"), 0);
-      const totalSpotcash = newData.reduce((sum, item) => sum + parseFloat(item.spotcash || "0"), 0);
-      const totalDiscount = newData.reduce((sum, item) => sum + parseFloat(item.discountedPrice || "0"), 0);
-  
+      const totalLabor = newData.reduce(
+        (sum, item) => sum + parseFloat(item.labor || "0"),
+        0
+      );
+      const totalSpotcash = newData.reduce(
+        (sum, item) => sum + parseFloat(item.spotcash || "0"),
+        0
+      );
+      const totalDiscount = newData.reduce(
+        (sum, item) => sum + parseFloat(item.discountedPrice || "0"),
+        0
+      );
+
       formData.append(
         "form_data",
         JSON.stringify([
@@ -345,28 +354,28 @@ const ViewDiscountModal: React.FC<Props> = ({
             status: editableRecord.status,
             items: newData,
             total_labor: totalLabor,
-            total_spotcash: totalSpotcash, 
-            total_discount: totalDiscount, 
+            total_spotcash: totalSpotcash,
+            total_discount: totalDiscount,
           },
         ])
       );
-  
+
       // Append existing attachments
       attachmentUrl.forEach((url, index) => {
         const path = url.split("storage/attachments/")[1];
         formData.append(`attachment_url_${index}`, path);
       });
-  
+
       // Append new attachments
       newAttachments.forEach((file, index) => {
         formData.append("new_attachments[]", file);
       });
-  
+
       // Append removed attachments
       removedAttachments.forEach((path, index) => {
         formData.append("removed_attachments[]", String(path));
       });
-  
+
       // Send the request
       const response = await axios.post(
         `http://122.53.61.91:6002/api/update-request/${record.id}`,
@@ -378,14 +387,14 @@ const ViewDiscountModal: React.FC<Props> = ({
           },
         }
       );
-  
+
       setLoading(false);
       setIsEditing(false);
       setSavedSuccessfully(true);
       refreshData();
     } catch (error: any) {
       setLoading(false);
-   
+
       setErrorMessage(
         error.response?.data?.message ||
           error.message ||
@@ -393,7 +402,6 @@ const ViewDiscountModal: React.FC<Props> = ({
       );
     }
   };
-  
 
   const handleItemChange = (
     index: number,
@@ -562,7 +570,7 @@ const ViewDiscountModal: React.FC<Props> = ({
           <div className="flex justify-between w-full items-center">
             <div>
               <h1 className="font-semibold text-[18px]">
-              Discount Requisition Form
+                Discount Requisition Form
               </h1>
             </div>
             <div className="w-auto flex ">
@@ -789,6 +797,9 @@ const ViewDiscountModal: React.FC<Props> = ({
                               alt="avatar"
                               width={120}
                               className="relative z-20 pointer-events-none"
+                              draggable="false"
+                              onContextMenu={(e) => e.preventDefault()}
+                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                             />
                           </div>
                         )}
@@ -839,11 +850,14 @@ const ViewDiscountModal: React.FC<Props> = ({
                               user.status.split(" ")[0] === "Rejected")) && (
                             <div className="absolute -top-4">
                               <img
-                                src={user.signature}
-                                alt="avatar"
-                                width={120}
-                                className="relative z-20 pointer-events-none"
-                              />
+                              src={user.signature}
+                              alt="avatar"
+                              width={120}
+                              className="relative z-20 pointer-events-none"
+                              draggable="false"
+                              onContextMenu={(e) => e.preventDefault()}
+                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
+                            />
                             </div>
                           )}
                           {/* Name */}
@@ -898,12 +912,15 @@ const ViewDiscountModal: React.FC<Props> = ({
                             (typeof user.status === "string" &&
                               user.status.split(" ")[0] === "Rejected")) && (
                             <div className="absolute -top-4">
-                              <img
-                                src={user.signature}
-                                alt="avatar"
-                                width={120}
-                                className="relative z-20 pointer-events-none"
-                              />
+                             <img
+                              src={user.signature}
+                              alt="avatar"
+                              width={120}
+                              className="relative z-20 pointer-events-none"
+                              draggable="false"
+                              onContextMenu={(e) => e.preventDefault()}
+                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
+                            />
                             </div>
                           )}
                           {/* Name */}

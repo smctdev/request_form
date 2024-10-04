@@ -415,7 +415,7 @@ const Request = (props: Props) => {
     <div className="bg-graybg dark:bg-blackbg w-full h-lvh pt-4 px-10 md:px-10 lg:px-30">
       <Link to="/request/sr">
         <button className="bg-primary text-white rounded-[12px] mb-2 w-[120px] sm:w-[151px] h-[34px] z-10">
-          Send Request
+          Create a Request
         </button>
       </Link>
 

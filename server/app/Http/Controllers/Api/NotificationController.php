@@ -66,8 +66,10 @@ class NotificationController extends Controller
             ];
         });
 
+        $unreadNotification = $user->unreadNotifications;
         return response()->json([
             'notifications' => $formattedNotifications,
+            'unread_notification' => $unreadNotification
         ]);
     }
 

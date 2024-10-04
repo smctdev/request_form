@@ -45,7 +45,7 @@ class LoginController extends Controller
             $token = $tokenResult->accessToken;
     
            
-            $expiration = now()->addHour();
+            $expiration = now()->addHours(8);
     
             // Update the token's expiration time in the database
             DB::table('personal_access_tokens')

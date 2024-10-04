@@ -54,7 +54,6 @@ type Record = {
   }[];
 };
 
-
 type FormData = {
   approvers_id: number;
   approvers: {
@@ -136,7 +135,7 @@ const ViewRequestModal: React.FC<Props> = ({
             branch.branch_code,
           ])
         );
-       
+
         setBranchList(branches);
         setBranchMap(branchMapping);
       } catch (error) {
@@ -163,8 +162,6 @@ const ViewRequestModal: React.FC<Props> = ({
 
     if (currentUserId) {
       fetchUser(record.user_id);
-    
-    
     }
     try {
       if (typeof record.attachment === "string") {
@@ -201,9 +198,8 @@ const ViewRequestModal: React.FC<Props> = ({
           },
         }
       );
-      
+
       setUser(response.data);
-    
     } catch (error) {
       console.error("Failed to fetch approvers:", error);
     } finally {
@@ -211,7 +207,7 @@ const ViewRequestModal: React.FC<Props> = ({
       setisFetchingApprovers(false);
     }
   };
- /*  const fetchCustomApprovers = async (id: number) => {
+  /*  const fetchCustomApprovers = async (id: number) => {
     setisFetchingApprovers(true);
     try {
       const token = localStorage.getItem("token");
@@ -365,8 +361,12 @@ const ViewRequestModal: React.FC<Props> = ({
 
       const formData = new FormData();
       formData.append("updated_at", new Date().toISOString());
-      const notedByIds = Array.isArray(notedBy) ? notedBy.map(person => person.id) : [];
-      const approvedByIds = Array.isArray(approvedBy) ? approvedBy.map(person => person.id) : [];
+      const notedByIds = Array.isArray(notedBy)
+        ? notedBy.map((person) => person.id)
+        : [];
+      const approvedByIds = Array.isArray(approvedBy)
+        ? approvedBy.map((person) => person.id)
+        : [];
       formData.append("noted_by", JSON.stringify(notedByIds));
       formData.append("approved_by", JSON.stringify(approvedByIds));
       formData.append(
@@ -481,7 +481,6 @@ const ViewRequestModal: React.FC<Props> = ({
       notedBy: notedBy,
       user: user,
     };
-
 
     localStorage.setItem("printData", JSON.stringify(data));
     // Open a new window with PrintRefund component
@@ -677,7 +676,6 @@ const ViewRequestModal: React.FC<Props> = ({
               </div>
             </div>
 
-
             {errorMessage && <p className="text-red-600">{errorMessage}</p>}
           </div>
           <div className="w-full">
@@ -689,7 +687,7 @@ const ViewRequestModal: React.FC<Props> = ({
               readOnly
             />
           </div>
-        {/*   <div className="w-full pr-12">
+          {/*   <div className="w-full pr-12">
             <h1>Approvers</h1>
             {fetchingApprovers ? (
               <p>Loading approvers...</p>
@@ -717,15 +715,15 @@ const ViewRequestModal: React.FC<Props> = ({
               </select>
             )}
           </div> */}
-            {isEditing && (
-          <div className="my-2">
-            <button
-              onClick={openAddCustomModal}
-              className="bg-primary  text-white p-2 rounded"
-            >
-              Edit Approver
-            </button>
-          </div>
+          {isEditing && (
+            <div className="my-2">
+              <button
+                onClick={openAddCustomModal}
+                className="bg-primary  text-white p-2 rounded"
+              >
+                Edit Approver
+              </button>
+            </div>
           )}
           <div className="w-full flex-col justify-center items-center">
             {isFetchingApprovers ? (
@@ -747,6 +745,9 @@ const ViewRequestModal: React.FC<Props> = ({
                               alt="avatar"
                               width={120}
                               className="relative z-20 pointer-events-none"
+                              draggable="false"
+                              onContextMenu={(e) => e.preventDefault()}
+                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                             />
                           </div>
                         )}
@@ -801,6 +802,9 @@ const ViewRequestModal: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                               />
                             </div>
                           )}
@@ -861,6 +865,9 @@ const ViewRequestModal: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                               />
                             </div>
                           )}
@@ -952,7 +959,7 @@ const ViewRequestModal: React.FC<Props> = ({
           </div>
 
           <div className="w-full">
-            <h2 className="text-lg font-bold mb-2">Comments</h2>
+            <h2 className="text-lg font-bold mb-2">Comments:</h2>
 
             {/* Check if there are no comments in both notedBy and approvedBy */}
             {notedBy.filter((user) => user.comment).length === 0 &&
@@ -1059,7 +1066,7 @@ const ViewRequestModal: React.FC<Props> = ({
           refreshData={refreshData}
         />
       )}
-        <AddCustomModal
+      <AddCustomModal
         modalIsOpen={isModalOpen}
         closeModal={closeModals}
         openCompleteModal={() => {}}

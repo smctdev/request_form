@@ -506,13 +506,51 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
           <div className="w-full md:w-1/2 mb-4 flex flex-col">
             <h1 className="lg:text-lg text-base mb-2">Signature</h1>
             {user?.signature ? (
-              <img
-                src={user.signature}
-                alt="User Signature"
-                className="sigCanvas border border-black h-28 w-full"
-                draggable="false"
-                onContextMenu={(e) => e.preventDefault()}
-              />
+              <div className="flex items-center justify-center overflow-hidden">
+              <div className="relative">
+                <img
+                  src={user.signature}
+                  className="sigCanvas border border-black h-28 w-full"
+                  alt="signature"
+                  draggable="false"
+                  onContextMenu={(e) => e.preventDefault()}
+                />
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div
+                    className="text-gray-950 opacity-30"
+                    style={{
+                      backgroundImage:
+                        "repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) 100px)",
+                      backgroundSize: "400px 400px",
+                      width: "100%",
+                      height: "100%",
+                      fontSize: "1.2em",
+                      transform: "rotate(-12deg)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    SMCT Group of Companies SMCT Group of Companies{" "}
+                    <br />
+                    SMCT Group of Companies SMCT Group of Companies{" "}
+                    <br />
+                    SMCT Group of Companies SMCT Group of Companies{" "}
+                    <br />
+                    SMCT Group of Companies SMCT Group of Companies{" "}
+                    <br />
+                    SMCT Group of Companies SMCT Group of Companies{" "}
+                    <br /> SMCT Group of Companies SMCT Group of
+                    Companies
+                    <br />
+                    SMCT Group of Companies SMCT Group of Companies
+                    <br /> SMCT Group of Companies SMCT Group of
+                    Companies
+                  </div>
+                </div>
+              </div>
+            </div>
             ) : (
               <SignatureCanvas
                 penColor="black"

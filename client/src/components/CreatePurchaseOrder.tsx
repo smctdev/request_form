@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select/dist/declarations/src/Select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { CalendarIcon } from "@heroicons/react/24/solid";
+import { CalendarIcon, MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import { set, useForm } from "react-hook-form";
 import { z, ZodError } from "zod";
@@ -334,11 +334,23 @@ const CreatePurchaseOrder = (props: Props) => {
     setFormData(null);
   };
 
-  const handleRemoveItem = () => {
+  const handleRemoveItem = (index: number) => {
     if (items.length > 1) {
-      const updatedItems = [...items];
-      updatedItems.pop();
-      setItems(updatedItems);
+      Swal.fire({
+        title: "Are you sure?",
+        text: "This item will be removed!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, remove it!",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const updatedItems = items.filter((_, i) => i !== index);
+          setItems(updatedItems);
+        }
+      });
     }
   };
 
@@ -373,23 +385,6 @@ const CreatePurchaseOrder = (props: Props) => {
         updatedItems[index].totalAmount = "";
       }
     }
-    <div className="space-x-3 flex justify-end mt-20 pb-10">
-      <button className={`bg-yellow ${buttonStyle}`} onClick={handleAddItem}>
-        Add
-      </button>
-      {items.length > 1 && (
-        <button className={`${buttonStyle} bg-pink`} onClick={handleRemoveItem}>
-          Remove Item
-        </button>
-      )}
-      <button
-        className={`bg-primary ${buttonStyle}`}
-        type="submit"
-        onClick={handleFormSubmit}
-      >
-        {loading ? <ClipLoader color="#36d7b7" /> : "Send Request"}
-      </button>
-    </div>;
 
     setItems(updatedItems);
   };
@@ -485,6 +480,16 @@ const CreatePurchaseOrder = (props: Props) => {
                       onChange={(e) =>
                         handleInputChange(index, "quantity", e.target.value)
                       }
+                      onKeyDown={(e) => {
+                        // Prevent non-digit input
+                        if (
+                          !/[0-9]/.test(e.key) &&
+                          e.key !== "Backspace" &&
+                          e.key !== "Tab"
+                        ) {
+                          e.preventDefault();
+                        }
+                      }}
                       className={`${inputStyle} h-[44px]`}
                     />
                     {validationErrors[`items.${index}.quantity`] &&
@@ -533,6 +538,16 @@ const CreatePurchaseOrder = (props: Props) => {
                       onChange={(e) =>
                         handleInputChange(index, "unitCost", e.target.value)
                       }
+                      onKeyDown={(e) => {
+                        // Prevent non-digit input
+                        if (
+                          !/[0-9]/.test(e.key) &&
+                          e.key !== "Backspace" &&
+                          e.key !== "Tab"
+                        ) {
+                          e.preventDefault();
+                        }
+                      }}
                       placeholder="₱"
                       className={`${inputStyle} h-[44px]`}
                     />
@@ -582,11 +597,34 @@ const CreatePurchaseOrder = (props: Props) => {
                       onBlur={() => handleTextareaHeight(index, "remarks")} // Adjust height on blur
                       onInput={() => handleTextareaHeight(index, "remarks")} // Adjust height on input change
                     />
+                     <div className="flex justify-end gap-2 mt-2">
+                      {items.length > 1 && (
+                        <span
+                          className={`${buttonStyle} bg-pink flex items-center justify-center cursor-pointer hover:bg-white hover:border-4 hover:border-pink hover:text-pink`}
+                          onClick={() => handleRemoveItem(index)}
+                        >
+                          <MinusCircleIcon
+                            className="h-5 w-5 mr-2"
+                            aria-hidden="true"
+                          />
+                          Remove Item
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
-
+            <div className="flex flex-col items-center justify-center w-full mt-4">
+              <hr className="w-full border-t-4 border-dotted border-gray-400 my-2" />
+              <span
+                className={`bg-yellow flex items-center cursor-pointer hover:bg-white hover:border-4 hover:border-yellow hover:text-yellow text-gray-950 mt-2 max-w-md justify-center ${buttonStyle}`}
+                onClick={handleAddItem}
+              >
+                <PlusCircleIcon className="h-5 w-5 mr-2" aria-hidden="true" />
+                Add Item
+              </span>
+            </div>
             <div className="flex justify-between flex-col md:flex-row">
               <div className="w-full max-w-md  p-4">
                 <p className="font-semibold">Attachments:</p>
@@ -634,6 +672,13 @@ const CreatePurchaseOrder = (props: Props) => {
             </div>
             <div className="mb-4 ml-5">
               <h3 className="font-bold mb-3">Approved By:</h3>
+              {approvedBy.length === 0 ? (
+                <p className=" text-gray-500">
+                  Please select an approver!
+                  <br/> 
+                  <span className="italic text-sm">Note: You can add approvers by clicking the 'Add Approver' button above.</span>
+                </p>
+              ) : (
               <ul className="flex flex-wrap gap-6">
                 {" "}
                 {/* Use gap instead of space-x */}
@@ -656,9 +701,10 @@ const CreatePurchaseOrder = (props: Props) => {
                   </li>
                 ))}
               </ul>
+              )}
             </div>
             <div className="space-x-3 flex justify-end mt-20 pb-10">
-              <button
+              {/* <button
                 type="button"
                 className={`bg-yellow ${buttonStyle}`}
                 onClick={handleAddItem}
@@ -673,7 +719,7 @@ const CreatePurchaseOrder = (props: Props) => {
                 >
                   Remove Item
                 </button>
-              )}
+              )} */}
               <button
                 className={`bg-primary ${buttonStyle}`}
                 type="submit"

@@ -91,7 +91,7 @@ type Item = {
   amount: string;
   perDiem: string;
 };
-const headerStyle ="border border-black bg-[#8EC7F7] w-2/12 text-sm p-4"
+const headerStyle = "border border-black bg-[#8EC7F7] w-2/12 text-sm p-4";
 const inputStyle = "border border-black text-[12px] font-bold p-2 h-14";
 const tableStyle = "border border-black p-2";
 const tableStyle2 = "bg-white p-2";
@@ -626,36 +626,16 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
               <table className="border-collapse w-full border-black border lg:overflow-auto xl:table-fixed">
                 <thead>
                   <tr>
-                    <th className={`${headerStyle}`}>
-                      Date
-                    </th>
-                    <th className={`${headerStyle}`}>
-                      Day
-                    </th>
-                    <th className={`${headerStyle}`}>
-                      From
-                    </th>
-                    <th className={`${headerStyle}`}>
-                      To
-                    </th>
-                    <th className={`${headerStyle}`}>
-                      Activity
-                    </th>
-                    <th className={`${headerStyle}`}>
-                      Hotel
-                    </th>
-                    <th className={`${headerStyle}`}>
-                      Rate
-                    </th>
-                    <th className={`${headerStyle}`}>
-                      Amount
-                    </th>
-                    <th className={`${headerStyle}`}>
-                      Per Diem
-                    </th>
-                    <th className={`${headerStyle}`}>
-                      Remarks
-                    </th>
+                    <th className={`${headerStyle}`}>Date</th>
+                    <th className={`${headerStyle}`}>Day</th>
+                    <th className={`${headerStyle}`}>From</th>
+                    <th className={`${headerStyle}`}>To</th>
+                    <th className={`${headerStyle}`}>Activity</th>
+                    <th className={`${headerStyle}`}>Hotel</th>
+                    <th className={`${headerStyle}`}>Rate</th>
+                    <th className={`${headerStyle}`}>Amount</th>
+                    <th className={`${headerStyle}`}>Per Diem</th>
+                    <th className={`${headerStyle}`}>Remarks</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -691,11 +671,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               type="text"
                               value={item.from}
                               onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "from",
-                                  e.target.value
-                                )
+                                handleItemChange(index, "from", e.target.value)
                               }
                               className="w-full bg-white"
                             />
@@ -705,11 +681,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               type="text"
                               value={item.to}
                               onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "to",
-                                  e.target.value
-                                )
+                                handleItemChange(index, "to", e.target.value)
                               }
                               className="w-full bg-white"
                             />
@@ -965,6 +937,9 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               alt="avatar"
                               width={120}
                               className="relative z-20 pointer-events-none"
+                              draggable="false"
+                              onContextMenu={(e) => e.preventDefault()}
+                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                             />
                           </div>
                         )}
@@ -1019,6 +994,9 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                               />
                             </div>
                           )}
@@ -1079,6 +1057,9 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                               />
                             </div>
                           )}

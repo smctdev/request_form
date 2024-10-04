@@ -558,7 +558,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
       newWindow.focus();
     }
   };
-  
+
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="p-4 relative w-full px-10 md:mx-0 z-10 md:w-1/2 lg:w-2/3 space-y-auto h-4/5 overflow-scroll bg-white border-black rounded-t-lg shadow-lg">
@@ -969,7 +969,51 @@ const ViewLiquidationModal: React.FC<Props> = ({
                     <p className="font-semibold pl-2    ">SIGNATURE</p>
                   </td>
                   <td className={`${tableStyle} h-10`}>
-                    <img src={record.form_data[0].signature} className="h-24" />
+                    <div className="flex items-center justify-center overflow-hidden">
+                      <div className="relative">
+                        <img
+                          src={record.form_data[0].signature}
+                          alt="signature"
+                          draggable="false"
+                          className="h-24"
+                          onContextMenu={(e) => e.preventDefault()}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <div
+                            className="text-gray-950 opacity-30"
+                            style={{
+                              backgroundImage:
+                                "repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) 100px)",
+                              backgroundSize: "400px 400px",
+                              width: "100%",
+                              height: "100%",
+                              fontSize: "1.2em",
+                              transform: "rotate(-12deg)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br /> SMCT Group of Companies SMCT Group of
+                            Companies
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies
+                            <br /> SMCT Group of Companies SMCT Group of
+                            Companies
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </td>
                 </tr>
                 <tr>
@@ -1013,6 +1057,9 @@ const ViewLiquidationModal: React.FC<Props> = ({
                               alt="avatar"
                               width={120}
                               className="relative z-20 pointer-events-none"
+                              draggable="false"
+                              onContextMenu={(e) => e.preventDefault()}
+                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                             />
                           </div>
                         )}
@@ -1067,6 +1114,9 @@ const ViewLiquidationModal: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                               />
                             </div>
                           )}
@@ -1127,6 +1177,9 @@ const ViewLiquidationModal: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                               />
                             </div>
                           )}

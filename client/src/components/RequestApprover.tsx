@@ -19,6 +19,7 @@ import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import { request } from "http";
 import { record } from "zod";
 import ApproverDiscount from "./ApproverDiscount";
+import { ClipLoader } from "react-spinners";
 type Props = {};
 
 type Record = {
@@ -169,6 +170,7 @@ const RequestApprover = (props: Props) => {
   const userId = localStorage.getItem("id");
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -207,7 +209,7 @@ const RequestApprover = (props: Props) => {
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-
+      setLoading(true);
       axios
         .get(
           `http://122.53.61.91:6002/api/request-forms/for-approval/${userId}`,
@@ -217,13 +219,27 @@ const RequestApprover = (props: Props) => {
         )
         .then((response) => {
           setRequests(response.data.request_forms);
-   
+          setLoading(false);
         })
         .catch((error) => {
           console.error("Error fetching requests data:", error);
+          setLoading(false);
         });
     }
   }, [userId]);
+
+  const NoDataComponent = () => (
+    <div className="flex justify-center items-center h-64 text-gray-500">
+      <p className="text-lg">No records found</p>
+    </div>
+  );
+  const LoadingSpinner = () => (
+    <div className="flex flex-col justify-center items-center h-64">
+      {/* <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div> */}
+      <ClipLoader color="#007bff" loading={loading} size={50} />
+      <p className="mt-2 text-gray-700 text-center">Please wait</p>
+    </div>
+  );
 
   const handleView = (record: Record) => {
     setSelectedRecord(record);
@@ -297,7 +313,7 @@ const RequestApprover = (props: Props) => {
       name: "Status",
       selector: (row: Record) => row.status,
       sortable: true,
-      width: "300px",
+      width: "200px",
       cell: (row: Record) => (
         <div className="relative flex items-center group">
           {/* Status Badge */}
@@ -424,6 +440,9 @@ const RequestApprover = (props: Props) => {
                   }))
                   .sort((a, b) => b.id - a.id) // Sorts by id in descending order
               }
+              noDataComponent={<NoDataComponent />}
+              progressPending={loading}
+              progressComponent={<LoadingSpinner />}
               pagination
               striped
               customStyles={tableCustomStyles}

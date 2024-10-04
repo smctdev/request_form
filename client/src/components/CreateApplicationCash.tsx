@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select/dist/declarations/src/Select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { CalendarIcon } from "@heroicons/react/24/solid";
+import { CalendarIcon, MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
 import TextareaAutosize from "react-textarea-autosize";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -290,9 +290,22 @@ const CreateApplicationCash = (props: Props) => {
 
   const handleRemoveItem = () => {
     if (tableData.length > 1) {
-      const updatedItems = [...tableData];
-      updatedItems.pop();
-      setTableData(updatedItems);
+      Swal.fire({
+        title: "Are you sure?",
+        text: "This item will be removed!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, remove it!",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const updatedItems = [...tableData];
+          updatedItems.pop();
+          setTableData(updatedItems);
+        }
+      });
     }
   };
 
@@ -659,13 +672,13 @@ const CreateApplicationCash = (props: Props) => {
                               onChange={(e) => {
                                 const value = e.target.value;
                                 const day = [
-                                  "Sun",
-                                  "Mon",
-                                  "Tue",
-                                  "Wed",
-                                  "Thu",
-                                  "Fri",
-                                  "Sat",
+                                  "Sunday",
+                                  "Monday",
+                                  "Tuesday",
+                                  "Wednesday",
+                                  "Thursday",
+                                  "Friday",
+                                  "Saturday",
                                 ][new Date(value).getDay()];
                                 handleChange(index, "cashDate", value);
                                 handleChange(index, "day", day);
@@ -684,12 +697,12 @@ const CreateApplicationCash = (props: Props) => {
                                 <p className="text-red-500">Date Required</p>
                               )}
                           </td>
-                          <td className="p-1 border border-black ">
+                          <td className="p-1 border border-black">
                             <input
                               type="text"
                               value={item.day}
                               readOnly
-                              className={`${tableInput}`}
+                              className={`cursor-not-allowed ${tableInput}`}
                             />
                           </td>
                           <td className="p-1 border border-black ">
@@ -801,6 +814,16 @@ const CreateApplicationCash = (props: Props) => {
                               onChange={(e) =>
                                 handleChange(index, "rate", e.target.value)
                               }
+                              onKeyDown={(e) => {
+                                // Prevent non-digit input
+                                if (
+                                  !/[0-9]/.test(e.key) &&
+                                  e.key !== "Backspace" &&
+                                  e.key !== "Tab"
+                                ) {
+                                  e.preventDefault();
+                                }
+                              }}
                               className={`${tableInput}`}
                             />
                           </td>
@@ -811,6 +834,16 @@ const CreateApplicationCash = (props: Props) => {
                               onChange={(e) =>
                                 handleChange(index, "amount", e.target.value)
                               }
+                              onKeyDown={(e) => {
+                                // Prevent non-digit input
+                                if (
+                                  !/[0-9]/.test(e.key) &&
+                                  e.key !== "Backspace" &&
+                                  e.key !== "Tab"
+                                ) {
+                                  e.preventDefault();
+                                }
+                              }}
                               className={`${tableInput}`}
                             />
                           </td>
@@ -821,6 +854,16 @@ const CreateApplicationCash = (props: Props) => {
                               onChange={(e) =>
                                 handleChange(index, "perDiem", e.target.value)
                               }
+                              onKeyDown={(e) => {
+                                // Prevent non-digit input
+                                if (
+                                  !/[0-9]/.test(e.key) &&
+                                  e.key !== "Backspace" &&
+                                  e.key !== "Tab"
+                                ) {
+                                  e.preventDefault();
+                                }
+                              }}
                               className={`${tableInput}`}
                             />
                           </td>
@@ -849,6 +892,31 @@ const CreateApplicationCash = (props: Props) => {
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </div>
+            <div className="flex flex-col items-center justify-center mt-4">
+              <hr className="w-full border-t-4 border-dotted border-gray-400 my-2" />
+
+              <div className="flex flex-row items-center gap-2 mt-2">
+                {tableData.length > 1 && (
+                  <span
+                    className={`${buttonStyle} bg-pink flex items-center justify-center cursor-pointer hover:bg-white hover:border-4 hover:border-pink hover:text-pink`}
+                    onClick={handleRemoveItem}
+                  >
+                    <MinusCircleIcon
+                      className="h-5 w-5 mr-2"
+                      aria-hidden="true"
+                    />
+                    Remove Item
+                  </span>
+                )}
+                <span
+                  className={`bg-yellow flex items-center cursor-pointer hover:bg-white hover:border-4 hover:border-yellow hover:text-yellow text-gray-950 max-w-md justify-center ${buttonStyle}`}
+                  onClick={handleAddItem}
+                >
+                  <PlusCircleIcon className="h-5 w-5 mr-2" aria-hidden="true" />
+                  Add Item
+                </span>
               </div>
             </div>
             <div className="flex justify-between overflow-x-auto ">
@@ -898,7 +966,8 @@ const CreateApplicationCash = (props: Props) => {
                       <p className="font-semibold">PER DIEM</p>
                     </td>
                     <td className={`${tableStyle} text-center`}>
-                      <p className="font-bold">{totalPerDiem.toFixed(2)}</p>
+                      <input className="font-bold text-center"  value={`${totalPerDiem.toFixed(2)}\u00A0\u00A0\u00A0\u00A0`}  disabled/> 
+                      {/* <p className="font-bold">{totalPerDiem.toFixed(2)}</p> */}
                     </td>
                   </tr>
 
@@ -991,6 +1060,13 @@ const CreateApplicationCash = (props: Props) => {
             </div>
             <div className="mb-4 ml-5">
               <h3 className="font-bold mb-3">Approved By:</h3>
+              {approvedBy.length === 0 ? (
+                <p className=" text-gray-500">
+                  Please select an approver!
+                  <br/> 
+                  <span className="italic text-sm">Note: You can add approvers by clicking the 'Add Approver' button above.</span>
+                </p>
+              ) : (
               <ul className="flex flex-wrap gap-6">
                 {" "}
                 {/* Use gap instead of space-x */}
@@ -1013,9 +1089,10 @@ const CreateApplicationCash = (props: Props) => {
                   </li>
                 ))}
               </ul>
+              )}
             </div>
             <div className="space-x-3 flex justify-end mt-20 pb-10">
-              <button
+              {/* <button
                 type="button"
                 className={`bg-yellow ${buttonStyle}`}
                 onClick={handleAddItem}
@@ -1030,7 +1107,7 @@ const CreateApplicationCash = (props: Props) => {
                 >
                   Remove Item
                 </button>
-              )}
+              )} */}
 
               <button
                 className={`bg-primary ${buttonStyle}`}
