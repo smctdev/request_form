@@ -19,6 +19,7 @@ import Echo from "../utils/Echo";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { set } from "react-hook-form";
+import { useUser } from "../context/UserContext";
 
 type NavItem = {
   title: string;
@@ -33,6 +34,10 @@ interface SidebarProps {
   toggleSidebar: () => void;
 }
 
+interface User {
+  id: number;
+}
+
 const Sidebar2: React.FC<SidebarProps> = ({
   darkMode,
   role,
@@ -43,6 +48,8 @@ const Sidebar2: React.FC<SidebarProps> = ({
   const location = useLocation(); // Get current location
   const [notificationReceived, setnotificationReceived] = useState(false);
   const [pendingCounts, setPendingCounts] = useState(0);
+  const [user, setUser] = useState<User>({ id: 0 });
+  const { userId } = useUser();
 
   const navItems: NavItem[] =
     role === "approver"
@@ -102,14 +109,32 @@ const Sidebar2: React.FC<SidebarProps> = ({
   }, []);
 
   useEffect(() => {
-    const userId = localStorage.getItem("id");
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setUser(response.data.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
     if (userId) {
       const token = localStorage.getItem("token");
       if (!token) {
         console.error("Token is missing");
         return;
       }
-
       const headers = {
         Authorization: `Bearer ${token}`,
       };
@@ -117,7 +142,7 @@ const Sidebar2: React.FC<SidebarProps> = ({
       const fetchRequests = async () => {
         try {
           const response = await axios.get(
-            `http://122.53.61.91:6002/api/request-forms/for-approval/${userId}`,
+            `${process.env.REACT_APP_API_BASE_URL}/request-forms/for-approval/${userId}`,
             { headers }
           );
           const filtered = response.data.request_forms.filter(
@@ -135,21 +160,21 @@ const Sidebar2: React.FC<SidebarProps> = ({
   }, [notificationReceived]);
 
   useEffect(() => {
-    const id = localStorage.getItem("id");
+    if (user && user.id) {
+      if (Echo) {
+        const channel = Echo.private(`pendingCount.${user.id}`).listen(
+          "NotificationEvent",
+          (e: any) => {
+            setnotificationReceived(true);
+          }
+        );
 
-    const channel = Echo.private(`pendingCount.${id}`).listen(
-      "NotificationEvent",
-      (e: any) => {
-        setnotificationReceived(true);
+        return () => {
+          channel.stopListening("NotificationEvent");
+        };
       }
-    );
-
-    return () => {
-      channel.stopListening(
-        "NotificationEvent"
-      );
-    };
-  }, []);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (notificationReceived) {
@@ -206,7 +231,7 @@ const Sidebar2: React.FC<SidebarProps> = ({
                     <item.icon className={iconStyle} />
 
                     {pendingCounts > 0 && item.title === "Process Request" ? (
-                      <span className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                      <span className="absolute top-0 right-0 bg-pink text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">
                         {pendingCounts}
                       </span>
                     ) : (

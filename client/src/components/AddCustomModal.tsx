@@ -51,7 +51,7 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
           setLoading(true);
           const userId = localStorage.getItem("id");
           const response = await axios.get(
-            `http://122.53.61.91:6002/api/view-approvers/${userId}`,
+            `${process.env.REACT_APP_API_BASE_URL}/view-approvers/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,

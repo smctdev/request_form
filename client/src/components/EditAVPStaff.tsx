@@ -84,7 +84,7 @@ const EditAVPStaff = ({
   
         // Fetch area manager data
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/get-avpstaff-branch/${selectedUser.id}`,
+          `${process.env.REACT_APP_API_BASE_URL}/get-avpstaff-branch/${selectedUser.id}`,
           { headers }
         );
   
@@ -124,7 +124,7 @@ const EditAVPStaff = ({
         };
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`,
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`,
           {
             headers,
           }
@@ -181,7 +181,7 @@ const EditAVPStaff = ({
         };
 
         const response = await axios.put(
-          `http://122.53.61.91:6002/api/update-avpstaff-branch/${selectedUser.id}`,
+          `${process.env.REACT_APP_API_BASE_URL}/update-avpstaff-branch/${selectedUser.id}`,
           putData,
           {
             headers,

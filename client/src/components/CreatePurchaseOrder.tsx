@@ -134,7 +134,7 @@ const CreatePurchaseOrder = (props: Props) => {
             return;
         }
 
-        const response = await axios.get(`http://122.53.61.91:6002/api/custom-approvers/${id}`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -293,7 +293,7 @@ const CreatePurchaseOrder = (props: Props) => {
       setLoading(true);
       // Perform the actual form submission
       const response = await axios.post(
-        "http://122.53.61.91:6002/api/create-request",
+        `${process.env.REACT_APP_API_BASE_URL}/create-request`,
         formData, // Use the formData stored in state
         {
           headers: {

@@ -50,7 +50,7 @@ const SetupUser = (props: Props) => {
       try {
      
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`
         );
         const branches = response.data.data;
         
@@ -96,7 +96,7 @@ const SetupUser = (props: Props) => {
         };
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-users`,
+          `${process.env.REACT_APP_API_BASE_URL}/view-users`,
           {
             headers,
           }
@@ -151,7 +151,7 @@ const SetupUser = (props: Props) => {
       };
 
       const response = await axios.delete(
-        `http://122.53.61.91:6002/api/delete-user/${selectedUser.id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/delete-user/${selectedUser.id}`,
         {
           headers,
         }
@@ -255,7 +255,7 @@ const SetupUser = (props: Props) => {
       };
 
       const response = await axios.get(
-        `http://122.53.61.91:6002/api/view-users`,
+        `${process.env.REACT_APP_API_BASE_URL}/view-users`,
         {
           headers,
         }

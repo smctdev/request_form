@@ -327,7 +327,7 @@ class RequestFormController extends Controller
                 $date = now();
                 $type = 'App\Notifications\ApprovalProcessNotification';
                 $read_at = null;
-                // event(new NotificationEvent($firstApprover->id, $message, $date, $type, $read_at));
+                event(new NotificationEvent(Auth::user()->id, $firstApprovalProcess->user->id));
             }
 
             // Commit transaction
@@ -513,7 +513,7 @@ class RequestFormController extends Controller
                     $date = now();
                     $type = 'App\Notifications\ApprovalProcessNotification';
                     $read_at = null;
-                    // event(new NotificationEvent($firstApproverUser->id, $message, $date, $type, $read_at));
+                    event(new NotificationEvent(Auth::user()->id, $firstApprovalProcess->user->id));
                 }
             }
 

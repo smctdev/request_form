@@ -67,7 +67,7 @@ const AddAVPModal = ({
         };
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/getAVP`,
+          `${process.env.REACT_APP_API_BASE_URL}/getAVP`,
           {
             headers,
           }
@@ -98,7 +98,7 @@ const AddAVPModal = ({
         };
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/getStaff`,
+          `${process.env.REACT_APP_API_BASE_URL}/getStaff`,
           {
             headers,
           }
@@ -128,7 +128,7 @@ const AddAVPModal = ({
         };
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`,
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`,
           {
             headers,
           }
@@ -188,7 +188,7 @@ const AddAVPModal = ({
         };
 
         const response = await axios.post(
-          `http://122.53.61.91:6002/api/add-avpstaff-branch`,
+          `${process.env.REACT_APP_API_BASE_URL}/add-avpstaff-branch`,
           postData,
           {
             headers,

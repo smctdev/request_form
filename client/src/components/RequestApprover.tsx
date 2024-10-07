@@ -178,10 +178,44 @@ const RequestApprover = (props: Props) => {
   const [notificationReceived, setnotificationReceived] = useState(false);
 
   useEffect(() => {
+    const id = localStorage.getItem("id");
+    if (!id) return;
+    if (Echo) {
+      const channel = Echo.private(`App.Models.User.${id}`).notification(
+        (notification: any) => {
+          setnotificationReceived(true);
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "info",
+            title: notification.message,
+            showConfirmButton: false,
+            timer: 6000,
+            timerProgressBar: true,
+            showCloseButton: true,
+          });
+        }
+      );
+
+      return () => {
+        channel.stopListening(
+          "IlluminateNotificationsEventsBroadcastNotificationCreated"
+        );
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    if (notificationReceived) {
+      setnotificationReceived(false);
+    }
+  }, [notificationReceived]);
+
+  useEffect(() => {
     const fetchBranchData = async () => {
       try {
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`
         );
         const branches = response.data.data;
 
@@ -210,15 +244,15 @@ const RequestApprover = (props: Props) => {
         console.error("Token is missing");
         return;
       }
-  
+
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-  
+
       const fetchRequests = async () => {
         try {
           const response = await axios.get(
-            `http://122.53.61.91:6002/api/request-forms/for-approval/${userId}`,
+            `${process.env.REACT_APP_API_BASE_URL}/request-forms/for-approval/${userId}`,
             { headers }
           );
           setRequests(response.data.request_forms);
@@ -228,42 +262,10 @@ const RequestApprover = (props: Props) => {
           setLoading(false);
         }
       };
-  
+
       fetchRequests();
     }
   }, [userId, notificationReceived]);
-  
-
-  useEffect(() => {
-    const id = localStorage.getItem("id");
-
-    const channel = Echo.private(`App.Models.User.${id}`).notification(
-      (notification: any) => {
-        setnotificationReceived(true);
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'info',
-          title: notification.message,
-          showConfirmButton: false,
-          timer: 6000,
-          timerProgressBar: true,
-          showCloseButton: true,
-        });
-      }
-    );
-
-    return () => {
-
-      channel.stopListening("Illuminate\Notifications\Events\BroadcastNotificationCreated");
-    };
-  }, []);
-
-  useEffect(() => {
-    if (notificationReceived) {
-      setnotificationReceived(false);
-    }
-  }, [notificationReceived]);
 
   const NoDataComponent = () => (
     <div className="flex justify-center items-center h-64 text-gray-500">
@@ -366,7 +368,7 @@ const RequestApprover = (props: Props) => {
                 : row.status.trim() === "Ongoing"
                 ? "bg-blue-500"
                 : "bg-red-600"
-            } rounded-lg py-1 px-3 text-center text-white flex items-center`}
+            } rounded-lg py-1 px-3 text-start text-white flex`}
           >
             {row.status.trim()}
           </div>
@@ -420,7 +422,7 @@ const RequestApprover = (props: Props) => {
 
       axios
         .get(
-          `http://122.53.61.91:6002/api/request-forms/for-approval/${userId}`,
+          `${process.env.REACT_APP_API_BASE_URL}/request-forms/for-approval/${userId}`,
           {
             headers,
           }
@@ -505,7 +507,7 @@ const RequestApprover = (props: Props) => {
             refreshData={refreshData}
           />
         )}
-          {modalIsOpen &&
+      {modalIsOpen &&
         selectedRecord &&
         selectedRecord.form_type === "Discount Requisition Form" && (
           <ApproverDiscount

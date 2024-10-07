@@ -140,7 +140,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
 
       // Fetch total requests sent
       axios
-        .get(`http://122.53.61.91:6002/api/total-request-sent/${userId}`, {
+        .get(`${process.env.REACT_APP_API_BASE_URL}/total-request-sent/${userId}`, {
           headers,
         })
       
@@ -175,7 +175,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
       };
   
       const response = await axios.get(
-        `http://122.53.61.91:6002/api/request-forms/for-approval/${userId}`,
+        `${process.env.REACT_APP_API_BASE_URL}/request-forms/for-approval/${userId}`,
         { headers }
       );
   

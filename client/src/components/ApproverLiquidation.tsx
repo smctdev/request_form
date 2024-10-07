@@ -167,7 +167,7 @@ const ApproverLiquidation: React.FC<Props> = ({
         }
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/profile`,
+          `${process.env.REACT_APP_API_BASE_URL}/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -196,7 +196,7 @@ const ApproverLiquidation: React.FC<Props> = ({
     const fetchBranchData = async () => {
       try {
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`
         );
         const branches = response.data.data;
 
@@ -283,7 +283,7 @@ const ApproverLiquidation: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(`http://122.53.61.91:6002/api/profile`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -342,7 +342,7 @@ const ApproverLiquidation: React.FC<Props> = ({
       // Log the contents of requestData for debugging
 
       const response = await axios.post(
-        `http://122.53.61.91:6002/api/request-forms/${record.id}/process`,
+        `${process.env.REACT_APP_API_BASE_URL}/request-forms/${record.id}/process`,
         requestData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -387,7 +387,7 @@ const ApproverLiquidation: React.FC<Props> = ({
       setApprovedLoading(true);
 
       const response = await axios.post(
-        `http://122.53.61.91:6002/api/request-forms/${record.id}/process`,
+        `${process.env.REACT_APP_API_BASE_URL}/request-forms/${record.id}/process`,
         requestData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

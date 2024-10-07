@@ -147,7 +147,7 @@ const SetupAVP = (props: Props) => {
         setLoading(true);
         const userId = localStorage.getItem("id");
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/getStaff`,
+          `${process.env.REACT_APP_API_BASE_URL}/getStaff`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -172,7 +172,7 @@ const SetupAVP = (props: Props) => {
         setLoading(true);
         const userId = localStorage.getItem("id");
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/get-avpstaff-branch`,
+          `${process.env.REACT_APP_API_BASE_URL}/get-avpstaff-branch`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -198,7 +198,7 @@ const SetupAVP = (props: Props) => {
         setLoading(true);
         const userId = localStorage.getItem("id");
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/get-avpstaff-branch`,
+          `${process.env.REACT_APP_API_BASE_URL}/get-avpstaff-branch`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -305,7 +305,7 @@ const SetupAVP = (props: Props) => {
 
       // Send PUT request to update user's role
       const response = await axios.delete(
-        `http://122.53.61.91:6002/api/delete-avpstaff-branch/${selectedUser?.id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/delete-avpstaff-branch/${selectedUser?.id}`,
 
         { headers }
       );

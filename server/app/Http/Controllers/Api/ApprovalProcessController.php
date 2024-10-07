@@ -124,7 +124,7 @@ class ApprovalProcessController extends Controller
                     $requesterFirstname = $employee->firstName;
                     $requesterLasttname = $employee->lastName;
                     $nextApprover->notify(new ApprovalProcessNotification($nextApprovalProcess, $firstname, $requestForm, $requesterFirstname, $requesterLasttname));
-                    event(new NotificationEvent(Auth::user()->id));
+                    event(new NotificationEvent(Auth::user()->id, $nextApprovalProcess->user->id));
 
                     // Broadcast the notification count update
                     $message = 'You have a request form to approve';
@@ -162,7 +162,7 @@ class ApprovalProcessController extends Controller
                 $date = now();
                 $type = 'App\Notifications\ReturnRequestNotification';
                 $read_at = null;
-                event(new NotificationEvent(Auth::user()->id));
+                event(new NotificationEvent(Auth::user()->id, $requestForm->user->id));
 
                 // Notify all previous approvers and update their status to "Rejected by [name]"
                 $previousApprovalProcesses = ApprovalProcess::where('request_form_id', $request_form_id)
@@ -188,7 +188,7 @@ class ApprovalProcessController extends Controller
                     $date = now();
                     $type = 'App\Notifications\PreviousReturnRequestNotification';
                     $read_at = null;
-                    event(new NotificationEvent(Auth::user()->id));
+                    event(new NotificationEvent(Auth::user()->id, $previousApprovalProcess->user->id));
                 }
             }
 

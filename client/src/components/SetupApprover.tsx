@@ -86,7 +86,7 @@ const SetupApprover = (props: Props) => {
     const fetchBranchData = async () => {
       try {
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`
         );
         const branches = response.data.data;
 
@@ -131,7 +131,7 @@ const SetupApprover = (props: Props) => {
         };
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-approvers`,
+          `${process.env.REACT_APP_API_BASE_URL}/view-approvers`,
           {
             headers,
           }
@@ -177,7 +177,7 @@ const SetupApprover = (props: Props) => {
       };
 
       const response = await axios.get(
-        `http://122.53.61.91:6002/api/view-approvers`,
+        `${process.env.REACT_APP_API_BASE_URL}/view-approvers`,
         {
           headers,
         }
@@ -283,7 +283,7 @@ const SetupApprover = (props: Props) => {
       };
 
       const response = await axios.delete(
-        `http://122.53.61.91:6002/api/delete-approver/${selectedUser.id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/delete-approver/${selectedUser.id}`,
         {
           headers,
         }

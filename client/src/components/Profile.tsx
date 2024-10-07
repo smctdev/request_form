@@ -71,7 +71,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
           Authorization: `Bearer ${token}`,
         };
 
-        const response = await axios.get(`http://122.53.61.91:6002/api/view-branch`, { headers });
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/view-branch`, { headers });
         const branches = response.data.data;
         const branchOptions = branches.map((branch: { id: number; branch_code: string }) => ({
           id: branch.id,
@@ -105,7 +105,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
         const headers = {
           Authorization: `Bearer ${token}`,
         };
-        const response = await axios.get(`http://122.53.61.91:6002/api/profile`, { headers });
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/profile`, { headers });
 
         if (response.data.status) {
           const userData = response.data.data;
@@ -145,7 +145,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
       }
 
       const response = await axios.put(
-        `http://122.53.61.91:6002/api/change-password/${id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/change-password/${id}`,
         {
           current_password: currentPassword,
           new_password: newPassword,
@@ -220,7 +220,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
     try {
       setLoading(true);
       const response = await axios.post(
-        `http://122.53.61.91:6002/api/upload-profile-pic/${id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/upload-profile-pic/${id}`,
         formData,
         {
           headers: {
@@ -291,7 +291,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
         
      
         const response = await axios.post(
-          `http://122.53.61.91:6002/api/update-profilepic/${id}`,
+          `${process.env.REACT_APP_API_BASE_URL}/update-profilepic/${id}`,
           formData,
           {
             headers: {
@@ -339,7 +339,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
       try {
         // Send the data URL to the backend API
         const response = await axios.post(
-          `http://122.53.61.91:6002/api/update-signature/${id}`, // Ensure the URL is correct
+          `${process.env.REACT_APP_API_BASE_URL}/update-signature/${id}`, // Ensure the URL is correct
           { signature: signatureDataURL },
           {
             headers: {

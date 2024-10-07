@@ -113,7 +113,7 @@ const AddUserModal = ({
       try {
       
              const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`,
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`,
           
         );
         const branches = response.data.data;
@@ -168,7 +168,7 @@ const AddUserModal = ({
     try {
  
       setLoading(true);
-      const response = await axios.post("http://122.53.61.91:6002/api/register", {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/register`, {
         email: data.email,
         password: data.password,
         userName: data.userName,

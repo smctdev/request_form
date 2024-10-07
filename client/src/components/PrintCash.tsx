@@ -89,22 +89,22 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
   
     localStorage.removeItem("printData");
   }, []);
-  
+
   useEffect(() => {
     if (printData !== null) {
       let isPrinting = false;
-  
+
       window.onbeforeprint = () => {
         isPrinting = true;
       };
-  
+
       window.onafterprint = () => {
         localStorage.removeItem("printData");
         window.close();
       };
-  
+
       window.print();
-  
+
       setTimeout(() => {
         if (!isPrinting) {
           window.close();
@@ -112,10 +112,8 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
       }, 500);
     }
   }, [printData]);
-  
-  
 
-  const tableStyle = " border-black border text-xs font-normal";
+  const tableStyle = " border-black border text-xs py-1 font-normal";
   return (
     <div>
       <style>
@@ -128,7 +126,6 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
 
             table {
               width: 100%;
-              border-collapse: collapse;
             }
 
             th, td {
@@ -140,10 +137,6 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
 
             .summary-table {
               width: 20%;
-            }
-
-            .flex-wrap {
-              flex-wrap: wrap;
             }
 
             .underline {
@@ -277,28 +270,28 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
           </h1>
 
           <div className="w-2/5">
-            <p className="flex justify-between">
+            <p className="flex justify-between text-xs">
               <span className="w-full">TOTAL CASH ADVANCE</span>
               <span className="ml-4">P</span>
               <span className="border-b border-black w-36 text-center">
                 {printData?.id.form_data[0].grand_total}
               </span>
             </p>
-            <p className="flex justify-between">
+            <p className="flex justify-between text-xs">
               <span className="w-full">TOTAL EXPENSES</span>
               <span className="ml-4">P</span>
               <span className="border-b border-black w-36 text-center"></span>
             </p>
-            <p className="flex justify-between">
+            <p className="flex justify-between text-xs">
               <span className="w-full">BALANCE</span>
               <span className="ml-4">P</span>
               <span className="border-b border-black w-36 text-center"></span>
             </p>
           </div>
         </div>
-        <div className="flex  justify-between pb-4  w-full">
+        <div className="flex  justify-between w-full">
           <div className="ml-20">
-            <p>Noted By:</p>
+            <p className="text-xs">Noted By:</p>
             <div className=" border-black text-center">
               {printData?.notedBy.map((approver: any, index: number) => (
                 <div
@@ -326,7 +319,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
             </div>
           </div>
           <div className="mr-20">
-            <p>Approved By:</p>
+            <p className="text-xs">Approved By:</p>
             <div className=" border-black text-center">
               {printData?.approvedBy.map((approver: any, index: number) => (
                 <div
@@ -429,7 +422,6 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
                         <td className={`${tableStyle} `}></td>
                         <td className={`${tableStyle} `}></td>
                         <td className={`${tableStyle} `}></td>
-                        <td className={`${tableStyle} `}></td>
                       </tr>
                     )
                   )}
@@ -458,6 +450,14 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
                 <td className="font-normal">HOTEL</td>
                 <td className="font-medium">
                   {printData?.id.form_data[0].totalHotel}
+                </td>
+                <td className="font-medium">
+                  {/* Display calculated total per diem */}
+                  {printData?.id.form_data[0].items.reduce(
+                    (totalHotelRate: number, item: any) =>
+                      totalHotelRate + Number(item.rate),
+                    0
+                  )}
                 </td>
               </tr>
               <tr>

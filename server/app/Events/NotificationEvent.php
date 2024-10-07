@@ -24,10 +24,12 @@ class NotificationEvent implements ShouldBroadcastNow
 
 
     public $user_id;
+    public $next_approver_user_id;
 
-    public function __construct($user_id)
+    public function __construct($user_id, $next_approver_user_id)
     {
         $this->user_id = $user_id;
+        $this->next_approver_user_id = $next_approver_user_id;
     }
 
     /**
@@ -39,6 +41,7 @@ class NotificationEvent implements ShouldBroadcastNow
     {
         return [
             new PrivateChannel('pendingCount.' . $this->user_id),
+            new PrivateChannel('pendingCount.' . $this->next_approver_user_id),
         ];
     }
 

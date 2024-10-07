@@ -181,7 +181,7 @@ const tableCustomStyles = {
       color: "STRIPEDCOLOR",
       backgroundColor: "STRIPEDCOLOR",
       transition: "background-color 0.1s ease",
-      '&:hover': {
+      "&:hover": {
         backgroundColor: "#D1E4F3",
       },
     },
@@ -208,7 +208,7 @@ const Request = (props: Props) => {
     const fetchBranchData = async () => {
       try {
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`
         );
         const branches = response.data.data;
 
@@ -230,30 +230,31 @@ const Request = (props: Props) => {
     fetchBranchData();
   }, []);
 
-  
   useEffect(() => {
     const id = localStorage.getItem("id");
+    if (Echo) {
+      const channel = Echo.private(`App.Models.User.${id}`).notification(
+        (notification: any) => {
+          setnotificationReceived(true);
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "info",
+            title: notification.message,
+            showConfirmButton: false,
+            timer: 6000,
+            timerProgressBar: true,
+            showCloseButton: true,
+          });
+        }
+      );
 
-    const channel = Echo.private(`App.Models.User.${id}`).notification(
-      (notification: any) => {
-        setnotificationReceived(true);
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'info',
-          title: notification.message,
-          showConfirmButton: false,
-          timer: 6000,
-          timerProgressBar: true,
-          showCloseButton: true,
-        });
-      }
-    );
-
-    return () => {
-
-      channel.stopListening("Illuminate\Notifications\Events\BroadcastNotificationCreated");
-    };
+      return () => {
+        channel.stopListening(
+          "IlluminateNotificationsEventsBroadcastNotificationCreated"
+        );
+      };
+    }
   }, []);
 
   useEffect(() => {
@@ -270,11 +271,11 @@ const Request = (props: Props) => {
           console.error("Token is missing");
           return;
         }
-  
+
         try {
           const headers = { Authorization: `Bearer ${token}` };
           const response = await axios.get(
-            `http://122.53.61.91:6002/api/view-request`,
+            `${process.env.REACT_APP_API_BASE_URL}/view-request`,
             { headers }
           );
           setRequests(response.data.data);
@@ -284,11 +285,10 @@ const Request = (props: Props) => {
           setLoading(false);
         }
       };
-  
+
       fetchRequests();
     }
   }, [userId, notificationReceived]);
-  
 
   const handleView = (record: Record) => {
     setSelectedRecord(record);
@@ -299,52 +299,56 @@ const Request = (props: Props) => {
     // Check if the status is not "Pending"
     if (record.status !== "Pending") {
       Swal.fire({
-        icon: 'error',
-        title: 'Cannot Delete',
-        text: 'You cannot delete this request as it is already appr',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Close',
+        icon: "error",
+        title: "Cannot Delete",
+        text: "You cannot delete this request as it is already appr",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Close",
       });
       return; // Exit the function if the condition is not met
     }
-  
+
     Swal.fire({
-      title: 'Are you sure you want to delete this request?',
-      html: "Request Code: " + record.request_code + " <br/> Request Type: " + record.form_type,
-      icon: 'warning',
+      title: "Are you sure you want to delete this request?",
+      html:
+        "Request Code: " +
+        record.request_code +
+        " <br/> Request Type: " +
+        record.form_type,
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
         setLoading(true);
         const token = localStorage.getItem("token");
         if (!token) return;
         const headers = { Authorization: `Bearer ${token}` };
-  
+
         axios
-          .delete(`http://122.53.61.91:6002/api/delete-request/${record.id}`, {
+          .delete(`${process.env.REACT_APP_API_BASE_URL}/delete-request/${record.id}`, {
             headers,
           })
           .then(() => {
             Swal.fire({
-              icon: 'success',
-              title: 'Deleted!',
+              icon: "success",
+              title: "Deleted!",
               text: `The request was successfully deleted.`,
-              confirmButtonColor: '#3085d6',
-              confirmButtonText: 'Close',
+              confirmButtonColor: "#3085d6",
+              confirmButtonText: "Close",
             });
             refreshData();
           })
           .catch((error) => {
             console.error("Error deleting request:", error);
             Swal.fire({
-              icon: 'error',
-              title: 'Oops...',
-              text: 'Something went wrong!',
-              confirmButtonColor: '#3085d6',
-              confirmButtonText: 'Close',
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong!",
+              confirmButtonColor: "#3085d6",
+              confirmButtonText: "Close",
             });
           })
           .finally(() => {
@@ -353,8 +357,6 @@ const Request = (props: Props) => {
       }
     });
   };
-  
-  
 
   const handleClick = (index: number) => {
     setSelected(index);
@@ -408,7 +410,7 @@ const Request = (props: Props) => {
       };
 
       axios
-        .get(`http://122.53.61.91:6002/api/view-request`, {
+        .get(`${process.env.REACT_APP_API_BASE_URL}/view-request`, {
           headers,
         })
         .then((response) => {
@@ -511,7 +513,6 @@ const Request = (props: Props) => {
         </div>
       ),
     },
-    
   ];
 
   const items = [

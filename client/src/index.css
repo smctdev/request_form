@@ -35,3 +35,8 @@ input[type="date"] {
 .isPiMa{
   justify-content: center!important;
 }
+
+.bOmZm option{
+  color: rgb(127, 127, 127)!important;
+  font: 1em sans-serif;
+}

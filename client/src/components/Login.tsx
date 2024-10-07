@@ -44,23 +44,12 @@ const Login: React.FC = () => {
     margin: "0 auto",
     borderColor: "red",
   };
-  /*   useEffect(() => {
-    const checkAuthRedirect = () => {
-      const token = localStorage.getItem('token');
-      
-      if (token) {
-        // If token exists, redirect to the dashboard
-        navigate('/profile'); // Change this to your dashboard route
-      }
-    };
-
-    checkAuthRedirect();
-  }, [navigate]); */
 
   const submitData: SubmitHandler<UserCredentials> = async (data) => {
     try {
       setLoading(true);
-      const response = await axios.post("http://122.53.61.91:6002/api/login", {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/login`, {
+        
         email: data.email,
         password: data.password,
       });
@@ -106,6 +95,7 @@ const Login: React.FC = () => {
         // alert(JSON.stringify(response.data.message));
         setLoading(false);
       }
+      
     } catch (error) {
       // console.error(error);
       // alert("An error occurred while logging in. Please try again later.");

@@ -81,7 +81,7 @@ const EditAreaManager = ({
         };
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-area-manager/${selectedUser.id}`,
+          `${process.env.REACT_APP_API_BASE_URL}/view-area-manager/${selectedUser.id}`,
           {
             headers,
           }
@@ -119,7 +119,7 @@ const EditAreaManager = ({
         };
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/area-manager/${areaManagerId}`, // Replace with your API endpoint to fetch area manager data
+          `${process.env.REACT_APP_API_BASE_URL}/area-manager/${areaManagerId}`, // Replace with your API endpoint to fetch area manager data
           {
             headers,
           }
@@ -157,7 +157,7 @@ const EditAreaManager = ({
         };
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`,
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`,
           {
             headers,
           }
@@ -215,7 +215,7 @@ const EditAreaManager = ({
         
        
         const response = await axios.post(
-          `http://122.53.61.91:6002/api/update-area-manager/${selectedUser.user_id}`,
+          `${process.env.REACT_APP_API_BASE_URL}/update-area-manager/${selectedUser.user_id}`,
           putData,
           {
             headers,

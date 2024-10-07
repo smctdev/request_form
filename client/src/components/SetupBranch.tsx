@@ -79,7 +79,7 @@ const SetupBranch = (props: Props) => {
           Authorization: `Bearer ${token}`,
         };
 
-        const response = await axios.get(`http://122.53.61.91:6002/api/view-branch`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/view-branch`, {
           headers,
         });
 
@@ -129,7 +129,7 @@ const SetupBranch = (props: Props) => {
 
         // Send PUT request to update user's role
         const response = await axios.delete(
-            `http://122.53.61.91:6002/api/delete-branch/${selectedUser?.id}`,
+            `${process.env.REACT_APP_API_BASE_URL}/delete-branch/${selectedUser?.id}`,
           
             { headers }
         );
@@ -246,7 +246,7 @@ const SetupBranch = (props: Props) => {
         Authorization: `Bearer ${token}`,
       };
 
-      const response = await axios.get(`http://122.53.61.91:6002/api/view-branch`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/view-branch`, {
         headers,
       });
       // Assuming response.data.data is the array of branches

@@ -133,7 +133,7 @@ const UpdateInformation = () => {
         };
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`,
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`,
           {
             headers,
           }
@@ -166,7 +166,7 @@ const UpdateInformation = () => {
         }
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/profile`,
+          `${process.env.REACT_APP_API_BASE_URL}/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -278,7 +278,7 @@ const UpdateInformation = () => {
       }
     
         const response = await axios.post(
-        `http://122.53.61.91:6002/api/update-profile/${id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/update-profile/${id}`,
         formData,
         {
           headers: {
@@ -353,7 +353,7 @@ const UpdateInformation = () => {
       try {
         // Send the data URL to the backend API
         const response = await axios.post(
-          `http://122.53.61.91:6002/api/update-signature/${id}`, // Ensure the URL is correct
+          `${process.env.REACT_APP_API_BASE_URL}/update-signature/${id}`, // Ensure the URL is correct
           { signature: signatureDataURL },
           {
             headers: {

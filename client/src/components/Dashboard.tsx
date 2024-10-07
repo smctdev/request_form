@@ -99,7 +99,7 @@ const Dashboard: React.FC = () => {
     const fetchBranchData = async () => {
       try {
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`
         );
         const branches = response.data.data;
 
@@ -150,7 +150,7 @@ const Dashboard: React.FC = () => {
 
       // Fetch requests data
       axios
-        .get(`http://122.53.61.91:6002/api/view-request`, { headers })
+        .get(`${process.env.REACT_APP_API_BASE_URL}/view-request`, { headers })
         .then((response) => {
           if (Array.isArray(response.data.data)) {
             setRequests(response.data.data);
@@ -167,7 +167,7 @@ const Dashboard: React.FC = () => {
       // Fetch total requests sent
 
       axios
-        .get(`http://122.53.61.91:6002/api/total-request-sent/${userId}`, {
+        .get(`${process.env.REACT_APP_API_BASE_URL}/total-request-sent/${userId}`, {
           headers,
         })
         .then((response) => {

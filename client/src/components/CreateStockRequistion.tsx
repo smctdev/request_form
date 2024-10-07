@@ -136,7 +136,7 @@ const CreateStockRequistion = (props: Props) => {
       }
 
       const response = await axios.get(
-        `http://122.53.61.91:6002/api/custom-approvers/${id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -296,7 +296,7 @@ const CreateStockRequistion = (props: Props) => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://122.53.61.91:6002/api/create-request",
+        `${process.env.REACT_APP_API_BASE_URL}/create-request`,
         formData,
         {
           headers: {

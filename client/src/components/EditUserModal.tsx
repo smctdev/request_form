@@ -60,7 +60,7 @@ useEffect(() => {
       };
 
       const response = await axios.get(
-        `http://122.53.61.91:6002/api/view-branch`,
+        `${process.env.REACT_APP_API_BASE_URL}/view-branch`,
         {
           headers,
         }
@@ -90,7 +90,7 @@ useEffect(() => {
         try {
           setLoading(true);
           const response = await axios.get(
-           `http://122.53.61.91:6002/api/view-approvers/${userId}`,
+           `${process.env.REACT_APP_API_BASE_URL}/view-approvers/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -279,7 +279,7 @@ useEffect(() => {
       let response;
       if (entityType === "Branch") {
         response = await axios.post(
-          `http://122.53.61.91:6002/api/update-branch/${selectedUser.id}`,
+          `${process.env.REACT_APP_API_BASE_URL}/update-branch/${selectedUser.id}`,
           updatedData,
           {
             headers: {
@@ -291,7 +291,7 @@ useEffect(() => {
       
       } else if (entityType === "User") {
         response = await axios.post(
-          `http://122.53.61.91:6002/api/update-profile/${selectedUser.id}`,
+          `${process.env.REACT_APP_API_BASE_URL}/update-profile/${selectedUser.id}`,
           updatedData,
           {
             headers: {
@@ -306,7 +306,7 @@ useEffect(() => {
 
        
           const response = await axios.post(
-            `http://122.53.61.91:6002/api/update-approvers/${selectedUser.id}`,
+            `${process.env.REACT_APP_API_BASE_URL}/update-approvers/${selectedUser.id}`,
             {
               approved_by: approvedBy,
               noted_by: notedBy,

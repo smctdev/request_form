@@ -95,7 +95,7 @@ const Registration: React.FC = () => {
     const fetchBranchData = async () => {
       try {
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`
         );
         const branches = response.data.data;
         // Assuming response.data.data is the array of branches
@@ -165,7 +165,7 @@ const Registration: React.FC = () => {
       const signatureDataURL = signature?.toDataURL("image/png");
 
       const response = await axios.post(
-        "http://122.53.61.91:6002/api/register",
+        `${process.env.REACT_APP_API_BASE_URL}/register`,
         {
           email: data.email,
           password: data.password,

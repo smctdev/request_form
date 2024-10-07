@@ -128,7 +128,7 @@ const ViewPurchaseModal: React.FC<Props> = ({
     const fetchBranchData = async () => {
       try {
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`
         );
         const branches = response.data.data;
 
@@ -198,7 +198,7 @@ const ViewPurchaseModal: React.FC<Props> = ({
       }
 
       const response = await axios.get(
-        `http://122.53.61.91:6002/api/profile`,
+        `${process.env.REACT_APP_API_BASE_URL}/profile`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -380,7 +380,7 @@ const ViewPurchaseModal: React.FC<Props> = ({
       });
 
       const response = await axios.post(
-        `http://122.53.61.91:6002/api/update-request/${record.id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/update-request/${record.id}`,
         formData,
         {
           headers: {

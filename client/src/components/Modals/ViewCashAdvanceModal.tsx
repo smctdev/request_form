@@ -91,11 +91,11 @@ type Item = {
   amount: string;
   perDiem: string;
 };
-const headerStyle = "border border-black bg-[#8EC7F7] w-2/12 text-sm p-4";
-const inputStyle = "border border-black text-[12px] font-bold p-2 h-14";
-const tableStyle = "border border-black p-2";
+const headerStyle = "border border-black bg-[#8EC7F7] w-2/12 text-sm p-2";
+const inputStyle = "border border-black text-[12px] font-bold";
+const tableStyle = "border border-black px-1";
 const tableStyle2 = "bg-white p-2";
-const tableCellStyle = `${inputStyle}  w-10 wrap-text  break-words`;
+const tableCellStyle = `${inputStyle} py-2 px-1 w-10 wrap-text  break-words`;
 const ViewCashAdvanceModal: React.FC<Props> = ({
   closeModal,
   record,
@@ -145,7 +145,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
     const fetchBranchData = async () => {
       try {
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-branch`
+           `${process.env.REACT_APP_API_BASE_URL}/view-branch`
         );
         const branches = response.data.data;
 
@@ -196,7 +196,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
           // Construct file URLs
           const fileUrls = parsedAttachment.map(
             (filePath) =>
-              `http://122.53.61.91:6002/storage/${filePath.replace(/\\/g, "/")}`
+               `http://122.53.61.91:6002/storage/${filePath.replace(/\\/g, "/")}`
           );
           setAttachmentUrl(fileUrls);
         }
@@ -214,11 +214,14 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(`http://122.53.61.91:6002/api/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/view-user/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setUser(response.data);
     } catch (error) {
@@ -251,7 +254,11 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
   const calculateGrandTotal = () => {
     let total = 0;
     total += parseFloat(newTotalBoatFare);
-    total += parseFloat(newTotalHotel);
+    // total += parseFloat(newTotalHotel);
+    total += newData.reduce(
+      (totalHotelRate, item) => totalHotelRate + Number(item.rate),
+      0
+    );
     total += parseFloat(newTotalFare);
     total += parseFloat(newTotalContingency);
     total += newData.reduce(
@@ -383,7 +390,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
       });
 
       const response = await axios.post(
-        `http://122.53.61.91:6002/api/update-request/${record.id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/update-request/${record.id}`,
         formData,
         {
           headers: {
@@ -462,7 +469,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
       }
 
       const response = await axios.get(
-        `http://122.53.61.91:6002/api/request-forms/${id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/request-forms/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -509,7 +516,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
       }
 
       const response = await axios.get(
-        `http://122.53.61.91:6002/api/custom-approvers/${userId}`,
+        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -618,19 +625,29 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
               </p>
             </div>
           </div>
-          <div className="mt-4 w-full overflow-x-auto">
+          <div className="flex">
+            <div className="mr-5">
+          <div className="w-full overflow-x-auto">
             <div className="w-full border-collapse">
               <table className="border-collapse w-full border-black border lg:overflow-auto xl:table-fixed">
                 <thead>
+                <tr>
+                        <th className="border border-black bg-[#8EC7F7]"></th>
+                        <th className="border border-black bg-[#8EC7F7]"></th>
+                        <th colSpan={2} className="text-center text-sm bg-[#8EC7F7]">Itinerary</th>
+                        <th className="border border-black bg-[#8EC7F7]"></th>
+                        <th colSpan={2} className="text-center text-sm bg-[#8EC7F7]">Hotel</th>
+                        <th className="border border-black bg-[#8EC7F7]"></th>
+                        <th className="border border-black bg-[#8EC7F7]"></th>
+                      </tr>
                   <tr>
                     <th className={`${headerStyle}`}>Date</th>
                     <th className={`${headerStyle}`}>Day</th>
                     <th className={`${headerStyle}`}>From</th>
                     <th className={`${headerStyle}`}>To</th>
                     <th className={`${headerStyle}`}>Activity</th>
-                    <th className={`${headerStyle}`}>Hotel</th>
+                    <th className={`${headerStyle}`}>Name</th>
                     <th className={`${headerStyle}`}>Rate</th>
-                    <th className={`${headerStyle}`}>Amount</th>
                     <th className={`${headerStyle}`}>Per Diem</th>
                     <th className={`${headerStyle}`}>Remarks</th>
                   </tr>
@@ -720,20 +737,6 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                           <td className="tableCellStyle break-words border-2 border-black">
                             <input
                               type="text"
-                              value={item.amount}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "amount",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full bg-white"
-                            />
-                          </td>
-                          <td className="tableCellStyle break-words border-2 border-black">
-                            <input
-                              type="text"
                               value={item.perDiem}
                               onChange={(e) =>
                                 handleItemChange(
@@ -772,7 +775,6 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                           <td className={tableCellStyle}>{item.activity}</td>
                           <td className={tableCellStyle}>{item.hotel}</td>
                           <td className={tableCellStyle}>{item.rate}</td>
-                          <td className={tableCellStyle}>{item.amount}</td>
                           <td className={tableCellStyle}>{item.perDiem}</td>
                           <td className={tableCellStyle}>{item.remarks}</td>
                         </tr>
@@ -781,14 +783,15 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
               </table>
             </div>
           </div>
-
           {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+          </div>
+          <div>
           <div className="inline-block w-full">
-            <table className="border border-black">
+            <table className="border border-black h-fit">
               <thead>
                 <tr>
                   <th colSpan={2} className="bg-[#8EC7F7]">
-                    <p className="font-semibold text-[12px] p-2">
+                    <p className="font-semibold text-[12px]">
                       SUMMARY OF EXPENSES TO BE INCURRED (for C/A)
                     </p>
                   </th>
@@ -797,7 +800,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
               <tbody>
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="font-semibold">BOAT FARE</p>
+                    <p className="font-semibold text-sm">BOAT FARE</p>
                   </td>
                   <td className={`${inputStyle}`}>
                     {isEditing ? (
@@ -805,7 +808,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                         type="number"
                         value={newTotalBoatFare}
                         onChange={(e) => setNewTotalBoatFare(e.target.value)}
-                        className="w-full bg-white p-2"
+                        className="w-full bg-white"
                         readOnly={!isEditing}
                       />
                     ) : (
@@ -817,27 +820,32 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                 </tr>
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="font-semibold">HOTEL</p>
+                    <p className="font-semibold text-sm">HOTEL</p>
                   </td>
                   <td className={`${inputStyle}`}>
-                    {isEditing ? (
+                    {/* {isEditing ? (
                       <input
                         type="number"
                         value={newTotalHotel}
                         onChange={(e) => setNewTotalHotel(e.target.value)}
-                        className="w-full bg-white p-2"
+                        className="w-full bg-white"
                         readOnly={!isEditing}
                       />
                     ) : (
                       parseFloat(
                         editableRecord.form_data[0].totalHotel
                       ).toFixed(2)
+                    )} */}
+                    {newData.reduce(
+                      (totalHotelRate, item) =>
+                        totalHotelRate + Number(item.rate),
+                      0
                     )}
                   </td>
                 </tr>
                 <tr>
                   <td className={`${tableStyle} `}>
-                    <p className="font-semibold">PER DIEM</p>
+                    <p className="font-semibold text-sm">PER DIEM</p>
                   </td>
                   <td className={`${inputStyle} p-2`}>
                     {/* Display calculated total per diem */}
@@ -850,7 +858,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                 </tr>
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="font-semibold">FARE</p>
+                    <p className="font-semibold text-sm">FARE</p>
                   </td>
                   <td className={`${inputStyle}`}>
                     {isEditing ? (
@@ -858,7 +866,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                         type="number"
                         value={newTotalFare}
                         onChange={(e) => setNewTotalFare(e.target.value)}
-                        className="w-full bg-white p-2"
+                        className="w-full bg-white"
                         readOnly={!isEditing}
                       />
                     ) : (
@@ -870,7 +878,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                 </tr>
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="font-semibold">CONTINGENCY</p>
+                    <p className="font-semibold text-sm">CONTINGENCY</p>
                   </td>
                   <td className={`${inputStyle}`}>
                     {isEditing ? (
@@ -878,7 +886,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                         type="number"
                         value={newTotalContingency}
                         onChange={(e) => setNewTotalContingency(e.target.value)}
-                        className="w-full bg-white p-2"
+                        className="w-full bg-white"
                         readOnly={!isEditing}
                       />
                     ) : (
@@ -889,12 +897,12 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                   </td>
                 </tr>
                 <tr>
-                  <td className={`${tableStyle} h-8`}></td>
+                  <td className={`${tableStyle} py-1`}></td>
                   <td className={`${tableStyle}`}></td>
                 </tr>
                 <tr>
-                  <td className={`${tableStyle} h-14 font-bold`}>TOTAL</td>
-                  <td className={`${tableStyle} text-center font-bold`}>
+                  <td className={`${tableStyle} font-bold text-sm`}>TOTAL</td>
+                  <td className={`${tableStyle} whitespace-nowrap text-center font-bold`}>
                     ₱{" "}
                     {isEditing
                       ? calculateGrandTotal()
@@ -903,6 +911,8 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                 </tr>
               </tbody>
             </table>
+          </div>
+          </div>
           </div>
           {isEditing && (
             <div className="my-2">
@@ -1236,8 +1246,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
             ) : (
               !fetchingApprovers &&
               !isFetchingApprovers &&
-              (editableRecord.status === "Pending" ||
-                editableRecord.status === "Disapproved") && (
+              editableRecord.status === "Pending" && (
                 <button
                   className="bg-blue-500 ml-2 rounded-xl p-2 flex text-white"
                   onClick={handleEdit}

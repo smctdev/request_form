@@ -12,7 +12,6 @@ import {
 } from "@heroicons/react/24/solid";
 import Avatar from "./assets/avatar.png";
 import { Link, useNavigate } from "react-router-dom";
-import { useUser } from "../context/UserContext";
 import axios from "axios";
 import { format } from "date-fns";
 import { useSpring, animated } from "@react-spring/web"; // Import useSpring and animated from @react-spring/web
@@ -29,6 +28,10 @@ interface NavProps {
   isSidebarVisible: boolean;
   isSidebarOpen: boolean;
   updateUserInfo: () => void; // Function to update user info
+}
+
+interface UserInfo {
+  id: number;
 }
 
 const Nav: React.FC<NavProps> = ({
@@ -50,17 +53,14 @@ const Nav: React.FC<NavProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenNotif, setIsOpenNotif] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
-  const { updateUser } = useUser();
-  const userId = localStorage.getItem("userId");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  const [userInfo, setUserInfo] = useState("");
+  const [userInfo, setUserInfo] = useState<UserInfo>({ id: 0 });
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [profilePicture, setProfilePicture] = useState("");
   const [sidebar, setSidebar] = useState(false);
-  const [UserID, setUserId] = useState("");
   const [unreadCount, setUnreadCount] = useState(0); // State to keep track of unread notifications
   const [role, setRole] = useState("");
   const [notificationReceived, setnotificationReceived] = useState(false);
@@ -134,7 +134,7 @@ const Nav: React.FC<NavProps> = ({
     try {
       const id = localStorage.getItem("id");
       const response = await axios.put(
-        `http://122.53.61.91:6002/api/notifications/mark-all-as-read/${id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/notifications/mark-all-as-read/${id}`,
         {},
         {
           headers: {
@@ -186,15 +186,14 @@ const Nav: React.FC<NavProps> = ({
         const headers = { Authorization: `Bearer ${token}` };
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/profile`,
+          `${process.env.REACT_APP_API_BASE_URL}/profile`,
           { headers }
         );
 
         if (response.data && response.data.data) {
-          setUserInfo(response.data);
+          setUserInfo(response.data.data);
           setLastName(response.data.data.lastName);
           setFirstName(response.data.data.firstName);
-          setUserId(response.data.data.id);
           setProfilePicture(response.data.data.profile_picture);
           setRole(response.data.data.role);
         } else {
@@ -212,19 +211,22 @@ const Nav: React.FC<NavProps> = ({
   }, []);
 
   useEffect(() => {
-    const id = localStorage.getItem("id");
-    const channel = Echo.private(`App.Models.User.${id}`).notification(
-      (notification: any) => {
-        setnotificationReceived(true);
-      }
-    );
+    if (userInfo && userInfo.id) {
+      if (Echo) {
+        const channel = Echo.private(
+          `App.Models.User.${userInfo.id}`
+        ).notification((notification: any) => {
+          setnotificationReceived(true);
+        });
 
-    return () => {
-      channel.stopListening(
-        "IlluminateNotificationsEventsBroadcastNotificationCreated"
-      );
-    };
-  }, []);
+        return () => {
+          channel.stopListening(
+            "IlluminateNotificationsEventsBroadcastNotificationCreated"
+          );
+        };
+      }
+    }
+  }, [userInfo]);
 
   useEffect(() => {
     if (notificationReceived) {
@@ -243,7 +245,7 @@ const Nav: React.FC<NavProps> = ({
         const headers = { Authorization: `Bearer ${token}` };
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/notifications/${id}/all`,
+          `${process.env.REACT_APP_API_BASE_URL}/notifications/${id}/all`,
           { headers }
         );
         const notificationsData = response.data.unread_notification;

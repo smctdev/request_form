@@ -105,7 +105,7 @@ const CustomRequest = (props: Props) => {
         };
   
         axios
-          .get(`http://122.53.61.91:6002/api/custom-approvers/${userId}`, {
+          .get(`${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`, {
             headers,
           })
           .then(async (response) => {
@@ -132,7 +132,7 @@ const CustomRequest = (props: Props) => {
               for (let notedById of notedByArray) {
            
                 await axios
-                  .get(`http://122.53.61.91:6002/api/approvers/${notedById}`, {
+                  .get(`${process.env.REACT_APP_API_BASE_URL}/approvers/${notedById}`, {
                     headers,
                   })
                   .then((response) => {
@@ -146,7 +146,7 @@ const CustomRequest = (props: Props) => {
               // Fetch details for approved_by
               for (let approvedById of approvedByArray) {
                 await axios
-                  .get(`http://122.53.61.91:6002/api/approvers/${approvedById}`, {
+                  .get(`${process.env.REACT_APP_API_BASE_URL}/approvers/${approvedById}`, {
                     headers,
                   })
                   .then((response) => {
@@ -204,7 +204,7 @@ const CustomRequest = (props: Props) => {
   
       // Properly interpolate selectedUser.id into the URL
       const response = await axios.delete(
-        `http://122.53.61.91:6002/api/delete-custom-approvers/${selectedUser.id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/delete-custom-approvers/${selectedUser.id}`,
         { headers }
       );
   
@@ -238,7 +238,7 @@ const CustomRequest = (props: Props) => {
       };
 
       axios
-        .get(`http://122.53.61.91:6002/api/custom-approvers/${userId}`, {
+        .get(`${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`, {
           headers,
         })
         .then(async (response) => {
@@ -265,7 +265,7 @@ const CustomRequest = (props: Props) => {
             for (let notedById of notedByArray) {
          
               await axios
-                .get(`http://122.53.61.91:6002/api/approvers/${notedById}`, {
+                .get(`${process.env.REACT_APP_API_BASE_URL}/approvers/${notedById}`, {
                   headers,
                 })
                 .then((response) => {
@@ -279,7 +279,7 @@ const CustomRequest = (props: Props) => {
             // Fetch details for approved_by
             for (let approvedById of approvedByArray) {
               await axios
-                .get(`http://122.53.61.91:6002/api/approvers/${approvedById}`, {
+                .get(`${process.env.REACT_APP_API_BASE_URL}/approvers/${approvedById}`, {
                   headers,
                 })
                 .then((response) => {

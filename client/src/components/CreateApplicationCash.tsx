@@ -190,7 +190,7 @@ const CreateApplicationCash = (props: Props) => {
       }
 
       const response = await axios.get(
-        `http://122.53.61.91:6002/api/custom-approvers/${id}`,
+        `http://localhost:6002/api/custom-approvers/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -224,9 +224,14 @@ const CreateApplicationCash = (props: Props) => {
     0
   );
 
+  const totalHotelRate = items.reduce(
+    (total, item) => total + parseFloat(String(item.rate) || "0"),
+    0
+  );
+
   const calculateTotal = () => {
     const total =
-      totalBoatFare + totalHotel + totalPerDiem + totalFare + totalContingency;
+      totalBoatFare  + totalHotelRate + totalPerDiem + totalFare + totalContingency;
     return total.toFixed(2);
   };
 
@@ -269,6 +274,23 @@ const CreateApplicationCash = (props: Props) => {
 
     setItems(newData);
   };
+
+  useEffect(() => {
+    setTableData([
+      {
+        cashDate: "",
+        day: "",
+        from: "",
+        to: "",
+        activity: "",
+        hotel: "",
+        rate: "",
+        amount: "",
+        perDiem: "",
+        remarks: "",
+      },
+    ]);
+  }, [selectedRequestType])
 
   const handleAddRow = () => {
     setTableData([
@@ -386,9 +408,17 @@ const CreateApplicationCash = (props: Props) => {
       });
 
       if (emptyItems.length > 0) {
-        emptyItems.forEach((index) => {});
-
-        return;
+        // emptyItems.forEach((index) => {});
+        if (emptyItems.length > 0) {
+          Swal.fire({
+            icon: "error",
+            title: "Missing Item Information",
+            text: "Please fill in all required fields for each item.",
+            confirmButtonText: "Close",
+            confirmButtonColor: "#007bff",
+          });
+          return;
+        }
       }
 
       const formData = new FormData();
@@ -452,6 +482,7 @@ const CreateApplicationCash = (props: Props) => {
       setLoading(false);
     }
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
   };
@@ -495,7 +526,7 @@ const CreateApplicationCash = (props: Props) => {
 
       // Perform the actual form submission
       const response = await axios.post(
-        "http://122.53.61.91:6002/api/create-request",
+        `${process.env.REACT_APP_API_BASE_URL}/create-request`,
         formData, // Use the formData stored in state
         {
           headers: {
@@ -626,13 +657,13 @@ const CreateApplicationCash = (props: Props) => {
                 )}
               </div>
 
-              <div className={`${itemDiv}`}>
+              {/* <div className={`${itemDiv}`}>
                 <p>Usage/Remarks</p>
                 <textarea
                   {...register("remarks")}
                   className={`${inputStyle} h-[100px]`}
                 />
-              </div>
+              </div> */}
               <div className={`${itemDiv}`}>
                 <p className="font-semibold">Liquidation Date</p>
                 <input
@@ -645,21 +676,30 @@ const CreateApplicationCash = (props: Props) => {
                 )}
               </div>
             </div>
-
+            <div className="flex mt-1">
+              <div className="mr-5">
             <div className="mt-4 w-full overflow-x-auto md:overflow-auto">
               <div className="w-full border-collapse border border-black">
                 <div className="table-container">
                   <table className="border-collapse w-full border border-black ">
                     <thead className="bg-[#8EC7F7]">
+                    <tr>
+                        <th className="border border-black"></th>
+                        <th className="border border-black"></th>
+                        <th colSpan={2} className="text-center">Itinerary</th>
+                        <th className="border border-black"></th>
+                        <th colSpan={2} className="text-center">Hotel</th>
+                        <th className="border border-black"></th>
+                        <th className="border border-black"></th>
+                      </tr>
                       <tr>
                         <th className={`${tableStyle}`}>Date</th>
                         <th className={`${tableStyle}`}>Day</th>
                         <th className={`${tableStyle}`}>From</th>
                         <th className={`${tableStyle}`}>To</th>
                         <th className={`${tableStyle}`}>Activity</th>
-                        <th className={`${tableStyle}`}>Hotel</th>
+                        <th className={`${tableStyle}`}>Name</th>
                         <th className={`${tableStyle}`}>Rate</th>
-                        <th className={`${tableStyle}`}>Amount</th>
                         <th className={`${tableStyle}`}>Per Diem</th>
                         <th className={`${tableStyle}`}>Remarks</th>
                       </tr>
@@ -772,7 +812,7 @@ const CreateApplicationCash = (props: Props) => {
                           </td>
                           <td className="p-1 border border-black ">
                             <textarea
-                              id={`activity-${index}`}
+                              // id={`activity-${index}`}
                               value={item.activity}
                               onChange={(e) =>
                                 handleChange(index, "activity", e.target.value)
@@ -815,26 +855,6 @@ const CreateApplicationCash = (props: Props) => {
                               value={item.rate}
                               onChange={(e) =>
                                 handleChange(index, "rate", e.target.value)
-                              }
-                              onKeyDown={(e) => {
-                                // Prevent non-digit input
-                                if (
-                                  !/[0-9]/.test(e.key) &&
-                                  e.key !== "Backspace" &&
-                                  e.key !== "Tab"
-                                ) {
-                                  e.preventDefault();
-                                }
-                              }}
-                              className={`${tableInput}`}
-                            />
-                          </td>
-                          <td className="p-1 border border-black">
-                            <input
-                              type="number"
-                              value={item.amount}
-                              onChange={(e) =>
-                                handleChange(index, "amount", e.target.value)
                               }
                               onKeyDown={(e) => {
                                 // Prevent non-digit input
@@ -921,9 +941,11 @@ const CreateApplicationCash = (props: Props) => {
                 </span>
               </div>
             </div>
+            </div>
+            <div>
             <div className="flex justify-between overflow-x-auto ">
               <div>
-                <table className="border border-black  mt-10">
+                <table className="border border-black mt-4">
                   <tr>
                     <th colSpan={2} className="bg-[#8EC7F7] ">
                       <p className="font-semibold text-[12px] p-2">
@@ -952,7 +974,7 @@ const CreateApplicationCash = (props: Props) => {
                       <p className="font-semibold">HOTEL</p>
                     </td>
                     <td className={`${tableStyle}`}>
-                      <input
+                      {/* <input
                         type="number"
                         {...register("totalHotel", { required: true })}
                         className="bg-white font-bold text-center"
@@ -960,7 +982,8 @@ const CreateApplicationCash = (props: Props) => {
                         onChange={handleHotelChange}
                         inputMode="numeric"
                         pattern="[0-9]*"
-                      />
+                      /> */}
+                      <input className="font-bold text-center"  value={`${totalHotelRate.toFixed(2)}\u00A0\u00A0\u00A0\u00A0`}  disabled/> 
                     </td>
                   </tr>
                   <tr>
@@ -1020,6 +1043,8 @@ const CreateApplicationCash = (props: Props) => {
                   </tr>
                 </table>
               </div>
+            </div>
+            </div>
             </div>
             <div className="flex justify-between flex-col md:flex-row">
               <div className="w-full max-w-md  p-4">
