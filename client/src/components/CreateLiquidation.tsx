@@ -290,6 +290,25 @@ const CreateLiquidation = (props: Props) => {
   // Convert cashAdvance to a number before performing subtraction
   const short = (totalExpense - parseFloat(cashAdvance || "0")).toFixed(2);
 
+  useEffect(() => {
+    setTableData([
+      {
+        liquidationDate: "",
+        from: "",
+        to: "",
+        transportation: "",
+        transportationAmount: "",
+        hotel: "",
+        hotelAddress: "",
+        hotelAmount: "",
+        perDiem: "",
+        particulars: "",
+        particularsAmount: "",
+        grandTotal: "0",
+      },
+    ]);
+  }, [selectedRequestType])
+
   const handleAddItem = () => {
     setTableData([
       ...tableData,
