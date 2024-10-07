@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\RequestForm;
@@ -105,6 +106,10 @@ class ApprovalProcessController extends Controller
                 if ($firstApprovalProcess && $firstApprovalProcess->user_id == $user_id) {
                     $requestForm->status = 'Ongoing';
                     $requestForm->save();
+
+                    $user = User::where('id', $requestForm->user_id)->first();
+
+                    $user->notify(new EmployeeNotification($requestForm, 'ongoing', $user->firstName, $requestForm->form_type));
                 }
 
                 $nextApprovalProcess = ApprovalProcess::where('request_form_id', $request_form_id)
@@ -119,13 +124,14 @@ class ApprovalProcessController extends Controller
                     $requesterFirstname = $employee->firstName;
                     $requesterLasttname = $employee->lastName;
                     $nextApprover->notify(new ApprovalProcessNotification($nextApprovalProcess, $firstname, $requestForm, $requesterFirstname, $requesterLasttname));
+                    event(new NotificationEvent(Auth::user()->id));
 
                     // Broadcast the notification count update
                     $message = 'You have a request form to approve';
                     $date = now();
                     $type = 'App\Notifications\ApprovalProcessNotification';
                     $read_at = null;
-                    event(new NotificationEvent($nextApprover->id, $message, $date,$type, $read_at));
+                    // event(new NotificationEvent($nextApprover->id, $message, $date,$type, $read_at));
                 } else {
                     $requestForm->status = 'Approved';
                     $formtype = $requestForm->form_type;
@@ -139,7 +145,7 @@ class ApprovalProcessController extends Controller
                     $date = now();
                     $type = 'App\Notifications\EmployeeNotification';
                     $read_at = null;
-                    event(new NotificationEvent($employee->id, $message, $date, $type, $read_at));
+                    // event(new NotificationEvent($employee->id, $message, $date, $type, $read_at));
                 }
             } else {
                 $requestForm->status = 'Disapproved';
@@ -156,7 +162,7 @@ class ApprovalProcessController extends Controller
                 $date = now();
                 $type = 'App\Notifications\ReturnRequestNotification';
                 $read_at = null;
-                event(new NotificationEvent($employee->id, $message, $date,$type, $read_at));
+                event(new NotificationEvent(Auth::user()->id));
 
                 // Notify all previous approvers and update their status to "Rejected by [name]"
                 $previousApprovalProcesses = ApprovalProcess::where('request_form_id', $request_form_id)
@@ -182,7 +188,7 @@ class ApprovalProcessController extends Controller
                     $date = now();
                     $type = 'App\Notifications\PreviousReturnRequestNotification';
                     $read_at = null;
-                    event(new NotificationEvent($employee->id, $message, $date,$type, $read_at));
+                    event(new NotificationEvent(Auth::user()->id));
                 }
             }
 
@@ -342,16 +348,20 @@ class ApprovalProcessController extends Controller
                     'created_at' => $approvalProcess->created_at,
                     'updated_at' => $approvalProcess->updated_at,
                     'user_id' => $requestForm->user_id,
-                    'requested_by' => ($requester ? "{$requester->firstName} {$requester->lastName}" : "Unknown"), // Handle null requester
+                    'requested_by' => ($requester ? "{$requester->firstName} {$requester->lastName}" : "Unknown"),
+                    'requested_signature' => ($requester ? "{$requester->signature}" : "Unknown"), // Handle null requester
+                    'requested_position' => ($requester ? "{$requester->position}" : "Unknown"), // Handle null requester
                     'noted_by' => $formattedNotedBy,
                     'approved_by' => $formattedApprovedBy,
                     'avp_staff' => $formattedOtherApprovers, // Include other approvers not listed in noted_by or approved_by
                     'pending_approver' => $pendingApprover, // Update pending approver logic
                     'attachment' => $requestForm->attachment,
+                    'branch' => $branchName,
                     'request_code' => "$branchName-$requestForm->request_code",
                     'approved_attachment' => $attachments,
                 ];
             })->filter(); // Filter out null values
+
 
             return response()->json([
                 'message' => 'Approval processes you are involved in',
@@ -464,6 +474,5 @@ class ApprovalProcessController extends Controller
             ], 500);
         }
     }
-
 
 }

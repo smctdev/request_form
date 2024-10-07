@@ -12,6 +12,9 @@ import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import ViewDiscountModal from "./Modals/ViewDiscountModal";
 import { ClipLoader } from "react-spinners";
+import { text } from "stream/consumers";
+import Swal from "sweetalert2";
+import Echo from "../utils/Echo";
 type Props = {};
 
 type Record = {
@@ -177,6 +180,10 @@ const tableCustomStyles = {
     style: {
       color: "STRIPEDCOLOR",
       backgroundColor: "STRIPEDCOLOR",
+      transition: "background-color 0.1s ease",
+      '&:hover': {
+        backgroundColor: "#D1E4F3",
+      },
     },
     stripedStyle: {
       color: "NORMALCOLOR",
@@ -194,7 +201,8 @@ const Request = (props: Props) => {
   const userId = localStorage.getItem("id");
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [notificationReceived, setnotificationReceived] = useState(false);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -222,14 +230,48 @@ const Request = (props: Props) => {
     fetchBranchData();
   }, []);
 
+  
+  useEffect(() => {
+    const id = localStorage.getItem("id");
+
+    const channel = Echo.private(`App.Models.User.${id}`).notification(
+      (notification: any) => {
+        setnotificationReceived(true);
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'info',
+          title: notification.message,
+          showConfirmButton: false,
+          timer: 6000,
+          timerProgressBar: true,
+          showCloseButton: true,
+        });
+      }
+    );
+
+    return () => {
+
+      channel.stopListening("Illuminate\Notifications\Events\BroadcastNotificationCreated");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (notificationReceived) {
+      setnotificationReceived(false);
+    }
+  }, [notificationReceived]);
+
   useEffect(() => {
     if (userId) {
       const fetchRequests = async () => {
         const token = localStorage.getItem("token");
-        if (!token) return;
-
+        if (!token) {
+          console.error("Token is missing");
+          return;
+        }
+  
         try {
-          setLoading(true);
           const headers = { Authorization: `Bearer ${token}` };
           const response = await axios.get(
             `http://122.53.61.91:6002/api/view-request`,
@@ -242,15 +284,77 @@ const Request = (props: Props) => {
           setLoading(false);
         }
       };
-
+  
       fetchRequests();
     }
-  }, [userId]);
+  }, [userId, notificationReceived]);
+  
 
   const handleView = (record: Record) => {
     setSelectedRecord(record);
     setModalIsOpen(true);
   };
+
+  const handleDelete = (record: Record) => {
+    // Check if the status is not "Pending"
+    if (record.status !== "Pending") {
+      Swal.fire({
+        icon: 'error',
+        title: 'Cannot Delete',
+        text: 'You cannot delete this request as it is already appr',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Close',
+      });
+      return; // Exit the function if the condition is not met
+    }
+  
+    Swal.fire({
+      title: 'Are you sure you want to delete this request?',
+      html: "Request Code: " + record.request_code + " <br/> Request Type: " + record.form_type,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setLoading(true);
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        const headers = { Authorization: `Bearer ${token}` };
+  
+        axios
+          .delete(`http://122.53.61.91:6002/api/delete-request/${record.id}`, {
+            headers,
+          })
+          .then(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Deleted!',
+              text: `The request was successfully deleted.`,
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'Close',
+            });
+            refreshData();
+          })
+          .catch((error) => {
+            console.error("Error deleting request:", error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Something went wrong!',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'Close',
+            });
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
+    });
+  };
+  
+  
 
   const handleClick = (index: number) => {
     setSelected(index);
@@ -325,6 +429,7 @@ const Request = (props: Props) => {
       name: "Request Type",
       selector: (row: Record) => row.form_type,
       width: "300px",
+      sortable: true,
     },
     {
       name: "Date",
@@ -388,16 +493,25 @@ const Request = (props: Props) => {
     },
     {
       name: "Action",
-      width: "150px",
+      width: "180px",
       cell: (row: Record) => (
-        <button
-          className="bg-primary text-white  px-3 py-1 rounded-[16px]"
-          onClick={() => handleView(row)}
-        >
-          View
-        </button>
+        <div className="flex w-full justify-center items-center gap-2">
+          <button
+            className="bg-primary text-white px-3 py-1 rounded-[16px]"
+            onClick={() => handleView(row)}
+          >
+            View
+          </button>
+          <button
+            className="bg-pink text-white px-3 py-1 rounded-[16px]"
+            onClick={() => handleDelete(row)}
+          >
+            Delete
+          </button>
+        </div>
       ),
     },
+    
   ];
 
   const items = [

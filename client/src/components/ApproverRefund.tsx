@@ -45,6 +45,9 @@ type Record = {
   approved_by: Approver[];
   avp_staff: Approver[];
   approved_attachment: string;
+  requested_by: string;
+  requested_signature: string;
+  requested_position: string;
 };
 
 type FormData = {
@@ -154,7 +157,7 @@ const ApproverRefund: React.FC<Props> = ({
         }
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-user/${id}`,
+          `http://122.53.61.91:6002/api/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -240,7 +243,6 @@ const ApproverRefund: React.FC<Props> = ({
       ) {
         const approvedAttachmentString = record.approved_attachment[0]; // Access the first element
         const parsedApprovedAttachment = JSON.parse(approvedAttachmentString); // Parse the string to get the actual array
-     
 
         if (
           Array.isArray(parsedApprovedAttachment) &&
@@ -249,7 +251,6 @@ const ApproverRefund: React.FC<Props> = ({
           // Access the first element of the array
           const formattedAttachment = parsedApprovedAttachment[0];
           setAttachment(formattedAttachment); // Set the state with the string
-   
         } else {
           console.warn(
             "Parsed approved attachment is not an array or is empty:",
@@ -275,14 +276,11 @@ const ApproverRefund: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(
-        `http://122.53.61.91:6002/api/view-user/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`http://122.53.61.91:6002/api/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setUser(response.data);
     } catch (error) {
@@ -320,8 +318,7 @@ const ApproverRefund: React.FC<Props> = ({
       requestData.append("user_id", parseInt(userId).toString());
       requestData.append("action", "disapprove");
       requestData.append("comment", comments);
-   
-    
+
       const response = await axios.post(
         `http://122.53.61.91:6002/api/request-forms/${record.id}/process`,
         requestData,
@@ -363,7 +360,6 @@ const ApproverRefund: React.FC<Props> = ({
     requestData.append("user_id", parseInt(userId).toString());
     requestData.append("action", "approve");
     requestData.append("comment", comments);
-
 
     try {
       setApprovedLoading(true);
@@ -503,7 +499,7 @@ const ApproverRefund: React.FC<Props> = ({
             Request for Refund
           </h1>
           <div className="flex flex-col justify-center ">
-            <p className="underline ">{user?.data?.branch}</p>
+            <p className="underline ">{record?.branch}</p>
             <p className="text-center">Branch</p>
           </div>
         </div>
@@ -656,10 +652,11 @@ const ApproverRefund: React.FC<Props> = ({
                     <li className="flex flex-col items-center justify-center text-center relative w-auto">
                       <div className="relative flex flex-col items-center justify-center">
                         {/* Signature */}
-                        {user.data?.signature && (
+
+                        {record?.requested_signature && (
                           <div className="absolute -top-4">
                             <img
-                              src={user.data?.signature}
+                              src={record?.requested_signature}
                               alt="avatar"
                               width={120}
                               className="relative z-20 pointer-events-none"
@@ -669,13 +666,13 @@ const ApproverRefund: React.FC<Props> = ({
                         {/* Name */}
                         <p className="relative inline-block uppercase font-medium text-center mt-4 z-10">
                           <span className="relative z-10">
-                            {user.data?.firstName} {user.data?.lastName}
+                            {record?.requested_by}
                           </span>
                           <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-black"></span>
                         </p>
                         {/* Position */}
                         <p className="font-bold text-[12px] text-center mt-1">
-                          {user.data?.position}
+                          {record?.requested_position}
                         </p>
                         {/* Status, if needed */}
                         {user.data?.status && (

@@ -444,6 +444,8 @@ const CreateApplicationCash = (props: Props) => {
 
       // Set form data to be submitted after confirmation
       setFormData(formData);
+      setTableData([]);
+      setItems([]);
     } catch (error) {
       console.error("An error occurred while submitting the request:", error);
     } finally {

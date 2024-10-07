@@ -71,10 +71,14 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
     const fetchBranchData = async () => {
       try {
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/get-role/${id}`
+          `http://122.53.61.91:6002/api/profile`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            }
+          }
         );
 
-        setUserRole(response.data.user_role);
+        setUserRole(response.data.data.role);
       } catch (error) {
         console.error("Error fetching branch data:", error);
       }

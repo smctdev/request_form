@@ -216,14 +216,11 @@ const ViewLiquidationModal: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(
-        `http://122.53.61.91:6002/api/view-user/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`http://122.53.61.91:6002/api/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setUser(response.data);
     } catch (error) {
@@ -1359,7 +1356,8 @@ const ViewLiquidationModal: React.FC<Props> = ({
             ) : (
               !fetchingApprovers &&
               !isFetchingApprovers &&
-              editableRecord.status === "Pending" && (
+              (editableRecord.status === "Pending" ||
+                editableRecord.status === "Disapproved") && (
                 <button
                   className="bg-blue-500 ml-2 rounded-xl p-2 flex text-white"
                   onClick={handleEdit}

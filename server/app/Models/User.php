@@ -82,6 +82,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_code');
+    }
     /**
      * The default values for attributes.
      *

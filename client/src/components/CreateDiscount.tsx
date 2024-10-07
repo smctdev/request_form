@@ -438,6 +438,7 @@ const CreateDiscount = (props: Props) => {
       setLoading(false);
     }
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
   };
@@ -454,7 +455,6 @@ const CreateDiscount = (props: Props) => {
   const handleCloseAddCustomModal = () => {
     setShowAddCustomModal(false);
   };
-
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
     setApprovedBy(approvedBy);

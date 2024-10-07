@@ -12,20 +12,20 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 
 class ApprovalProcessNotification extends Notification
 {
-    use Queueable,InteractsWithSockets;
+    use Queueable, InteractsWithSockets;
 
     /**
      * Create a new notification instance.
      */
 
-     
+
     protected $approvalProcess;
     protected $firstname;
     protected $requestForm;
 
-    protected $requesterFirstname; 
+    protected $requesterFirstname;
     protected $requesterLastname;
-    public function __construct($approvalProcess,$firstname,$requestForm,$requesterFirstname,$requesterLastname)
+    public function __construct($approvalProcess, $firstname, $requestForm, $requesterFirstname, $requesterLastname)
     {
         $this->approvalProcess = $approvalProcess;
         $this->firstname = $firstname;
@@ -41,7 +41,7 @@ class ApprovalProcessNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail','database','broadcast'];
+        return ['mail', 'database', 'broadcast'];
     }
 
     /**
@@ -51,16 +51,16 @@ class ApprovalProcessNotification extends Notification
     {
         $approvalUrl = route('view.single.request.form.for.approval', ['request_form_id' => $this->requestForm->id]);
         return (new MailMessage)
-                    ->view('emails.approval_process',[
-                        'approvalProcess' => $this->approvalProcess,
-                        'firstname' =>$this->firstname,
-                        'approvalUrl' => $approvalUrl,
-                        'requesterFirstname' => $this->requesterFirstname,
-                        'requesterLastname' =>$this->requesterLastname,
-                        ])
-                    ->subject('You have a new request form need to approve - '.$this->requestForm->form_type. ' '.now()->format('Y-m-d H:i:s'))
-                    ->line('You have a new request form to approve.')
-                    ->line('Request Form Type : '. $this->approvalProcess->RequestForm->form_type);
+            ->view('emails.approval_process', [
+                'approvalProcess' => $this->approvalProcess,
+                'firstname' => $this->firstname,
+                'approvalUrl' => $approvalUrl,
+                'requesterFirstname' => $this->requesterFirstname,
+                'requesterLastname' => $this->requesterLastname,
+            ])
+            ->subject('You have a new request form need to approve - ' . $this->requestForm->form_type . ' ' . now()->format('Y-m-d H:i:s'))
+            ->line('You have a new request form to approve.')
+            ->line('Request Form Type : ' . $this->approvalProcess->RequestForm->form_type);
     }
 
     /**
@@ -77,20 +77,17 @@ class ApprovalProcessNotification extends Notification
             'created_at' => now()->toDateTimeString(),
             'approvalUrl' => $approvalUrl,
             'requesterFirstname' => $this->requesterFirstname,
-            'requesterLastname' =>$this->requesterLastname,
-            
+            'requesterLastname' => $this->requesterLastname,
+
             //'level' => $this->approvalProcess->level,
             //'status' => $this->approvalProcess->status,
         ];
     }
 
-   /*  public function toBroadcast($notifiable)
+    public function toBroadcast($notifiable)
     {
-        //broadcast(new NotificationEvent($this->toArray($notifiable)));
         return new BroadcastMessage([
             'message' => 'You have a new request form to approve',
-            'request_form_id' => $this->approvalProcess->RequestForm->form_type,
-            'created_at' => now()->toDateTimeString(),
         ]);
-    } */
+    }
 }

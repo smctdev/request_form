@@ -45,6 +45,9 @@ type Record = {
   approved_by: Approver[];
   avp_staff: Approver[];
   approved_attachment: string;
+  requested_by: string;
+  requested_signature: string;
+  requested_position: string;
 };
 
 type FormData = {
@@ -130,13 +133,13 @@ const ApproversStock: React.FC<Props> = ({
   );
 
   let logo;
-  if (user?.data?.branch === "Strong Motocentrum, Inc.") {
+  if (record.branch === "Strong Motocentrum, Inc.") {
     logo = <img src={SMCTLogo} alt="SMCT Logo" />;
-  } else if (user?.data?.branch === "Des Strong Motors, Inc.") {
+  } else if (record.branch === "Des Strong Motors, Inc.") {
     logo = <img src={DSMLogo} alt="DSM Logo" />;
-  } else if (user?.data?.branch === "Des Appliance Plaza, Inc.") {
+  } else if (record.branch === "Des Appliance Plaza, Inc.") {
     logo = <img src={DAPLogo} alt="DAP Logo" />;
-  } else if (user?.data?.branch === "Honda Des, Inc.") {
+  } else if (record.branch === "Honda Des, Inc.") {
     logo = <img src={HDILogo} alt="HDI Logo" />;
   } else {
     logo = null; // Handle the case where branch does not match any of the above
@@ -152,7 +155,7 @@ const ApproversStock: React.FC<Props> = ({
         }
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-user/${id}`,
+          `http://122.53.61.91:6002/api/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -204,7 +207,6 @@ const ApproversStock: React.FC<Props> = ({
 
   useEffect(() => {
     // Log the entire record object to understand its structure
-   
 
     // Fetch user data based on user_id
     fetchUser(record.user_id);
@@ -223,7 +225,6 @@ const ApproversStock: React.FC<Props> = ({
             `http://122.53.61.91:6002/storage/${filePath.replace(/\\/g, "/")}`
         );
         setAttachmentUrl(fileUrls);
-       
       } else {
         console.warn("Attachment is not a JSON string:", record.attachment);
       }
@@ -235,7 +236,7 @@ const ApproversStock: React.FC<Props> = ({
       ) {
         const approvedAttachmentString = record.approved_attachment[0]; // Access the first element
         const parsedApprovedAttachment = JSON.parse(approvedAttachmentString); // Parse the string to get the actual array
-      
+
         if (
           Array.isArray(parsedApprovedAttachment) &&
           parsedApprovedAttachment.length > 0
@@ -243,7 +244,6 @@ const ApproversStock: React.FC<Props> = ({
           // Access the first element of the array
           const formattedAttachment = parsedApprovedAttachment[0];
           setAttachment(formattedAttachment); // Set the state with the string
-
         } else {
           console.warn(
             "Parsed approved attachment is not an array or is empty:",
@@ -260,7 +260,6 @@ const ApproversStock: React.FC<Props> = ({
       console.error("Error parsing attachment:", error);
     }
   }, [record]); // Dependency on record
-
 
   const handleRemoveAttachment = (index: number) => {
     // Get the path of the attachment to be removed
@@ -289,14 +288,11 @@ const ApproversStock: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(
-        `http://122.53.61.91:6002/api/view-user/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`http://122.53.61.91:6002/api/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setUser(response.data);
     } catch (error) {
@@ -306,7 +302,7 @@ const ApproversStock: React.FC<Props> = ({
     }
   };
 
-  
+
 
   const formatDate2 = (dateString: Date) => {
     const date = new Date(dateString);
@@ -374,7 +370,6 @@ const ApproversStock: React.FC<Props> = ({
         return;
       }
 
-  
       const requestData = new FormData();
 
       // Only append attachments if the file array is not empty
@@ -383,12 +378,10 @@ const ApproversStock: React.FC<Props> = ({
           requestData.append("attachment[]", file);
         });
       }
-  
+
       requestData.append("user_id", parseInt(userId).toString());
       requestData.append("action", "disapprove");
       requestData.append("comment", comments);
-  
-   
 
       const response = await axios.post(
         `http://122.53.61.91:6002/api/request-forms/${record.id}/process`,
@@ -418,7 +411,7 @@ const ApproversStock: React.FC<Props> = ({
       approvedBy: approvedBy,
       notedBy: notedBy,
       user: user,
-      purpose: checkedPurpose
+      purpose: checkedPurpose,
     };
 
     localStorage.setItem("printData", JSON.stringify(data));
@@ -466,7 +459,7 @@ const ApproversStock: React.FC<Props> = ({
             Stock Requisition Slip
           </h1>
           <div className="flex flex-col justify-center ">
-            <p className="underline ">{user?.data?.branch}</p>
+            <p className="underline ">{record?.branch}</p>
             <p className="text-center">Branch</p>
           </div>
         </div>
@@ -498,7 +491,9 @@ const ApproversStock: React.FC<Props> = ({
             </p>
           </div>
 
-          <p className="font-medium text-[14px]">Purpose: {record.form_data[0].purpose}</p>
+          <p className="font-medium text-[14px]">
+            Purpose: {record.form_data[0].purpose}
+          </p>
 
           {/* <div className="flex flex-col md:flex-row md:space-x-2">
             <label>
@@ -582,10 +577,10 @@ const ApproversStock: React.FC<Props> = ({
                     <li className="flex flex-col items-center justify-center text-center relative w-auto">
                       <div className="relative flex flex-col items-center justify-center">
                         {/* Signature */}
-                        {user.data?.signature && (
+                        {record?.requested_signature && (
                           <div className="absolute -top-4">
                             <img
-                              src={user.data?.signature}
+                              src={record?.requested_signature}
                               alt="avatar"
                               width={120}
                               className="relative z-20 pointer-events-none"
@@ -597,13 +592,13 @@ const ApproversStock: React.FC<Props> = ({
                           {/* Name */}
                           <p className="relative inline-block uppercase font-medium text-center z-10">
                             <span className="relative z-10">
-                              {user.data?.firstName} {user.data?.lastName}
+                              {record?.requested_by}
                             </span>
                             <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-black"></span>
                           </p>
                           {/* Position */}
                           <p className="font-bold text-[12px] text-center mt-1">
-                            {user.data?.position}
+                            {record?.requested_position}
                           </p>
                           {/* Status */}
                           <div className="mt-1 min-h-[1.5rem] flex items-center justify-center">
@@ -884,7 +879,8 @@ const ApproversStock: React.FC<Props> = ({
             <p className="font-semibold">Approved Attachment:</p>
 
             {record.approved_attachment.length === 0 &&
-            position === "Vice President" && record.status === "Pending" ? (
+            position === "Vice President" &&
+            record.status === "Pending" ? (
               <input
                 id="file"
                 type="file"
@@ -892,7 +888,7 @@ const ApproversStock: React.FC<Props> = ({
                 onChange={handleFileChange}
                 className="w-full mt-2"
               />
-            ) : record.approved_attachment.length > 0 && attachment  ? (
+            ) : record.approved_attachment.length > 0 && attachment ? (
               <div className="mt-2">
                 <img
                   src={`http://122.53.61.91:6002/storage/${attachment}`}

@@ -46,6 +46,9 @@ type Record = {
   approved_by: Approver[];
   avp_staff: Approver[];
   approved_attachment: string;
+  requested_by: string;
+  requested_signature: string;
+  requested_position: string;
 };
 
 type FormData = {
@@ -155,7 +158,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
         }
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-user/${id}`,
+          `http://122.53.61.91:6002/api/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -277,7 +280,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
       }
 
       const response = await axios.get(
-        `http://122.53.61.91:6002/api/view-user/${id}`,
+        `http://122.53.61.91:6002/api/profile`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -534,7 +537,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
             Cash Disbursement Requisition Slip
           </h1>
           <div className="flex flex-col justify-center ">
-            <p className="underline ">{user?.data?.branch}</p>
+            <p className="underline ">{record?.branch}</p>
             <p className="text-center">Branch</p>
           </div>
         </div>
@@ -686,10 +689,10 @@ const ApproverCashDisbursement: React.FC<Props> = ({
                     <li className="flex flex-col items-center justify-center text-center relative w-auto">
                       <div className="relative flex flex-col items-center justify-center">
                         {/* Signature */}
-                        {user.data?.signature && (
+                        {record?.requested_signature && (
                           <div className="absolute -top-4">
                             <img
-                              src={user.data?.signature}
+                              src={record?.requested_signature}
                               alt="avatar"
                               width={120}
                               className="relative z-20 pointer-events-none"
@@ -699,13 +702,13 @@ const ApproverCashDisbursement: React.FC<Props> = ({
                         {/* Name */}
                         <p className="relative inline-block uppercase font-medium text-center mt-4 z-10">
                           <span className="relative z-10">
-                            {user.data?.firstName} {user.data?.lastName}
+                            {record?.requested_by}
                           </span>
                           <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-black"></span>
                         </p>
                         {/* Position */}
                         <p className="font-bold text-[12px] text-center mt-1">
-                          {user.data?.position}
+                          {record?.requested_position}
                         </p>
                         {/* Status, if needed */}
                         {user.data?.status && (

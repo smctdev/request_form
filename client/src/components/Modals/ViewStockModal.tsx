@@ -199,7 +199,7 @@ const ViewStockModal: React.FC<Props> = ({
       }
 
       const response = await axios.get(
-        `http://122.53.61.91:6002/api/view-user/${id}`,
+        `http://122.53.61.91:6002/api/profile`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -214,6 +214,7 @@ const ViewStockModal: React.FC<Props> = ({
       setisFetchingApprovers(false);
     }
   };
+
 
   const handleEdit = () => {
     setEditedDate(editableRecord.form_data[0].date); // Initialize editedDate with the original date
@@ -294,6 +295,7 @@ const ViewStockModal: React.FC<Props> = ({
         ? approvedBy.map((person) => person.id)
         : [];
       formData.append("noted_by", JSON.stringify(notedByIds));
+      formData.append("status", "Pending");
       formData.append("approved_by", JSON.stringify(approvedByIds));
       formData.append(
         "form_data",
@@ -335,7 +337,6 @@ const ViewStockModal: React.FC<Props> = ({
           },
         }
       );
-
       setLoading(false);
       setIsEditing(false);
       setSavedSuccessfully(true);
@@ -1068,7 +1069,7 @@ const ViewStockModal: React.FC<Props> = ({
             ) : (
               !fetchingApprovers &&
               !isFetchingApprovers &&
-              editableRecord.status === "Pending" && (
+              (editableRecord.status === "Pending" || editableRecord.status === "Disapproved") && (
                 <button
                   className="bg-blue-500 ml-2 rounded-xl p-2 flex text-white"
                   onClick={handleEdit}

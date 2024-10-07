@@ -437,6 +437,9 @@ const CreateLiquidation = (props: Props) => {
       // Set form data to be submitted after confirmation
 
       setFormData(formData);
+
+      setTableData([]);
+      setItems([]);
     } catch (error) {
       console.error("An error occurred while submitting the request:", error);
     } finally {
@@ -497,6 +500,7 @@ const CreateLiquidation = (props: Props) => {
 
       setFormSubmitted(true);
       setLoading(false);
+      setTableData([]);
     } catch (error) {
       console.error("An error occurred while submitting the request:", error);
     } finally {

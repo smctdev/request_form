@@ -18,18 +18,18 @@ class EmployeeNotification extends Notification
      * Create a new notification instance.
      */
 
-     protected $requestForm;
+    protected $requestForm;
 
-     protected $status;
-     protected $firstname;
-     protected $formtype;
+    protected $status;
+    protected $firstname;
+    protected $formtype;
 
 
-    public function __construct($requestForm, $status, $firstname,$formtype)
+    public function __construct($requestForm, $status, $firstname, $formtype)
     {
         $this->requestForm = $requestForm;
         $this->status = $status;
-        $this->firstname =$firstname;
+        $this->firstname = $firstname;
         $this->formtype = $formtype;
     }
 
@@ -40,7 +40,7 @@ class EmployeeNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail','database','broadcast'];
+        return ['mail', 'database', 'broadcast'];
     }
 
     /**
@@ -48,18 +48,18 @@ class EmployeeNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage) 
-                    ->view('emails.employee',[
-                        'request_form' => $this->requestForm,
-                        'status' => $this->status,
-                        'firstname' =>$this->firstname,
-                        'formtype' =>$this->formtype,
-                    ])
-                    ->subject('Request Form Update - '.$this->requestForm->form_type. ' '.now()->format('Y-m-d H:i:s'))
-                    ->line('Your request has been ' . $this->status)
-                    ->line('Request Type: '.$this->requestForm->form_type)
-                    ->line('Status:' . $this->status);
-        
+        return (new MailMessage)
+            ->view('emails.employee', [
+                'request_form' => $this->requestForm,
+                'status' => $this->status,
+                'firstname' => $this->firstname,
+                'formtype' => $this->formtype,
+            ])
+            ->subject('Request Form Update - ' . $this->requestForm->form_type . ' ' . now()->format('Y-m-d H:i:s'))
+            ->line('Your request has been ' . $this->status)
+            ->line('Request Type: ' . $this->requestForm->form_type)
+            ->line('Status:' . $this->status);
+
     }
 
     /**
@@ -77,7 +77,7 @@ class EmployeeNotification extends Notification
         ];
     }
 
-  /*   public function toBroadcast($notifiable)
+    public function toBroadcast($notifiable)
     {
         //broadcast(new NotificationEvent($this->toArray($notifiable)));
         return new BroadcastMessage([
@@ -86,5 +86,5 @@ class EmployeeNotification extends Notification
             'status' => $this->status,
             'created_at' => now()->toDateTimeString(),
         ]);
-    } */
+    }
 }

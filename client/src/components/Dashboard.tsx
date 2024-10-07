@@ -200,6 +200,7 @@ const Dashboard: React.FC = () => {
       name: "Request Type",
       selector: (row: Request) => row.form_type,
       width: "300px",
+      sortable: true,
     },
     {
       name: "Date",
@@ -219,6 +220,7 @@ const Dashboard: React.FC = () => {
         const branchId = parseInt(row.form_data[0].branch, 10);
         return branchMap.get(branchId) || "Unknown";
       },
+      sortable: true,
     },
     {
       name: "Status",

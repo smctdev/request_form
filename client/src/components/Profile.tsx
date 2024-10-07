@@ -95,6 +95,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
  
  
   useEffect(() => {
+
     const fetchUserInformation = async () => {
       try {
         if (!token || !branchList.length) {
@@ -104,7 +105,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
         const headers = {
           Authorization: `Bearer ${token}`,
         };
-        const response = await axios.get(`http://122.53.61.91:6002/api/view-user/${id}`, { headers });
+        const response = await axios.get(`http://122.53.61.91:6002/api/profile`, { headers });
 
         if (response.data.status) {
           const userData = response.data.data;

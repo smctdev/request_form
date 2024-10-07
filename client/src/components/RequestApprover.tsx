@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import DataTable from "react-data-table-component";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -20,6 +20,8 @@ import { request } from "http";
 import { record } from "zod";
 import ApproverDiscount from "./ApproverDiscount";
 import { ClipLoader } from "react-spinners";
+import Echo from "../utils/Echo";
+import Swal from "sweetalert2";
 type Props = {};
 
 type Record = {
@@ -47,6 +49,8 @@ type Record = {
   noted_by: Approver[];
   approved_by: Approver[];
   avp_staff: Approver[];
+  requested_signature: string;
+  requested_position: string;
 };
 interface Approver {
   id: number;
@@ -170,7 +174,8 @@ const RequestApprover = (props: Props) => {
   const userId = localStorage.getItem("id");
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [notificationReceived, setnotificationReceived] = useState(false);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -205,28 +210,60 @@ const RequestApprover = (props: Props) => {
         console.error("Token is missing");
         return;
       }
-
+  
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-      setLoading(true);
-      axios
-        .get(
-          `http://122.53.61.91:6002/api/request-forms/for-approval/${userId}`,
-          {
-            headers,
-          }
-        )
-        .then((response) => {
+  
+      const fetchRequests = async () => {
+        try {
+          const response = await axios.get(
+            `http://122.53.61.91:6002/api/request-forms/for-approval/${userId}`,
+            { headers }
+          );
           setRequests(response.data.request_forms);
-          setLoading(false);
-        })
-        .catch((error) => {
+        } catch (error) {
           console.error("Error fetching requests data:", error);
+        } finally {
           setLoading(false);
-        });
+        }
+      };
+  
+      fetchRequests();
     }
-  }, [userId]);
+  }, [userId, notificationReceived]);
+  
+
+  useEffect(() => {
+    const id = localStorage.getItem("id");
+
+    const channel = Echo.private(`App.Models.User.${id}`).notification(
+      (notification: any) => {
+        setnotificationReceived(true);
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'info',
+          title: notification.message,
+          showConfirmButton: false,
+          timer: 6000,
+          timerProgressBar: true,
+          showCloseButton: true,
+        });
+      }
+    );
+
+    return () => {
+
+      channel.stopListening("Illuminate\Notifications\Events\BroadcastNotificationCreated");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (notificationReceived) {
+      setnotificationReceived(false);
+    }
+  }, [notificationReceived]);
 
   const NoDataComponent = () => (
     <div className="flex justify-center items-center h-64 text-gray-500">

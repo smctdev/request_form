@@ -19,6 +19,7 @@ import { useSpring, animated } from "@react-spring/web"; // Import useSpring and
 import Pusher from "pusher-js";
 import { set } from "react-hook-form";
 import Swal from "sweetalert2";
+import Echo from "../utils/Echo";
 
 interface NavProps {
   darkMode: boolean;
@@ -54,7 +55,7 @@ const Nav: React.FC<NavProps> = ({
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [profilePicture, setProfilePicture] = useState("");
@@ -62,6 +63,7 @@ const Nav: React.FC<NavProps> = ({
   const [UserID, setUserId] = useState("");
   const [unreadCount, setUnreadCount] = useState(0); // State to keep track of unread notifications
   const [role, setRole] = useState("");
+  const [notificationReceived, setnotificationReceived] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -123,8 +125,8 @@ const Nav: React.FC<NavProps> = ({
           <p>No unread notifications to mark as read.</p>
         </div>
       `,
-      confirmButtonColor: "#007bff",
-      confirmButtonText: "Close",
+        confirmButtonColor: "#007bff",
+        confirmButtonText: "Close",
       });
       return; // Exit early if there are no unread notifications
     }
@@ -132,7 +134,13 @@ const Nav: React.FC<NavProps> = ({
     try {
       const id = localStorage.getItem("id");
       const response = await axios.put(
-        `http://122.53.61.91:6002/api/notifications/mark-all-as-read/${id}`
+        `http://122.53.61.91:6002/api/notifications/mark-all-as-read/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
 
       if (response.data.success) {
@@ -148,9 +156,9 @@ const Nav: React.FC<NavProps> = ({
         setUnreadCount(0);
 
         Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: 'All notifications marked as read.',
+          icon: "success",
+          title: "Success!",
+          text: "All notifications marked as read.",
           confirmButtonColor: "#007bff",
           confirmButtonText: "Close",
         });
@@ -173,8 +181,13 @@ const Nav: React.FC<NavProps> = ({
         return;
       }
       try {
+        const token = localStorage.getItem("token");
+
+        const headers = { Authorization: `Bearer ${token}` };
+
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-user/${id}`
+          `http://122.53.61.91:6002/api/profile`,
+          { headers }
         );
 
         if (response.data && response.data.data) {
@@ -196,7 +209,28 @@ const Nav: React.FC<NavProps> = ({
     };
 
     fetchUserInfoFromDatabase();
-  }, [updateUserInfo]);
+  }, []);
+
+  useEffect(() => {
+    const id = localStorage.getItem("id");
+    const channel = Echo.private(`App.Models.User.${id}`).notification(
+      (notification: any) => {
+        setnotificationReceived(true);
+      }
+    );
+
+    return () => {
+      channel.stopListening(
+        "IlluminateNotificationsEventsBroadcastNotificationCreated"
+      );
+    };
+  }, []);
+
+  useEffect(() => {
+    if (notificationReceived) {
+      setnotificationReceived(false);
+    }
+  }, [notificationReceived]);
 
   useEffect(() => {
     const id = localStorage.getItem("id");
@@ -204,8 +238,13 @@ const Nav: React.FC<NavProps> = ({
     // Fetch initial notifications
     const fetchNotifications = async () => {
       try {
+        const token = localStorage.getItem("token");
+
+        const headers = { Authorization: `Bearer ${token}` };
+
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/notifications/${id}/all`
+          `http://122.53.61.91:6002/api/notifications/${id}/all`,
+          { headers }
         );
         const notificationsData = response.data.unread_notification;
         setNotifications(notificationsData);
@@ -220,51 +259,8 @@ const Nav: React.FC<NavProps> = ({
       }
     };
 
-    // Fetch initial notifications on mount
     fetchNotifications();
-
-    // Enable Pusher logging for debugging
-    Pusher.logToConsole = true;
-
-    // Initialize Pusher instance
-    const pusher = new Pusher("dd9d4765fc958213199b", {
-      cluster: "ap1",
-    });
-
-    // Subscribe to the user's notification channel
-    const channel = pusher.subscribe(`notification${id}`);
-
-    // Listen for notification-event
-    channel.bind("notification-event", (newNotification: any) => {
-      // Destructure the required properties from newNotification
-      const { message, user_id, date, type, read_at } = newNotification;
-
-      // Update the notifications state with the new notification
-      setNotifications((prevNotifications) => [
-        {
-          notification_id: `notif-${Date.now()}`, // Generate a unique ID
-          read_at,
-          type,
-          data: {
-            message,
-            user_id,
-            created_at: date,
-          },
-        },
-        ...prevNotifications,
-      ]);
-      // Increment unread count if it's unread
-      if (!newNotification.read_at) {
-        setUnreadCount((prevCount) => prevCount + 1);
-      }
-    });
-
-    // Cleanup function to unsubscribe from Pusher when component unmounts
-    return () => {
-      channel.unbind("notification-event"); // Unbind the specific event listener
-      pusher.unsubscribe(`notification${id}`); // Unsubscribe from the channel
-    };
-  }, []);
+  }, [notificationReceived]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -483,9 +479,10 @@ const Nav: React.FC<NavProps> = ({
                             : "/profile";
 
                         const textColor =
-                          notif.type ===
-                          "App\\Notifications\\EmployeeNotification"
+                          notif.data.status === "approved"
                             ? "text-green"
+                            : notif.data.status === "ongoing"
+                            ? "text-blue-500"
                             : notif.type ===
                                 "App\\Notifications\\PreviousReturnRequestNotification" ||
                               notif.type ===
@@ -494,7 +491,7 @@ const Nav: React.FC<NavProps> = ({
                             : "text-primary";
 
                         return (
-                          <Link to={linkTo} key={notificationId}>
+                          <Link to={linkTo} key={notif.id}>
                             <li
                               className={`px-4 py-4 hover:bg-[#E0E0F9] cursor-pointer border-b flex items-center`}
                               onClick={() => setIsOpenNotif(false)}
@@ -527,13 +524,13 @@ const Nav: React.FC<NavProps> = ({
                   </ul>
                   <hr />
                   {notifications.length > 0 && ( // Conditionally render this section
-      <div
-        className="py-5 text-center text-gray-500 cursor-pointer"
-        onClick={handleMarkAllAsRead}
-      >
-        Mark All As Read
-      </div>
-    )}
+                    <div
+                      className="py-5 text-center text-gray-500 cursor-pointer"
+                      onClick={handleMarkAllAsRead}
+                    >
+                      Mark All As Read
+                    </div>
+                  )}
                 </div>
               </div>
             )}

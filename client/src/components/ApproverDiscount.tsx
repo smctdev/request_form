@@ -47,6 +47,9 @@ type Record = {
   approved_by: Approver[];
   avp_staff: Approver[];
   approved_attachment: string;
+  requested_by: string;
+  requested_signature: string;
+  requested_position: string;
 };
 
 type FormData = {
@@ -84,7 +87,7 @@ type Item = {
   spotcash: string;
   discountedPrice: string;
 };
-const tableInput = "break-words border border-black p-2"
+const tableInput = "break-words border border-black p-2";
 const inputStyle = "border border-black text-[12px] font-bold p-2 h-14";
 const tableStyle = "border border-black p-2";
 const tableCellStyle = `${inputStyle}  w-10`;
@@ -160,7 +163,7 @@ const ApproverDiscount: React.FC<Props> = ({
         }
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-user/${id}`,
+          `http://122.53.61.91:6002/api/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -184,7 +187,6 @@ const ApproverDiscount: React.FC<Props> = ({
 
     fetchUserInformation();
   }, []);
-
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -250,7 +252,6 @@ const ApproverDiscount: React.FC<Props> = ({
       ) {
         const approvedAttachmentString = record.approved_attachment[0]; // Access the first element
         const parsedApprovedAttachment = JSON.parse(approvedAttachmentString); // Parse the string to get the actual array
-      
 
         if (
           Array.isArray(parsedApprovedAttachment) &&
@@ -259,7 +260,6 @@ const ApproverDiscount: React.FC<Props> = ({
           // Access the first element of the array
           const formattedAttachment = parsedApprovedAttachment[0];
           setAttachment(formattedAttachment); // Set the state with the string
-       
         } else {
           console.warn(
             "Parsed approved attachment is not an array or is empty:",
@@ -306,7 +306,7 @@ const ApproverDiscount: React.FC<Props> = ({
       requestData.append("comment", comments);
 
       // Log the contents of requestData for debugging
- 
+
       const response = await axios.post(
         `http://122.53.61.91:6002/api/request-forms/${record.id}/process`,
         requestData,
@@ -349,7 +349,7 @@ const ApproverDiscount: React.FC<Props> = ({
     requestData.append("user_id", parseInt(userId).toString());
     requestData.append("action", "approve");
     requestData.append("comment", comments);
-  
+
     try {
       setApprovedLoading(true);
 
@@ -373,7 +373,6 @@ const ApproverDiscount: React.FC<Props> = ({
       setCommentMessage(errorMessage);
     }
   };
-  
 
   const formatDate2 = (dateString: Date) => {
     const date = new Date(dateString);
@@ -387,8 +386,6 @@ const ApproverDiscount: React.FC<Props> = ({
 
   if (!record) return null;
 
-  
-
   const fetchUser = async (id: number) => {
     setisFetchingUser(true);
     try {
@@ -397,14 +394,11 @@ const ApproverDiscount: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(
-        `http://122.53.61.91:6002/api/view-user/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`http://122.53.61.91:6002/api/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setUser(response.data);
     } catch (error) {
@@ -490,16 +484,18 @@ const ApproverDiscount: React.FC<Props> = ({
         <div className="flex flex-col justify-center items-center">
           <div className="justify-center w-1/2">{logo}</div>
           <h1 className="font-bold text-[18px] uppercase ">
-          Discount Requisition Form
+            Discount Requisition Form
           </h1>
           <div className="flex flex-col justify-center ">
-            <p className="underline ">{user?.data?.branch}</p>
+            <p className="underline ">{record?.branch}</p>
             <p className="text-center">Branch</p>
           </div>
         </div>
         <div className="justify-start items-start flex flex-col space-y-4 w-full">
           <div className="flex items-center justify-between w-full">
-            <p className="font-medium text-[14px]">Request ID: #{record.request_code}</p>
+            <p className="font-medium text-[14px]">
+              Request ID: #{record.request_code}
+            </p>
             <div className="w-auto flex ">
               <p>Date: </p>
               <p className="font-bold pl-2">{formatDate2(record.created_at)}</p>
@@ -524,53 +520,67 @@ const ApproverDiscount: React.FC<Props> = ({
             </p>
           </div>
           <div className="mt-4 w-full overflow-x-auto">
-  <div className="w-full border-collapse">
-    <table className="border-collapse w-full border-black border lg:overflow-auto xl:table-fixed">
-      <thead>
-        <tr>
-          <th className="border p-2 border-black bg-[#8EC7F7] w-1/12">Brand</th>
-          <th className="border border-black bg-[#8EC7F7] w-1/12">Model</th>
-          <th className="border border-black bg-[#8EC7F7] w-2/12">Unit/Part/Job</th>
-          <th className="border border-black bg-[#8EC7F7] w-2/12">Part No./Job Order No.</th>
-          <th className="border border-black bg-[#8EC7F7] w-2/12">Labor Charge</th>
-          <th className="border border-black bg-[#8EC7F7] w-2/12">Net Spotcash</th>
-          <th className="border border-black bg-[#8EC7F7] w-2/12">Discounted Price</th>
-        </tr>
-      </thead>
-      <tbody>
-        {editableRecord.form_data[0].items.map((item, index) => (
-          <tr key={index}>
-            <td className={`${tableInput}`}>{item.brand}</td>
-            <td className={`${tableInput}`}>{item.model}</td>
-            <td className={`${tableInput}`}>{item.unit}</td>
-            <td className={`${tableInput}`}>{item.partno}</td>
-            <td className={`${tableInput}`}>{item.labor}</td>
-            <td className={`${tableInput}`}>{item.spotcash}</td>
-            <td className={`${tableInput}`}>{item.discountedPrice}</td>
-          </tr>
-        ))}
-      </tbody>
-      <tfoot className="bg-gray-100">
-        <tr>
-          <td colSpan={4} className="text-right font-bold p-2">Totals:</td>
-          <td className="p-2 border border-black text-center font-bold">
-            {record.form_data[0].total_labor.toFixed(2)}
-          </td>
-          <td className="p-2 border border-black text-center font-bold">
-            {record.form_data[0].total_spotcash.toFixed(2)}
-          </td>
-          <td className="p-2 border border-black text-center font-bold">
-            {record.form_data[0].total_discount.toFixed(2)}
-          </td>
-        </tr>
-      </tfoot>
-    </table>
-  </div>
-</div>
-
-          
-
-       
+            <div className="w-full border-collapse">
+              <table className="border-collapse w-full border-black border lg:overflow-auto xl:table-fixed">
+                <thead>
+                  <tr>
+                    <th className="border p-2 border-black bg-[#8EC7F7] w-1/12">
+                      Brand
+                    </th>
+                    <th className="border border-black bg-[#8EC7F7] w-1/12">
+                      Model
+                    </th>
+                    <th className="border border-black bg-[#8EC7F7] w-2/12">
+                      Unit/Part/Job
+                    </th>
+                    <th className="border border-black bg-[#8EC7F7] w-2/12">
+                      Part No./Job Order No.
+                    </th>
+                    <th className="border border-black bg-[#8EC7F7] w-2/12">
+                      Labor Charge
+                    </th>
+                    <th className="border border-black bg-[#8EC7F7] w-2/12">
+                      Net Spotcash
+                    </th>
+                    <th className="border border-black bg-[#8EC7F7] w-2/12">
+                      Discounted Price
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {editableRecord.form_data[0].items.map((item, index) => (
+                    <tr key={index}>
+                      <td className={`${tableInput}`}>{item.brand}</td>
+                      <td className={`${tableInput}`}>{item.model}</td>
+                      <td className={`${tableInput}`}>{item.unit}</td>
+                      <td className={`${tableInput}`}>{item.partno}</td>
+                      <td className={`${tableInput}`}>{item.labor}</td>
+                      <td className={`${tableInput}`}>{item.spotcash}</td>
+                      <td className={`${tableInput}`}>
+                        {item.discountedPrice}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot className="bg-gray-100">
+                  <tr>
+                    <td colSpan={4} className="text-right font-bold p-2">
+                      Totals:
+                    </td>
+                    <td className="p-2 border border-black text-center font-bold">
+                      {record.form_data[0].total_labor.toFixed(2)}
+                    </td>
+                    <td className="p-2 border border-black text-center font-bold">
+                      {record.form_data[0].total_spotcash.toFixed(2)}
+                    </td>
+                    <td className="p-2 border border-black text-center font-bold">
+                      {record.form_data[0].total_discount.toFixed(2)}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
 
           <div className="w-full flex-col justify-center items-center">
             {isFetchingApprovers ? (
@@ -585,10 +595,10 @@ const ApproverDiscount: React.FC<Props> = ({
                     <li className="flex flex-col items-center justify-center text-center relative w-auto">
                       <div className="relative flex flex-col items-center justify-center">
                         {/* Signature */}
-                        {user.data?.signature && (
+                        {record?.requested_signature && (
                           <div className="absolute -top-4">
                             <img
-                              src={user.data?.signature}
+                              src={record?.requested_signature}
                               alt="avatar"
                               width={120}
                               className="relative z-20 pointer-events-none"
@@ -598,13 +608,13 @@ const ApproverDiscount: React.FC<Props> = ({
                         {/* Name */}
                         <p className="relative inline-block uppercase font-medium text-center mt-4 z-10">
                           <span className="relative z-10">
-                            {user.data?.firstName} {user.data?.lastName}
+                            {record?.requested_by}
                           </span>
                           <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-black"></span>
                         </p>
                         {/* Position */}
                         <p className="font-bold text-[12px] text-center mt-1">
-                          {user.data?.position}
+                          {record?.requested_position}
                         </p>
                         {/* Status, if needed */}
                         {user.data?.status && (
@@ -784,7 +794,7 @@ const ApproverDiscount: React.FC<Props> = ({
               </div>
             )}
             {commentMessage && <p className="text-red-500">{commentMessage}</p>}
-         
+
             {/* Comments Section */}
             <ul className="flex flex-col w-full mb-4 space-y-4">
               {notedBy.filter((user) => user.comment).length > 0 ||

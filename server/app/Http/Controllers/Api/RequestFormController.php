@@ -17,6 +17,7 @@ use Illuminate\Validation\ValidationException;
 use App\Notifications\ApprovalProcessNotification;
 use App\Events\NotificationEvent;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Branch;
@@ -326,7 +327,7 @@ class RequestFormController extends Controller
                 $date = now();
                 $type = 'App\Notifications\ApprovalProcessNotification';
                 $read_at = null;
-                event(new NotificationEvent($firstApprover->id, $message, $date,$type,$read_at));
+                // event(new NotificationEvent($firstApprover->id, $message, $date, $type, $read_at));
             }
 
             // Commit transaction
@@ -369,11 +370,12 @@ class RequestFormController extends Controller
     }
     public function updateRequest(Request $request, $id)
     {
+
         DB::beginTransaction(); // Start transaction
 
         try {
             // Find the request form by ID
-            $form_data = RequestForm::with('approvalProcess')->findOrFail($id);
+            $request_data = RequestForm::with('approvalProcess')->findOrFail($id);
 
             // Decode JSON strings
             $form_data_content = json_decode($request->input('form_data'), true);
@@ -402,16 +404,18 @@ class RequestFormController extends Controller
             }
 
             // Update the request form data including attachment
-            $form_data->update([
+            $request_data->update([
                 'form_data' => $form_data_content,
                 'noted_by' => $noted_by,
                 'approved_by' => $approved_by,
                 'attachment' => json_encode($attachment_paths),
+                'status' => "Pending",
                 'updated_at' => now(), // Use now() for the current timestamp
             ]);
 
+
             // Delete existing approval processes
-            $form_data->approvalProcess()->delete();
+            $request_data->approvalProcess()->delete();
 
             // Initialize approval process variables
             $level = 1;
@@ -476,7 +480,7 @@ class RequestFormController extends Controller
             foreach ($approvers as $approverGroup) {
                 foreach ($approverGroup['ids'] as $approverId) {
                     // Use the helper function to handle AVPFinance and their staff
-                    handleAvpFinanceApprovals($approverId, $approvalProcesses, $level, $form_data->id, $form_data->branch_code);
+                    handleAvpFinanceApprovals($approverId, $approvalProcesses, $level, $request_data->id, $request_data->branch_code);
                 }
             }
 
@@ -488,18 +492,18 @@ class RequestFormController extends Controller
             if ($firstApprover) {
                 $firstApproverUser = User::find($firstApprover);
                 if ($firstApproverUser) {
-                    $firstApprovalProcess = ApprovalProcess::where('request_form_id', $form_data->id)
+                    $firstApprovalProcess = ApprovalProcess::where('request_form_id', $request_data->id)
                         ->where('user_id', $firstApprover)
                         ->first();
 
-                    $requester = User::find($form_data->user_id);
+                    $requester = User::find($request_data->user_id);
                     $requesterFirstName = $requester->firstName ?? 'N/A';
                     $requesterLastName = $requester->lastName ?? 'N/A';
 
                     $firstApproverUser->notify(new ApprovalProcessNotification(
                         $firstApprovalProcess,
                         $firstApproverUser->firstName,
-                        $form_data,
+                        $request_data,
                         $requesterFirstName,
                         $requesterLastName
                     ));
@@ -509,7 +513,7 @@ class RequestFormController extends Controller
                     $date = now();
                     $type = 'App\Notifications\ApprovalProcessNotification';
                     $read_at = null;
-                    event(new NotificationEvent($firstApproverUser->id, $message, $date,$type,$read_at));
+                    // event(new NotificationEvent($firstApproverUser->id, $message, $date, $type, $read_at));
                 }
             }
 
@@ -734,20 +738,25 @@ class RequestFormController extends Controller
     public function deleteRequest($id)
     {
         try {
+            $user = Auth::user();
+            $requestForm = RequestForm::where('id', $id)->where('user_id', $user->id)->firstOrFail();
 
-            $user = RequestForm::findOrFail($id);
+            if (in_array($requestForm->status, ['Ongoing', 'Approved', 'Disapproved'])) {
+                return response()->json([
+                    'message' => 'Request form cannot be deleted because it has already been processed'
+                ], 400);
+            }
 
-            $user->delete();
+            $requestForm->delete();
 
             return response()->json([
                 'message' => 'Request form deleted successfully',
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while deleting the request form',
                 'error' => $e->getMessage()
-            ], 500);
+            ]);
         }
     }
     public function totalRequestSent($user_id)

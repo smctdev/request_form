@@ -166,7 +166,7 @@ const UpdateInformation = () => {
         }
 
         const response = await axios.get(
-          `http://122.53.61.91:6002/api/view-user/${id}`,
+          `http://122.53.61.91:6002/api/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
