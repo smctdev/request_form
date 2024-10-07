@@ -330,6 +330,19 @@ const CreateDiscount = (props: Props) => {
     }
   };
 
+  useEffect(() => {
+    setTableData([
+      {
+        brand: "",
+        model: "",
+        unit: "",
+        partno: "",
+        labor: "",
+        spotcash: "",
+        discountedPrice: "",
+      },
+    ]);
+  }, [selectedRequestType])
   const handleAddItem = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevent form submission
 
