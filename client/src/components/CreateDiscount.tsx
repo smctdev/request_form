@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select/dist/declarations/src/Select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { CalendarIcon, MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
+import {
+  CalendarIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
+} from "@heroicons/react/24/solid";
 import TextareaAutosize from "react-textarea-autosize";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -235,9 +239,7 @@ const CreateDiscount = (props: Props) => {
   const inputStyle =
     "w-full max-w-[300px] border-2 border-black rounded-[12px] pl-[10px] bg-white";
   const [tableData, setTableData] = useState<TableDataItem[]>(initialTableData);
-  const [selectedRequestType, setSelectedRequestType] =
-    useState("/request/dr");
-
+  const [selectedRequestType, setSelectedRequestType] = useState("/request/dr");
 
   const handleChange = (
     index: number,
@@ -351,7 +353,7 @@ const CreateDiscount = (props: Props) => {
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("id");
       const branch_code = localStorage.getItem("branch_code");
-      if (items.some((item) => !item.brand || !item.model || !item.unit)) {       
+      if (items.some((item) => !item.brand || !item.model || !item.unit)) {
         return;
       }
       if (!token || !userId) {
@@ -365,18 +367,18 @@ const CreateDiscount = (props: Props) => {
           text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
           confirmButtonText: "Close",
           confirmButtonColor: "#007bff",
-        })
+        });
         setLoading(false); // Stop loading state
         return; // Prevent form submission
       }
-        if (notedBy.length === 0 || approvedBy.length === 0) {
-          Swal.fire({
-            icon: "error",
-            title: "No approver selected",
-            text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
-            confirmButtonText: "Close",
-            confirmButtonColor: "#007bff",
-          })
+      if (notedBy.length === 0 || approvedBy.length === 0) {
+        Swal.fire({
+          icon: "error",
+          title: "No approver selected",
+          text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        });
         setLoading(false); // Stop loading state
         return; // Prevent form submission
       }
@@ -471,7 +473,7 @@ const CreateDiscount = (props: Props) => {
         text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
         confirmButtonText: "Close",
         confirmButtonColor: "#007bff",
-      })
+      });
       return; // Prevent form submission
     }
 
@@ -585,7 +587,7 @@ const CreateDiscount = (props: Props) => {
               <span className="mr-2 underline decoration-2 underline-offset-8">
                 Discount
               </span>{" "}
-            Requisition Form
+              Requisition Form
             </h1>
           </div>
           <div className="my-2  ">
@@ -604,25 +606,53 @@ const CreateDiscount = (props: Props) => {
                 <div className="">
                   <p className="font-bold">Purpose:</p>
                   <div className="flex flex-col space-y-2 mt-2 ">
-                    <div>
-                      <input
-                        type="radio"
-                        id="proba"
-                        value="Proba"
-                        className="size-4 ml-1"
-                        {...register("emp_status", { required: true })}
-                      />
-                      <label className="font-semibold ml-2">PROBA</label>
+                    <div className="inline-flex items-center">
+                      <label
+                        className="relative flex items-center cursor-pointer"
+                        htmlFor="repair_maintenance"
+                      >
+                        <input
+                          type="radio"
+                          id="proba"
+                          value="Proba"
+                          className="size-4 ml-1 peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                          {...register("emp_status", { required: true })}
+                        />
+                        <span
+                          className="absolute bg-blue-800 w-3.5 h-3.5 rounded-full opacity-0 ml-0.5 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                          style={{ pointerEvents: "none" }} // Prevent span from blocking click events
+                        ></span>
+                      </label>
+                      <label
+                        className="font-semibold ml-2 cursor-pointer"
+                        htmlFor="proba"
+                      >
+                        PROBA
+                      </label>
                     </div>
-                    <div>
-                      <input
-                        type="radio"
-                        id="regular"
-                        value="Regular"
-                        className="size-4 ml-1"
-                        {...register("emp_status", { required: true })}
-                      />
-                      <label className="font-semibold ml-2">REGULAR</label>
+                    <div className="inline-flex items-center">
+                      <label
+                        className="relative flex items-center cursor-pointer"
+                        htmlFor="repair_maintenance"
+                      >
+                        <input
+                          type="radio"
+                          id="regular"
+                          value="Regular"
+                          className="size-4 ml-1 peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                          {...register("emp_status", { required: true })}
+                        />
+                        <span
+                          className="absolute bg-blue-800 w-3.5 h-3.5 rounded-full opacity-0 ml-0.5 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                          style={{ pointerEvents: "none" }} // Prevent span from blocking click events
+                        ></span>
+                      </label>
+                      <label
+                        className="font-semibold ml-2 cursor-pointer"
+                        htmlFor="regular"
+                      >
+                        REGULAR
+                      </label>
                     </div>
                   </div>
                   {errors.emp_status && formSubmitted && (
@@ -709,7 +739,7 @@ const CreateDiscount = (props: Props) => {
                                 handleTextareaHeight(index, "model")
                               }
                             />
-                             {validationErrors[`items.${index}.model`] &&
+                            {validationErrors[`items.${index}.model`] &&
                               formSubmitted && (
                                 <p className="text-red-500">
                                   {validationErrors[`items.${index}.model`]}
@@ -739,7 +769,7 @@ const CreateDiscount = (props: Props) => {
                                 handleTextareaHeight(index, "unit")
                               }
                             />
-                             {validationErrors[`items.${index}.unit`] &&
+                            {validationErrors[`items.${index}.unit`] &&
                               formSubmitted && (
                                 <p className="text-red-500">
                                   {validationErrors[`items.${index}.unit`]}
@@ -795,7 +825,7 @@ const CreateDiscount = (props: Props) => {
                               }
                               className={`${tableInput}`}
                             />
-                             {validationErrors[`items.${index}.spotcash`] &&
+                            {validationErrors[`items.${index}.spotcash`] &&
                               formSubmitted && (
                                 <p className="text-red-500">
                                   {validationErrors[`items.${index}.spotcash`]}
@@ -804,7 +834,9 @@ const CreateDiscount = (props: Props) => {
                             {!item.spotcash &&
                               formSubmitted &&
                               !validationErrors[`items.${index}.spotcash`] && (
-                                <p className="text-red-500">Spot Cash Required</p>
+                                <p className="text-red-500">
+                                  Spot Cash Required
+                                </p>
                               )}
                           </td>
 
@@ -822,16 +854,26 @@ const CreateDiscount = (props: Props) => {
                               }
                               className={`${tableInput}`}
                             />
-                                {validationErrors[`items.${index}.discountedPrice`] &&
+                            {validationErrors[
+                              `items.${index}.discountedPrice`
+                            ] &&
                               formSubmitted && (
                                 <p className="text-red-500">
-                                  {validationErrors[`items.${index}.discountedPrice`]}
+                                  {
+                                    validationErrors[
+                                      `items.${index}.discountedPrice`
+                                    ]
+                                  }
                                 </p>
                               )}
                             {!item.discountedPrice &&
                               formSubmitted &&
-                              !validationErrors[`items.${index}.discountedPrice`] && (
-                                <p className="text-red-500">Discounted Price Required</p>
+                              !validationErrors[
+                                `items.${index}.discountedPrice`
+                              ] && (
+                                <p className="text-red-500">
+                                  Discounted Price Required
+                                </p>
                               )}
                           </td>
                         </tr>
@@ -928,32 +970,35 @@ const CreateDiscount = (props: Props) => {
               {approvedBy.length === 0 ? (
                 <p className=" text-gray-500">
                   Please select an approver!
-                  <br/> 
-                  <span className="italic text-sm">Note: You can add approvers by clicking the 'Add Approver' button above.</span>
+                  <br />
+                  <span className="italic text-sm">
+                    Note: You can add approvers by clicking the 'Add Approver'
+                    button above.
+                  </span>
                 </p>
               ) : (
-              <ul className="flex flex-wrap gap-6">
-                {" "}
-                {/* Use gap instead of space-x */}
-                {approvedBy.map((user, index) => (
-                  <li
-                    className="flex flex-col items-center justify-center text-center relative"
-                    key={index}
-                  >
-                    <div className="relative flex flex-col items-center justify-center">
-                      <p className="relative inline-block uppercase font-medium text-center pt-6">
-                        <span className="relative z-10 px-2">
-                          {user.firstName} {user.lastName}
-                        </span>
-                        <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-black"></span>
-                      </p>
-                      <p className="font-bold text-[12px] text-center">
-                        {user.position}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                <ul className="flex flex-wrap gap-6">
+                  {" "}
+                  {/* Use gap instead of space-x */}
+                  {approvedBy.map((user, index) => (
+                    <li
+                      className="flex flex-col items-center justify-center text-center relative"
+                      key={index}
+                    >
+                      <div className="relative flex flex-col items-center justify-center">
+                        <p className="relative inline-block uppercase font-medium text-center pt-6">
+                          <span className="relative z-10 px-2">
+                            {user.firstName} {user.lastName}
+                          </span>
+                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-black"></span>
+                        </p>
+                        <p className="font-bold text-[12px] text-center">
+                          {user.position}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
             <div className="space-x-3 flex justify-end mt-20 pb-10">

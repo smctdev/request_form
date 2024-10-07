@@ -190,7 +190,7 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
                           width: "20px",
                         }} // Set fixed height and width
                       >
-                        {notedBy.indexOf(approver) + 1}
+                        {notedBy.findIndex((a) => a.id === approver.id) + 1}
                       </span>
                     )}
                     <input
@@ -239,7 +239,7 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
                           width: "20px",
                         }} // Set fixed height and width
                       >
-                        {approvedBy.indexOf(approver) + 1}
+                        {approvedBy.findIndex((a) => a.id === approver.id) + 1}
                       </span>
                     )}
                     <input

@@ -457,35 +457,74 @@ const CreateStockRequistion = (props: Props) => {
               <div className="">
                 <p className="font-bold">Purpose:</p>
                 <div className="flex flex-col space-y-2 mt-2 ">
-                  <div>
-                    <input
-                      type="radio"
-                      id="repair_maintenance"
-                      value="Repair & Maintenance"
-                      className="size-4 ml-1"
-                      {...register("purpose")}
-                    />
-                    <label className="">Repair & Maintenance</label>
+                  <div className="inline-flex items-center">
+                    <label
+                      className="relative flex items-center cursor-pointer"
+                      htmlFor="repair_maintenance"
+                    >
+                      <input
+                        type="radio"
+                        id="repair_maintenance"
+                        value="Repair & Maintenance"
+                        className="size-10 ml-1 peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                        {...register("purpose")}
+                      />
+                      <span
+                        className="absolute bg-blue-800 w-3.5 h-3.5 rounded-full opacity-0 ml-0.5 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                        style={{ pointerEvents: "none" }} // Prevent span from blocking click events
+                      ></span>
+                    </label>
+                    <label
+                      className="cursor-pointer ml-2"
+                      htmlFor="repair_maintenance"
+                    >
+                      Repair & Maintenance
+                    </label>
                   </div>
-                  <div>
-                    <input
-                      type="radio"
-                      id="repo_recon"
-                      value="Repo. Recon"
-                      className="size-4 ml-1"
-                      {...register("purpose", { required: true })}
-                    />
-                    <label className="">Repo. Recon</label>
+                  <div className="inline-flex items-center">
+                    <label
+                      className="relative flex items-center cursor-pointer"
+                      htmlFor="repair_maintenance"
+                    >
+                      <input
+                        type="radio"
+                        id="repo_recon"
+                        value="Repo. Recon"
+                        className="size-10 ml-1 peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                        {...register("purpose", { required: true })}
+                      />
+                      <span
+                        className="absolute bg-blue-800 w-3.5 h-3.5 rounded-full opacity-0 ml-0.5 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                        style={{ pointerEvents: "none" }} // Prevent span from blocking click events
+                      ></span>
+                    </label>
+                    <label className="cursor-pointer ml-2" htmlFor="repo_recon">
+                      Repo. Recon
+                    </label>
                   </div>
-                  <div>
-                    <input
-                      type="radio"
-                      id="office_service_used"
-                      value="Office/Service Used"
-                      className="size-4 ml-1"
-                      {...register("purpose", { required: true })}
-                    />
-                    <label className="">Office/Service Used</label>
+                  <div className="inline-flex items-center">
+                    <label
+                      className="relative flex items-center cursor-pointer"
+                      htmlFor="repair_maintenance"
+                    >
+                      <input
+                        type="radio"
+                        id="office_service_used"
+                        value="Office/Service Used"
+                        className="size-10 ml-1 peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                        {...register("purpose", { required: true })}
+                      />
+                      <span
+                        className="absolute bg-blue-800 w-3.5 h-3.5 rounded-full opacity-0 ml-0.5 peer-checked:opacity-100 transition-opacity duration-200 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                        style={{ pointerEvents: "none" }} // Prevent span from blocking click events
+                      ></span>
+                    </label>
+                    <label
+                      className="cursor-pointer ml-2"
+                      htmlFor="office_service_used"
+                    >
+                      Office/Service Used
+                    </label>
                   </div>
                 </div>
                 {errors.purpose && formSubmitted && (
@@ -706,8 +745,11 @@ const CreateStockRequistion = (props: Props) => {
               {approvedBy.length === 0 ? (
                 <p className=" text-gray-500">
                   Please select an approver!
-                  <br/> 
-                  <span className="italic text-sm">Note: You can add approvers by clicking the 'Add Approver' button above.</span>
+                  <br />
+                  <span className="italic text-sm">
+                    Note: You can add approvers by clicking the 'Add Approver'
+                    button above.
+                  </span>
                 </p>
               ) : (
                 <ul className="flex flex-wrap gap-6">
