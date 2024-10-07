@@ -343,6 +343,7 @@ const CreateDiscount = (props: Props) => {
       },
     ]);
   }, [selectedRequestType])
+  
   const handleAddItem = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevent form submission
 
