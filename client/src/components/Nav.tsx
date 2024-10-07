@@ -299,7 +299,7 @@ const Nav: React.FC<NavProps> = ({
   });
 
   const profilePictureUrl = profilePicture
-    ? `http://122.53.61.91:6002/storage/${profilePicture.replace(/\\/g, "/")}`
+    ? `${process.env.REACT_APP_API_BASE_URL}/${profilePicture.replace(/\\/g, "/")}`
     : Avatar;
 
   return (

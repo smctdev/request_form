@@ -259,7 +259,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
   const profilePictureUrl = newProfilePic
     ? URL.createObjectURL(newProfilePic) // Create a temporary URL for the new profile picture
     : user?.profile_picture
-    ? `http://122.53.61.91:6002/storage/${user.profile_picture.replace(
+    ? `${process.env.REACT_APP_API_BASE_URL}/${user.profile_picture.replace(
         /\\/g,
         "/"
       )}`

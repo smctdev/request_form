@@ -222,7 +222,7 @@ const ApproversStock: React.FC<Props> = ({
         const parsedAttachment = JSON.parse(record.attachment);
         const fileUrls = parsedAttachment.map(
           (filePath: string) =>
-            `http://122.53.61.91:6002/storage/${filePath.replace(/\\/g, "/")}`
+            `${process.env.REACT_APP_API_BASE_URL}/${filePath.replace(/\\/g, "/")}`
         );
         setAttachmentUrl(fileUrls);
       } else {
@@ -891,7 +891,7 @@ const ApproversStock: React.FC<Props> = ({
             ) : record.approved_attachment.length > 0 && attachment ? (
               <div className="mt-2">
                 <img
-                  src={`http://122.53.61.91:6002/storage/${attachment}`}
+                  src={`${process.env.REACT_APP_API_BASE_URL}/${attachment}`}
                   alt="Approved Attachment"
                   className="max-w-full h-auto rounded"
                 />

@@ -186,7 +186,7 @@ const ViewDiscountModal: React.FC<Props> = ({
           // Construct file URLs
           const fileUrls = parsedAttachment.map(
             (filePath) =>
-              `http://122.53.61.91:6002/storage/${filePath.replace(/\\/g, "/")}`
+              `${process.env.REACT_APP_API_BASE_URL}/${filePath.replace(/\\/g, "/")}`
           );
           setAttachmentUrl(fileUrls);
         }
