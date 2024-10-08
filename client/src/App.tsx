@@ -71,10 +71,11 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
     const fetchBranchData = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/profile`, {
+          `${process.env.REACT_APP_API_BASE_URL}/profile`,
+          {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
-            }
+            },
           }
         );
 
@@ -106,6 +107,14 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
     setDarkMode((prevDarkMode) => !prevDarkMode);
   };
 
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
   };
@@ -117,11 +126,7 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
 
   const isMobileView = windowWidth < 768;
 
-  const marginClass = isMobileView
-    ? "ml-0"
-    : isSidebarOpen
-    ? "ml-20"
-    : "ml-0";
+  const marginClass = isMobileView ? "ml-0" : isSidebarOpen ? "ml-20" : "ml-0";
 
   return (
     <div
@@ -140,26 +145,27 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
         />
       </div>
       <div
-  className={`flex-1 flex-col w-full transition-all duration-300 ${
-    isMobileView ? marginClass : isSidebarOpen ? "ml-60" : "ml-20"
-  }`}
->
-  <Nav
-    darkMode={darkMode}
-    toggleDarkMode={toggleDarkMode}
-    toggleSidebar={toggleSidebar}
-    currentPage={currentPage}
-    isSidebarVisible={isSidebarVisible}
-    isSidebarOpen={isSidebarOpen}
-    updateUserInfo={updateUserInfo}
-  />
-  <div
-    className={`bg-${darkMode ? "black" : "gray"} flex-1 w-full text-black`}
-  >
-    <Outlet />
-  </div>
-</div>
-
+        className={`flex-1 flex-col w-full transition-all duration-300 ${
+          isMobileView ? marginClass : isSidebarOpen ? "ml-60" : "ml-20"
+        }`}
+      >
+        <Nav
+          darkMode={darkMode}
+          toggleDarkMode={toggleDarkMode}
+          toggleSidebar={toggleSidebar}
+          currentPage={currentPage}
+          isSidebarVisible={isSidebarVisible}
+          isSidebarOpen={isSidebarOpen}
+          updateUserInfo={updateUserInfo}
+        />
+        <div
+          className={`bg-${
+            darkMode ? "black" : "gray"
+          } flex-1 w-full text-black`}
+        >
+          <Outlet />
+        </div>
+      </div>
     </div>
   );
 };

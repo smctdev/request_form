@@ -13,8 +13,8 @@ const initializeEcho = () => {
 
   return new Echo({
     broadcaster: "pusher",
-    key: "dd9d4765fc958213199b",
-    cluster: "ap1",
+    key: "9775ee85a908d864d328",
+    cluster: "mt1",
     forceTLS: true,
     authEndpoint: `${process.env.REACT_APP_API_BASE_URL}/broadcasting/auth`,
     auth: {
