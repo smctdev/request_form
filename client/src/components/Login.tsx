@@ -80,8 +80,10 @@ const Login: React.FC = () => {
         localStorage.setItem("expires_at", response.data.expires_at);
         if (response.data.role === "approver") {
           navigate("/dashboard/approver");
+          window.location.reload();
         } else {
           navigate("/dashboard");
+          window.location.reload();
         }
       } else {
         Swal.fire({

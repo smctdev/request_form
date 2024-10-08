@@ -129,35 +129,32 @@ const Sidebar2: React.FC<SidebarProps> = ({
   }, []);
 
   useEffect(() => {
-    if (userId) {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("Token is missing");
-        return;
-      }
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
-      const fetchRequests = async () => {
-        try {
-          const response = await axios.get(
-            `${process.env.REACT_APP_API_BASE_URL}/request-forms/for-approval/${userId}`,
-            { headers }
-          );
-          const filtered = response.data.request_forms.filter(
-            (request: any) => request.status === "Pending"
-          );
-          setPendingCounts(filtered.length);
-        } catch (error) {
-          console.error("Error fetching requests data:", error);
-        } finally {
-        }
-      };
-
-      fetchRequests();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token is missing");
+      return;
     }
-  }, [notificationReceived]);
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    const fetchRequests = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/request-forms/for-approval/${userId}`,
+          { headers }
+        );
+        const filtered = response.data.request_forms.filter(
+          (request: any) => request.status === "Pending"
+        );
+          setPendingCounts(filtered.length);
+      } catch (error) {
+        console.error("Error fetching requests data:", error);
+      }
+    };
+
+    fetchRequests();
+  }, [notificationReceived, user]);
 
   useEffect(() => {
     if (user && user.id) {
