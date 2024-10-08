@@ -176,9 +176,9 @@ useEffect(() => {
       (branch) => branch.id === selectedBranchId
     );
     setEditedBranchCode(selectedBranch?.id.toString() || "");
-   
+    console.log("brancfh", selectedBranch);
     if (selectedBranch) {
-      setEditedBranch(selectedBranch.id.toString());
+      setEditedBranch(selectedBranch.branch.toString());
     } else {
       setEditedBranch("Honda Des, Inc.");
     }

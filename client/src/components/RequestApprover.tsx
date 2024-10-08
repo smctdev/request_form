@@ -374,13 +374,13 @@ const RequestApprover = (props: Props) => {
           </div>
 
           {/* Tooltip Icon */}
-          {(row.status === "Pending" || row.status === "Approved") && (
+          {(row.status === "Pending") && (
             <div className=" relative top-1/2 justify-center items-center flex ml-4 transform -translate-x-full -translate-y-1/2  group-hover:opacity-100 transition-opacity duration-300 z-10">
               <QuestionMarkCircleIcon className="w-6 h-6 text-gray-500 absolute" />
             </div>
           )}
           {/* Tooltip */}
-          {(row.status === "Pending" || row.status === "Approved") && (
+          {(row.status === "Pending") && (
             <div className="h-auto mb-4 absolute drop-shadow-sm   mt-2 hidden group-hover:block  bg-gray-600  ml-10  text-black p-1 rounded-md shadow-lg w-full z-40">
               <p className="text-[11px] text-white">
                 Pending: {row.pending_approver}

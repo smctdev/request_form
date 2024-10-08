@@ -108,7 +108,7 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
       }, 500);
     }
   }, [printData]);
-
+  // console.log("printdata",printData);
   const tableStyle = "border-b border-black text-sm font-normal";
   return (
     <div className="bg-white h-lvh text-black  ">
@@ -225,8 +225,9 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
                   width={120}
                 />
                 <p className="relative z-10 px-2 underline text-sm font-normal">
-                  {printData?.user.data.firstName}{" "}
-                  {printData?.user.data.lastName}
+                  {/* {printData?.user.data.firstName}{" "}
+                  {printData?.user.data.lastName} */}
+                  {printData?.id.requested_by}
                 </p>
                 <p className="font-light text-xs text-center">
                   {printData?.user.data.position}
