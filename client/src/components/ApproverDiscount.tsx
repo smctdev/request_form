@@ -442,6 +442,7 @@ const ApproverDiscount: React.FC<Props> = ({
       approvedBy: approvedBy,
       notedBy: notedBy,
       user: user,
+      requested_branch: record?.branch,
     };
 
     localStorage.setItem("printData", JSON.stringify(data));

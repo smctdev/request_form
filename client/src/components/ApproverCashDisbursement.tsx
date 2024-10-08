@@ -490,6 +490,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
       notedBy: notedBy,
       approvedBy: approvedBy,
       user: user,
+      requested_branch: record?.branch,
     };
 
     // Open a new window with PrintCashDisbursement component

@@ -21,7 +21,7 @@ use App\Models\Branch;
 
 class ApprovalProcessController extends Controller
 {
-    //FOR APPROVER SIDE 
+    //FOR APPROVER SIDE
     public function processRequestForm(Request $request, $request_form_id)
     {
         $validated = $request->validate([
@@ -357,7 +357,7 @@ class ApprovalProcessController extends Controller
                     'avp_staff' => $formattedOtherApprovers, // Include other approvers not listed in noted_by or approved_by
                     'pending_approver' => $pendingApprover, // Update pending approver logic
                     'attachment' => $requestForm->attachment,
-                    'branch' => ($acronym . "-" .$branchName),
+                    'branch' => (($acronym === "HO" ? 'ㅤ' : 'ㅤ' . $acronym . " - " ) .$branchName . 'ㅤ'),
                     'request_code' => "$branchName-$requestForm->request_code",
                     'approved_attachment' => $attachments,
                 ];

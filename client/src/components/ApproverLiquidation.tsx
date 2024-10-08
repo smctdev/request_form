@@ -481,6 +481,7 @@ const ApproverLiquidation: React.FC<Props> = ({
       approvedBy: approvedBy,
       notedBy: notedBy,
       user: user,
+      requested_branch: record?.branch,
     };
 
     localStorage.setItem("printData", JSON.stringify(data));
@@ -494,18 +495,18 @@ const ApproverLiquidation: React.FC<Props> = ({
     }
   };
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="p-4 relative w-full px-10 md:mx-0 z-10  md:w-1/2 lg:w-2/3 space-y-auto h-4/5 overflow-scroll bg-white border-black rounded-t-lg shadow-lg">
-        <div className=" top-2 flex justify-end cursor-pointer sticky">
+    <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+      <div className="relative z-10 w-full p-4 px-10 overflow-scroll bg-white border-black rounded-t-lg shadow-lg md:mx-0 md:w-1/2 lg:w-2/3 space-y-auto h-4/5">
+        <div className="sticky flex justify-end cursor-pointer  top-2">
           <XMarkIcon
-            className="h-8 w-8 text-black  bg-white rounded-full p-1  "
+            className="w-8 h-8 p-1 text-black bg-white rounded-full "
             onClick={closeModal}
           />
         </div>
         {!fetchingApprovers && !isFetchingApprovers && (
           <>
             <button
-              className="bg-blue-600 p-1 px-2 rounded-md text-white"
+              className="p-1 px-2 text-white bg-blue-600 rounded-md"
               onClick={handlePrint}
             >
               Print
@@ -522,7 +523,7 @@ const ApproverLiquidation: React.FC<Props> = ({
             )}
           </>
         )}
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center justify-center">
           <div className="justify-center w-1/2">{logo}</div>
           <h1 className="font-bold text-[18px] uppercase ">
             Liquidation of Actual Expense
@@ -532,17 +533,17 @@ const ApproverLiquidation: React.FC<Props> = ({
             <p className="text-center">Branch</p>
           </div>
         </div>
-        <div className="justify-start items-start flex flex-col space-y-2 w-full">
+        <div className="flex flex-col items-start justify-start w-full space-y-2">
           <div className="flex items-center justify-between w-full">
             <p className="font-medium text-[14px]">
               Request ID: #{record.request_code}
             </p>
-            <div className="w-auto flex ">
+            <div className="flex w-auto ">
               <p>Date: </p>
-              <p className="font-bold pl-2">{formatDate2(record.created_at)}</p>
+              <p className="pl-2 font-bold">{formatDate2(record.created_at)}</p>
             </div>
           </div>
-          <div className="flex w-full md:w-1/2 items-center">
+          <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
               className={`${
@@ -561,9 +562,9 @@ const ApproverLiquidation: React.FC<Props> = ({
             </p>
           </div>
 
-          <div className="mt-6 w-full overflow-x-auto">
+          <div className="w-full mt-6 overflow-x-auto">
             <div className="w-full">
-              <table className="border-collapse w-full border-black border-2 xl:table-fixed">
+              <table className="w-full border-2 border-collapse border-black xl:table-fixed">
                 <thead>
                   <tr>
                     <th className={`${tableStyle} w-16 bg-[#8EC7F7]`}>Date</th>
@@ -684,12 +685,12 @@ const ApproverLiquidation: React.FC<Props> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 w-full md:gap-2">
+          <div className="grid w-full grid-cols-1 md:grid-cols-2 md:gap-2">
             <div>
-              <table className="border border-black  mt-10 w-full">
+              <table className="w-full mt-10 border border-black">
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="font-semibold pl-2 pr-20   ">TOTAL EXPENSE</p>
+                    <p className="pl-2 pr-20 font-semibold ">TOTAL EXPENSE</p>
                   </td>
                   <td className={`${inputStyles} font-bold`}>
                     {isEditing
@@ -701,7 +702,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                 </tr>
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="font-semibold pl-2 pr-20   ">Cash Advance</p>
+                    <p className="pl-2 pr-20 font-semibold ">Cash Advance</p>
                   </td>
                   <td className={`${tableStyle} text-lg font-bold text-[16px]`}>
                     <p className="text-[16px] text-right pr-8">
@@ -713,7 +714,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                 </tr>
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="font-semibold pl-2 ">SHORT</p>
+                    <p className="pl-2 font-semibold ">SHORT</p>
                   </td>
                   <td className={`${inputStyles} font-bold`}>
                     ₱
@@ -730,10 +731,10 @@ const ApproverLiquidation: React.FC<Props> = ({
               </table>
             </div>
             <div>
-              <table className="border border-black  mt-10 w-full">
+              <table className="w-full mt-10 border border-black">
                 <tr>
                   <td className={`${input2Style} `}>
-                    <p className="font-semibold pl-2 pr-20   ">
+                    <p className="pl-2 pr-20 font-semibold ">
                       NAME OF EMPLOYEE
                     </p>
                   </td>
@@ -746,7 +747,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                 </tr>
                 <tr>
                   <td className={`${input2Style} `}>
-                    <p className="font-semibold pl-2    ">SIGNATURE</p>
+                    <p className="pl-2 font-semibold ">SIGNATURE</p>
                   </td>
                   <td className={`${tableStyle}`}>
                     <img src={record.form_data[0].signature} />
@@ -764,7 +765,7 @@ const ApproverLiquidation: React.FC<Props> = ({
             </div>
           </div>
 
-          <div className="w-full flex-col justify-center items-center">
+          <div className="flex-col items-center justify-center w-full">
             {isFetchingApprovers ? (
               <div className="flex items-center justify-center w-full h-40">
                 <h1>Fetching..</h1>
@@ -772,9 +773,9 @@ const ApproverLiquidation: React.FC<Props> = ({
             ) : (
               <div className="flex flex-wrap">
                 <div className="mb-4 ml-5">
-                  <h3 className="font-bold mb-3">Requested By:</h3>
+                  <h3 className="mb-3 font-bold">Requested By:</h3>
                   <ul className="flex flex-wrap gap-6">
-                    <li className="flex flex-col items-center justify-center text-center relative w-auto">
+                    <li className="relative flex flex-col items-center justify-center w-auto text-center">
                       <div className="relative flex flex-col items-center justify-center">
                         {/* Signature */}
                         {record?.requested_signature && (
@@ -788,7 +789,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                           </div>
                         )}
                         {/* Name */}
-                        <p className="relative inline-block uppercase font-medium text-center mt-4 z-10">
+                        <p className="relative z-10 inline-block mt-4 font-medium text-center uppercase">
                           <span className="relative z-10">
                             {record?.requested_by}
                           </span>
@@ -820,11 +821,11 @@ const ApproverLiquidation: React.FC<Props> = ({
                 </div>
 
                 <div className="mb-4 ml-5">
-                  <h3 className="font-bold mb-3">Noted By:</h3>
+                  <h3 className="mb-3 font-bold">Noted By:</h3>
                   <ul className="flex flex-wrap gap-6">
                     {notedBy.map((user, index) => (
                       <li
-                        className="flex flex-col items-center justify-center text-center relative"
+                        className="relative flex flex-col items-center justify-center text-center"
                         key={index}
                       >
                         <div className="relative flex flex-col items-center justify-center text-center">
@@ -842,7 +843,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                             </div>
                           )}
                           {/* Name */}
-                          <p className="relative inline-block uppercase font-medium text-center mt-4 z-10">
+                          <p className="relative z-10 inline-block mt-4 font-medium text-center uppercase">
                             <span className="relative z-10">
                               {user.firstName} {user.lastName}
                             </span>
@@ -880,11 +881,11 @@ const ApproverLiquidation: React.FC<Props> = ({
                 </div>
 
                 <div className="mb-4 ml-5">
-                  <h3 className="font-bold mb-3">Approved By:</h3>
+                  <h3 className="mb-3 font-bold">Approved By:</h3>
                   <ul className="flex flex-wrap gap-6">
                     {approvedBy.map((user, index) => (
                       <li
-                        className="flex flex-col items-center justify-center text-center relative"
+                        className="relative flex flex-col items-center justify-center text-center"
                         key={index}
                       >
                         <div className="relative flex flex-col items-center justify-center text-center">
@@ -902,7 +903,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                             </div>
                           )}
                           {/* Name */}
-                          <p className="relative inline-block uppercase font-medium text-center mt-4 z-10">
+                          <p className="relative z-10 inline-block mt-4 font-medium text-center uppercase">
                             <span className="relative z-10">
                               {user.firstName} {user.lastName}
                             </span>
@@ -963,12 +964,12 @@ const ApproverLiquidation: React.FC<Props> = ({
             </div>
           </div>
           <div className="w-full">
-            <h2 className="text-lg font-bold mb-2">Comments:</h2>
+            <h2 className="mb-2 text-lg font-bold">Comments:</h2>
 
             {record.status === "Pending" && (
               <div>
                 <textarea
-                  className="border bg-white h-auto border-black rounded-md p-1 mt-2 w-full"
+                  className="w-full h-auto p-1 mt-2 bg-white border border-black rounded-md"
                   placeholder="Enter your comments here.."
                   value={comments}
                   onChange={(e) => setComments(e.target.value)}
@@ -989,7 +990,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                         <div>
                           <img
                             alt="logo"
-                            className="cursor-pointer hidden sm:block"
+                            className="hidden cursor-pointer sm:block"
                             src={Avatar}
                             height={35}
                             width={45}
@@ -997,7 +998,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                         </div>
                         <div className="flex flex-row w-full" key={index}>
                           <li className="flex flex-col justify-between pl-2">
-                            <h3 className="font-bold text-lg">
+                            <h3 className="text-lg font-bold">
                               {user.firstName} {user.lastName}
                             </h3>
                             <p>{user.comment}</p>
@@ -1013,7 +1014,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                         <div>
                           <img
                             alt="logo"
-                            className="cursor-pointer hidden sm:block"
+                            className="hidden cursor-pointer sm:block"
                             src={Avatar}
                             height={35}
                             width={45}
@@ -1021,7 +1022,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                         </div>
                         <div className="flex flex-row w-full" key={index}>
                           <li className="flex flex-col justify-between pl-2">
-                            <h3 className="font-bold text-lg">
+                            <h3 className="text-lg font-bold">
                               {user.firstName} {user.lastName}
                             </h3>
                             <p>{user.comment}</p>
@@ -1036,7 +1037,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                         <div>
                           <img
                             alt="logo"
-                            className="cursor-pointer hidden sm:block"
+                            className="hidden cursor-pointer sm:block"
                             src={Avatar}
                             height={35}
                             width={45}
@@ -1044,7 +1045,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                         </div>
                         <div className="flex flex-row w-full" key={index}>
                           <li className="flex flex-col justify-between pl-2">
-                            <h3 className="font-bold text-lg">
+                            <h3 className="text-lg font-bold">
                               {user.firstName} {user.lastName} - AVP STAFF
                             </h3>
                             <p>{user.comment}</p>
@@ -1076,7 +1077,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                 <img
                   src={`${process.env.REACT_APP_API_BASE_URL}/${attachment}`}
                   alt="Approved Attachment"
-                  className="max-w-full h-auto rounded"
+                  className="h-auto max-w-full rounded"
                 />
               </div>
             ) : (
@@ -1084,9 +1085,9 @@ const ApproverLiquidation: React.FC<Props> = ({
             )}
           </div>
           {record.status === "Pending" && (
-            <div className="w-full space-x-2 flex items-center justify-between">
+            <div className="flex items-center justify-between w-full space-x-2">
               <button
-                className="bg-primary text-white w-1/2 items-center h-10 rounded-xl p-2"
+                className="items-center w-1/2 h-10 p-2 text-white bg-primary rounded-xl"
                 onClick={handleApprove}
               >
                 {approveLoading ? (
@@ -1096,7 +1097,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                 )}
               </button>
               <button
-                className="bg-red-600 w-1/2 rounded-xl text-white p-2"
+                className="w-1/2 p-2 text-white bg-red-600 rounded-xl"
                 onClick={handleDisapprove}
               >
                 {loading ? (

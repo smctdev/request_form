@@ -154,7 +154,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
           Application for Cash Advance
         </h1>
         <div className="mx-10 mt-2 ">
-          <p className="text-sm font-normal  indent-8">
+          <p className="text-sm font-normal indent-8">
             I hereby apply for cash advance in the amount of
             <span className="px-6 ml-2 border-b border-black">
               {printData?.id?.form_data?.[0]?.grand_total
@@ -365,7 +365,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
           </h1>
           <div className="flex flex-col items-center mt-1 font-bold">
             <h1 className="text-base font-medium underline uppercase">
-              {printData?.user.data.branch || ""}
+              {printData?.requested_branch}
             </h1>
             <h1 className="text-base font-semibold">BRANCH</h1>
           </div>
