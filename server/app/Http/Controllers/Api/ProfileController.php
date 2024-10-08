@@ -11,7 +11,7 @@ class ProfileController extends Controller
 {
     public function profile()
     {
-        $myProfile = Auth::user();
+        $myProfile = Auth::user()->load('branch');
 
         return response([
             'status'    =>      true,

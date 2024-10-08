@@ -108,7 +108,6 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
       }, 500);
     }
   }, [printData]);
-  // console.log("printdata",printData);
   const tableStyle = "border-b border-black text-sm font-normal";
   return (
     <div className="bg-white h-lvh text-black  ">
@@ -140,7 +139,7 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
           </h1>
           <div className="flex flex-col items-center font-bold mt-2">
             <h1 className="font-medium text-sm uppercase underline">
-              {printData?.user.data.branch}
+              {printData?.requested_branch}
             </h1>
             <h1 className="text-sm font-semibold">BRANCH</h1>
           </div>
@@ -220,7 +219,7 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
               <div className="flex flex-col items-center justify-center relative pt-3">
                 <img
                   className="absolute -top-3 left-1/2 transform -translate-x-1/2 pointer-events-none"
-                  src={printData?.user.data.signature}
+                  src={printData?.id.requested_signature}
                   alt="avatar"
                   width={120}
                 />
@@ -230,7 +229,7 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
                   {printData?.id.requested_by}
                 </p>
                 <p className="font-light text-xs text-center">
-                  {printData?.user.data.position}
+                  {printData?.user?.data?.position}
                 </p>
               </div>
             </div>

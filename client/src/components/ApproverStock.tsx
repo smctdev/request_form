@@ -412,6 +412,7 @@ const ApproversStock: React.FC<Props> = ({
       notedBy: notedBy,
       user: user,
       purpose: checkedPurpose,
+      requested_branch: record?.branch,
     };
 
     localStorage.setItem("printData", JSON.stringify(data));
