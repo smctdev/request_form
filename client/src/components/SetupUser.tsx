@@ -13,6 +13,7 @@ import DeleteSuccessModal from "./DeleteSucessModal";
 import DeleteModal from "./DeleteModal";
 import ViewUserModal from "./ViewUserModal";
 import axios from "axios";
+import { ClipLoader } from "react-spinners";
 
 type Props = {};
 
@@ -43,38 +44,35 @@ const SetupUser = (props: Props) => {
   const userId = localStorage.getItem("id");
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
-  
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-  
     const fetchBranchData = async () => {
       try {
-     
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/view-branch`
         );
         const branches = response.data.data;
-        
+
         // Create a mapping of id to branch_code
         const branchMapping = new Map<number, string>(
           branches.map((branch: { id: number; branch_code: string }) => [
             branch.id,
-            branch.branch_code
+            branch.branch_code,
           ])
         );
-  
+
         setBranchList(branches);
         setBranchMap(branchMapping);
-  
-      
       } catch (error) {
         console.error("Error fetching branch data:", error);
       }
     };
-  
+
     fetchBranchData();
   }, []);
-  
-  const [filterTerm , setFilterTerm] = useState("")
+
+  const [filterTerm, setFilterTerm] = useState("");
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -82,8 +80,6 @@ const SetupUser = (props: Props) => {
           console.error("User ID is missing");
           return;
         }
-
-   
 
         const token = localStorage.getItem("token");
         if (!token) {
@@ -101,7 +97,7 @@ const SetupUser = (props: Props) => {
             headers,
           }
         );
-     
+
         // Transform data to match columns selector
         const transformedData = response.data.data.map(
           (item: Record, index: number) => ({
@@ -117,19 +113,20 @@ const SetupUser = (props: Props) => {
             position: item.position,
           })
         );
-    
+
         setUserList(transformedData);
-     
       } catch (error) {
         console.error("Error fetching users data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchUserData();
   }, [userId]);
 
-  const filteredUserList = userList.filter(user =>
-    Object.values(user).some(value =>
+  const filteredUserList = userList.filter((user) =>
+    Object.values(user).some((value) =>
       String(value).toLowerCase().includes(filterTerm.toLowerCase())
     )
   );
@@ -158,7 +155,6 @@ const SetupUser = (props: Props) => {
       );
 
       if (response.data.status) {
-
         closeDeleteModal();
         openDeleteSuccessModal();
         refreshData();
@@ -242,8 +238,6 @@ const SetupUser = (props: Props) => {
         return;
       }
 
-
-
       const token = localStorage.getItem("token");
       if (!token) {
         console.error("Token is missing");
@@ -277,7 +271,7 @@ const SetupUser = (props: Props) => {
         })
       );
 
-      setUserList(transformedData);   
+      setUserList(transformedData);
     } catch (error) {
       console.error("Error fetching users data:", error);
     }
@@ -296,7 +290,6 @@ const SetupUser = (props: Props) => {
     {
       name: "Branch code",
       selector: (row: Record) => {
-      
         const branchId = parseInt(row.branch_code, 10);
         return branchMap.get(branchId) || "Unknown";
       },
@@ -361,32 +354,40 @@ const SetupUser = (props: Props) => {
               <MagnifyingGlassIcon className="h-5 w-5 text-black absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
-          <DataTable
-            columns={columns}
-            data={filteredUserList}
-            pagination
-            striped
-            customStyles={{
-              headRow: {
-                style: {
-                  fontSize: "18px",
-                  fontWeight: "bold",
-                  color: "black",
-                  backgroundColor: "#FFFF",
+          {loading ? (
+            <div className="flex flex-col justify-center items-center h-64">
+              {/* <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div> */}
+              <ClipLoader color="#007bff" loading={loading} size={50} />
+              <p className="mt-2 text-gray-700 text-center">Please wait</p>
+            </div>
+          ) : (
+            <DataTable
+              columns={columns}
+              data={filteredUserList}
+              pagination
+              striped
+              customStyles={{
+                headRow: {
+                  style: {
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    color: "black",
+                    backgroundColor: "#FFFF",
+                  },
                 },
-              },
-              rows: {
-                style: {
-                  color: "black", // Adjust as per your design
-                  backgroundColor: "#E7F1F9", // Adjust as per your design
+                rows: {
+                  style: {
+                    color: "black", // Adjust as per your design
+                    backgroundColor: "#E7F1F9", // Adjust as per your design
+                  },
+                  stripedStyle: {
+                    color: "black", // Adjust as per your design
+                    backgroundColor: "#FFFFFF", // Adjust as per your design
+                  },
                 },
-                stripedStyle: {
-                  color: "black", // Adjust as per your design
-                  backgroundColor: "#FFFFFF", // Adjust as per your design
-                },
-              },
-            }}
-          />
+              }}
+            />
+          )}
         </div>
       </div>
       <AddUserModal

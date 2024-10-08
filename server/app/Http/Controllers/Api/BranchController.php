@@ -16,6 +16,8 @@ class BranchController extends Controller
        
             $validator = Validator::make($request->all(), [
                 'branch_code' => 'required|string|max:255|unique:branches,branch_code',
+                'branch_name'       =>     ['required', 'string', 'max:150'],
+                'acronym'           =>     ['required', 'string', 'max:20']
                 // Add other validation rules as needed
             ]);
 
@@ -28,6 +30,8 @@ class BranchController extends Controller
             $branch = Branch::create([
                 'user_id' => auth()->id(),
                 'branch_code' => $request->branch_code,
+                'branch_name' => $request->branch_code,
+                'acronym' => $request->branch_code,
                 'branch' => $request->branch,
 
             ]);

@@ -329,7 +329,8 @@ class ApprovalProcessController extends Controller
                 $approver = $approvalProcess->user; // Eager loaded approver
                 $branch = $requestForm->branch_code;
                 $branchNa = Branch::find($branch);
-                $branchName = $branchNa->branch_code;
+                $acronym = $branchNa->acronym;
+                $branchName = $branchNa->branch_name;
                 // Determine pending approver
                 $pendingApprover = null;
                 if ($isUserTurn && $isLastApprover) {
@@ -356,7 +357,7 @@ class ApprovalProcessController extends Controller
                     'avp_staff' => $formattedOtherApprovers, // Include other approvers not listed in noted_by or approved_by
                     'pending_approver' => $pendingApprover, // Update pending approver logic
                     'attachment' => $requestForm->attachment,
-                    'branch' => $branchName,
+                    'branch' => ($acronym . "-" .$branchName),
                     'request_code' => "$branchName-$requestForm->request_code",
                     'approved_attachment' => $attachments,
                 ];

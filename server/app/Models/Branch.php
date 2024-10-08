@@ -6,20 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Branch extends Model
 {
-    protected $fillable = [
-        'branch_code',
-       'branch'
-    ];
-
-    protected $guarded = [
-        'id',
-        'created_at',
-        'updated_at',
-    ];
+    protected $guarded = [];
 
     public function users()
     {
         return $this->hasMany(User::class);
     }
-    
+
 }

@@ -19,6 +19,7 @@ import { set } from "react-hook-form";
 import ViewBranchModal from "./ViewBranchModal";
 import axios from "axios";
 import SquareLoader from "react-spinners/SquareLoader";
+import { ClipLoader } from "react-spinners";
 
 export type Branch = {
   id: number;
@@ -58,8 +59,9 @@ const SetupBranch = (props: Props) => {
   const [selectedUser, setSelectedUser] = useState<Record | null>(null);
   const [branchList, setBranchList] = useState<Record[]>([]);
   const [isLoading, setisLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const userId = localStorage.getItem("id");
-  const [filterTerm , setFilterTerm] = useState("")
+  const [filterTerm, setFilterTerm] = useState("");
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -79,11 +81,12 @@ const SetupBranch = (props: Props) => {
           Authorization: `Bearer ${token}`,
         };
 
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/view-branch`, {
-          headers,
-        });
-
-       
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`,
+          {
+            headers,
+          }
+        );
 
         // Assuming response.data.data is the array of branches
         setBranchList(response.data.data);
@@ -95,58 +98,53 @@ const SetupBranch = (props: Props) => {
     fetchBranchData();
   }, [userId]);
 
-  
-
-
-
   const viewModalShow = (row: Record) => {
     setSelectedUser(row);
     setViewModalIsOpen(true);
-
   };
 
   const viewModalClose = () => {
     setSelectedUser(null);
     setViewModalIsOpen(false);
   };
-  const filteredBranch = branchList.filter(branch =>
-    Object.values(branch).some(value =>
+  const filteredBranch = branchList.filter((branch) =>
+    Object.values(branch).some((value) =>
       String(value).toLowerCase().includes(filterTerm.toLowerCase())
     )
   );
   const deleteUser = async () => {
     try {
-        setisLoading(true);
-        const token = localStorage.getItem("token");
-        if (!token) {
-            console.error("Token is missing");
-            return;
-        }
+      setisLoading(true);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Token is missing");
+        return;
+      }
 
-        const headers = {
-            Authorization: `Bearer ${token}`,
-        };
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
 
-        // Send PUT request to update user's role
-        const response = await axios.delete(
-            `${process.env.REACT_APP_API_BASE_URL}/delete-branch/${selectedUser?.id}`,
-          
-            { headers }
-        );
+      // Send PUT request to update user's role
+      const response = await axios.delete(
+        `${process.env.REACT_APP_API_BASE_URL}/delete-branch/${selectedUser?.id}`,
 
-        setisLoading(false);
-        openDeleteSuccessModal();
-        refreshData();
-   
-        // Optionally handle success message or UI updates after successful update
+        { headers }
+      );
+
+      setisLoading(false);
+      openDeleteSuccessModal();
+      refreshData();
+
+      // Optionally handle success message or UI updates after successful update
     } catch (error) {
-        setisLoading(false);
-        console.error("Error updating role:", error);
-        // Handle error state or show error message to the user
-        // Example: show error message in a toast or modal
-        // showErrorToast("Failed to update role. Please try again later.");
+      setisLoading(false);
+      console.error("Error updating role:", error);
+      // Handle error state or show error message to the user
+      // Example: show error message in a toast or modal
+      // showErrorToast("Failed to update role. Please try again later.");
     }
-};
+  };
 
   const deleteModalShow = (row: Record) => {
     setSelectedUser(row);
@@ -246,13 +244,18 @@ const SetupBranch = (props: Props) => {
         Authorization: `Bearer ${token}`,
       };
 
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/view-branch`, {
-        headers,
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/view-branch`,
+        {
+          headers,
+        }
+      );
       // Assuming response.data.data is the array of branches
       setBranchList(response.data.data);
     } catch (error) {
       console.error("Error fetching branch data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -264,7 +267,6 @@ const SetupBranch = (props: Props) => {
             Branch
           </h1>
           <div className="flex items-end justify-end mx-2 bg-white">
-          
             <div>
               <button
                 className="bg-primary text-white rounded-[12px] p-2"
@@ -286,32 +288,40 @@ const SetupBranch = (props: Props) => {
               <MagnifyingGlassIcon className="h-5 w-5 text-black absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
-          <DataTable
-            columns={columns}
-            data={filteredBranch}
-            pagination
-            striped
-            customStyles={{
-              headRow: {
-                style: {
-                  fontSize: "18px",
-                  fontWeight: "bold",
-                  color: "black",
-                  backgroundColor: "#FFFF",
+          {loading ? (
+            <div className="flex flex-col justify-center items-center h-64">
+              {/* <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div> */}
+              <ClipLoader color="#007bff" loading={loading} size={50} />
+              <p className="mt-2 text-gray-700 text-center">Please wait</p>
+            </div>
+          ) : (
+            <DataTable
+              columns={columns}
+              data={filteredBranch}
+              pagination
+              striped
+              customStyles={{
+                headRow: {
+                  style: {
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    color: "black",
+                    backgroundColor: "#FFFF",
+                  },
                 },
-              },
-              rows: {
-                style: {
-                  color: "black",
-                  backgroundColor: "#E7F1F9",
+                rows: {
+                  style: {
+                    color: "black",
+                    backgroundColor: "#E7F1F9",
+                  },
+                  stripedStyle: {
+                    color: "black",
+                    backgroundColor: "#FFFFFF",
+                  },
                 },
-                stripedStyle: {
-                  color: "black",
-                  backgroundColor: "#FFFFFF",
-                },
-              },
-            }}
-          />
+              }}
+            />
+          )}
         </div>
       </div>
       <AddBranchModal
@@ -342,7 +352,7 @@ const SetupBranch = (props: Props) => {
         entityType="Branch"
       />
       <EditUserModal
-      refreshData={refreshData}
+        refreshData={refreshData}
         editModal={editModal}
         editModalClose={editModalClose}
         openSuccessModal={openSuccessModal}
