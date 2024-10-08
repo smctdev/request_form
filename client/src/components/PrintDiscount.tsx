@@ -82,25 +82,25 @@ const PrintDiscount: React.FC<PrintRefundProps> = ({ data }) => {
       const parsedData = JSON.parse(storedData);
       setPrintData(parsedData);
     }
-  
+
     localStorage.removeItem("printData");
   }, []);
-  
+
   useEffect(() => {
     if (printData !== null) {
       let isPrinting = false;
-  
+
       window.onbeforeprint = () => {
         isPrinting = true;
       };
-  
+
       window.onafterprint = () => {
         localStorage.removeItem("printData");
         window.close();
       };
-  
+
       window.print();
-  
+
       setTimeout(() => {
         if (!isPrinting) {
           window.close();
@@ -111,7 +111,7 @@ const PrintDiscount: React.FC<PrintRefundProps> = ({ data }) => {
 
   const tableStyle = "border-black border py-2 font-bold text-xs text-center";
   return (
-    <div className="bg-white h-lvh text-black">
+    <div className="text-black bg-white h-lvh">
       <style>
         {`
         @media print
@@ -123,59 +123,59 @@ const PrintDiscount: React.FC<PrintRefundProps> = ({ data }) => {
         }
         `}
       </style>
-      <div className="border-2 border-black px-4 pt-2">
-      <div className="flex justify-end pr-3">
-          <p className="flex font-medium text-xs">
+      <div className="px-4 pt-2 border-2 border-black">
+        <div className="flex justify-end pr-3">
+          <p className="flex text-xs font-medium">
             Date:{" "}
-            <p className="underline ml-2 text-xs font-normal">
+            <p className="ml-2 text-xs font-normal underline">
               {formatDate(printData?.id.created_at)}
             </p>
           </p>
         </div>
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center justify-center">
           <div className="justify-center w-1/2">{logo}</div>
 
-          <h1 className="mt-2 font-semibold text-xs uppercase">
+          <h1 className="mt-2 text-xs font-semibold uppercase">
             Discount Requisition Slip
           </h1>
-          <div className="flex flex-col items-center font-medium text-xs mt-2">
-            <h1 className="font-medium text-xs uppercase underline">
+          <div className="flex flex-col items-center mt-2 text-xs font-medium">
+            <h1 className="text-xs font-medium underline uppercase">
               {printData?.user.data.branch}
             </h1>
             <h1 className="text-xs font-semibold">BRANCH</h1>
           </div>
         </div>
         {/* <div className="flex justify-end pr-6">
-          <p className=" mb-2 flex font-medium text-xs ">
+          <p className="flex mb-2 text-xs font-medium ">
             Date:{" "}
-            <p className="underline ml-2 mb-2 font-normal">
+            <p className="mb-2 ml-2 font-normal underline">
               {formatDate(printData?.id.created_at)}
             </p>
           </p>
         </div> */}
         <div className="flex justify-center w-full mt-2">
-          <table className="border w-full">
+          <table className="w-full border">
             <thead className="border border-black ">
               <tr>
-                <th className="border border-black font-medium text-xs text-center px-1">
+                <th className="px-1 text-xs font-medium text-center border border-black">
                   Brand
                 </th>
-                <th className="border border-black font-medium text-xs text-center px-1">
+                <th className="px-1 text-xs font-medium text-center border border-black">
                   Model
                 </th>
-                <th className="border border-black font-medium text-xs text-center px-1 whitespace-nowrap">
+                <th className="px-1 text-xs font-medium text-center border border-black whitespace-nowrap">
                   Unit/Part/Job Description
                 </th>
-                <th className="border border-black font-medium text-xs text-center px-1 whitespace-nowrap">
+                <th className="px-1 text-xs font-medium text-center border border-black whitespace-nowrap">
                   Part No./Job Order No.
                 </th>
-                <th className="border border-black font-medium text-xs text-center px-1 whitespace-nowrap">
+                <th className="px-1 text-xs font-medium text-center border border-black whitespace-nowrap">
                   Labor Charge
                 </th>
-                <th className="border border-black font-medium text-xs text-center px-1 whitespace-nowrap">
+                <th className="px-1 text-xs font-medium text-center border border-black whitespace-nowrap">
                   Net Spotcash
                 </th>
-                <th className="border border-black font-medium text-xs text-center px-1 whitespace-nowrap">
+                <th className="px-1 text-xs font-medium text-center border border-black whitespace-nowrap">
                   Discounted Price
                 </th>
               </tr>
@@ -185,25 +185,25 @@ const PrintDiscount: React.FC<PrintRefundProps> = ({ data }) => {
                 <React.Fragment key={index}>
                   {formData.items.map((item: any, itemIndex: number) => (
                     <tr key={itemIndex}>
-                      <td className="border border-black font-normal text-xs text-center px-1">
+                      <td className="px-1 text-xs font-normal text-center border border-black">
                         {item.brand}
                       </td>
-                      <td className="border border-black font-normal text-xs text-center px-1">
+                      <td className="px-1 text-xs font-normal text-center border border-black">
                         {item.model}
                       </td>
-                      <td className="border border-black font-normal text-xs text-center px-1">
+                      <td className="px-1 text-xs font-normal text-center border border-black">
                         {item.unit}
                       </td>
-                      <td className="border border-black font-normal text-xs text-center px-1">
+                      <td className="px-1 text-xs font-normal text-center border border-black">
                         {item.partno}
                       </td>
-                      <td className="border border-black font-normal text-xs text-center px-1">
+                      <td className="px-1 text-xs font-normal text-center border border-black">
                         {item.labor}
                       </td>
-                      <td className="border border-black font-normal text-xs text-center px-1">
+                      <td className="px-1 text-xs font-normal text-center border border-black">
                         {item.spotcash}
                       </td>
-                      <td className="border border-black font-normal text-xs text-center px-1">
+                      <td className="px-1 text-xs font-normal text-center border border-black">
                         {item.discountedPrice}
                       </td>
                     </tr>
@@ -226,16 +226,19 @@ const PrintDiscount: React.FC<PrintRefundProps> = ({ data }) => {
             </tbody>
             <tfoot className={`${tableStyle} `}>
               <tr>
-                <td colSpan={4} className="text-right font-medium text-xs border-black border">
+                <td
+                  colSpan={4}
+                  className="text-xs font-medium text-right border border-black"
+                >
                   Total:
                 </td>
-                <td className="font-medium text-xs text-center border border-black">
+                <td className="text-xs font-medium text-center border border-black">
                   {printData?.id.form_data[0].total_labor.toFixed(2)}
                 </td>
-                <td className="font-medium text-xs text-center border border-black">
+                <td className="text-xs font-medium text-center border border-black">
                   {printData?.id.form_data[0].total_spotcash.toFixed(2)}
                 </td>
-                <td className="font-medium text-xs text-center border border-black">
+                <td className="text-xs font-medium text-center border border-black">
                   {printData?.id.form_data[0].total_discount.toFixed(2)}
                 </td>
               </tr>
@@ -246,46 +249,45 @@ const PrintDiscount: React.FC<PrintRefundProps> = ({ data }) => {
         <div className="mt-4 ">
           <div className="flex flex-wrap justify-start ">
             {/* Requested By Section */}
-            <div className="mb-4 flex-grow">
-              <h3 className="font-normal text-xs mb-3">Requested By:</h3>
-              <div className="flex flex-col items-center justify-center relative pt-3">
+            <div className="flex-grow mb-4">
+              <h3 className="mb-3 text-xs font-normal">Requested By:</h3>
+              <div className="relative flex flex-col items-center justify-center pt-3">
                 <img
-                  className="absolute -top-3 left-1/2 transform -translate-x-1/2 pointer-events-none"
-                  src={printData?.user.data.signature}
+                  className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
+                  src={printData?.id.requested_signature}
                   alt="avatar"
                   width={120}
                 />
-                <p className="relative z-10 px-2 underline font-normal text-xs">
-                  {printData?.user.data.firstName}{" "}
-                  {printData?.user.data.lastName}
+                <p className="relative z-10 px-2 text-xs font-normal underline">
+                  {printData?.id.requested_by}
                 </p>
-                <p className="font-light text-xs text-center">
-                  {printData?.user.data.position}
+                <p className="text-xs font-light text-center">
+                  {printData?.id.requested_position}
                 </p>
               </div>
             </div>
 
             {/* Noted By Section */}
-            <div className="mb-4 flex-grow">
-              <h3 className="font-normal text-xs mb-3">Noted By:</h3>
+            <div className="flex-grow mb-4">
+              <h3 className="mb-3 text-xs font-normal">Noted By:</h3>
               <div className="flex flex-wrap justify-start">
                 {printData?.notedBy.map((approver: any, index: number) => (
                   <div
                     key={index}
-                    className="flex flex-col items-center justify-center relative pt-3 mr-10"
+                    className="relative flex flex-col items-center justify-center pt-3 mr-10"
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute -top-3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                        className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}
                       />
                     )}
-                    <p className="relative z-10 underline text-center font-normal text-xs">
+                    <p className="relative z-10 text-xs font-normal text-center underline">
                       {approver.firstName} {approver.lastName}
                     </p>
-                    <p className="font-light text-xs text-center">
+                    <p className="text-xs font-light text-center">
                       {approver.position}
                     </p>
                   </div>
@@ -294,26 +296,26 @@ const PrintDiscount: React.FC<PrintRefundProps> = ({ data }) => {
             </div>
 
             {/* Approved By Section */}
-            <div className="mb-4 flex-grow">
-              <h3 className="font-normal text-xs mb-3">Approved By:</h3>
+            <div className="flex-grow mb-4">
+              <h3 className="mb-3 text-xs font-normal">Approved By:</h3>
               <div className="flex flex-wrap justify-start">
                 {printData?.approvedBy.map((approver: any, index: number) => (
                   <div
                     key={index}
-                    className="flex flex-col justify-start items-center mr-10 relative pt-3"
+                    className="relative flex flex-col items-center justify-start pt-3 mr-10"
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute -top-3 left-1/2 transform -translate-x-1/2 pointer-events-none"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}
                       />
                     )}
-                    <p className="relative z-10 underline text-center font-normal text-xs">
+                    <p className="relative z-10 text-xs font-normal text-center underline">
                       {approver.firstName} {approver.lastName}
                     </p>
-                    <p className="font-light text-xs text-center">
+                    <p className="text-xs font-light text-center">
                       {approver.position}
                     </p>
                   </div>

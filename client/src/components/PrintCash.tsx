@@ -86,7 +86,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
       const parsedData = JSON.parse(storedData);
       setPrintData(parsedData);
     }
-  
+
     localStorage.removeItem("printData");
   }, []);
 
@@ -149,25 +149,25 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
           }
         `}
       </style>
-      <div className="flex flex-col  border-2 border-black h-auto mb-2">
-        <h1 className="uppercase text-base mt-2 font-bold text-center">
+      <div className="flex flex-col h-auto mb-2 border-2 border-black">
+        <h1 className="mt-2 text-base font-bold text-center uppercase">
           Application for Cash Advance
         </h1>
         <div className="mx-10 mt-2 ">
-          <p className=" indent-8 text-sm font-normal">
+          <p className="text-sm font-normal  indent-8">
             I hereby apply for cash advance in the amount of
-            <span className="border-b border-black px-6 ml-2">
+            <span className="px-6 ml-2 border-b border-black">
               {printData?.id?.form_data?.[0]?.grand_total
                 ? toWords(printData?.id?.form_data?.[0]?.grand_total)
                 : "N/A"}
             </span>
             (₱ {printData?.id?.form_data?.[0]?.grand_total}) for the following
             reasons:{" "}
-            <span className="border-b border-black px-6">
+            <span className="px-6 border-b border-black">
               {printData?.id.form_data[0].remarks}
             </span>
             I promise to liquidate the said amount on or before{" "}
-            <span className="border-b border-black px-6">
+            <span className="px-6 border-b border-black">
               {formatDate(printData?.id.form_data[0].liquidationDate)}
             </span>{" "}
             it is understood that my failure to do so shall mean the imposition
@@ -175,49 +175,49 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
           </p>
         </div>
         {/* container signature */}
-        <div className="flex  justify-between mx-20 mt-3">
-          <div className="mb-4 flex-grow relative flex">
-            <h3 className="font-normal text-sm mb-3 indent-10">Payee:</h3>
-            <div className="ml-6  text-center">
+        <div className="flex justify-between mx-20 mt-3">
+          <div className="relative flex flex-grow mb-4">
+            <h3 className="mb-3 text-sm font-normal indent-10">Payee:</h3>
+            <div className="ml-6 text-center">
               <span className=" inline-block border-b border-black w-[200px] text-sm font-medium text-center">
                 {printData?.user?.data?.firstName}{" "}
                 {printData?.user?.data?.lastName}
               </span>
             </div>
           </div>
-          <div className="mb-1 flex-grow relative flex ">
-            <div className="ml-6 relative  ">
+          <div className="relative flex flex-grow mb-1 ">
+            <div className="relative ml-6 ">
               <img
-                className="absolute -top-1 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-1 left-1/2"
                 src={printData?.user?.data?.signature}
                 alt=""
                 width={100}
               />
               <div className="border-b w-[200px] border-black text-center">
-                <span className="   text-center text-sm font-medium">
+                <span className="text-sm font-medium text-center ">
                   {printData?.user?.data?.firstName}{" "}
                   {printData?.user?.data?.lastName}
                 </span>
               </div>
 
-              <p className=" text-center text-xs font-light">
+              <p className="text-xs font-light text-center ">
                 Print Name & Sign
               </p>
             </div>
           </div>
         </div>
-        <div className="flex  justify-between border-b-2 pb-4 border-dashed border-black w-full">
+        <div className="flex justify-between w-full pb-4 border-b-2 border-black border-dashed">
           <div className="ml-20">
             <p className="text-sm font-normal">Noted By:</p>
-            <div className=" border-black text-center">
+            <div className="text-center border-black ">
               {printData?.notedBy.map((approver: any, index: number) => (
                 <div
                   key={index}
-                  className="flex flex-col items-center justify-center relative pt-3 mr-10"
+                  className="relative flex flex-col items-center justify-center pt-3 mr-10"
                 >
                   {approver.status === "Approved" && (
                     <img
-                      className="absolute -top-3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                      className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
                       src={approver.signature}
                       alt=""
                       width={120}
@@ -228,7 +228,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
                       {approver.firstName} {approver.lastName}
                     </p>
                   </div>
-                  <p className="font-light text-xs text-center">
+                  <p className="text-xs font-light text-center">
                     {approver.position}
                   </p>
                 </div>
@@ -237,26 +237,26 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
           </div>
           <div className="mr-20">
             <p className="text-sm font-normal">Approved By:</p>
-            <div className=" border-black text-center">
+            <div className="text-center border-black ">
               {printData?.approvedBy.map((approver: any, index: number) => (
                 <div
                   key={index}
-                  className="flex flex-col items-center justify-center relative pt-3 mr-10"
+                  className="relative flex flex-col items-center justify-center pt-3 mr-10"
                 >
                   {approver.status === "Approved" && (
                     <img
-                      className="absolute -top-3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                      className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
                       src={approver.signature}
                       alt=""
                       width={120}
                     />
                   )}
                   <div className="border-b w-[200px] border-black">
-                    <p className="relative z-10 text-sm text-center font-medium">
+                    <p className="relative z-10 text-sm font-medium text-center">
                       {approver.firstName} {approver.lastName}
                     </p>
                   </div>
-                  <p className="font-light text-xs text-center">
+                  <p className="text-xs font-light text-center">
                     {approver.position}
                   </p>
                 </div>
@@ -265,7 +265,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
           </div>
         </div>
         <div className="mx-20 mt-2 ">
-          <h1 className="text-base font-bold mb-2 text-center">
+          <h1 className="mb-2 text-base font-bold text-center">
             LIQUIDATION STATEMENT
           </h1>
 
@@ -273,45 +273,45 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
             <p className="flex justify-between text-xs">
               <span className="w-full">TOTAL CASH ADVANCE</span>
               <span className="ml-4">P</span>
-              <span className="border-b border-black w-36 text-center">
+              <span className="text-center border-b border-black w-36">
                 {printData?.id.form_data[0].grand_total}
               </span>
             </p>
             <p className="flex justify-between text-xs">
               <span className="w-full">TOTAL EXPENSES</span>
               <span className="ml-4">P</span>
-              <span className="border-b border-black w-36 text-center"></span>
+              <span className="text-center border-b border-black w-36"></span>
             </p>
             <p className="flex justify-between text-xs">
               <span className="w-full">BALANCE</span>
               <span className="ml-4">P</span>
-              <span className="border-b border-black w-36 text-center"></span>
+              <span className="text-center border-b border-black w-36"></span>
             </p>
           </div>
         </div>
-        <div className="flex  justify-between w-full">
+        <div className="flex justify-between w-full">
           <div className="ml-20">
             <p className="text-xs">Noted By:</p>
-            <div className=" border-black text-center">
+            <div className="text-center border-black ">
               {printData?.notedBy.map((approver: any, index: number) => (
                 <div
                   key={index}
-                  className="flex flex-col items-center justify-center relative pt-3 mr-10"
+                  className="relative flex flex-col items-center justify-center pt-3 mr-10"
                 >
                   {approver.status === "Approved" && (
                     <img
-                      className="absolute -top-3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                      className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
                       src={approver.signature}
                       alt=""
                       width={120}
                     />
                   )}
                   <div className="border-b w-[200px] border-black">
-                    <p className="relative z-10 text-sm text-center font-medium">
+                    <p className="relative z-10 text-sm font-medium text-center">
                       {approver.firstName} {approver.lastName}
                     </p>
                   </div>
-                  <p className="font-light text-xs text-center">
+                  <p className="text-xs font-light text-center">
                     {approver.position}
                   </p>
                 </div>
@@ -320,51 +320,51 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
           </div>
           <div className="mr-20">
             <p className="text-xs">Approved By:</p>
-            <div className=" border-black text-center">
+            <div className="text-center border-black ">
               {printData?.approvedBy.map((approver: any, index: number) => (
                 <div
                   key={index}
-                  className="flex flex-col items-center justify-center relative pt-3 mr-10"
+                  className="relative flex flex-col items-center justify-center pt-3 mr-10"
                 >
                   {approver.status === "Approved" && (
                     <img
-                      className="absolute -top-3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                      className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
                       src={approver.signature}
                       alt=""
                       width={120}
                     />
                   )}
                   <div className="border-b w-[200px] border-black">
-                    <p className="relative z-10 text-sm text-center font-medium">
+                    <p className="relative z-10 text-sm font-medium text-center">
                       {approver.firstName} {approver.lastName}
                     </p>
                   </div>
-                  <p className="font-light text-xs text-center">
+                  <p className="text-xs font-light text-center">
                     {approver.position}
                   </p>
                 </div>
               ))}
-              <div className="flex flex-col items-center justify-center relative pt-4 mr-10">
+              <div className="relative flex flex-col items-center justify-center pt-4 mr-10">
                 <div className="border-b w-[200px] border-black">
-                  <p className="relative z-10 text-sm text-center font-medium">
+                  <p className="relative z-10 text-sm font-medium text-center">
                     Marilou D. Lumapas
                   </p>
                 </div>
-                <p className="font-light text-xs text-center">Vice President</p>
+                <p className="text-xs font-light text-center">Vice President</p>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="flex flex-col font-bold  border-2 border-black h-auto break-before-page">
-        <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col h-auto font-bold border-2 border-black break-before-page">
+        <div className="flex flex-col items-center justify-center">
           <div className="justify-center w-1/2 mt-2">{logo}</div>
 
-          <h1 className="text-base mt-2 font-bold uppercase">
+          <h1 className="mt-2 text-base font-bold uppercase">
             Application for Cash Advance
           </h1>
-          <div className="flex flex-col items-center font-bold mt-1">
-            <h1 className="text-base font-medium uppercase underline">
+          <div className="flex flex-col items-center mt-1 font-bold">
+            <h1 className="text-base font-medium underline uppercase">
               {printData?.user.data.branch || ""}
             </h1>
             <h1 className="text-base font-semibold">BRANCH</h1>
@@ -429,7 +429,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
               ))}
             </tbody>
           </table>
-          <table className="summary-table h-auto">
+          <table className="h-auto summary-table">
             <thead>
               <tr>
                 <th colSpan={2} className="bg-[#8EC7F7]">
@@ -496,52 +496,51 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
             </tbody>
           </table>
         </div>
-        {/* <p className="uppercase font-medium text-xs ml-8 mt-2">
+        {/* <p className="mt-2 ml-8 text-xs font-medium uppercase">
           Grand Total: {printData?.id.form_data[0].grand_total}
         </p> */}
         <div className="mt-2 ml-8">
           <div className="flex flex-wrap justify-start ">
             {/* Requested By Section */}
-            <div className="mb-3 flex-grow">
-              <h3 className="font-normal text-xs mb-3">Requested By:</h3>
-              <div className="flex flex-col items-center justify-center relative pt-3">
+            <div className="flex-grow mb-3">
+              <h3 className="mb-3 text-xs font-normal">Requested By:</h3>
+              <div className="relative flex flex-col items-center justify-center pt-3">
                 <img
-                  className="absolute -top-3 left-1/2 transform -translate-x-1/2 pointer-events-none"
-                  src={printData?.user.data.signature}
+                  className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
+                  src={printData?.id.requested_signature}
                   alt="avatar"
                   width={120}
                 />
-                <p className="relative z-10 px-2 underline font-medium text-xs">
-                  {printData?.user.data.firstName}{" "}
-                  {printData?.user.data.lastName}
+                <p className="relative z-10 px-2 text-xs font-medium underline">
+                  {printData?.id.requested_by}
                 </p>
-                <p className="font-light text-xs text-center">
-                  {printData?.user.data.position}
+                <p className="text-xs font-light text-center">
+                  {printData?.id.requested_position}
                 </p>
               </div>
             </div>
 
             {/* Noted By Section */}
-            <div className="mb-3 flex-grow">
-              <h3 className="font-normal text-xs mb-3">Noted By:</h3>
+            <div className="flex-grow mb-3">
+              <h3 className="mb-3 text-xs font-normal">Noted By:</h3>
               <div className="flex flex-wrap justify-start">
                 {printData?.notedBy.map((approver: any, index: number) => (
                   <div
                     key={index}
-                    className="flex flex-col items-center justify-center relative pt-3 mr-10"
+                    className="relative flex flex-col items-center justify-center pt-3 mr-10"
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute -top-3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                        className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}
                       />
                     )}
-                    <p className="relative z-10 underline text-center font-medium text-xs">
+                    <p className="relative z-10 text-xs font-medium text-center underline">
                       {approver.firstName} {approver.lastName}
                     </p>
-                    <p className="font-light text-xs text-center">
+                    <p className="text-xs font-light text-center">
                       {approver.position}
                     </p>
                   </div>
@@ -550,26 +549,26 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
             </div>
 
             {/* Approved By Section */}
-            <div className="mb-3 flex-grow">
-              <h3 className="font-normal text-xs mb-3">Approved By:</h3>
+            <div className="flex-grow mb-3">
+              <h3 className="mb-3 text-xs font-normal">Approved By:</h3>
               <div className="flex flex-wrap justify-start">
                 {printData?.approvedBy.map((approver: any, index: number) => (
                   <div
                     key={index}
-                    className="flex flex-col justify-start items-center mr-10 relative pt-3"
+                    className="relative flex flex-col items-center justify-start pt-3 mr-10"
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute -top-3 left-1/2 transform -translate-x-1/2 pointer-events-none"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}
                       />
                     )}
-                    <p className="relative z-10 underline text-center font-medium text-xs">
+                    <p className="relative z-10 text-xs font-medium text-center underline">
                       {approver.firstName} {approver.lastName}
                     </p>
-                    <p className="font-light text-xs text-center">
+                    <p className="text-xs font-light text-center">
                       {approver.position}
                     </p>
                   </div>
