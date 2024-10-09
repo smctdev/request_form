@@ -305,7 +305,7 @@ const CreateRefund = (props: Props) => {
           },
         }
       );
-      
+
       setShowSuccessModal(true);
       setFormSubmitted(true);
       setLoading(false);
@@ -462,7 +462,7 @@ const CreateRefund = (props: Props) => {
             {items.map((item, index) => (
               <div key={index} className="flex flex-col mt-5 mb-4">
                 <label className="font-semibold">ITEM {index + 1}</label>
-                <div className="grid grid-cols-1 gap-2  md:grid-cols-2 lg:grid-cols-5">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-5">
                   <div className={`${itemDiv}`}>
                     <p>Quantity</p>
                     <input
@@ -676,30 +676,16 @@ const CreateRefund = (props: Props) => {
                 </ul>
               )}
             </div>
-            <div className="flex justify-end pb-10 mt-20 space-x-3">
-              {/* <button
-                type="button"
-                className={`bg-yellow ${buttonStyle}`}
-                onClick={handleAddItem}
-              >
-                Add
-              </button>
-              {items.length > 1 && (
-                <button
-                  type="button"
-                  className={`${buttonStyle} bg-pink`}
-                  onClick={handleRemoveItem}
-                >
-                  Remove Item
-                </button>
-              )} */}
+            <div className="flex justify-center w-full pb-10 mt-20 space-x-3">
               <button
-                className={`bg-primary ${buttonStyle}`}
+                className={`bg-[#0275d8] hover:bg-[#6fbcff] ${buttonStyle}`}
                 type="submit"
                 onClick={handleFormSubmit}
                 disabled={loading}
               >
-                {loading ? "Please Wait..." : "Send Request"}
+                <span className="text-white hover:text-black">
+                  {loading ? "PLEASE WAIT..." : "CREATE REQUEST"}
+                </span>
               </button>
             </div>
             {showConfirmationModal && (

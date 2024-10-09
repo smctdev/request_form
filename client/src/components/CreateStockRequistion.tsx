@@ -410,7 +410,7 @@ const CreateStockRequistion = (props: Props) => {
   return (
     <div className="bg-graybg dark:bg-blackbg h-full pt-[15px] px-[30px] pb-[15px]">
       {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75">
           <ClipLoader color="#007bff" />
         </div>
       )}
@@ -445,7 +445,7 @@ const CreateStockRequistion = (props: Props) => {
           <div className="my-2">
             <button
               onClick={openAddCustomModal}
-              className="bg-primary text-white p-2 rounded"
+              className="p-2 text-white rounded bg-primary"
             >
               Add Approver
             </button>
@@ -453,10 +453,10 @@ const CreateStockRequistion = (props: Props) => {
         </div>
         <div className="px-[35px] mt-4">
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col sm:flex-row justify-between">
+            <div className="flex flex-col justify-between sm:flex-row">
               <div className="">
                 <p className="font-bold">Purpose:</p>
-                <div className="flex flex-col space-y-2 mt-2 ">
+                <div className="flex flex-col mt-2 space-y-2 ">
                   <div className="inline-flex items-center">
                     <label
                       className="relative flex items-center cursor-pointer"
@@ -466,7 +466,7 @@ const CreateStockRequistion = (props: Props) => {
                         type="radio"
                         id="repair_maintenance"
                         value="Repair & Maintenance"
-                        className="size-10 ml-1 peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                        className="w-5 h-5 ml-1 transition-all border rounded-full appearance-none cursor-pointer size-10 peer border-slate-300 checked:border-slate-400"
                         {...register("purpose")}
                       />
                       <span
@@ -475,7 +475,7 @@ const CreateStockRequistion = (props: Props) => {
                       ></span>
                     </label>
                     <label
-                      className="cursor-pointer ml-2"
+                      className="ml-2 cursor-pointer"
                       htmlFor="repair_maintenance"
                     >
                       Repair & Maintenance
@@ -490,7 +490,7 @@ const CreateStockRequistion = (props: Props) => {
                         type="radio"
                         id="repo_recon"
                         value="Repo. Recon"
-                        className="size-10 ml-1 peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                        className="w-5 h-5 ml-1 transition-all border rounded-full appearance-none cursor-pointer size-10 peer border-slate-300 checked:border-slate-400"
                         {...register("purpose", { required: true })}
                       />
                       <span
@@ -498,7 +498,7 @@ const CreateStockRequistion = (props: Props) => {
                         style={{ pointerEvents: "none" }} // Prevent span from blocking click events
                       ></span>
                     </label>
-                    <label className="cursor-pointer ml-2" htmlFor="repo_recon">
+                    <label className="ml-2 cursor-pointer" htmlFor="repo_recon">
                       Repo. Recon
                     </label>
                   </div>
@@ -511,7 +511,7 @@ const CreateStockRequistion = (props: Props) => {
                         type="radio"
                         id="office_service_used"
                         value="Office/Service Used"
-                        className="size-10 ml-1 peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-slate-300 checked:border-slate-400 transition-all"
+                        className="w-5 h-5 ml-1 transition-all border rounded-full appearance-none cursor-pointer size-10 peer border-slate-300 checked:border-slate-400"
                         {...register("purpose", { required: true })}
                       />
                       <span
@@ -520,7 +520,7 @@ const CreateStockRequistion = (props: Props) => {
                       ></span>
                     </label>
                     <label
-                      className="cursor-pointer ml-2"
+                      className="ml-2 cursor-pointer"
                       htmlFor="office_service_used"
                     >
                       Office/Service Used
@@ -536,7 +536,7 @@ const CreateStockRequistion = (props: Props) => {
             {items.map((item, index) => (
               <div key={index} className="flex flex-col mt-5 mb-4">
                 <label className="font-semibold">ITEM {index + 1}</label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:grid-cols-5">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-5">
                   <div className={`${itemDiv}`}>
                     <label className="font-semibold">Quantity:</label>
                     <input
@@ -673,7 +673,7 @@ const CreateStockRequistion = (props: Props) => {
                           onClick={() => handleRemoveItem(index)}
                         >
                           <MinusCircleIcon
-                            className="h-5 w-5 mr-2"
+                            className="w-5 h-5 mr-2"
                             aria-hidden="true"
                           />
                           Remove Item
@@ -685,18 +685,18 @@ const CreateStockRequistion = (props: Props) => {
               </div>
             ))}
             <div className="flex flex-col items-center justify-center w-full mt-4">
-              <hr className="w-full border-t-4 border-dotted border-gray-400 my-2" />
+              <hr className="w-full my-2 border-t-4 border-gray-400 border-dotted" />
               <span
                 className={`bg-yellow flex items-center cursor-pointer hover:bg-white hover:border-4 hover:border-yellow hover:text-yellow text-gray-950 mt-2 max-w-md justify-center ${buttonStyle}`}
                 onClick={handleAddItem}
               >
-                <PlusCircleIcon className="h-5 w-5 mr-2" aria-hidden="true" />
+                <PlusCircleIcon className="w-5 h-5 mr-2" aria-hidden="true" />
                 Add Item
               </span>
             </div>
             {errorMessage && <p className="text-red-600">{errorMessage}</p>}
-            <div className="flex justify-between flex-col md:flex-row">
-              <div className="w-full max-w-md  p-4">
+            <div className="flex flex-col justify-between md:flex-row">
+              <div className="w-full max-w-md p-4">
                 <p className="font-semibold">Attachments:</p>
                 <input
                   id="file"
@@ -713,20 +713,20 @@ const CreateStockRequistion = (props: Props) => {
                 </p>
               </div>
             </div>
-            <div className="mb-4 ml-5 mt-10">
-              <h3 className="font-bold mb-3">Noted By:</h3>
+            <div className="mt-10 mb-4 ml-5">
+              <h3 className="mb-3 font-bold">Noted By:</h3>
               <ul className="flex flex-wrap gap-6">
                 {" "}
                 {/* Use gap instead of space-x */}
                 {notedBy.map((user, index) => (
                   <li
-                    className="flex flex-col items-center justify-center text-center relative w-auto"
+                    className="relative flex flex-col items-center justify-center w-auto text-center"
                     key={index}
                   >
                     {" "}
                     {/* Adjust width as needed */}
                     <div className="relative flex flex-col items-center justify-center">
-                      <p className="relative inline-block uppercase font-medium text-center pt-6">
+                      <p className="relative inline-block pt-6 font-medium text-center uppercase">
                         <span className="relative z-10 px-2">
                           {user.firstName} {user.lastName}
                         </span>
@@ -741,12 +741,12 @@ const CreateStockRequistion = (props: Props) => {
               </ul>
             </div>
             <div className="mb-4 ml-5">
-              <h3 className="font-bold mb-3">Approved By:</h3>
+              <h3 className="mb-3 font-bold">Approved By:</h3>
               {approvedBy.length === 0 ? (
-                <p className=" text-gray-500">
+                <p className="text-gray-500 ">
                   Please select an approver!
                   <br />
-                  <span className="italic text-sm">
+                  <span className="text-sm italic">
                     Note: You can add approvers by clicking the 'Add Approver'
                     button above.
                   </span>
@@ -755,11 +755,11 @@ const CreateStockRequistion = (props: Props) => {
                 <ul className="flex flex-wrap gap-6">
                   {approvedBy.map((user, index) => (
                     <li
-                      className="flex flex-col items-center justify-center text-center relative"
+                      className="relative flex flex-col items-center justify-center text-center"
                       key={index}
                     >
                       <div className="relative flex flex-col items-center justify-center">
-                        <p className="relative inline-block uppercase font-medium text-center pt-6">
+                        <p className="relative inline-block pt-6 font-medium text-center uppercase">
                           <span className="relative z-10 px-2">
                             {user.firstName} {user.lastName}
                           </span>
@@ -775,47 +775,31 @@ const CreateStockRequistion = (props: Props) => {
               )}
             </div>
 
-            <div className="space-x-3 flex justify-end mt-20 pb-10">
-              {/* <button
-                type="button"
-                className={`bg-yellow ${buttonStyle}`}
-                onClick={handleAddItem}
-              >
-                Add
-              </button>
-              {items.length > 1 && (
-                <button
-                  type="button"
-                  className={`${buttonStyle} bg-pink`}
-                  onClick={handleRemoveItem}
-                >
-                  Remove Item
-                </button>
-              )} */}
+            <div className="flex justify-center pb-10 mt-20 space-x-3">
               <button
-                className={`bg-primary ${buttonStyle} ${
-                  loading ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`bg-[#0275d8] hover:bg-[#6fbcff] ${buttonStyle}`}
                 type="submit"
                 onClick={handleFormSubmit}
                 disabled={loading}
               >
-                {loading ? "Please wait..." : "Send Request"}
+                <span className="text-white hover:text-black">
+                  {loading ? "PLEASE WAIT..." : "CREATE REQUEST"}
+                </span>
               </button>
             </div>
             {showConfirmationModal && (
-              <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
-                <div className="bg-white p-4 rounded-md">
+              <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+                <div className="p-4 bg-white rounded-md">
                   <p>Are you sure you want to submit the request?</p>
                   <div className="flex justify-end mt-4">
                     <button
-                      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2"
+                      className="px-4 py-2 mr-2 font-bold text-gray-800 bg-gray-300 rounded hover:bg-gray-400"
                       onClick={handleCloseConfirmationModal}
                     >
                       Cancel
                     </button>
                     <button
-                      className="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded"
+                      className="px-4 py-2 font-bold text-white rounded bg-primary hover:bg-primary-dark"
                       onClick={handleConfirmSubmit}
                     >
                       Confirm
