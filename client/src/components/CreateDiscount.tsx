@@ -56,13 +56,13 @@ const schema = z.object({
   approver: z.string(),
   items: z.array(
     z.object({
-      brand: z.string().nonempty("Brand is required"),
-      model: z.string().nonempty("Model is required"),
-      unit: z.string().nonempty("Unit/Part/Job Description is required"),
+      brand: z.string().min(1, "Brand is required"),
+      model: z.string().min(1, "Model is required"),
+      unit: z.string().min(1, "Unit/Part/Job Description is required"),
       partno: z.string().optional(),
       labor: z.string().optional(),
-      spotcash: z.string().nonempty("Spot cash is required"),
-      discountedPrice: z.string().nonempty("Discounted price is required"),
+      // spotcash: z.string().min(1, "Spot cash is required"),
+      discountedPrice: z.string().min(1, "Discounted price is required"),
     })
   ),
 });

@@ -6,6 +6,7 @@ import {
   CalendarIcon,
   MinusCircleIcon,
   PlusCircleIcon,
+  TrashIcon,
 } from "@heroicons/react/24/solid";
 import path from "path";
 import { Link, useNavigate } from "react-router-dom";
@@ -59,7 +60,7 @@ const requestType = [
 ];
 
 const inputStyle =
-  "w-full   border-2 border-black rounded-[12px] pl-[10px] bg-white  autofill-input";
+  "w-full h-full bg-white px-2 py-1 bg-white  autofill-input focus:outline-0";
 const itemDiv = "flex flex-col ";
 const buttonStyle = "h-[45px] w-[150px] rounded-[12px] text-white";
 const CreateRefund = (props: Props) => {
@@ -255,6 +256,8 @@ const CreateRefund = (props: Props) => {
       setLoading(false);
     }
   };
+
+  const tableStyle = "border border-black p-2 bg-[#8EC7F7]";
 
   const openAddCustomModal = () => {
     setIsModalOpen(true);
@@ -459,132 +462,168 @@ const CreateRefund = (props: Props) => {
         <div className="px-[35px] mt-4">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-row w-1/2 mt-5 mb-4 space-x-6 "></div>
-            {items.map((item, index) => (
-              <div key={index} className="flex flex-col mt-5 mb-4">
-                <label className="font-semibold">ITEM {index + 1}</label>
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-5">
-                  <div className={`${itemDiv}`}>
-                    <p>Quantity</p>
-                    <input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) =>
-                        handleInputChange(index, "quantity", e.target.value)
-                      }
-                      className={`${inputStyle} h-[44px]`}
-                    />
-                    {validationErrors[`items.${index}.quantity`] &&
-                      formSubmitted && (
-                        <p className="text-red-500">
-                          {validationErrors[`items.${index}.quantity`]}
-                        </p>
-                      )}
-                    {!item.quantity &&
-                      formSubmitted &&
-                      !validationErrors[`items.${index}.quantity`] && (
-                        <p className="text-red-500">Quantity Required</p>
-                      )}
-                  </div>
-                  <div key={index} className={itemDiv}>
-                    <label className="font-semibold">Description:</label>
-                    <textarea
-                      id={`description-${index}`}
-                      value={item.description}
-                      onChange={(e) =>
-                        handleInputChange(index, "description", e.target.value)
-                      }
-                      className={`${inputStyle}`}
-                      style={{ minHeight: "100px", maxHeight: "400px" }} // Minimum height 100px, maximum height 400px (optional)
-                      onFocus={() => handleTextareaHeight(index, "description")} // Adjust height on focus
-                      onBlur={() => handleTextareaHeight(index, "description")} // Adjust height on blur
-                      onInput={() => handleTextareaHeight(index, "description")} // Adjust height on input change
-                    />
-                    {validationErrors?.[`items.${index}.description`] &&
-                      formSubmitted && (
-                        <p className="text-red-500">
-                          {validationErrors[`items.${index}.description`]}
-                        </p>
-                      )}
-                    {!item.description &&
-                      formSubmitted &&
-                      !validationErrors?.[`items.${index}.description`] && (
-                        <p className="text-red-500">Description Required</p>
-                      )}
-                  </div>
-                  <div className={`${itemDiv}`}>
-                    <p>Unit Cost</p>
-                    <input
-                      type="number"
-                      value={item.unitCost}
-                      onChange={(e) =>
-                        handleInputChange(index, "unitCost", e.target.value)
-                      }
-                      placeholder="₱"
-                      className={`${inputStyle} h-[44px]`}
-                    />
-                    {validationErrors[`items.${index}.unitCost`] &&
-                      formSubmitted && (
-                        <p className="text-red-500">
-                          {validationErrors[`items.${index}.unitCost`]}
-                        </p>
-                      )}
-                    {!item.unitCost &&
-                      formSubmitted &&
-                      !validationErrors[`items.${index}.unitCost`] && (
-                        <p className="text-red-500">Unit Cost Required</p>
-                      )}
-                  </div>
-                  <div className={`${itemDiv}`}>
-                    <p>Total Amount</p>
-                    <input
-                      type="number"
-                      value={item.totalAmount}
-                      onChange={(e) =>
-                        handleInputChange(index, "totalAmount", e.target.value)
-                      }
-                      placeholder="₱"
-                      className={`${inputStyle} h-[44px]`}
-                      readOnly
-                    />
-                    {validationErrors[`items.${index}.totalAmount`] &&
-                      formSubmitted && (
-                        <p className="text-red-500">
-                          {validationErrors[`items.${index}.totalAmount`]}
-                        </p>
-                      )}
-                    {!item.totalAmount &&
-                      formSubmitted &&
-                      !validationErrors[`items.${index}.totalAmount`] && (
-                        <p className="text-red-500">Total Amount Required</p>
-                      )}
-                  </div>
-                  <div className={`${itemDiv}`}>
-                    <label className="font-semibold">Usage/Remarks</label>
-                    <textarea
-                      value={item.remarks}
-                      onChange={(e) =>
-                        handleInputChange(index, "remarks", e.target.value)
-                      }
-                      className={`${inputStyle} h-[100px]`}
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end gap-2 mt-2">
-                  {items.length > 1 && (
-                    <span
-                      className={`${buttonStyle} bg-pink flex items-center justify-center cursor-pointer hover:bg-white hover:border-4 hover:border-pink hover:text-pink`}
-                      onClick={() => handleRemoveItem(index)}
-                    >
-                      <MinusCircleIcon
-                        className="w-5 h-5 mr-2"
-                        aria-hidden="true"
-                      />
-                      Remove Item
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
+            <div className="table-container">
+              <table className="w-full">
+                <thead className="">
+                  <tr>
+                    <th className={`${tableStyle}`}>Quantity</th>
+                    <th className={`${tableStyle}`}>Description</th>
+                    <th className={`${tableStyle}`}>Unit Cost</th>
+                    <th className={`${tableStyle}`}>Total Amount</th>
+                    <th className={`${tableStyle}`}>Usage/Remarks</th>
+                    <th style={{ border: "none" }}></th>
+                  </tr>
+                </thead>
+                
+                <tbody>
+                  {items.map((item, index) => (
+                    <tr key={index} className="">
+                      <td
+                        className="p-1 border border-black max-w-[50px]"
+                        onClick={() => {
+                          const input = document.getElementById(
+                            `input-${index}`
+                          );
+                          if (input) input.focus();
+                        }}
+                      >
+                        <input
+                          id={`input-${index}`}
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) =>
+                            handleInputChange(index, "quantity", e.target.value)
+                          }
+                          className={`${inputStyle} h-[44px]`}
+                        />
+                        {validationErrors[`items.${index}.quantity`] &&
+                          formSubmitted && (
+                            <p className="text-red-500">
+                              {validationErrors[`items.${index}.quantity`]}
+                            </p>
+                          )}
+                        {!item.quantity &&
+                          formSubmitted &&
+                          !validationErrors[`items.${index}.quantity`] && (
+                            <p className="text-red-500">Quantity Required</p>
+                          )}
+                      </td>
+
+                      <td className="p-1 border border-black">
+                        <textarea
+                          id={`description-${index}`}
+                          value={item.description}
+                          onChange={(e) =>
+                            handleInputChange(
+                              index,
+                              "description",
+                              e.target.value
+                            )
+                          }
+                          className={`${inputStyle}`}
+                          style={{ minHeight: "100px", maxHeight: "400px" }} // Minimum height 100px, maximum height 400px (optional)
+                          onFocus={() =>
+                            handleTextareaHeight(index, "description")
+                          } // Adjust height on focus
+                          onBlur={() =>
+                            handleTextareaHeight(index, "description")
+                          } // Adjust height on blur
+                          onInput={() =>
+                            handleTextareaHeight(index, "description")
+                          } // Adjust height on input change
+                        />
+                        {validationErrors[`items.${index}.description`] &&
+                          formSubmitted && (
+                            <p className="text-red-500">
+                              {validationErrors[`items.${index}.description`]}
+                            </p>
+                          )}
+                        {!item.description &&
+                          formSubmitted &&
+                          !validationErrors[`items.${index}.description`] && (
+                            <p className="text-red-500">Description Required</p>
+                          )}
+                      </td>
+                      <td
+                        className="p-1 border border-black max-w-[50px]"
+                        onClick={() => {
+                          const input = document.getElementById(
+                            `unitCost-input-${index}`
+                          );
+                          if (input) input.focus();
+                        }}
+                      >
+                        <input
+                          id={`unitCost-input-${index}`}
+                          type="number"
+                          value={item.unitCost}
+                          onChange={(e) =>
+                            handleInputChange(index, "unitCost", e.target.value)
+                          }
+                          className={`${inputStyle} h-[44px]`}
+                        />
+                        {validationErrors[`items.${index}.unitCost`] &&
+                          formSubmitted && (
+                            <p className="text-red-500">
+                              {validationErrors[`items.${index}.unitCost`]}
+                            </p>
+                          )}
+                        {!item.unitCost &&
+                          formSubmitted &&
+                          !validationErrors[`items.${index}.unitCost`] && (
+                            <p className="text-red-500">Unit Cost Required</p>
+                          )}
+                      </td>
+
+                      <td className="p-1 border border-black">
+                        {item.totalAmount}
+                      </td>
+                      <td className="p-1 border border-black">
+                        <textarea
+                          id={`remarks-${index}`}
+                          value={item.remarks}
+                          onChange={(e) =>
+                            handleInputChange(index, "remarks", e.target.value)
+                          }
+                          className={`${inputStyle}`}
+                          style={{ minHeight: "100px", maxHeight: "400px" }} // Minimum height 100px, maximum height 400px (optional)
+                          onFocus={() => handleTextareaHeight(index, "remarks")} // Adjust height on focus
+                          onBlur={() => handleTextareaHeight(index, "remarks")} // Adjust height on blur
+                          onInput={() => handleTextareaHeight(index, "remarks")} // Adjust height on input change
+                        />
+                        {validationErrors[`items.${index}.remarks`] &&
+                          formSubmitted && (
+                            <p className="text-red-500">
+                              {validationErrors[`items.${index}.remarks`]}
+                            </p>
+                          )}
+                        {!item.remarks &&
+                          formSubmitted &&
+                          !validationErrors[`items.${index}.remarks`] && (
+                            <p className="text-red-500">Remarks Required</p>
+                          )}
+                      </td>
+                      <td>
+                        {items.length > 1 && (
+                          <TrashIcon className="text-[#e63c3c] size-7 cursor-pointer" onClick={() => handleRemoveItem(index)} title="Remove Item"/>
+                        )}
+                          
+                        </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot className="bg-gray-100">
+                  <tr>
+                    <td colSpan={4} className="p-2 font-bold text-right">
+                      Grand Total:
+                    </td>
+                    <td className="p-2 font-bold text-center border border-black">
+                      ₱ {calculateGrandTotal()}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
             <div className="flex flex-col items-center justify-center w-full mt-4">
               <hr className="w-full my-2 border-t-4 border-gray-400 border-dotted" />
               <span
@@ -605,12 +644,6 @@ const CreateRefund = (props: Props) => {
                   onChange={handleFileChange}
                   className="w-full mt-2"
                 />
-              </div>
-
-              <div className="mt-4">
-                <p className="font-semibold">
-                  Grand Total: ₱{calculateGrandTotal()}
-                </p>
               </div>
             </div>
             <div className="mt-10 mb-4 ml-5">
