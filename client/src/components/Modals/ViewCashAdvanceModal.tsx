@@ -122,8 +122,8 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [customApprovers, setCustomApprovers] = useState<any>(null);
-  const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
-  const [isFetchingUser, setisFetchingUser] = useState(false);
+  const [isFetchingApprovers, setIsFetchingApprovers] = useState(false);
+  const [isFetchingUser, setIsFetchingUser] = useState(false);
   const [user, setUser] = useState<any>({});
   const [attachmentUrl, setAttachmentUrl] = useState<string[]>([]);
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
@@ -205,9 +205,36 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
       console.error("Error parsing attachment:", error);
     }
   }, [record]);
+  // const fetchUser = async (id: number) => {
+  //   setisFetchingUser(true);
+  //   setisFetchingApprovers(true);
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     if (!token) {
+  //       throw new Error("Token is missing");
+  //     }
+
+  //     const response = await axios.get(
+  //       `${process.env.REACT_APP_API_BASE_URL}/view-user/${id}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     setUser(response.data);
+  //   } catch (error) {
+  //     console.error("Failed to fetch approvers:", error);
+  //   } finally {
+  //     setisFetchingUser(false);
+  //     setisFetchingApprovers(false);
+  //   }
+  // };
+
   const fetchUser = async (id: number) => {
-    setisFetchingUser(true);
-    setisFetchingApprovers(true);
+    setIsFetchingUser(true);
+    setIsFetchingApprovers(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -215,20 +242,19 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
       }
 
       const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/view-user/${id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/profile`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-
       setUser(response.data);
     } catch (error) {
       console.error("Failed to fetch approvers:", error);
     } finally {
-      setisFetchingUser(false);
-      setisFetchingApprovers(false);
+      setIsFetchingUser(false);
+      setIsFetchingApprovers(false);
     }
   };
 
@@ -461,7 +487,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
   };
 
   const fetchCustomApprovers = async (id: number) => {
-    setisFetchingApprovers(true);
+    setIsFetchingApprovers(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -483,7 +509,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
     } catch (error) {
       console.error("Failed to fetch approvers:", error);
     } finally {
-      setisFetchingApprovers(false);
+      setIsFetchingApprovers(false);
     }
   };
   const openAddCustomModal = () => {
@@ -554,19 +580,19 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="p-4 relative w-full mx-10 md:mx-0 z-10 md:w-1/2 lg:w-2/3 space-y-auto h-4/5 overflow-scroll bg-white border-black shadow-lg">
-        <div className=" top-2 flex justify-end cursor-pointer sticky">
+    <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+      <div className="relative z-10 w-full p-4 mx-10 overflow-scroll bg-white border-black shadow-lg md:mx-0 md:w-1/2 lg:w-2/3 space-y-auto h-4/5">
+        <div className="sticky flex justify-end cursor-pointer top-2">
           <XMarkIcon
-            className="h-8 w-8 text-black  bg-white rounded-full p-1  "
+            className="w-8 h-8 p-1 text-black bg-white rounded-full "
             onClick={closeModal}
           />
         </div>
-        <div className="justify-start items-start flex flex-col space-y-4 w-full">
+        <div className="flex flex-col items-start justify-start w-full space-y-4">
           {!fetchingApprovers && !isFetchingApprovers && (
             <>
               <button
-                className="bg-blue-600 p-1 px-2 rounded-md text-white"
+                className="p-1 px-2 text-white bg-blue-600 rounded-md"
                 onClick={handlePrint}
               >
                 Print
@@ -583,22 +609,22 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
               )}
             </>
           )}
-          <div className="flex justify-between w-full items-center">
+          <div className="flex items-center justify-between w-full">
             <div>
               <h1 className="font-semibold text-[18px]">
                 Application for Cash Advance
               </h1>
             </div>
-            <div className="w-auto flex ">
+            <div className="flex w-auto ">
               <p>Date: </p>
-              <p className="font-bold pl-1">
+              <p className="pl-1 font-bold">
                 {formatDate(editableRecord.created_at)}
               </p>
             </div>
           </div>
 
           <p className="font-medium text-[14px]">Request ID:#{record.id}</p>
-          <div className="flex w-full md:w-1/2 items-center">
+          <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
               className={`${
@@ -617,10 +643,10 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-2 md:grid-cols-2 w-full">
-            <div className="w-1/2  flex ">
+          <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2">
+            <div className="flex w-1/2 ">
               <h1 className="flex items-center">Branch: </h1>
-              <p className=" bg-white rounded-md  w-full pl-1 font-bold">
+              <p className="w-full pl-1 font-bold bg-white rounded-md ">
                 {branchName}
               </p>
             </div>
@@ -629,7 +655,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
             <div className="mr-5">
           <div className="w-full overflow-x-auto">
             <div className="w-full border-collapse">
-              <table className="border-collapse w-full border-black border lg:overflow-auto xl:table-fixed">
+              <table className="w-full border border-collapse border-black lg:overflow-auto xl:table-fixed">
                 <thead>
                 <tr>
                         <th className="border border-black bg-[#8EC7F7]"></th>
@@ -656,7 +682,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                   {isEditing
                     ? newData.map((item, index) => (
                         <tr key={index}>
-                          <td className="tableCellStyle break-words">
+                          <td className="break-words tableCellStyle">
                             <input
                               type="date"
                               value={item.cashDate}
@@ -670,7 +696,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               className="w-full bg-white"
                             />
                           </td>
-                          <td className="tableCellStyle break-words border-2 border-black">
+                          <td className="break-words border-2 border-black tableCellStyle">
                             <input
                               type="text"
                               value={item.day}
@@ -680,7 +706,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               className="w-full bg-white"
                             />
                           </td>
-                          <td className="tableCellStyle break-words border-2 border-black">
+                          <td className="break-words border-2 border-black tableCellStyle">
                             <input
                               type="text"
                               value={item.from}
@@ -690,7 +716,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               className="w-full bg-white"
                             />
                           </td>
-                          <td className="tableCellStyle break-words border-2 border-black">
+                          <td className="break-words border-2 border-black tableCellStyle">
                             <input
                               type="text"
                               value={item.to}
@@ -700,7 +726,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               className="w-full bg-white"
                             />
                           </td>
-                          <td className="tableCellStyle break-words border-2 border-black">
+                          <td className="break-words border-2 border-black tableCellStyle">
                             <input
                               type="text"
                               value={item.activity}
@@ -714,7 +740,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               className="w-full bg-white"
                             />
                           </td>
-                          <td className="tableCellStyle break-words border-2 border-black">
+                          <td className="break-words border-2 border-black tableCellStyle">
                             <input
                               type="text"
                               value={item.hotel}
@@ -724,7 +750,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               className="w-full bg-white"
                             />
                           </td>
-                          <td className="tableCellStyle break-words border-2 border-black">
+                          <td className="break-words border-2 border-black tableCellStyle">
                             <input
                               type="text"
                               value={item.rate}
@@ -734,7 +760,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               className="w-full bg-white"
                             />
                           </td>
-                          <td className="tableCellStyle break-words border-2 border-black">
+                          <td className="break-words border-2 border-black tableCellStyle">
                             <input
                               type="text"
                               value={item.perDiem}
@@ -748,7 +774,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               className="w-full bg-white"
                             />
                           </td>
-                          <td className="tableCellStyle break-words border-2 border-black">
+                          <td className="break-words border-2 border-black tableCellStyle">
                             <input
                               type="text"
                               value={item.remarks}
@@ -800,7 +826,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
               <tbody>
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="font-semibold text-sm">BOAT FARE</p>
+                    <p className="text-sm font-semibold">BOAT FARE</p>
                   </td>
                   <td className={`${inputStyle}`}>
                     {isEditing ? (
@@ -820,7 +846,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                 </tr>
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="font-semibold text-sm">HOTEL</p>
+                    <p className="text-sm font-semibold">HOTEL</p>
                   </td>
                   <td className={`${inputStyle}`}>
                     {/* {isEditing ? (
@@ -845,7 +871,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                 </tr>
                 <tr>
                   <td className={`${tableStyle} `}>
-                    <p className="font-semibold text-sm">PER DIEM</p>
+                    <p className="text-sm font-semibold">PER DIEM</p>
                   </td>
                   <td className={`${inputStyle} p-2`}>
                     {/* Display calculated total per diem */}
@@ -858,7 +884,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                 </tr>
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="font-semibold text-sm">FARE</p>
+                    <p className="text-sm font-semibold">FARE</p>
                   </td>
                   <td className={`${inputStyle}`}>
                     {isEditing ? (
@@ -878,7 +904,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                 </tr>
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="font-semibold text-sm">CONTINGENCY</p>
+                    <p className="text-sm font-semibold">CONTINGENCY</p>
                   </td>
                   <td className={`${inputStyle}`}>
                     {isEditing ? (
@@ -918,13 +944,13 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
             <div className="my-2">
               <button
                 onClick={openAddCustomModal}
-                className="bg-primary  text-white p-2 rounded"
+                className="p-2 text-white rounded bg-primary"
               >
                 Edit Approver
               </button>
             </div>
           )}
-          <div className="w-full flex-col justify-center items-center">
+          <div className="flex-col items-center justify-center w-full">
             {isFetchingApprovers ? (
               <div className="flex items-center justify-center w-full h-40">
                 <h1>Fetching..</h1>
@@ -932,9 +958,9 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
             ) : (
               <div className="flex flex-wrap">
                 <div className="mb-4 ml-5">
-                  <h3 className="font-bold mb-3">Requested By:</h3>
+                  <h3 className="mb-3 font-bold">Requested By:</h3>
                   <ul className="flex flex-wrap gap-6">
-                    <li className="flex flex-col items-center justify-center text-center relative w-auto">
+                    <li className="relative flex flex-col items-center justify-center w-auto text-center">
                       <div className="relative flex flex-col items-center justify-center">
                         {/* Signature */}
                         {user.data?.signature && (
@@ -951,7 +977,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                           </div>
                         )}
                         {/* Name */}
-                        <p className="relative inline-block uppercase font-medium text-center mt-4 z-10">
+                        <p className="relative z-10 inline-block mt-4 font-medium text-center uppercase">
                           <span className="relative z-10">
                             {user.data?.firstName} {user.data?.lastName}
                           </span>
@@ -983,11 +1009,11 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                 </div>
 
                 <div className="mb-4 ml-5">
-                  <h3 className="font-bold mb-3">Noted By:</h3>
+                  <h3 className="mb-3 font-bold">Noted By:</h3>
                   <ul className="flex flex-wrap gap-6">
                     {notedBy.map((user, index) => (
                       <li
-                        className="flex flex-col items-center justify-center text-center relative"
+                        className="relative flex flex-col items-center justify-center text-center"
                         key={index}
                       >
                         <div className="relative flex flex-col items-center justify-center text-center">
@@ -1008,7 +1034,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                             </div>
                           )}
                           {/* Name */}
-                          <p className="relative inline-block uppercase font-medium text-center mt-4 z-10">
+                          <p className="relative z-10 inline-block mt-4 font-medium text-center uppercase">
                             <span className="relative z-10">
                               {user.firstName} {user.lastName}
                             </span>
@@ -1046,11 +1072,11 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                 </div>
 
                 <div className="mb-4 ml-5">
-                  <h3 className="font-bold mb-3">Approved By:</h3>
+                  <h3 className="mb-3 font-bold">Approved By:</h3>
                   <ul className="flex flex-wrap gap-6">
                     {approvedBy.map((user, index) => (
                       <li
-                        className="flex flex-col items-center justify-center text-center relative"
+                        className="relative flex flex-col items-center justify-center text-center"
                         key={index}
                       >
                         <div className="relative flex flex-col items-center justify-center text-center">
@@ -1071,7 +1097,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                             </div>
                           )}
                           {/* Name */}
-                          <p className="relative inline-block uppercase font-medium text-center mt-4 z-10">
+                          <p className="relative z-10 inline-block mt-4 font-medium text-center uppercase">
                             <span className="relative z-10">
                               {user.firstName} {user.lastName}
                             </span>
@@ -1158,7 +1184,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
           </div>
 
           <div className="w-full">
-            <h2 className="text-lg font-bold mb-2">Comments</h2>
+            <h2 className="mb-2 text-lg font-bold">Comments</h2>
 
             {/* Check if there are no comments in both notedBy and approvedBy */}
             {notedBy.filter((user) => user.comment).length === 0 &&
@@ -1175,7 +1201,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                         <div>
                           <img
                             alt="avatar"
-                            className="cursor-pointer hidden sm:block"
+                            className="hidden cursor-pointer sm:block"
                             src={Avatar}
                             height={35}
                             width={45}
@@ -1183,7 +1209,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                         </div>
                         <div className="flex flex-row w-full">
                           <li className="flex flex-col justify-between pl-2">
-                            <h3 className="font-bold text-lg">
+                            <h3 className="text-lg font-bold">
                               {user.firstName} {user.lastName}
                             </h3>
                             <p>{user.comment}</p>
@@ -1202,7 +1228,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                         <div>
                           <img
                             alt="avatar"
-                            className="cursor-pointer hidden sm:block"
+                            className="hidden cursor-pointer sm:block"
                             src={Avatar}
                             height={35}
                             width={45}
@@ -1210,7 +1236,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                         </div>
                         <div className="flex flex-row w-full">
                           <li className="flex flex-col justify-between pl-2">
-                            <h3 className="font-bold text-lg">
+                            <h3 className="text-lg font-bold">
                               {user.firstName} {user.lastName}
                             </h3>
                             <p>{user.comment}</p>
@@ -1223,11 +1249,11 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
             )}
           </div>
 
-          <div className="md:absolute  right-20 top-2 items-center">
+          <div className="items-center md:absolute right-20 top-2">
             {isEditing ? (
               <div>
                 <button
-                  className="bg-primary text-white items-center h-10 rounded-xl p-2"
+                  className="items-center h-10 p-2 text-white bg-primary rounded-xl"
                   onClick={handleSaveChanges}
                 >
                   {loading ? (
@@ -1237,7 +1263,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                   )}
                 </button>
                 <button
-                  className="bg-red-600 rounded-xl text-white ml-2 p-2"
+                  className="p-2 ml-2 text-white bg-red-600 rounded-xl"
                   onClick={handleCancelEdit}
                 >
                   Cancel
@@ -1248,10 +1274,10 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
               !isFetchingApprovers &&
               editableRecord.status === "Pending" && (
                 <button
-                  className="bg-blue-500 ml-2 rounded-xl p-2 flex text-white"
+                  className="flex p-2 ml-2 text-white bg-blue-500 rounded-xl"
                   onClick={handleEdit}
                 >
-                  <PencilIcon className="h-6 w-6 mr-2" />
+                  <PencilIcon className="w-6 h-6 mr-2" />
                   Edit
                 </button>
               )

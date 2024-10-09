@@ -464,7 +464,7 @@ const ViewStockModal: React.FC<Props> = ({
       purpose: checkedPurpose,
       requested_branch: record?.branch,
     };
-    console.log("branch", record);
+
     localStorage.setItem("printData", JSON.stringify(data));
     // Open a new window with PrintRefund component
     const newWindow = window.open(`/print-stock`, "_blank");
