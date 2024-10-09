@@ -256,6 +256,7 @@ const RequestApprover = (props: Props) => {
             { headers }
           );
           setRequests(response.data.request_forms);
+          console.log(response.data.request_forms);
         } catch (error) {
           console.error("Error fetching requests data:", error);
         } finally {
@@ -268,15 +269,15 @@ const RequestApprover = (props: Props) => {
   }, [userId, notificationReceived]);
 
   const NoDataComponent = () => (
-    <div className="flex justify-center items-center h-64 text-gray-500">
+    <div className="flex items-center justify-center h-64 text-gray-500">
       <p className="text-lg">No records found</p>
     </div>
   );
   const LoadingSpinner = () => (
-    <div className="flex flex-col justify-center items-center h-64">
-      {/* <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div> */}
+    <div className="flex flex-col items-center justify-center h-64">
+      {/* <div className="w-16 h-16 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin"></div> */}
       <ClipLoader color="#007bff" loading={loading} size={50} />
-      <p className="mt-2 text-gray-700 text-center">Please wait</p>
+      <p className="mt-2 text-center text-gray-700">Please wait</p>
     </div>
   );
 
@@ -375,13 +376,13 @@ const RequestApprover = (props: Props) => {
 
           {/* Tooltip Icon */}
           {(row.status === "Pending") && (
-            <div className=" relative top-1/2 justify-center items-center flex ml-4 transform -translate-x-full -translate-y-1/2  group-hover:opacity-100 transition-opacity duration-300 z-10">
-              <QuestionMarkCircleIcon className="w-6 h-6 text-gray-500 absolute" />
+            <div className="relative z-10 flex items-center justify-center ml-4 transition-opacity duration-300 transform -translate-x-full -translate-y-1/2  top-1/2 group-hover:opacity-100">
+              <QuestionMarkCircleIcon className="absolute w-6 h-6 text-gray-500" />
             </div>
           )}
           {/* Tooltip */}
           {(row.status === "Pending") && (
-            <div className="h-auto mb-4 absolute drop-shadow-sm   mt-2 hidden group-hover:block  bg-gray-600  ml-10  text-black p-1 rounded-md shadow-lg w-full z-40">
+            <div className="absolute z-40 hidden w-full h-auto p-1 mt-2 mb-4 ml-10 text-black bg-gray-600 rounded-md shadow-lg drop-shadow-sm group-hover:block">
               <p className="text-[11px] text-white">
                 Pending: {row.pending_approver}
               </p>
@@ -444,16 +445,16 @@ const RequestApprover = (props: Props) => {
   ];
 
   return (
-    <div className="bg-graybg dark:bg-blackbg w-full h-lvh pb-10 pt-4 px-10 md:px-10 lg:px-30">
+    <div className="w-full px-10 pt-4 pb-10 bg-graybg dark:bg-blackbg h-lvh md:px-10 lg:px-30">
       <Link to="/request/sr">
         <button className="bg-primary text-white rounded-[12px] mb-2 w-[120px] sm:w-[151px] h-[34px] z-10">
           Send Request
         </button>
       </Link>
-      <div className="w-full h-auto drop-shadow-lg rounded-lg md:mr-4 relative">
-        <div className="bg-white rounded-lg w-full flex flex-col items-center overflow-x-auto">
+      <div className="relative w-full h-auto rounded-lg drop-shadow-lg md:mr-4">
+        <div className="flex flex-col items-center w-full overflow-x-auto bg-white rounded-lg">
           <div className="w-full border-b-2 md:px-30">
-            <ul className="px-2 md:px-30 flex justify-start items-center space-x-4 md:space-x-6 py-4 font-medium overflow-x-auto">
+            <ul className="flex items-center justify-start px-2 py-4 space-x-4 overflow-x-auto font-medium md:px-30 md:space-x-6">
               {items.map((item, index) => (
                 <li
                   key={index}
