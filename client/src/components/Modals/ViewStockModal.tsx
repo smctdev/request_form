@@ -511,7 +511,6 @@ const ViewStockModal: React.FC<Props> = ({
             <div>
               <h1 className="font-semibold text-[18px]">
                 Stock Requisition Slip
-                {record?.branch || 'n/a'}
               </h1>
             </div>
             <div className="flex w-auto ">

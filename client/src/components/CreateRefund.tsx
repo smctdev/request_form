@@ -474,7 +474,7 @@ const CreateRefund = (props: Props) => {
                     <th style={{ border: "none" }}></th>
                   </tr>
                 </thead>
-                
+
                 <tbody>
                   {items.map((item, index) => (
                     <tr key={index} className="">
@@ -578,7 +578,15 @@ const CreateRefund = (props: Props) => {
                       <td className="p-1 border border-black">
                         {item.totalAmount}
                       </td>
-                      <td className="p-1 border border-black">
+                      <td
+                        className="p-1 border border-black"
+                        onClick={() => {
+                          const input = document.getElementById(
+                            `remarks-${index}`
+                          );
+                          if (input) input.focus();
+                        }}
+                      >
                         <textarea
                           id={`remarks-${index}`}
                           value={item.remarks}
@@ -605,10 +613,13 @@ const CreateRefund = (props: Props) => {
                       </td>
                       <td>
                         {items.length > 1 && (
-                          <TrashIcon className="text-[#e63c3c] size-7 cursor-pointer" onClick={() => handleRemoveItem(index)} title="Remove Item"/>
+                          <TrashIcon
+                            className="text-[#e63c3c] size-7 cursor-pointer"
+                            onClick={() => handleRemoveItem(index)}
+                            title="Remove Item"
+                          />
                         )}
-                          
-                        </td>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
