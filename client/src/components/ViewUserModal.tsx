@@ -1,5 +1,6 @@
 import React from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import Avatar from "./assets/avatar.png";
 
 interface Record {
   id: number;
@@ -9,6 +10,8 @@ interface Record {
   email: string;
   role: string;
   contact: string;
+  username: string;
+  profile_picture: string;
 }
 
 interface ViewUserModalProps {
@@ -25,32 +28,84 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({
   if (!modalIsOpen) {
     return null;
   }
-
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col ">
-      <div className=" p-4  w-1/2  relative bg-primary flex justify-center mx-20  border-b rounded-t-[12px]">
-        <h2 className="text-center  text-xl md:text-[32px] font-bold text-white">
-          User Information{" "}
+    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col">
+      <div className="p-6 w-4/5 md:w-2/5 relative bg-primary flex justify-center mx-4 rounded-t-[12px] shadow-lg">
+        <h2 className="text-center text-xl md:text-[32px] font-semibold text-white">
+          User Information
         </h2>
         <XMarkIcon
-          className="size-6 text-black absolute right-3 cursor-pointer"
+          className="text-white size-6 absolute right-4 top-4 cursor-pointer"
           onClick={closeModal}
         />
       </div>
-      <div className="bg-white w-1/2 rounded-b-[12px] shadow-lg   lg:overflow h-auto px-14">
+
+      <div className="bg-white w-4/5 md:w-2/5 rounded-b-[12px] shadow-xl px-10 py-6">
         {user && (
-          <div className="grid mb-10 lg:grid-cols-2 justify-items-center place-content-center mt-5  gap-4">
-            {Object.entries(user).map(([key, value]) => (
-              <div key={key} className="w-2/3 sm:w-full    ">
-                <p className="font-bold">{`${
-                  key.replace(/_/g, " ").charAt(0).toUpperCase() +
-                  key.replace(/_/g, " ").slice(1)
-                }`}</p>
-                <div className="border p-2 border-black rounded-[12px] overflow-auto">
-                  <p className="break-words">{value}</p>
-                </div>
+          <div className="flex flex-col items-center gap-8">
+            {/* Profile Picture Section */}
+            <div className="flex flex-col items-center mb-8">
+              <img
+                src={user.profile_picture ? `${process.env.REACT_APP_URL_STORAGE}/${user.profile_picture}` : Avatar} // Default image if no profile image exists
+                alt="Profile"
+                className="w-32 h-32 rounded-full border-4 border-primary mb-4"
+              />
+              <h3 className="text-xl font-bold text-gray-800">
+                {user.username || "User Name"}
+              </h3>
+              <p className="text-gray-600">
+                {user.email || "user@example.com"}
+              </p>
+            </div>
+
+            {/* User Information Section */}
+            <div className="w-full grid lg:grid-cols-2 gap-6">
+              {/* Left Column of Information */}
+              <div className="flex flex-col items-start">
+                {Object.entries(user)
+                  .filter(
+                    ([key]) =>
+                      key !== "profile_picture" &&
+                      key !== "username" &&
+                      key !== "email"
+                  )
+                  .map(([key, value], index) =>
+                    index % 2 === 0 ? (
+                      <div key={key} className="mb-4 w-full">
+                        <p className="font-semibold text-gray-700">
+                          {key.replace(/_/g, " ").toUpperCase()}
+                        </p>
+                        <div className="border p-4 border-gray-300 rounded-xl shadow-sm">
+                          <p className="text-gray-800 break-words">{value}</p>
+                        </div>
+                      </div>
+                    ) : null
+                  )}
               </div>
-            ))}
+
+              {/* Right Column of Information */}
+              <div className="flex flex-col items-start">
+                {Object.entries(user)
+                  .filter(
+                    ([key]) =>
+                      key !== "profile_picture" &&
+                      key !== "username" &&
+                      key !== "email"
+                  )
+                  .map(([key, value], index) =>
+                    index % 2 !== 0 ? (
+                      <div key={key} className="mb-4 w-full">
+                        <p className="font-semibold text-gray-700">
+                          {key.replace(/_/g, " ").toUpperCase()}
+                        </p>
+                        <div className="border p-4 border-gray-300 rounded-xl shadow-sm">
+                          <p className="text-gray-800 break-words">{value}</p>
+                        </div>
+                      </div>
+                    ) : null
+                  )}
+              </div>
+            </div>
           </div>
         )}
       </div>

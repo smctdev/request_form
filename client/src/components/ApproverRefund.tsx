@@ -229,7 +229,7 @@ const ApproverRefund: React.FC<Props> = ({
         // Handle the parsed attachment
         const fileUrls = parsedAttachment.map(
           (filePath: string) =>
-            `${process.env.REACT_APP_API_BASE_URL}/${filePath.replace(/\\/g, "/")}`
+            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
         );
         setAttachmentUrl(fileUrls);
       } else {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\OngoingNotification;
 use Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -97,6 +98,12 @@ class ApprovalProcessController extends Controller
                 'attachment' => $attachmentPaths // Will be null if no attachments were uploaded
             ]);
 
+            $code =$requestForm->request_code;
+            $branch =$requestForm->branch_code;
+            $name = Branch::find($branch);
+            $branchName = $name->branch_code;
+            $request_code = "$branchName-$code";
+
             if ($action === 'approve') {
                 // Check if the current approver is the first approver
                 $firstApprovalProcess = ApprovalProcess::where('request_form_id', $request_form_id)
@@ -109,7 +116,7 @@ class ApprovalProcessController extends Controller
 
                     $user = User::where('id', $requestForm->user_id)->first();
 
-                    $user->notify(new EmployeeNotification($requestForm, 'ongoing', $user->firstName, $requestForm->form_type));
+                    $user->notify(new OngoingNotification($requestForm, 'ongoing', $user->firstName, $requestForm->form_type,$request_code));
                 }
 
                 $nextApprovalProcess = ApprovalProcess::where('request_form_id', $request_form_id)
@@ -138,7 +145,7 @@ class ApprovalProcessController extends Controller
                     $requestForm->save();
                     $employee = $requestForm->user;
                     $firstname = $employee->firstName;
-                    $employee->notify(new EmployeeNotification($requestForm, 'approved', $firstname, $formtype));
+                    $employee->notify(new EmployeeNotification($requestForm, 'approved', $firstname, $formtype, $request_code, $comment));
 
                     // Broadcast the notification count update
                     $message = 'Your request has been ' . $requestForm->status;
@@ -155,7 +162,7 @@ class ApprovalProcessController extends Controller
                 $firstname = $employee->firstName;
                 $approverFirstname = $approvalProcess->user->firstName;
                 $approverLastname = $approvalProcess->user->lastName;
-                $employee->notify(new ReturnRequestNotification($requestForm, 'disapproved', $firstname, $approverFirstname, $approverLastname, $comment));
+                $employee->notify(new ReturnRequestNotification($requestForm, 'disapproved', $firstname, $approverFirstname, $approverLastname,$request_code, $comment));
 
                 // Broadcast the notification count update
                 $message = 'Your request has been returned because it is ' . $requestForm->status;

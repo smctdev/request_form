@@ -287,7 +287,7 @@ class UserController extends Controller
     {
         try {
 
-            $users = User::select('id', 'firstname', 'lastname', 'branch_code', 'email', 'username', 'role', 'position', 'contact', 'employee_id', 'branch')->get();
+            $users = User::select('id', 'firstname', 'lastname', 'branch_code', 'email', 'username', 'role', 'position', 'contact', 'employee_id', 'branch', 'profile_picture')->get();
 
             return response()->json([
                 'message' => 'Users retrieved successfully',

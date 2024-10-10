@@ -197,7 +197,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
           // Construct file URLs
           const fileUrls = parsedAttachment.map(
             (filePath) =>
-              `${process.env.REACT_APP_API_BASE_URL}/${filePath.replace(/\\/g, "/")}`
+              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
           );
           setAttachmentUrl(fileUrls);
         }

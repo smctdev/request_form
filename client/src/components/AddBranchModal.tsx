@@ -247,14 +247,14 @@ const AddBranchModal = ({
           onClick={closeModal}
         />
       </div>
-      <div className="bg-white w-7/12 md:w-2/6 x-20 rounded-b-[12px] shadow-lg overflow-y-auto h-2/3">
+      <div className="bg-white w-7/12 md:w-2/6 x-20 rounded-b-[12px] shadow-lg overflow-y-auto">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mt-10 md:mx-5 gap-4">
             <div className="mb-4">
               <p className="font-medium w-full">Branch</p>
               <select
                 {...register("branch")}
-                className="w-full bg-[#F5F5F5] border border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="w-full bg-[#F5F5F5] border select select-bordered border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                 onChange={(e) => setValue("branch", e.target.value)}
               >
                 <option value="" hidden>Select Branch</option>
@@ -274,7 +274,7 @@ const AddBranchModal = ({
              <input
              type="text"
              onChange={(e) => setValue("branchCode", e.target.value)}
-             className="w-full bg-[#F5F5F5] border border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+             className="w-full bg-[#F5F5F5] border input input-bordered border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
              />
               {errors.branchCode && (
                 <span className="text-red-500 text-xs">{errors.branchCode.message}</span>
@@ -285,7 +285,7 @@ const AddBranchModal = ({
              <input
              type="text"
              onChange={(e) => setValue("branchNameInput", e.target.value)}
-             className="w-full bg-[#F5F5F5] border border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+             className="w-full bg-[#F5F5F5] input input-bordered border border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
              />
              {backendError && (
                <span className="text-red-500 text-xs">{backendError}</span>

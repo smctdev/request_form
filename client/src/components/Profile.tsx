@@ -263,7 +263,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
   const profilePictureUrl = newProfilePic
     ? URL.createObjectURL(newProfilePic) // Create a temporary URL for the new profile picture
     : user?.profile_picture
-    ? `${process.env.REACT_APP_API_BASE_URL}/${user.profile_picture.replace(
+    ? `${process.env.REACT_APP_URL_STORAGE}/${user.profile_picture.replace(
         /\\/g,
         "/"
       )}`
@@ -377,9 +377,8 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
             <div className="flex flex-col items-center lg:flex-row md:items-start">
               <img
                 alt="profile"
-                height={180}
-                width={180}
                 src={profilePictureUrl}
+                className="rounded-full w-[180px] h-[180px] border-4 border-blue-600"
           
               />
               <div className="flex flex-col mt-4 ml-2">

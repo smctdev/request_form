@@ -372,9 +372,8 @@ const EditUserModal = ({
 
   const fields = fieldsConfig[entityType] || [];
   const pStyle = "font-medium w-full";
-  const inputStyle = "border border-black bg-white rounded-md p-1 w-full";
+  const inputStyle = "input input-bordered bg-white w-full mt-2";
   const roleOptions = [
-    { label: "", value: "" },
     { label: "Accounting Clerk", value: "Accounting Clerk" },
     { label: "Accounting Manager", value: "Accounting Manager" },
     { label: "Accounting Staff", value: "Accounting Staff" },
@@ -415,7 +414,6 @@ const EditUserModal = ({
   ];
 
   const positionOptions = [
-    { label: "", value: "" },
     { label: "Approver", value: "approver" },
     { label: "User", value: "User" },
     { label: "Admin", value: "Admin" },
@@ -423,27 +421,27 @@ const EditUserModal = ({
 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col">
-      <div className="p-4 w-10/12 md:w-2/5 relative bg-primary flex justify-center mx-20 border-b rounded-t-[12px]">
-        <h2 className="text-center text-xl md:text-[32px] font-bold text-white">
-          Edit {entityType}
-        </h2>
+      <div className="p-6 w-10/12 md:w-2/5 bg-primary text-white rounded-t-[12px] shadow-xl relative">
+        <h2 className="text-center text-xl md:text-[32px] font-bold">{`Edit ${entityType}`}</h2>
         <XMarkIcon
-          className="size-6 text-black absolute right-3 cursor-pointer"
+          className="size-6 text-white absolute right-3 top-6 cursor-pointer"
           onClick={handleCancel}
         />
       </div>
-      <div className="bg-white h-2/3 w-10/12 md:w-2/5 x-20 rounded-b-[12px] shadow-lg overflow-y-auto sm:h-2/3">
-        <div className="mx-10 mt-10 grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div className="bg-white w-10/12 md:w-2/5 mx-auto rounded-b-[12px] shadow-lg overflow-y-auto p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Render input fields dynamically */}
           {fields.map((field, index) => (
             <div key={index}>
               <p className={`${pStyle}`}>{field}</p>
               {field === "Role" ? (
                 <select
-                  className={`${inputStyle}`}
+                  className={`select select-bordered w-full bg-white rounded-lg border p-2`}
                   value={editedRole}
                   onChange={(e) => setEditedRole(e.target.value)}
                 >
+                  <option value="" hidden>Select Role</option>
+                  <option value="" disabled>Select Role</option>
                   {positionOptions.map((option, index) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
@@ -452,125 +450,128 @@ const EditUserModal = ({
                 </select>
               ) : field === "Branch Code" ? (
                 <select
-                  className={`${inputStyle}`}
+                  className={`select select-bordered w-full rounded-lg border bg-white p-2`}
                   value={editedBranchCode}
                   onChange={(e) =>
                     handleBranchCodeChange(Number(e.target.value))
                   }
                 >
-                  <option value="">Select branch</option>
-
+                  <option value="" hidden>Select Branch Code</option>
+                  <option value="" disabled>Select Branch Code</option>
                   {branchList.map((branch) => (
                     <option key={branch.id} value={branch.id}>
                       {branch.branch_code}
                     </option>
                   ))}
                 </select>
-              ) : (
-                <>
-                  {field === "Position" ? (
-                    <select
-                      className={`${inputStyle}`}
-                      value={editedPosition}
-                      onChange={(e) => setEditedPosition(e.target.value)}
-                    >
-                      {roleOptions.map((option, index) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  ) : field === "Branch Name" ? (
-                    <input
-                      className={`${inputStyle}`}
-                      value={editedBranch}
-                      readOnly
-                    />
-                  ) : field === "Branch" ? (
-                    <select className={`${inputStyle}`} value={editedBranch}>
-                      {" "}
-                      <option value="">Select branch</option>
-                      {branch.length > 0 ? (
-                        branch.map((branchItem) => (
-                          <option key={branchItem} value={branchItem}>
-                            {branchItem}
-                          </option>
-                        ))
-                      ) : (
-                        <option value="" disabled>
-                          No branch codes available
-                        </option>
-                      )}
-                    </select>
-                  ) : field === "BranchCode" ? (
-                    <input
-                      className={`${inputStyle}`}
-                      value={editedBranchCode}
-                      onChange={(e) => setEditedBranchCode(e.target.value)}
-                    />
-                  ) : field === "BranchName" ? (
-                    <input
-                      className={`${inputStyle}`}
-                      value={editedBranchName}
-                      onChange={(e) => setEditedBranchName(e.target.value)}
-                    />
+              ) : field === "Position" ? (
+                <select
+                  className={`select select-bordered w-full rounded-lg bg-white border p-2`}
+                  value={editedPosition}
+                  onChange={(e) => setEditedPosition(e.target.value)}
+                >
+                  
+                  <option value="" hidden>Select Position</option>
+                  <option value="" disabled>Select Position</option>
+                  {roleOptions.map((option, index) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              ) : field === "Branch Name" ? (
+                <input
+                  className={`${inputStyle}`}
+                  value={editedBranch}
+                  readOnly
+                />
+              ) : field === "Branch" ? (
+                <select
+                  className={`select select-bordered w-full rounded-lg bg-white border p-2 mt-2`}
+                  value={editedBranch}
+                  onChange={(e) => setEditedBranch(e.target.value)}
+                >
+                <option value="" hidden>Select Branch</option>
+                <option value="" disabled>Select Branch</option>
+                  {branch.length > 0 ? (
+                    branch.map((branchItem) => (
+                      <option key={branchItem} value={branchItem}>
+                        {branchItem}
+                      </option>
+                    ))
                   ) : (
-                    <input
-                      type="text"
-                      className={`${inputStyle}`}
-                      value={
-                        field === "Firstname"
-                          ? firstname
-                          : field === "Lastname"
-                          ? lastname
-                          : field === "Email"
-                          ? email
-                          : field === "Username"
-                          ? username
-                          : field === "Contact"
-                          ? contact
-                          : field === "Branch Code"
-                          ? branch
-                          : field === "Branch Name"
-                          ? branch
-                          : ""
-                      }
-                      onChange={(e) =>
-                        field === "Firstname"
-                          ? setFirstName(e.target.value)
-                          : field === "Lastname"
-                          ? setLastName(e.target.value)
-                          : field === "Email"
-                          ? setEmail(e.target.value)
-                          : field === "Username"
-                          ? setUsername(e.target.value)
-                          : field === "Contact"
-                          ? setContact(e.target.value)
-                          : null
-                      }
-                    />
+                    <option value="" disabled>
+                      No branch codes available
+                    </option>
                   )}
-                </>
+                </select>
+              ) : field === "BranchCode" || field === "BranchName" ? (
+                <input
+                  className={`${inputStyle}`}
+                  value={
+                    field === "BranchCode" ? editedBranchCode : editedBranchName
+                  }
+                  onChange={(e) =>
+                    field === "BranchCode"
+                      ? setEditedBranchCode(e.target.value)
+                      : setEditedBranchName(e.target.value)
+                  }
+                />
+              ) : (
+                <input
+                  type="text"
+                  className={`${inputStyle}`}
+                  value={
+                    field === "Firstname"
+                      ? firstname
+                      : field === "Lastname"
+                      ? lastname
+                      : field === "Email"
+                      ? email
+                      : field === "Username"
+                      ? username
+                      : field === "Contact"
+                      ? contact
+                      : ""
+                  }
+                  onChange={(e) =>
+                    field === "Firstname"
+                      ? setFirstName(e.target.value)
+                      : field === "Lastname"
+                      ? setLastName(e.target.value)
+                      : field === "Email"
+                      ? setEmail(e.target.value)
+                      : field === "Username"
+                      ? setUsername(e.target.value)
+                      : field === "Contact"
+                      ? setContact(e.target.value)
+                      : null
+                  }
+                />
               )}
             </div>
           ))}
         </div>
+
+        {/* Custom fields section */}
         {entityType === "Custom" && (
-          <div className=" flex flex-col  mx-4 lg:mx-20 ">
-            <div className="grid grid-cols-2 w-full">
-              <div className="">
+          <div className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
                 <p className={`${pStyle}`}>Name</p>
                 <input
                   type="text"
-                  className="w-full border bg-white border-black rounded-md p-1"
+                  className="w-full input input-bordered p-2 border rounded-lg"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
-                {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+                {errorMessage && (
+                  <p className="text-red-500 text-sm">{errorMessage}</p>
+                )}
               </div>
             </div>
-            <div className="flex space-x-6 w-full"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 mt-4 ">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Noted By
@@ -582,7 +583,7 @@ const EditUserModal = ({
                       id={`noted_by_${person.id}`}
                       checked={notedBy.includes(person.id)}
                       onChange={() => toggleNotedBy(person.id)}
-                      className="mr-2 size-6 bg-white"
+                      className="mr-2 input input-bordered"
                     />
                     <label
                       htmlFor={`noted_by_${person.id}`}
@@ -593,6 +594,7 @@ const EditUserModal = ({
                   </div>
                 ))}
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Approved By
@@ -604,7 +606,7 @@ const EditUserModal = ({
                       id={`approved_by_${person.id}`}
                       checked={approvedBy.includes(person.id)}
                       onChange={() => toggleApprovedBy(person.id)}
-                      className="mr-2 size-6 bg-white"
+                      className="mr-2 input input-bordered"
                     />
                     <label
                       htmlFor={`approved_by_${person.id}`}
@@ -619,18 +621,23 @@ const EditUserModal = ({
           </div>
         )}
 
-        <div className="mx-10 mt-4">
-          {errorMessage && <p className="text-red-600">{errorMessage}</p>}
+        {/* Error message */}
+        <div className="mt-4">
+          {errorMessage && (
+            <p className="text-red-600 text-sm">{errorMessage}</p>
+          )}
         </div>
-        <div className="flex justify-center mx-10 mt-6 lg:justify-end items-center space-x-2 md:mt-20 md:mr-10 mb-10">
+
+        {/* Buttons */}
+        <div className="flex justify-end space-x-4 mt-6">
           <button
-            className="bg-[#9C9C9C] p-2 w-full h-14 lg:w-1/4 rounded-[12px] text-white font-medium"
+            className="btn btn-secondary bg-gray-500 border-gray-500 hover:bg-gray-600 hover:border-gray-600 w-24"
             onClick={handleCancel}
           >
             Cancel
           </button>
           <button
-            className="bg-primary p-2 w-full h-14 lg:w-1/4 rounded-[12px] text-white font-medium"
+            className={`btn btn-primary bg-blue-500 border-blue-500 hover:bg-blue-600 hover:border-blue-600 text-white hover:text-white w-1/3`}
             onClick={handleUpdate}
           >
             {loading ? <ClipLoader color="#36d7b7" /> : "Update"}

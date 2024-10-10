@@ -2,12 +2,14 @@
 
 namespace App\Notifications;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use app\Events\NotificationEvent;
+use Log;
 
 class ReturnRequestNotification extends Notification
 {
@@ -24,7 +26,8 @@ class ReturnRequestNotification extends Notification
      protected $approverFirstname;
      protected $approverLastname;
      protected $comment;
-    public function __construct($requestForm, $status, $firstname,$approverFirstname,$approverLastname,$comment)
+     protected $requested_code;
+    public function __construct($requestForm, $status, $firstname,$approverFirstname,$approverLastname,$request_code,$comment)
     {
         $this->requestForm = $requestForm;
         $this->status = $status;
@@ -32,6 +35,7 @@ class ReturnRequestNotification extends Notification
         $this->approverFirstname =$approverFirstname;
         $this->approverLastname =$approverLastname;
         $this->comment=$comment;
+        $this->requested_code=$request_code;
 
     }
 
@@ -50,6 +54,8 @@ class ReturnRequestNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        
+        Log::info($this->requestForm->created_at);
         $approvalUrl = route('view.single.request.form.for.approval', ['request_form_id' => $this->requestForm->id]);
                     return (new MailMessage)
                     ->view('emails.return_request',[
@@ -59,16 +65,17 @@ class ReturnRequestNotification extends Notification
                         'status' =>$this->status,
                         'approverFirstname' =>$this->approverFirstname,
                         'approverLastname' =>$this->approverLastname,
-                        'comment' =>$this->comment
-
+                        'request_code' => $this->requested_code,
+                        'comment' =>$this->comment,
+                        'date' => Carbon::parse($this->requestForm->created_at)->format('F j, Y')
 
                         ])
-                    ->subject('Request Form Update - '.$this->requestForm->form_type. ' '.now()->format('Y-m-d H:i:s'))
-                    ->line('Your request has been returned because it is ' . $this->status)
-                    ->line('Request Type: '.$this->requestForm->form_type)
-                    ->line('Status:' . $this->status)
-                    ->action('Notification Action', url('/'));
-    }
+                        ->subject('Request Form Update - '.$this->requestForm->form_type. ' '.now()->format('Y-m-d H:i:s'))
+                        ->line('Your request has been returned because it is ' . $this->status)
+                        ->line('Request Type: '.$this->requestForm->form_type)
+                        ->line('Status:' . $this->status)
+                        ->action('Notification Action', url('/'));
+                    }
 
     /**
      * Get the array representation of the notification.

@@ -29,6 +29,7 @@ class RequestForm extends Model
         'attachment' => 'array',
         'approved_by' => 'array',
         'noted_by' => 'array',
+        'date'  => 'datetime',
     ];
 
 

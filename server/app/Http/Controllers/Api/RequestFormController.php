@@ -40,12 +40,12 @@ class RequestFormController extends Controller
 
             $userID = $validated['user_id'];
             $formType = $validated['form_type'];
-                $formDataArray = json_decode($validated['form_data'], true);
-               $notedByIds = json_decode($validated['noted_by'], true);
-               $approvedByIds = json_decode($validated['approved_by'], true); 
-         /*    $formDataArray = $validated['form_data'];
-            $notedByIds = $validated['noted_by'];
-            $approvedByIds = $validated['approved_by']; */
+            $formDataArray = json_decode($validated['form_data'], true);
+            $notedByIds = json_decode($validated['noted_by'], true);
+            $approvedByIds = json_decode($validated['approved_by'], true);
+            /*    $formDataArray = $validated['form_data'];
+               $notedByIds = $validated['noted_by'];
+               $approvedByIds = $validated['approved_by']; */
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 return response()->json([
@@ -286,7 +286,7 @@ class RequestFormController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
-                
+
                 $level++;
             }
 
@@ -314,11 +314,11 @@ class RequestFormController extends Controller
             // Notify the first approver (user 3 in this case)
             $firstApproverId = $notedByIds[0];
             $firstApprover = User::find($firstApproverId);
-            
+
             if ($firstApprover) {
                 $firstApprovalProcess = ApprovalProcess::where('request_form_id', $requestFormData->id)
-                ->where('level', 1)
-                ->first();
+                    ->where('level', 1)
+                    ->first();
                 Log::info($firstApprovalProcess);
 
                 $firstApprover->notify(new ApprovalProcessNotification(
@@ -360,7 +360,7 @@ class RequestFormController extends Controller
             'Cash Disbursement Requisition Slip' => 'CD',
             'Liquidation of Actual Expense' => 'LAE',
             'Purchase Order Requisition Slip' => 'PO',
-            'Refund Request' => 'RR-',
+            'Refund Request' => 'RR',
             'Stock Requisition Slip' => 'SRL',
             'Discount Requisition Form' => 'DRF',
         ];
@@ -390,24 +390,36 @@ class RequestFormController extends Controller
             $approved_by = json_decode($request->input('approved_by'), true);
 
             // Initialize attachment paths
-            $attachment_paths = [];
+            $existing_attachments = json_decode($request_data->attachment, associative: true) ?? [];
 
-            // Process existing and new attachments
+            // Process new attachments (upload)
+            $attachment_paths = $existing_attachments; // Start with existing attachments
+
             if ($request->hasFile('new_attachments')) {
                 foreach ($request->file('new_attachments') as $file) {
-                    $attachment_paths[] = $file->store('attachments', 'public');
+                    $attachment_paths[] = $file->store('attachments', 'public'); // Add new file paths
                 }
             }
 
-            // Add existing attachment paths from the request
+            // Add existing attachment paths (from input)
             foreach ($request->input('attachment_urls', []) as $value) {
-                $attachment_paths[] = 'attachments/' . $value;
+                // Ensure the value is valid and not already in the list
+                if ($value && !in_array('attachments/' . $value, $attachment_paths)) {
+                    $attachment_paths[] = 'attachments/' . $value; // Add to list
+                }
             }
 
             // Process removed attachments
             $removed_attachments = $request->input('removed_attachments', []);
             foreach ($removed_attachments as $path) {
-                Storage::disk('public')->delete('attachments/' . $path);
+                // Delete the file from storage
+                if (Storage::disk('public')->exists('attachments/' . $path)) {
+                    Storage::disk('public')->delete('attachments/' . $path);
+                }
+                // Remove from the attachment list as well
+                $attachment_paths = array_filter($attachment_paths, function ($existing_path) use ($path) {
+                    return basename($existing_path) !== basename($path); // Remove the file from the list
+                });
             }
 
             // Update the request form data including attachment
@@ -417,9 +429,7 @@ class RequestFormController extends Controller
                 'approved_by' => $approved_by,
                 'attachment' => json_encode($attachment_paths),
                 'status' => "Pending",
-                'updated_at' => now(), // Use now() for the current timestamp
             ]);
-
 
             // Delete existing approval processes
             $request_data->approvalProcess()->delete();

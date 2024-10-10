@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -23,14 +24,18 @@ class EmployeeNotification extends Notification
     protected $status;
     protected $firstname;
     protected $formtype;
+    protected $comment;
+    protected $request_code;
 
 
-    public function __construct($requestForm, $status, $firstname, $formtype)
+    public function __construct($requestForm, $status, $firstname, $formtype, $request_code, $comment)
     {
         $this->requestForm = $requestForm;
         $this->status = $status;
         $this->firstname = $firstname;
         $this->formtype = $formtype;
+        $this->request_code = $request_code;
+         $this->comment = $comment;
     }
 
     /**
@@ -54,6 +59,10 @@ class EmployeeNotification extends Notification
                 'status' => $this->status,
                 'firstname' => $this->firstname,
                 'formtype' => $this->formtype,
+                'request_code' => $this->request_code,
+                'comment' => $this->comment,
+                'date' => Carbon::parse($this->requestForm->created_at)->format('F j, Y')
+
             ])
             ->subject('Request Form Update - ' . $this->requestForm->form_type . ' ' . now()->format('Y-m-d H:i:s'))
             ->line('Your request has been ' . $this->status)

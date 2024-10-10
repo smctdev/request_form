@@ -29,6 +29,7 @@ type Record = {
   username: string;
   branch: string;
   position: string;
+  profile_picture: string;
 };
 
 const SetupUser = (props: Props) => {
@@ -111,6 +112,7 @@ const SetupUser = (props: Props) => {
             contact: item.contact,
             branch: item.branch,
             position: item.position,
+            profile_picture: item.profile_picture,
           })
         );
 
