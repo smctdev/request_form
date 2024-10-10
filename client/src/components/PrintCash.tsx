@@ -422,6 +422,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
                         <td className={`${tableStyle} `}></td>
                         <td className={`${tableStyle} `}></td>
                         <td className={`${tableStyle} `}></td>
+                        <td className={`${tableStyle} `}></td>
                       </tr>
                     )
                   )}
@@ -449,10 +450,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
               <tr>
                 <td className="font-normal">HOTEL</td>
                 <td className="font-medium">
-                  {printData?.id.form_data[0].totalHotel}
-                </td>
-                <td className="font-medium">
-                  {/* Display calculated total per diem */}
+                  {/* Display calculated total hotel rate */}
                   {printData?.id.form_data[0].items.reduce(
                     (totalHotelRate: number, item: any) =>
                       totalHotelRate + Number(item.rate),
