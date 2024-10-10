@@ -187,11 +187,11 @@ const Sidebar2: React.FC<SidebarProps> = ({
   }, [notificationReceived]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("tokenExpiry");
+    localStorage.clear(); // Clear all local storage
     navigate("/login");
-    setIsAuthenticated(false)
+    setIsAuthenticated(false);
   };
+  
 
   const listStyle =
     "relative mx-2 group flex items-center text-[18px] text-gray-400 font-medium py-2 pr-3 px-2 cursor-pointer rounded-lg";
@@ -219,8 +219,8 @@ const Sidebar2: React.FC<SidebarProps> = ({
             Request Form
           </h1>
         </div>
-        <ul className="mt-6 flex-1 w-full">
-          <div className="gap-2 w-full">
+        <ul className="flex-1 w-full mt-6">
+          <div className="w-full gap-2">
             {navItems.map((item) => (
               <Link to={item.path} key={item.title}>
                 <li
@@ -265,9 +265,9 @@ const Sidebar2: React.FC<SidebarProps> = ({
             ))}
             <div
               onClick={handleLogout}
-              className="border-t flex justify-center items-center cursor-pointer"
+              className="flex items-center justify-center border-t cursor-pointer"
             >
-              <div className="flex h-5/6 p-2">
+              <div className="flex p-2 h-5/6">
                 <ArrowLeftStartOnRectangleIcon
                   className={`${iconStyle} dark:text-white`}
                 />

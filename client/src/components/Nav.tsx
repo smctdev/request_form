@@ -196,11 +196,13 @@ const Nav: React.FC<NavProps> = ({
         );
 
         if (response.data && response.data.data) {
-          setUserInfo(response.data.data);
-          setLastName(response.data.data.lastName);
-          setFirstName(response.data.data.firstName);
-          setProfilePicture(response.data.data.profile_picture);
-          setRole(response.data.data.role);
+          const userData = response.data.data;
+          localStorage.setItem("userInfo", JSON.stringify(userData));
+          setUserInfo(userData);
+          setLastName(userData.lastName);
+          setFirstName(userData.firstName);
+          setProfilePicture(userData.profile_picture);
+          setRole(userData.role);
         } else {
           console.error("Unexpected response structure:", response.data);
         }
@@ -214,7 +216,20 @@ const Nav: React.FC<NavProps> = ({
       }
     };
 
+      // Check local storage for user info
+  const storedUserInfo = localStorage.getItem("userInfo");
+  if (storedUserInfo) {
+    const parsedUserInfo = JSON.parse(storedUserInfo);
+    setUserInfo(parsedUserInfo);
+    setFirstName(parsedUserInfo.firstName);
+    setLastName(parsedUserInfo.lastName);
+    setProfilePicture(parsedUserInfo.profile_picture);
+    setRole(parsedUserInfo.role);
+    setProfileLoading(false); // Set loading to false since we got data from local storage
+  } else {
+    // Fetch from database if not found in local storage
     fetchUserInfoFromDatabase();
+  }
   }, []);
 
   useEffect(() => {
@@ -378,19 +393,20 @@ const Nav: React.FC<NavProps> = ({
           </div>
           <div className={`${flexBetween} gap-2 relative`}>
             {profileLoading ? (
-              <div className="flex w-52 flex-col gap-4">
+                <div className="relative flex flex-col gap-4 w-52">
                 <div className="flex items-center gap-4">
-                  <div className="skeleton h-16 w-16 shrink-0 rounded-full"></div>
+                  <div className="w-16 h-16 rounded-full shrink-0 bg-slate-300 skeleton"></div>
                   <div className="flex flex-col gap-4">
-                    <div className="skeleton h-9 w-28"></div>
+                    <div className="h-9 w-28 bg-slate-300 skeleton"></div>
                   </div>
                 </div>
+                
               </div>
             ) : (
               <>
                 <img
                   alt="logo"
-                  className="cursor-pointer hidden sm:block rounded-full"
+                  className="hidden rounded-full cursor-pointer sm:block"
                   src={profilePictureUrl}
                   height={45}
                   width={45}
@@ -421,7 +437,7 @@ const Nav: React.FC<NavProps> = ({
             {isOpen && (
               <div
                 ref={dropdownRef}
-                className="w-full border-x-2 border-b-2 bg-white absolute top-11 overflow-x-hidden z-50"
+                className="absolute z-50 w-full overflow-x-hidden bg-white border-b-2 border-x-2 top-11"
                 style={{ zIndex: 1000 }}
               >
                 <ul>
@@ -435,7 +451,7 @@ const Nav: React.FC<NavProps> = ({
               </div>
             )}
           </div>
-          <div className="pl-4 sm:pl-10 relative">
+          <div className="relative pl-4 sm:pl-10">
             <div className="relative">
               <BellIcon
                 className={`size-[30px] cursor-pointer ${
@@ -523,14 +539,14 @@ const Nav: React.FC<NavProps> = ({
                               onClick={() => setIsOpenNotif(false)}
                               aria-label={`Notification: ${message}`}
                             >
-                              <div className="w-12 h-12 flex items-center justify-center bg-black rounded-full">
+                              <div className="flex items-center justify-center w-12 h-12 bg-black rounded-full">
                                 {notif.read_at ? (
-                                  <EnvelopeOpenIcon className="size-5 text-white" />
+                                  <EnvelopeOpenIcon className="text-white size-5" />
                                 ) : (
-                                  <EnvelopeIcon className="size-5 text-white" />
+                                  <EnvelopeIcon className="text-white size-5" />
                                 )}
                               </div>
-                              <div className="ml-4 flex-1">
+                              <div className="flex-1 ml-4">
                                 <p
                                   className={`${textColor} text-sm ${
                                     notif.read_at ? "" : "font-bold"
@@ -538,7 +554,7 @@ const Nav: React.FC<NavProps> = ({
                                 >
                                   {message}
                                 </p>
-                                <p className="text-gray-400 text-sm text-center">
+                                <p className="text-sm text-center text-gray-400">
                                   {formatDate(createdAt)}
                                 </p>
                               </div>

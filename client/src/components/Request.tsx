@@ -388,15 +388,19 @@ const Request = (props: Props) => {
   };
 
   const NoDataComponent = () => (
-    <div className="flex justify-center items-center h-64 text-gray-500">
+    <div className="flex items-center justify-center h-64 text-gray-500">
       <p className="text-lg">No records found</p>
     </div>
   );
+
   const LoadingSpinner = () => (
     <table className="table" style={{ background: "white" }}>
       <thead>
         <tr>
-          <th className="w-[80px] py-6" style={{ color: "black", fontWeight: "500" }}>
+          <th
+            className="w-[80px] py-6"
+            style={{ color: "black", fontWeight: "500" }}
+          >
             Request ID
           </th>
           <th style={{ color: "black", fontWeight: "500" }}>Request Type</th>
@@ -409,10 +413,10 @@ const Request = (props: Props) => {
       <tbody>
         {Array.from({ length: 6 }).map((_, index) => (
           <tr key={index}>
-            <td className="w-full" colSpan={6}>
+            <td className="w-full border border-gray-200" colSpan={6}>
               <div className="flex justify-center">
-                <div className="flex flex-col gap-4 w-full">
-                  <div className="skeleton h-12 w-full"></div>
+                <div className="flex flex-col w-full gap-4">
+                  <div className="w-full h-12 skeleton bg-slate-300"></div>
                 </div>
               </div>
             </td>
@@ -421,6 +425,56 @@ const Request = (props: Props) => {
       </tbody>
     </table>
   );
+  // const LoadingSpinner = () => {
+  //   const skeletonStyle = {
+  //     width: '100%',
+  //     height: '3rem', // h-12
+  //     backgroundColor: '#e2e8f0', // slate-200
+  //     animation: 'fade 1s infinite alternate',
+  //   };
+
+  //   return (
+  //     <table className="table" style={{ background: "white" }}>
+  //       <thead>
+  //         <tr>
+  //           <th className="w-[80px] py-6" style={{ color: "black", fontWeight: "500" }}>
+  //             Request ID
+  //           </th>
+  //           <th style={{ color: "black", fontWeight: "500" }}>Request Type</th>
+  //           <th style={{ color: "black", fontWeight: "500" }}>Date</th>
+  //           <th style={{ color: "black", fontWeight: "500" }}>Branch</th>
+  //           <th style={{ color: "black", fontWeight: "500" }}>Status</th>
+  //           <th style={{ color: "black", fontWeight: "500" }}>Action</th>
+  //         </tr>
+  //       </thead>
+  //       <tbody>
+  //         {Array.from({ length: 6 }).map((_, index) => (
+  //           <tr key={index}>
+  //             <td className="w-full border border-gray-200" colSpan={6}>
+  //               <div className="flex justify-center">
+  //                 <div className="flex flex-col w-full gap-4">
+  //                   <div style={skeletonStyle}></div>
+  //                 </div>
+  //               </div>
+  //             </td>
+  //           </tr>
+  //         ))}
+  //       </tbody>
+  //       <style>
+  //         {`
+  //           @keyframes fade {
+  //             0% {
+  //               background-color: #e2e8f0; /* slate-200 */
+  //             }
+  //             100% {
+  //               background-color: #d1d5db; /* gray-300 */
+  //             }
+  //           }
+  //         `}
+  //       </style>
+  //     </table>
+  //   );
+  // };
 
   const refreshData = () => {
     if (userId) {
@@ -490,7 +544,7 @@ const Request = (props: Props) => {
       sortable: true,
       width: "320px",
       cell: (row: Record) => (
-        <div className="relative flex items-center group w-full">
+        <div className="relative flex items-center w-full group">
           {/* Status Badge */}
           <div
             className={`${
@@ -510,14 +564,14 @@ const Request = (props: Props) => {
 
           {/* Tooltip Icon */}
           {(row.status === "Pending" || row.status === "Ongoing") && (
-            <div className=" absolute top-1/2 justify-center items-center flex right-44 transform -translate-x-full -translate-y-1/2  group-hover:opacity-100 transition-opacity duration-300 z-10">
-              <QuestionMarkCircleIcon className="w-6 h-6 text-gray-500 absolute" />
+            <div className="absolute z-10 flex items-center justify-center transition-opacity duration-300 transform -translate-x-full -translate-y-1/2 top-1/2 right-44 group-hover:opacity-100">
+              <QuestionMarkCircleIcon className="absolute w-6 h-6 text-gray-500" />
             </div>
           )}
 
           {/* Tooltip */}
           {(row.status === "Pending" || row.status === "Ongoing") && (
-            <div className="h-auto mb-4 absolute drop-shadow-sm w-auto   mt-2 hidden group-hover:block  bg-gray-600  ml-10  text-black p-1 rounded-md shadow-lg  z-40">
+            <div className="absolute z-40 hidden w-auto h-auto p-1 mt-2 mb-4 ml-10 text-black bg-gray-600 rounded-md shadow-lg drop-shadow-sm group-hover:block">
               <p className="text-[11px] text-white">
                 Pending: {row.pending_approver.approver_name}
               </p>
@@ -530,7 +584,7 @@ const Request = (props: Props) => {
       name: "Action",
       width: "180px",
       cell: (row: Record) => (
-        <div className="flex w-full justify-center items-center gap-2">
+        <div className="flex items-center justify-center w-full gap-2">
           <button
             className="bg-primary text-white px-3 py-1 rounded-[16px]"
             onClick={() => handleView(row)}
@@ -560,17 +614,17 @@ const Request = (props: Props) => {
   };
 
   return (
-    <div className="bg-graybg dark:bg-blackbg w-full h-lvh pt-4 px-10 md:px-10 lg:px-30">
+    <div className="w-full px-10 pt-4 bg-graybg dark:bg-blackbg h-lvh md:px-10 lg:px-30">
       <Link to="/request/sr">
         <button className="bg-primary text-white rounded-[12px] mb-2 w-[120px] sm:w-[151px] h-[34px] z-10">
           Create a Request
         </button>
       </Link>
 
-      <div className="w-full  h-auto  drop-shadow-lg rounded-lg  md:mr-4 relative ">
-        <div className="bg-white   rounded-lg  w-full flex flex-col items-center overflow-x-auto">
-          <div className="w-full border-b-2  md:px-30">
-            <ul className=" px-2 md:px-30 flex justify-start items-center space-x-4 md:space-x-6 py-4 font-medium overflow-x-auto">
+      <div className="relative w-full h-auto rounded-lg drop-shadow-lg md:mr-4 ">
+        <div className="flex flex-col items-center w-full overflow-x-auto bg-white rounded-lg">
+          <div className="w-full border-b-2 md:px-30">
+            <ul className="flex items-center justify-start px-2 py-4 space-x-4 overflow-x-auto font-medium md:px-30 md:space-x-6">
               {items.map((item, index) => (
                 <li
                   key={index}

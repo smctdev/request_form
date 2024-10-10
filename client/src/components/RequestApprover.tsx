@@ -277,7 +277,10 @@ const RequestApprover = (props: Props) => {
     <table className="table" style={{ background: "white" }}>
       <thead>
         <tr>
-          <th className="w-[80px] py-6" style={{ color: "black", fontWeight: "500" }}>
+          <th
+            className="w-[80px] py-6"
+            style={{ color: "black", fontWeight: "500" }}
+          >
             Request ID
           </th>
           <th style={{ color: "black", fontWeight: "500" }}>Requested by</th>
@@ -291,10 +294,10 @@ const RequestApprover = (props: Props) => {
       <tbody>
         {Array.from({ length: 6 }).map((_, index) => (
           <tr key={index}>
-            <td className="w-full" colSpan={7}>
+            <td className="w-full border border-gray-200" colSpan={7}>
               <div className="flex justify-center">
-                <div className="flex flex-col gap-4 w-full">
-                  <div className="skeleton h-12 w-full"></div>
+                <div className="flex flex-col w-full gap-4">
+                  <div className="w-full h-12 skeleton bg-slate-300"></div>
                 </div>
               </div>
             </td>
@@ -399,13 +402,13 @@ const RequestApprover = (props: Props) => {
 
           {/* Tooltip Icon */}
           {row.status === "Pending" && (
-            <div className=" relative top-1/2 justify-center items-center flex ml-4 transform -translate-x-full -translate-y-1/2  group-hover:opacity-100 transition-opacity duration-300 z-10">
-              <QuestionMarkCircleIcon className="w-6 h-6 text-gray-500 absolute" />
+            <div className="relative z-10 flex items-center justify-center ml-4 transition-opacity duration-300 transform -translate-x-full -translate-y-1/2 top-1/2 group-hover:opacity-100">
+              <QuestionMarkCircleIcon className="absolute w-6 h-6 text-gray-500" />
             </div>
           )}
           {/* Tooltip */}
           {row.status === "Pending" && (
-            <div className="h-auto mb-4 absolute drop-shadow-sm   mt-2 hidden group-hover:block  bg-gray-600  ml-10  text-black p-1 rounded-md shadow-lg w-full z-40">
+            <div className="absolute z-40 hidden w-full h-auto p-1 mt-2 mb-4 ml-10 text-black bg-gray-600 rounded-md shadow-lg drop-shadow-sm group-hover:block">
               <p className="text-[11px] text-white">
                 Pending: {row.pending_approver}
               </p>

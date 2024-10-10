@@ -73,6 +73,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     const fetchUserProfile = async () => {
       if (!token) {
         setUserId(null);
+        setLoading(false); // Ensure loading is set to false
         return;
       }
       try {
@@ -84,10 +85,16 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
             },
           }
         );
-        if(response.status === 200){
-          
-        setUserId(response.data.data.id);
-        setIsAuthenticated(true);
+        if (response.status === 200) {
+          setUserId(response.data.data.id);
+          setFirstName(response.data.data.firstName);
+          setLastName(response.data.data.lastName);
+          setEmail(response.data.data.email);
+          setRole(response.data.data.role);
+          setBranchCode(response.data.data.branchCode);
+          setContact(response.data.data.contact);
+          setSignature(response.data.data.signature);
+          setIsAuthenticated(true);
         }
       } catch (error) {
         console.error("Failed to fetch user profile", error);
@@ -96,9 +103,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         setLoading(false);
       }
     };
-
+  
     fetchUserProfile();
   }, []);
+  
   return (
     <UserContext.Provider
       value={{

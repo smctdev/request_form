@@ -123,7 +123,7 @@ const Dashboard: React.FC = () => {
 
   const linkTo = "/request";
   const NoDataComponent = () => (
-    <div className="flex justify-center items-center h-64 text-gray-500 overflow-hidden">
+    <div className="flex items-center justify-center h-64 overflow-hidden text-gray-500">
       <p className="text-lg">No records found</p>
     </div>
   );
@@ -131,10 +131,7 @@ const Dashboard: React.FC = () => {
     <table className="table" style={{ background: "white" }}>
       <thead>
         <tr>
-          <th
-            className="py-6"
-            style={{ color: "black", fontWeight: "bold" }}
-          >
+          <th className="py-6" style={{ color: "black", fontWeight: "bold" }}>
             Request ID
           </th>
           <th style={{ color: "black", fontWeight: "bold" }}>Request Type</th>
@@ -146,10 +143,10 @@ const Dashboard: React.FC = () => {
       <tbody>
         {Array.from({ length: 6 }).map((_, index) => (
           <tr key={index}>
-            <td className="w-full" colSpan={5}>
+            <td className="w-full border border-gray-200" colSpan={5}>
               <div className="flex justify-center">
-                <div className="flex flex-col gap-4 w-full">
-                  <div className="skeleton h-12 w-full"></div>
+                <div className="flex flex-col w-full gap-4">
+                  <div className="w-full h-12 skeleton bg-slate-300"></div>
                 </div>
               </div>
             </td>
@@ -305,7 +302,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="w-full sm:w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 space-y-2 md:space-y-0 gap-8 mt-4">
+      <div className="grid w-full grid-cols-1 gap-8 mt-4 space-y-2 sm:w-full md:grid-cols-2 lg:grid-cols-4 md:space-y-0">
         <div className={`${boxWhite} hover:-translate-y-1 hover:scale-110`}>
           <div className={`${boxPink} bg-primary`}>
             <ChartBarIcon className={`${outerLogo} text-[#298DDE]`} />
@@ -382,7 +379,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
       <div
-        className={`mt-[20px] mb-10 bg-white w-full h-72 drop-shadow-lg rounded-[12px] relative sm:w-full ${
+        className={`mt-[20px] mb-10 bg-white w-full h-72 data-table-container drop-shadow-lg rounded-[12px] relative sm:w-full ${
           latestRequests.length === 0 ? "overflow-hidden" : "overflow-x-auto"
         }`}
       >
@@ -403,14 +400,17 @@ const Dashboard: React.FC = () => {
         ) : (
           <DataTable columns={columns} data={latestRequests} pagination />
         )} */}
-        <DataTable
-          columns={columns}
-          data={latestRequests}
-          noDataComponent={<NoDataComponent />}
-          progressPending={loading}
-          progressComponent={<LoadingSpinner />}
-          pagination
-        />
+        <div>
+          <DataTable
+            className="data-table"
+            columns={columns}
+            data={latestRequests}
+            noDataComponent={<NoDataComponent />}
+            progressPending={loading}
+            progressComponent={<LoadingSpinner />}
+            pagination
+          />
+        </div>
       </div>
     </div>
   );

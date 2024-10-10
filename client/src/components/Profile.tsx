@@ -198,7 +198,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
 
   if (!user) {
     return (
-<div className="fixed inset-0 flex bg-gray-200 justify-center items-center">
+<div className="fixed inset-0 flex items-center justify-center bg-gray-200">
   <div className="flex flex-col items-center">
     <ClipLoader color="#007bff" size={80} />
     <p className="mt-2 text-lg text-gray-700">Please wait...</p>
@@ -370,11 +370,11 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
  
   };
   return (
-    <div className="bg-graybg dark:bg-blackbg w-full h-full py-4 px-4 md:px-10 lg:px-30 ">
+    <div className="w-full h-full px-4 py-4 bg-graybg dark:bg-blackbg md:px-10 lg:px-30 ">
       <div className="bg-white rounded-[12px] flex flex-col w-full px-4 md:px-8 lg:px-10 xl:px-12 py-[50px]">
         <div className="rounded-[12px] flex flex-col lg:flex-row items-center justify-center">
-          <div className="flex flex-col items-start text-left px-4 md:px-10 w-full">
-            <div className="flex flex-col lg:flex-row items-center md:items-start">
+          <div className="flex flex-col items-start w-full px-4 text-left md:px-10">
+            <div className="flex flex-col items-center lg:flex-row md:items-start">
               <img
                 alt="profile"
                 height={180}
@@ -382,12 +382,12 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
                 src={profilePictureUrl}
           
               />
-              <div className="flex flex-col ml-2 mt-4">
-                <h1 className="font-bold text-lg md:text-xl lg:text-2xl">
+              <div className="flex flex-col mt-4 ml-2">
+                <h1 className="text-lg font-bold md:text-xl lg:text-2xl">
                   {user.firstName} {user.lastName}
                 </h1>
                 <div onClick={handleImageClick}>
-                  <p className="text-primary cursor-pointer">
+                  <p className="cursor-pointer text-primary">
                     Upload new picture
                   </p>
                   <input
@@ -397,32 +397,32 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
                     onChange={handleProfilePicUpload}
                   />
                 </div>
-                <p className="text-black italic font-semibold">{user.position}</p>
+                <p className="italic font-semibold text-black">{user.position}</p>
               </div>
             </div>
-            <h1 className="font-semibold text-lg md:text-xl lg:text-2xl my-5">
+            <h1 className="my-5 text-lg font-semibold md:text-xl lg:text-2xl">
               User Information
             </h1>
-            <div className="grid grid-cols-1 gap-4 lg:gap-6 w-full">
+            <div className="grid w-full grid-cols-1 gap-4 lg:gap-6">
               <div className="flex flex-col">
                 <p className="text-gray-400">Email</p>
-                <p className="font-medium border p-2 rounded-md">{user.email}</p>
+                <p className="p-2 font-medium border rounded-md">{user.email}</p>
               </div>
               <div className="flex flex-col">
                 <p className="text-gray-400">Branch</p>
-                <p className="font-medium border p-2 rounded-md">{selectedBranchCode}</p>
+                <p className="p-2 font-medium border rounded-md">{selectedBranchCode}</p>
               </div>
               <div className="flex flex-col">
                 <p className="text-gray-400">Contact</p>
-                <p className="font-medium border p-2 rounded-md">{user.contact}</p>
+                <p className="p-2 font-medium border rounded-md">{user.contact}</p>
               </div>
               <div className="flex flex-col">
                 <p className="text-gray-400">Username</p>
-                <p className="font-medium border p-2 rounded-md">{user.userName}</p>
+                <p className="p-2 font-medium border rounded-md">{user.userName}</p>
               </div>
               <div className="flex flex-col">
                 <p className="text-gray-400">Branch</p>
-                <p className="font-medium border p-2 rounded-md">{user.branch?.branch}</p>
+                <p className="p-2 font-medium border rounded-md">{user.branch?.branch}</p>
               </div>
             </div>
            
@@ -434,12 +434,12 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
               )}
           </div>
 
-          <div className="mt-4 md:mt-0 w-full md:px-10 ">
-            <h1 className="font-semibold text-lg md:text-xl lg:text-2xl my-5">
+          <div className="w-full mt-4 md:mt-0 md:px-10 ">
+            <h1 className="my-5 text-lg font-semibold md:text-xl lg:text-2xl">
               Change Password
             </h1>
             <p className="mt-2 text-gray-400">Enter your current password</p>
-            <div className="flex justify-center items-center relative w-full">
+            <div className="relative flex items-center justify-center w-full">
               <input
                 type={showCurrent ? "text" : "password"}
                 className="w-full h-10 p-2 bg-gray-300 rounded-lg"
@@ -459,7 +459,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
               )}
             </div>
             <p className="mt-2 text-gray-400">Enter your new password</p>
-            <div className="flex justify-center items-center relative w-full">
+            <div className="relative flex items-center justify-center w-full">
               <input
                 type={showPassword ? "text" : "password"}
                 className="w-full h-10 p-2 bg-gray-300 rounded-lg"
@@ -479,7 +479,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
               )}
             </div>
             <p className="mt-2 text-gray-400">Confirm password</p>
-            <div className="flex justify-center items-center relative w-full">
+            <div className="relative flex items-center justify-center w-full">
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 className="w-full h-10 p-2 bg-gray-300 rounded-lg"
@@ -507,14 +507,14 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
             </button>
           </div>
 
-          <div className="w-full md:w-1/2 mb-4 flex flex-col">
-            <h1 className="lg:text-lg text-base mb-2">Signature</h1>
+          <div className="flex flex-col w-full mb-4 md:w-1/2">
+            <h1 className="mb-2 text-base lg:text-lg">Signature</h1>
             {user?.signature ? (
               <div className="flex items-center justify-center overflow-hidden">
-              <div className="relative">
+              <div className="relative overflow-hidden">
                 <img
                   src={user.signature}
-                  className="sigCanvas border border-black h-28 w-full"
+                  className="w-full border border-black sigCanvas h-28"
                   alt="signature"
                   draggable="false"
                   onContextMenu={(e) => e.preventDefault()}
@@ -565,7 +565,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
               />
             )}
             {signatureEmpty && (
-              <span className="text-red-500 text-xs">
+              <span className="text-xs text-red-500">
                 Please provide a signature.
               </span>
             )}
@@ -573,7 +573,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
               <div className="flex mt-2">
                 <button
                   onClick={handleClear}
-                  className="bg-gray-300 p-1 rounded-lg mr-2"
+                  className="p-1 mr-2 bg-gray-300 rounded-lg"
                 >
                   Clear
                 </button>
@@ -599,21 +599,21 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
         </div>
       </div>
       {showSuccessModal && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col ">
-          <div className="bg-white relative w-1/4 flex flex-col items-center justify-center rounded-md ">
+        <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50 ">
+          <div className="relative flex flex-col items-center justify-center w-1/4 bg-white rounded-md ">
             <FontAwesomeIcon
               icon={faCircleCheck}
-              className="size-20 text-primary absolute -top-6  "
+              className="absolute size-20 text-primary -top-6 "
             />
             <div>
               <h1 className="mt-20 text-[28px] font-bold text-center">
                 Success
               </h1>
-              <p className="my-7  text-gray-400 font-semibold text-center">
+              <p className="font-semibold text-center text-gray-400 my-7">
                 User information updated!
               </p>
             </div>
-            <div className="bg-graybg w-full rounded-b-lg flex justify-center items-center p-4">
+            <div className="flex items-center justify-center w-full p-4 rounded-b-lg bg-graybg">
               <button
                 className=" bg-primary p-2 w-1/2 rounded-[12px] text-white font-extrabold"
                 onClick={closeSuccessModal}
@@ -625,21 +625,21 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
         </div>
       )}
       {signatureButton && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col ">
-          <div className="bg-white relative w-1/4 flex flex-col items-center justify-center rounded-md ">
+        <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50 ">
+          <div className="relative flex flex-col items-center justify-center w-1/4 bg-white rounded-md ">
             <FontAwesomeIcon
               icon={faCircleCheck}
-              className="size-20 text-primary absolute -top-6  "
+              className="absolute size-20 text-primary -top-6 "
             />
             <div>
               <h1 className="mt-20 text-[28px] font-bold text-center">
                 Success
               </h1>
-              <p className="my-7  text-gray-400 font-semibold text-center">
+              <p className="font-semibold text-center text-gray-400 my-7">
                 Signature Added!
               </p>
             </div>
-            <div className="bg-graybg w-full rounded-b-lg flex justify-center items-center p-4">
+            <div className="flex items-center justify-center w-full p-4 rounded-b-lg bg-graybg">
               <button
                 className=" bg-primary p-2 w-1/2 rounded-[12px] text-white font-extrabold"
                 onClick={closeSignatureSuccess}

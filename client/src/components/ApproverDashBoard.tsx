@@ -212,7 +212,11 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
     }
   };
   
-  
+  const error = console.error;
+console.error = (...args: any) => {
+  if (/defaultProps/.test(args[0])) return;
+  error(...args);
+};
 
   const processAreaChartData = (requests: Request[]) => {
     const today = new Date();
@@ -352,7 +356,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
         </div>
       </div>
 
-      <div className="w-full sm:w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 space-y-2 md:space-y-0 gap-8 mt-4">
+      <div className="grid w-full grid-cols-1 gap-8 mt-4 space-y-2 sm:w-full md:grid-cols-2 lg:grid-cols-4 md:space-y-0">
         <div className={`${boxWhite} hover:-translate-y-1 hover:scale-110`}>
           <div className={`${boxPink} bg-primary`}>
             <ChartBarIcon className={`${outerLogo} text-[#298DDE]`} />
@@ -428,9 +432,9 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
           </div>
         </div>
       </div>
-      <div className="flex gap-4 flex-col md:flex-row ">
+      <div className="flex flex-col gap-4 md:flex-row ">
         <div className="flex-7 pt-2 bg-white drop-shadow-lg w-full rounded-[12px] h-[327px] mt-4">
-          <h1 className="text-center font-bold text-lg ">
+          <h1 className="text-lg font-bold text-center ">
             REQUESTS THIS MONTH
           </h1>
           <ResponsiveContainer width="100%" height="100%">
@@ -442,7 +446,8 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
               <XAxis dataKey="name" />
               <YAxis
                 domain={[0, "auto"]} 
-                ticks={[20, 60, 90, 150]} 
+                ticks={[20, 60, 90, 150]}
+                allowDecimals={false} 
                 tickFormatter={(value) => Math.floor(value).toString()} 
               />
               <Tooltip />
@@ -486,7 +491,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
         </div>
 
         <div className="flex-3 pb-10 pt-2 bg-white w-full drop-shadow-lg lg:w-2/4 rounded-[12px] h-[327px] mt-4">
-          <h1 className="text-center font-bold text-lg">REQUEST THIS WEEK</h1>
+          <h1 className="text-lg font-bold text-center">REQUEST THIS WEEK</h1>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               width={500}
