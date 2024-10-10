@@ -336,18 +336,18 @@ const AddAreaManagerModal = ({
           </div>
         )}
       </div>
-      <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex space-x-2">
+      <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2">
+        <button
+          onClick={handleCancel}
+          className="bg-gray-500 text-white font-bold h-12 py-2 px-4 rounded cursor-pointer"
+        >
+          Cancel
+        </button>
         <button
           onClick={handleConfirmSelection}
           className="bg-primary text-white h-12 font-bold py-2 px-4 rounded cursor-pointer"
         >
           {isLoading ? <ClipLoader color="#36d7b7" /> : "Add Area Manager"}
-        </button>
-        <button
-          onClick={handleCancel}
-          className="bg-red-500 text-white font-bold h-12 py-2 px-4 rounded cursor-pointer"
-        >
-          Cancel
         </button>
       </div>
     </div>

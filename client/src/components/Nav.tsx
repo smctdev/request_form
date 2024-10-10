@@ -406,11 +406,7 @@ const Nav: React.FC<NavProps> = ({
               <>
                 <img
                   alt="logo"
-<<<<<<< Updated upstream
-                  className="hidden rounded-full cursor-pointer sm:block"
-=======
                   className="cursor-pointer hidden sm:block rounded-full w-14 h-14"
->>>>>>> Stashed changes
                   src={profilePictureUrl}
                   height={45}
                   width={45}
