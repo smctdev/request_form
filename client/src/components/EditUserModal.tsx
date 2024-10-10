@@ -5,6 +5,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import EyeSlashIcon from "@heroicons/react/24/solid/EyeSlashIcon";
 import { EyeIcon } from "@heroicons/react/24/solid";
 import { set } from "react-hook-form";
+import Swal from "sweetalert2";
 
 type EntityType = "User" | "Branch" | "Custom" | "Approver";
 const EditUserModal = ({
@@ -24,6 +25,7 @@ const EditUserModal = ({
 }) => {
   const [editedBranch, setEditedBranch] = useState<string>("");
   const [editedBranchCode, setEditedBranchCode] = useState<string>("");
+  const [editedBranchName, setEditedBranchName] = useState<string>("");
   const [firstname, setFirstName] = useState<string>("");
   const [lastname, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -43,45 +45,45 @@ const EditUserModal = ({
   const [approvers, setApprovers] = useState<any[]>([]);
   const [name, setName] = useState<string>("");
   const [branchList, setBranchList] = useState<
-  { id: number; branch_code: string; branch: string }[]
->([]);
+    { id: number; branch_code: string; branch: string }[]
+  >([]);
 
-useEffect(() => {
-  const fetchBranchData = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("Token is missing");
-        return;
-      }
-
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/view-branch`,
-        {
-          headers,
+  useEffect(() => {
+    const fetchBranchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("Token is missing");
+          return;
         }
-      );
-      const branches = response.data.data;
-      // Assuming response.data.data is the array of branches
-      const branchOptions = branches.map(
-        (branch: { id: number; branch_code: string; branch: string }) => ({
-          id: branch.id,
-          branch_code: branch.branch_code,
-          branch: branch.branch,
-        })
-      );
-      setBranchList(branchOptions);
-    } catch (error) {
-      console.error("Error fetching branch data:", error);
-    }
-  };
 
-  fetchBranchData();
-}, []);
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`,
+          {
+            headers,
+          }
+        );
+        const branches = response.data.data;
+        // Assuming response.data.data is the array of branches
+        const branchOptions = branches.map(
+          (branch: { id: number; branch_code: string; branch: string }) => ({
+            id: branch.id,
+            branch_code: branch.branch_code,
+            branch: branch.branch,
+          })
+        );
+        setBranchList(branchOptions);
+      } catch (error) {
+        console.error("Error fetching branch data:", error);
+      }
+    };
+
+    fetchBranchData();
+  }, []);
 
   useEffect(() => {
     if (entityType === "Custom") {
@@ -90,7 +92,7 @@ useEffect(() => {
         try {
           setLoading(true);
           const response = await axios.get(
-           `${process.env.REACT_APP_API_BASE_URL}/view-approvers/${userId}`,
+            `${process.env.REACT_APP_API_BASE_URL}/view-approvers/${userId}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -100,12 +102,11 @@ useEffect(() => {
           const allApprovers = [
             ...(response.data.HOApprovers || []),
             ...(response.data.areaManagerApprover || []),
-            ...(response.data.sameBranchApprovers || [])
+            ...(response.data.sameBranchApprovers || []),
           ];
-  
+
           // Update state with the combined approvers data
           setApprovers(allApprovers);
-        
 
           setLoading(false);
         } catch (error) {
@@ -149,12 +150,13 @@ useEffect(() => {
       setUsername(selectedUser.username || "");
       setContact(selectedUser.contact || "");
       setEditedBranch(selectedUser.branch || "");
-      setEditedBranchCode(selectedUser.branch_code );
+      setEditedBranchCode(selectedUser.branch_code);
+      setEditedBranchName(selectedUser.branch_name || "");
       setEditedRole(selectedUser.role || "");
       setEditedPosition(selectedUser.position || "");
     }
   }, [selectedUser]);
-  
+
   const handleCancel = () => {
     // Reset state to selectedUser data
     if (selectedUser) {
@@ -165,12 +167,13 @@ useEffect(() => {
       setContact(selectedUser.contact);
       setEditedBranch(selectedUser.branch);
       setEditedBranchCode(selectedUser.branch_code);
+      setEditedBranchName(selectedUser.branch_name);
       setEditedRole(selectedUser.role);
       setEditedPosition(selectedUser.position);
     }
     editModalClose();
   };
-  
+
   const handleBranchCodeChange = (selectedBranchId: number) => {
     const selectedBranch = branchList.find(
       (branch) => branch.id === selectedBranchId
@@ -182,10 +185,7 @@ useEffect(() => {
     } else {
       setEditedBranch("Honda Des, Inc.");
     }
-};
-
-
-
+  };
 
   const handleUpdate = async () => {
     // Validation based on entityType
@@ -205,7 +205,11 @@ useEffect(() => {
         return;
       }
     } else if (entityType === "Branch") {
-      if (editedBranch.trim() === "" || editedBranchCode.trim() === "") {
+      if (
+        editedBranch.trim() === "" ||
+        editedBranchCode.trim() === "" ||
+        editedBranchName.trim() === ""
+      ) {
         setErrorMessage("Please fill out all required fields.");
         return;
       }
@@ -241,6 +245,7 @@ useEffect(() => {
         contact: string;
         branch?: string; // Optional for Branch entityType
         branch_code?: string; // Optional for Branch entityType
+        branch_name?: string; // Optional for Branch entityType
         role?: string; // Optional for User entityType
         position?: string; // Optional for User entityType
         password?: string; // Make password optional
@@ -264,6 +269,7 @@ useEffect(() => {
           entityType === "Branch" || entityType === "User"
             ? editedBranchCode
             : undefined,
+        branch_name: entityType === "Branch" ? editedBranchName : undefined,
 
         role: entityType === "User" ? editedRole : undefined,
         position: entityType === "User" ? editedPosition : undefined,
@@ -276,9 +282,8 @@ useEffect(() => {
       }
 
       // Perform the API request based on entityType
-      let response;
       if (entityType === "Branch") {
-        response = await axios.post(
+        const response = await axios.post(
           `${process.env.REACT_APP_API_BASE_URL}/update-branch/${selectedUser.id}`,
           updatedData,
           {
@@ -288,9 +293,20 @@ useEffect(() => {
             },
           }
         );
-      
+        if (response.status === 200) {
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "success",
+            title: response.data.message,
+            showConfirmButton: false,
+            timer: 6000,
+            timerProgressBar: true,
+            showCloseButton: true,
+          });
+        }
       } else if (entityType === "User") {
-        response = await axios.post(
+        const response = await axios.post(
           `${process.env.REACT_APP_API_BASE_URL}/update-profile/${selectedUser.id}`,
           updatedData,
           {
@@ -300,11 +316,8 @@ useEffect(() => {
             },
           }
         );
-      
       } else if (entityType === "Custom") {
         try {
-
-       
           const response = await axios.post(
             `${process.env.REACT_APP_API_BASE_URL}/update-approvers/${selectedUser.id}`,
             {
@@ -320,7 +333,6 @@ useEffect(() => {
               },
             }
           );
-        
         } catch (error) {
           console.error("Error updating approvers:", error);
         }
@@ -354,7 +366,7 @@ useEffect(() => {
       "Branch Code",
       "Branch Name",
     ],
-    Branch: ["Branch", "BranchCode"],
+    Branch: ["Branch", "BranchCode", "BranchName"],
     Manager: ["Manager Name", "Manager ID", "Branch Code"],
   };
 
@@ -395,21 +407,19 @@ useEffect(() => {
   ];
 
   const branch = [
-    "Des Strong Appliance, Inc.",
+    "Des Appliance, Inc.",
     "Des Strong Motors, Inc.",
-    "Strong Motocentrum, Inc.",
+    "Strong Moto Centrum, Inc.",
     "Honda Des, Inc.",
     "Head Office",
   ];
+
   const positionOptions = [
     { label: "", value: "" },
     { label: "Approver", value: "approver" },
     { label: "User", value: "User" },
-    { label: "Area Manager", value: "Area Manager" },
     { label: "Admin", value: "Admin" },
   ];
-
-
 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col">
@@ -444,16 +454,17 @@ useEffect(() => {
                 <select
                   className={`${inputStyle}`}
                   value={editedBranchCode}
-                  onChange={(e) => handleBranchCodeChange(Number(e.target.value))}
+                  onChange={(e) =>
+                    handleBranchCodeChange(Number(e.target.value))
+                  }
                 >
                   <option value="">Select branch</option>
-                      
-                          {branchList.map((branch) => (
-                            <option key={branch.id} value={branch.id}>
-                              {branch.branch_code}
-                            </option>
-                          ))}
-                     
+
+                  {branchList.map((branch) => (
+                    <option key={branch.id} value={branch.id}>
+                      {branch.branch_code}
+                    </option>
+                  ))}
                 </select>
               ) : (
                 <>
@@ -476,27 +487,32 @@ useEffect(() => {
                       readOnly
                     />
                   ) : field === "Branch" ? (
-                    <select className={`${inputStyle}`} 
-                    value={editedBranch}>
+                    <select className={`${inputStyle}`} value={editedBranch}>
                       {" "}
                       <option value="">Select branch</option>
-                      {branchList.length > 0 ? (
-                          branchList.map((branch) => (
-                            <option key={branch.id} value={branch.id}>
-                              {branch.branch_code}
-                            </option>
-                          ))
-                        ) : (
-                          <option value="" disabled>
-                            No branch codes available
+                      {branch.length > 0 ? (
+                        branch.map((branchItem) => (
+                          <option key={branchItem} value={branchItem}>
+                            {branchItem}
                           </option>
-                        )}
+                        ))
+                      ) : (
+                        <option value="" disabled>
+                          No branch codes available
+                        </option>
+                      )}
                     </select>
                   ) : field === "BranchCode" ? (
                     <input
                       className={`${inputStyle}`}
                       value={editedBranchCode}
                       onChange={(e) => setEditedBranchCode(e.target.value)}
+                    />
+                  ) : field === "BranchName" ? (
+                    <input
+                      className={`${inputStyle}`}
+                      value={editedBranchName}
+                      onChange={(e) => setEditedBranchName(e.target.value)}
                     />
                   ) : (
                     <input
@@ -538,30 +554,23 @@ useEffect(() => {
               )}
             </div>
           ))}
-        
-         
-</div>
-          {entityType === "Custom" && (
-            <div className=" flex flex-col  mx-4 lg:mx-20 ">
-           <div className="grid grid-cols-2 w-full">
-                <div className="">
-                  <p className={`${pStyle}`}>Name</p>
-                  <input
-                    type="text"
-                    className="w-full border bg-white border-black rounded-md p-1"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                  {errorMessage && (
-                    <p className="text-red-500">{errorMessage}</p>
-                  )}
-                </div>
-                
-                  </div>
-                <div className="flex space-x-6 w-full">
-               
+        </div>
+        {entityType === "Custom" && (
+          <div className=" flex flex-col  mx-4 lg:mx-20 ">
+            <div className="grid grid-cols-2 w-full">
+              <div className="">
+                <p className={`${pStyle}`}>Name</p>
+                <input
+                  type="text"
+                  className="w-full border bg-white border-black rounded-md p-1"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                {errorMessage && <p className="text-red-500">{errorMessage}</p>}
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 mt-4 ">
+            </div>
+            <div className="flex space-x-6 w-full"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 mt-4 ">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Noted By
@@ -606,10 +615,10 @@ useEffect(() => {
                   </div>
                 ))}
               </div>
-              </div>
             </div>
-          )}
-     
+          </div>
+        )}
+
         <div className="mx-10 mt-4">
           {errorMessage && <p className="text-red-600">{errorMessage}</p>}
         </div>

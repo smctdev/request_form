@@ -11,14 +11,15 @@ type Branch = z.infer<typeof schema>;
 const schema = z.object({
   branchCode: z.string().nonempty(),
   branch: z.string(),
+  branchNameInput: z.string(),
 });
 
 const branchOptions = [  
-  "Des Strong Appliance, Inc.",  
+  "Des Appliance, Inc.",  
   "Des Strong Motors, Inc.",  
   "Head Office",  
   "Honda Des, Inc.",  
-  "Strong Motocentrum, Inc."];
+  "Strong Moto Centrum, Inc."];
 
 const AddBranchModal = ({
   modalIsOpen,
@@ -35,6 +36,7 @@ const AddBranchModal = ({
 }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [backendError, setBackendError] = useState("");
   const {
     control,
     reset,
@@ -56,6 +58,7 @@ const AddBranchModal = ({
       const requestData = {
         branch: data.branch,
         branch_code: data.branchCode,
+        branch_name: data.branchNameInput,
       };
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/add-branch`,
@@ -67,13 +70,13 @@ const AddBranchModal = ({
       if (response.status === 200 && response.data.status) {
         openCompleteModal();
         refreshData();
+        
+      setBackendError("");
         reset();
-      } else {
-        alert("Registration failed. Please check your details and try again.");
       }
     } catch (error) {
       console.error("Registration Error:", error);
-      alert("An error occurred during the registration process.");
+      setBackendError("Branch Name must be uppercase");
     } finally {
       setLoading(false);
     }
@@ -246,14 +249,16 @@ const AddBranchModal = ({
       </div>
       <div className="bg-white w-7/12 md:w-2/6 x-20 rounded-b-[12px] shadow-lg overflow-y-auto h-2/3">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid lg:grid-cols-2 place-content-center mt-10 mx-5 md:mx-10 gap-4">
-            <div>
+          <div className="mt-10 md:mx-5 gap-4">
+            <div className="mb-4">
               <p className="font-medium w-full">Branch</p>
               <select
                 {...register("branch")}
                 className="w-full bg-[#F5F5F5] border border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                 onChange={(e) => setValue("branch", e.target.value)}
               >
+                <option value="" hidden>Select Branch</option>
+                <option value="" disabled>Select Branch</option>
                 {branchOptions.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -264,7 +269,7 @@ const AddBranchModal = ({
                 <span className="text-red-500 text-xs">{errors.branch.message}</span>
               )}
             </div>
-            <div>
+            <div className="mb-4">
               <p className="font-medium w-full">Branch Code</p>
              <input
              type="text"
@@ -275,8 +280,22 @@ const AddBranchModal = ({
                 <span className="text-red-500 text-xs">{errors.branchCode.message}</span>
               )}
             </div>
+            <div className="mb-4">
+              <p className="font-medium w-full">Branch Name</p>
+             <input
+             type="text"
+             onChange={(e) => setValue("branchNameInput", e.target.value)}
+             className="w-full bg-[#F5F5F5] border border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+             />
+             {backendError && (
+               <span className="text-red-500 text-xs">{backendError}</span>
+             )}
+              {errors.branchNameInput && (
+                <span className="text-red-500 text-xs">{errors.branchNameInput.message}</span>
+              )}
+            </div>
           </div>
-          <div className="flex  lg:flex-row justify-center space-x-2 mt-5 mx-4 sm:x-10 lg:justify-end items-center  md:mt-10  mb-10">
+          <div className="flex lg:flex-row justify-center space-x-2 mt-5 md:mt-10 mb-10">
             <button
               className="bg-[#9C9C9C] p-2 h-12  w-1/2 sm:w-1/3 rounded-[12px] text-white font-medium"
               onClick={closeModal}

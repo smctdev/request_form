@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\BranchController;
+use App\Http\Controllers\API\BranchHeadController;
 use App\Http\Controllers\API\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,15 +31,15 @@ Route::post("login", [LoginController::class, "login"]);
 Route::get("get-role/{id}", [UserController::class, "getRole"])->name("get.user.role");
 Route::post("password/email", [UserController::class, "sendResetLinkEmail"])->name("password.forgot");
 Route::get("view-branch", [BranchController::class, "viewBranch"])->name('view.branch');
-
+Route::post("create-request", [RequestFormController::class, "createRequest"])->name('create.request');
 
 // PROTECTED
 // REQUEST FORM
 Route::middleware('auth:sanctum')->group(function () {
-    // Route::get("view-user/{id}", [UserController::class, "viewUser"])->name('view.user');
+    Route::get("view-user/{id}", [UserController::class, "viewUser"])->name('view.user');
     Route::get('/profile', [ProfileController::class, 'profile']);
     Route::get('request-forms/for-approval/{user_id}', [ApprovalProcessController::class, 'getRequestFormsForApproval'])->name('get.request.form.for.approval');
-    Route::post("create-request", [RequestFormController::class, "createRequest"])->name('create.request');
+
     Route::post("update-request/{id}", [RequestFormController::class, "updateRequest"])->name('update.request');
     Route::put('change-password/{id}', [ChangePasswordController::class, 'changePassword'])->name('change.password');
 
@@ -90,8 +91,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post("update-area-manager/{id}", [AreaManagerController::class, "updateAreaManager"])->name('update.area.manager');
     Route::get("view-area-manager/{id}", [AreaManagerController::class, "viewAreaManager"])->name('view.area.manager');
     Route::get("view-area-managers", [AreaManagerController::class, "viewAllAreaManagers"])->name('view.area.managers');
-
     Route::delete("delete-area-manager/{id}", [AreaManagerController::class, "deleteAreaManager"])->name('delete.area.manager');
+
+    // BRANCH HEAD
+    Route::post("create-branch-head", [BranchHeadController::class, "createbranchhead"])->name('create.branch.head');
+    Route::post("update-branch-head/{id}", [BranchHeadController::class, "updatebranchhead"])->name('update.branch.head');
+    Route::get("view-branch-head/{id}", [BranchHeadController::class, "viewbranchhead"])->name('view.branch.head');
+    Route::get("view-branch-heads", [BranchHeadController::class, "viewAllbranchheads"])->name('view.branch.heads');
+    Route::delete("delete-branch-head/{id}", [BranchHeadController::class, "deletebranchhead"])->name('delete.branch.head');
 
     // APPROVAL PROCESS
     Route::post("request-forms/{request_form_id}/process", [ApprovalProcessController::class, 'processRequestForm'])->name('process.request.form');//APPROVAL PROCESS

@@ -16,6 +16,9 @@ interface UserContextType {
   branchCode: string | null;
   contact: string | null;
   signature: string | null;
+  isAuthenticated: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   updateUser: (
     userId: string,
     firstName: string,
@@ -26,6 +29,7 @@ interface UserContextType {
     contact: string,
     signature: string
   ) => void;
+  loading: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -41,6 +45,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   const [branchCode, setBranchCode] = useState<string | null>(null);
   const [contact, setContact] = useState<string | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const updateUser = (
     userId: string,
@@ -78,20 +84,27 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
             },
           }
         );
+        if(response.status === 200){
+          
         setUserId(response.data.data.id);
+        setIsAuthenticated(true);
+        }
       } catch (error) {
         console.error("Failed to fetch user profile", error);
         setUserId(null);
       } finally {
+        setLoading(false);
       }
     };
 
     fetchUserProfile();
   }, []);
-
   return (
     <UserContext.Provider
       value={{
+        setIsAuthenticated,
+        setLoading,
+        isAuthenticated,
         userId,
         firstName,
         lastName,
@@ -101,6 +114,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         contact,
         signature,
         updateUser,
+        loading,
       }}
     >
       {children}

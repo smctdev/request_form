@@ -121,17 +121,42 @@ const Dashboard: React.FC = () => {
     fetchBranchData();
   }, []);
 
-  const linkTo = '/request';
+  const linkTo = "/request";
   const NoDataComponent = () => (
     <div className="flex justify-center items-center h-64 text-gray-500 overflow-hidden">
       <p className="text-lg">No records found</p>
     </div>
   );
   const LoadingSpinner = () => (
-    <div className="flex flex-col justify-center items-center h-64">
-      <ClipLoader color="#007bff" loading={loading} size={50} />
-      <p className="mt-2 text-gray-700 text-center">Please wait</p>
-    </div>
+    <table className="table" style={{ background: "white" }}>
+      <thead>
+        <tr>
+          <th
+            className="py-6"
+            style={{ color: "black", fontWeight: "bold" }}
+          >
+            Request ID
+          </th>
+          <th style={{ color: "black", fontWeight: "bold" }}>Request Type</th>
+          <th style={{ color: "black", fontWeight: "bold" }}>Date</th>
+          <th style={{ color: "black", fontWeight: "bold" }}>Branch</th>
+          <th style={{ color: "black", fontWeight: "bold" }}>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {Array.from({ length: 6 }).map((_, index) => (
+          <tr key={index}>
+            <td className="w-full" colSpan={5}>
+              <div className="flex justify-center">
+                <div className="flex flex-col gap-4 w-full">
+                  <div className="skeleton h-12 w-full"></div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 
   useEffect(() => {
@@ -167,9 +192,12 @@ const Dashboard: React.FC = () => {
       // Fetch total requests sent
 
       axios
-        .get(`${process.env.REACT_APP_API_BASE_URL}/total-request-sent/${userId}`, {
-          headers,
-        })
+        .get(
+          `${process.env.REACT_APP_API_BASE_URL}/total-request-sent/${userId}`,
+          {
+            headers,
+          }
+        )
         .then((response) => {
           setTotalRequestsSent(response.data.totalRequestSent);
           setTotalPendingRequests(response.data.totalPendingRequest);
@@ -217,8 +245,16 @@ const Dashboard: React.FC = () => {
     {
       name: "Branch",
       selector: (row: Request) => {
-        const branchId = parseInt(row.form_data[0].branch, 10);
-        return branchMap.get(branchId) || "Unknown";
+        // Ensure form_data exists and has at least one item with a branch field
+        if (
+          row.form_data &&
+          row.form_data.length > 0 &&
+          row.form_data[0].branch
+        ) {
+          const branchId = parseInt(row.form_data[0].branch, 10);
+          return branchMap.get(branchId) || "Unknown";
+        }
+        return "Unknown"; // Return "Unknown" if branch is unavailable
       },
       sortable: true,
     },
@@ -245,7 +281,6 @@ const Dashboard: React.FC = () => {
       ),
     },
   ];
-
   return (
     <div className="bg-graybg dark:bg-blackbg h-full pt-[26px] px-[35px]">
       <div className="bg-primary w-full sm:w-full h-[210px] rounded-[12px] pl-[30px] flex flex-row justify-between items-center">
@@ -346,15 +381,21 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className={`mt-[20px] mb-10 bg-white w-full h-72 drop-shadow-lg rounded-[12px] relative sm:w-full ${latestRequests.length === 0 ? 'overflow-hidden' : 'overflow-x-auto'}`}>
+      <div
+        className={`mt-[20px] mb-10 bg-white w-full h-72 drop-shadow-lg rounded-[12px] relative sm:w-full ${
+          latestRequests.length === 0 ? "overflow-hidden" : "overflow-x-auto"
+        }`}
+      >
         <h1 className="py-[16px] px-[25px] font-bold text-[20px]">
           Recent requests
         </h1>
         <p className="flex justify-end px-[25px] -mt-10 mb-1">
-    <a href={linkTo}>
-      <span className="bg-primary px-3 py-1 rounded-[12px] text-white">See all</span>
-    </a>
-  </p>
+          <a href={linkTo}>
+            <span className="bg-primary px-3 py-1 rounded-[12px] text-white">
+              See all
+            </span>
+          </a>
+        </p>
         {/* {loading ? (
           <div className="flex items-center justify-center h-full">
             <ClipLoader color={"#123abc"} loading={loading} size={50} />

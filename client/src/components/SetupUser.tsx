@@ -280,15 +280,18 @@ const SetupUser = (props: Props) => {
     {
       name: "ID",
       selector: (row: Record) => row.id,
-      width: "60px",
+      width: "80px",
+      sortable: true,
     },
     {
       name: "Name",
       selector: (row: Record) => `${row.firstname} ${row.lastname}`,
+      sortable: true,
     },
 
     {
       name: "Branch code",
+      sortable: true,
       selector: (row: Record) => {
         const branchId = parseInt(row.branch_code, 10);
         return branchMap.get(branchId) || "Unknown";
@@ -297,13 +300,16 @@ const SetupUser = (props: Props) => {
     {
       name: "Email",
       selector: (row: Record) => row.email,
+      sortable: true,
     },
     {
       name: "Role",
       selector: (row: Record) => row.role,
+      sortable: true,
     },
     {
       name: "Action",
+      sortable: true,
       cell: (row: Record) => (
         <div className="flex space-x-2 items-center">
           <PencilSquareIcon
@@ -355,17 +361,55 @@ const SetupUser = (props: Props) => {
             </div>
           </div>
           {loading ? (
-            <div className="flex flex-col justify-center items-center h-64">
-              {/* <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div> */}
-              <ClipLoader color="#007bff" loading={loading} size={50} />
-              <p className="mt-2 text-gray-700 text-center">Please wait</p>
-            </div>
+            <table className="table" style={{ background: "white" }}>
+              <thead>
+                <tr>
+                  <th
+                    className="py-6"
+                    style={{ color: "black", fontWeight: "bold" }}
+                  >
+                    ID
+                  </th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>Name</th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>
+                    Branch code
+                  </th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>Email</th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>Role</th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <tr key={index}>
+                    <td className="w-full" colSpan={10}>
+                      <div className="flex justify-center">
+                        <div className="flex flex-col gap-4 w-full">
+                          <div className="skeleton h-12 w-full"></div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
             <DataTable
               columns={columns}
               data={filteredUserList}
               pagination
               striped
+              noDataComponent={
+                filteredUserList.length === 0 ? (
+                  <p className="flex flex-col justify-center items-center h-64">
+                    {filterTerm
+                      ? "No " + `"${filterTerm}"` + " found"
+                      : "No data available."}
+                  </p>
+                ) : (
+                  <ClipLoader color="#36d7b7" />
+                )
+              }
               customStyles={{
                 headRow: {
                   style: {

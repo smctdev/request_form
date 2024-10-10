@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { XMarkIcon, MagnifyingGlassIcon} from "@heroicons/react/24/outline";
+import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { set, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -59,7 +59,7 @@ const AddApproverModal = ({
   const [users, setUsers] = useState<Record[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
   const [isButtonVisible, setIsButtonVisible] = useState(false);
-  const [filterTerm, setFilterTerm] =useState("");
+  const [filterTerm, setFilterTerm] = useState("");
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -68,23 +68,21 @@ const AddApproverModal = ({
           console.error("Token is missing");
           return;
         }
-  
+
         const headers = {
           Authorization: `Bearer ${token}`,
         };
-  
+
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/view-users`,
           {
             headers,
           }
         );
-  
-      
-  
+
         // Filter and map data to desired format
         const transformedData = response.data.data
-          .filter((item: Record) => item.role.trim() === 'User')
+          .filter((item: Record) => item.role.trim() === "User")
           .map((item: Record) => ({
             id: item.id,
             name: `${item.firstname} ${item.lastname}`,
@@ -93,21 +91,20 @@ const AddApproverModal = ({
             role: item.role.trim(),
             position: item.position,
           }));
-  
+
         setUsers(transformedData);
-       
       } catch (error) {
         console.error("Error fetching users data:", error);
       }
     };
-  
+
     if (modalIsOpen) {
       fetchUsers();
     }
   }, [modalIsOpen]);
-  
-  const filteredApproverlist = users.filter(user =>
-    Object.values(user).some(value =>
+
+  const filteredApproverlist = users.filter((user) =>
+    Object.values(user).some((value) =>
       String(value).toLowerCase().includes(filterTerm.toLowerCase())
     )
   );
@@ -127,44 +124,41 @@ const AddApproverModal = ({
 
   const handleConfirmSelection = async () => {
     try {
-        setisLoading(true);
-        const token = localStorage.getItem("token");
-        if (!token) {
-            console.error("Token is missing");
-            return;
-        }
+      setisLoading(true);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Token is missing");
+        return;
+      }
 
-        const headers = {
-            Authorization: `Bearer ${token}`,
-        };
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
 
-        // Prepare the data to send to the backend
-        const data = {
-            role: "approver", // Replace with the actual role value you want to update
-            userIds: selectedUsers, // Send selected user IDs to update
-        };
+      // Prepare the data to send to the backend
+      const data = {
+        role: "approver", // Replace with the actual role value you want to update
+        userIds: selectedUsers, // Send selected user IDs to update
+      };
 
-        // Send PUT request to update roles
-        const response = await axios.put(
-            `${process.env.REACT_APP_API_BASE_URL}/update-role`, // Assuming your API endpoint structure (no IDs in the URL)
-            data,
-            { headers }
-        );
-        setisLoading(false);
-        openCompleteModal();
-        refreshData();
-        setSelectedUsers([]);
-       
-        // Optionally handle success message or UI updates after successful update
+      // Send PUT request to update roles
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_BASE_URL}/update-role`, // Assuming your API endpoint structure (no IDs in the URL)
+        data,
+        { headers }
+      );
+      setisLoading(false);
+      openCompleteModal();
+      refreshData();
+      setSelectedUsers([]);
 
+      // Optionally handle success message or UI updates after successful update
     } catch (error) {
-        setisLoading(false);
-        console.error("Error updating role:", error);
-        // Handle error state or show error message to the user
+      setisLoading(false);
+      console.error("Error updating role:", error);
+      // Handle error state or show error message to the user
     }
-};
-
-  
+  };
 
   const handleCancel = () => {
     // Reset all selected users
@@ -176,9 +170,8 @@ const AddApproverModal = ({
   }
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col ">
-  
-      <div className="p-4  w-10/12 md:w-1/2 lg:w-1/4 relative bg-primary flex justify-center mx-20  border-b rounded-t-[12px]">
+    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col  ">
+      <div className="p-4  w-10/12 md:w-1/2 lg:w-1/3 relative bg-primary flex justify-center mx-20  border-b rounded-t-[12px]">
         <h2 className="text-center  text-xl md:text-[32px] font-bold text-white">
           Add {entityType}
         </h2>
@@ -187,20 +180,20 @@ const AddApproverModal = ({
           onClick={closeModal}
         />
       </div>
-     
-      <div className="bg-white w-10/12 md:w-1/2 lg:w-1/4 x-20    overflow-y-auto  h-2/3 relative">
-      <div className="sm:mx-0 md:mx-4 my-2 relative w-1/2">
-            <div className="relative flex-grow">
-              <input
-                type="text"
-                className="w-full border bg-white border-black rounded-md pl-10 pr-3 py-2"
-                value={filterTerm}
-                onChange={(e) => setFilterTerm(e.target.value)}
-                placeholder="Search approvers"
-              />
-              <MagnifyingGlassIcon className="h-5 w-5 text-black absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-            </div>
+
+      <div className="bg-white w-10/12 md:w-1/2 lg:w-1/3 x-20 overflow-y-auto overflow-x-hidden h-2/3 relative">
+        <div className="sm:mx-0 md:mx-4 sm:px-5 lg:px-5 lg:mx-0 my-2 relative w-full">
+          <div className="relative flex-grow">
+            <input
+              type="text"
+              className="border bg-white border-black rounded-md pl-10 pr-3 py-2 w-full"
+              value={filterTerm}
+              onChange={(e) => setFilterTerm(e.target.value)}
+              placeholder="Search approvers"
+            />
+            <MagnifyingGlassIcon className="h-5 w-5 text-black absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
           </div>
+        </div>
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <ClipLoader size={35} color={"#123abc"} loading={loading} />
@@ -233,24 +226,23 @@ const AddApproverModal = ({
             ))}
           </div>
         )}
-        
       </div>
       {isButtonVisible && (
-          <div className="bg-white w-10/12 md:w-1/2 lg:w-1/4  rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex space-x-2">
-            <button
-              onClick={handleConfirmSelection}
-              className="bg-primary text-white  h-12 font-bold py-2 px-4 rounded cursor-pointer"
-            >
-                {isLoading ? <ClipLoader color="#36d7b7" /> : "Add Approver"}
-            </button>
-            <button
-              onClick={handleCancel}
-              className="bg-red-500 text-white font-bold  h-12 py-2 px-4 rounded cursor-pointer"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
+        <div className="bg-white w-10/12 md:w-1/2 lg:w-1/4  rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex space-x-2">
+          <button
+            onClick={handleConfirmSelection}
+            className="bg-primary text-white  h-12 font-bold py-2 px-4 rounded cursor-pointer"
+          >
+            {isLoading ? <ClipLoader color="#36d7b7" /> : "Add Approver"}
+          </button>
+          <button
+            onClick={handleCancel}
+            className="bg-red-500 text-white font-bold  h-12 py-2 px-4 rounded cursor-pointer"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 };

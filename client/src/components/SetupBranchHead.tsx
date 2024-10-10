@@ -19,8 +19,8 @@ import { set } from "react-hook-form";
 
 import AddApproverModal from "./AddApproverModal";
 import axios from "axios";
-import AddAreaManagerModal from "./AddAreaManagerModal";
-import EditAreaManager from "./EditAreaManager";
+import AddBranchHeadModal from "./AddBranchHeadModal";
+import EditBranchHead from "./EditBranchHead";
 import { ClipLoader } from "react-spinners";
 
 type Props = {};
@@ -64,7 +64,7 @@ const tableCustomStyles = {
 };
 
 const deleteUser = async () => {};
-interface AreaManager {
+interface BranchHead {
   id: number;
   user_id: number;
   branch_id: number[];
@@ -104,7 +104,7 @@ interface User {
   branch: string;
   employee_id: string;
 }
-const SetupAreaManager = (props: Props) => {
+const SetupBranchHead = (props: Props) => {
   const [darkMode, setDarkMode] = useState(true);
   const [selected, setSelected] = useState<number | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -116,12 +116,12 @@ const SetupAreaManager = (props: Props) => {
   const [deleteSuccessModal, setDeleteSuccessModal] = useState(false);
   const [viewModalIsOpen, setViewModalIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Record | null>(null);
-  const [areaManagerList, setAreaManagerList] = useState<Record[]>([]);
+  const [branchHeadList, setBranchHeadList] = useState<Record[]>([]);
   const [filterTerm, setFilterTerm] = useState("");
   const [isLoading, setisLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const userId = localStorage.getItem("id");
-  const [areaManager, setAreaManager] = useState<{
+  const [branchHead, setBranchHead] = useState<{
     branches: any[];
     user: any;
     id: number;
@@ -129,7 +129,7 @@ const SetupAreaManager = (props: Props) => {
     branch_id: number[];
   } | null>(null);
   const userData =
-    areaManagerList.length > 0 ? areaManagerList[0]?.user?.data ?? null : null;
+    branchHeadList.length > 0 ? branchHeadList[0]?.user?.data ?? null : null;
   const [fetchCompleted, setFetchCompleted] = useState(false);
   useEffect(() => {
     const fetchApproverData = async () => {
@@ -149,23 +149,23 @@ const SetupAreaManager = (props: Props) => {
           Authorization: `Bearer ${token}`,
         };
 
-        // Fetch area managers
-        const response = await axios.get<{ data: AreaManager[] }>(
-          `${process.env.REACT_APP_API_BASE_URL}/view-area-managers`,
+        // Fetch branch heads
+        const response = await axios.get<{ data: BranchHead[] }>(
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch-heads`,
           {
             headers,
           }
         );
 
-        const areaManagerList: AreaManager[] = response.data.data;
+        const branchHeadList: BranchHead[] = response.data.data;
 
         // Prepare array to hold promises for fetching user info
-        const areaManagersWithData: any[] = [];
+        const branchHeadsWithData: any[] = [];
 
-        for (const areaManager of areaManagerList) {
+        for (const branchHead of branchHeadList) {
           // Fetch user info based on user_id (which is id in users table)
           const userResponse = await axios.get<Record>(
-            `${process.env.REACT_APP_API_BASE_URL}/view-user/${areaManager.user_id}`,
+            `${process.env.REACT_APP_API_BASE_URL}/view-user/${branchHead.user_id}`,
             {
               headers,
             }
@@ -174,7 +174,7 @@ const SetupAreaManager = (props: Props) => {
           const userInfo: Record = userResponse.data;
 
           // Fetch branches for each branch_id
-          const branchPromises = areaManager.branch_id.map(async (branchId) => {
+          const branchPromises = branchHead.branch_id.map(async (branchId) => {
             const branchResponse = await axios.get(
               `${process.env.REACT_APP_API_BASE_URL}/view-branch/${branchId}`,
               {
@@ -186,17 +186,17 @@ const SetupAreaManager = (props: Props) => {
 
           const branchInfos = await Promise.all(branchPromises);
 
-          // Combine area manager data with branch info and user info
-          const areaManagerWithData = {
-            ...areaManager,
+          // Combine branch head data with branch info and user info
+          const branchHeadWithData = {
+            ...branchHead,
             branches: branchInfos,
             user: userInfo,
           };
 
-          areaManagersWithData.push(areaManagerWithData);
+          branchHeadsWithData.push(branchHeadWithData);
         }
 
-        setAreaManagerList(areaManagersWithData);
+        setBranchHeadList(branchHeadsWithData);
         setFetchCompleted(true); // Indicate fetch completion
       } catch (error) {
         console.error("Error fetching approvers data:", error);
@@ -209,8 +209,8 @@ const SetupAreaManager = (props: Props) => {
     fetchApproverData();
   }, [userId]);
 
-  const filteredAreaManager = areaManagerList.filter((areamanager) =>
-    Object.values(areamanager).some((value) =>
+  const filteredBranchHead = branchHeadList.filter((branchHead) =>
+    Object.values(branchHead).some((value) =>
       String(value).toLowerCase().includes(filterTerm.toLowerCase())
     )
   );
@@ -235,20 +235,20 @@ const SetupAreaManager = (props: Props) => {
         Authorization: `Bearer ${token}`,
       };
 
-      const response = await axios.get<{ data: AreaManager[] }>(
-        `${process.env.REACT_APP_API_BASE_URL}/view-area-managers`,
+      const response = await axios.get<{ data: BranchHead[] }>(
+        `${process.env.REACT_APP_API_BASE_URL}/view-branch-heads`,
         {
           headers,
         }
       );
 
-      const areaManagerList: AreaManager[] = response.data.data;
+      const branchHeadList: BranchHead[] = response.data.data;
 
-      const areaManagersWithData: any[] = [];
+      const branchHeadsWithData: any[] = [];
 
-      for (const areaManager of areaManagerList) {
+      for (const branchHead of branchHeadList) {
         const userResponse = await axios.get<Record>(
-          `${process.env.REACT_APP_API_BASE_URL}/view-user/${areaManager.user_id}`,
+          `${process.env.REACT_APP_API_BASE_URL}/view-user/${branchHead.user_id}`,
           {
             headers,
           }
@@ -256,7 +256,7 @@ const SetupAreaManager = (props: Props) => {
 
         const userInfo: Record = userResponse.data;
 
-        const branchPromises = areaManager.branch_id.map(async (branchId) => {
+        const branchPromises = branchHead.branch_id.map(async (branchId) => {
           const branchResponse = await axios.get(
             `${process.env.REACT_APP_API_BASE_URL}/view-branch/${branchId}`,
             {
@@ -268,16 +268,16 @@ const SetupAreaManager = (props: Props) => {
 
         const branchInfos = await Promise.all(branchPromises);
 
-        const areaManagerWithData = {
-          ...areaManager,
+        const branchHeadWithData = {
+          ...branchHead,
           branches: branchInfos,
           user: userInfo,
         };
 
-        areaManagersWithData.push(areaManagerWithData);
+        branchHeadsWithData.push(branchHeadWithData);
       }
 
-      setAreaManagerList(areaManagersWithData);
+      setBranchHeadList(branchHeadsWithData);
       setisLoading(false);
       setFetchCompleted(true);
     } catch (error) {
@@ -375,7 +375,7 @@ const SetupAreaManager = (props: Props) => {
 
       // Send PUT request to update user's role
       const response = await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/delete-area-manager/${selectedUser?.id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/delete-branch-head/${selectedUser?.id}`,
 
         { headers }
       );
@@ -440,7 +440,7 @@ const SetupAreaManager = (props: Props) => {
       <div className=" h-auto drop-shadow-lg rounded-lg md:mr-4 w-full ">
         <div className="bg-white rounded-lg w-full flex flex-col overflow-x-auto">
           <h1 className="pl-4 sm:pl-[30px] text-[24px] text-left py-4 text-primary font-bold mr-2 underline decoration-2 underline-offset-8">
-            Area Manager
+            Branch Head
           </h1>
           <div className="flex items-end justify-end  mx-2 bg-white">
             <div>
@@ -459,7 +459,7 @@ const SetupAreaManager = (props: Props) => {
                 className="w-full border bg-white border-black rounded-md pl-10 pr-3 py-2"
                 value={filterTerm}
                 onChange={(e) => setFilterTerm(e.target.value)}
-                placeholder="Search Area Manager"
+                placeholder="Search Branch Head"
               />
               <MagnifyingGlassIcon className="h-5 w-5 text-black absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
             </div>
@@ -498,20 +498,20 @@ const SetupAreaManager = (props: Props) => {
           ) : (
             <DataTable
               columns={columns}
-              data={filteredAreaManager}
+              data={filteredBranchHead}
               pagination
               striped
               // progressPending={isLoading}
               // progressComponent={<p>Loading...</p>}
               noDataComponent={
-                filteredAreaManager.length === 0 ? (
+                filteredBranchHead.length === 0 ? (
                   <p className="flex flex-col justify-center items-center h-64">
                     {filterTerm
                       ? "No " + `"${filterTerm}"` + " found"
                       : "No data available."}
                   </p>
                 ) : (
-                  <ClipLoader color="#36d7b7" />
+                  ""
                 )
               }
               customStyles={{
@@ -538,12 +538,12 @@ const SetupAreaManager = (props: Props) => {
           )}
         </div>
       </div>
-      <AddAreaManagerModal
+      <AddBranchHeadModal
         refreshData={refreshData}
         modalIsOpen={modalIsOpen}
         closeModal={closeModal}
         openCompleteModal={openCompleteModal}
-        entityType="Area Manager"
+        entityType="Branch Head"
       />
       <DeleteModal
         refreshData={refreshData}
@@ -551,41 +551,41 @@ const SetupAreaManager = (props: Props) => {
         deleteModal={deleteModal}
         closeDeleteModal={closeDeleteModal}
         openDeleteSuccessModal={openDeleteSuccessModal}
-        entityType="Area Manager"
+        entityType="Branch Head"
       />
       <DeleteSuccessModal
         showDeleteSuccessModal={showDeletedSuccessModal}
         closeDeleteSuccessModal={closeDeleteSuccessModal}
         openDeleteSuccessModal={openDeleteSuccessModal}
-        entityType="Area Manager"
+        entityType="Branch Head"
       />
       <CompleteModal
         showCompleteModal={showCompleteModal}
         closeCompleteModal={closeCompleteModal}
         openCompleteModal={openCompleteModal}
-        entityType="Area Manager"
+        entityType="Branch Head"
       />
-      <EditAreaManager
+      <EditBranchHead
         closeSuccessModal={closeSuccessModal}
         refreshData={refreshData}
         editModal={editModal}
         editModalClose={editModalClose}
         openSuccessModal={openSuccessModal}
-        entityType="Area Manager"
+        entityType="Branch Head"
         selectedUser={selectedUser || null}
         openCompleteModal={null}
         closeModal={null}
         modalIsOpen={false}
-        areaManagerId={0}
+        branchHeadId={0}
       />
       <SuccessModal
         showSuccessModal={showSuccessModal}
         closeSuccessModal={closeSuccessModal}
         openSuccessModal={openSuccessModal}
-        entityType="Area Manager"
+        entityType="Branch Head"
       />
     </div>
   );
 };
 
-export default SetupAreaManager;
+export default SetupBranchHead;

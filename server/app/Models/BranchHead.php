@@ -5,14 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AVPFinanceStaff extends Model
+class BranchHead extends Model
 {
     use HasFactory;
 
-    protected $table = 'a_v_p_finance_staff';
     protected $fillable = [
         'user_id',
-        'staff_id',
         'branch_id',
     ];
 
@@ -20,20 +18,18 @@ class AVPFinanceStaff extends Model
         'branch_id' => 'array',
     ];
 
-    public function branch()
+    public function setFormDataAttribute($value)
     {
-        return $this->belongsTo(Branch::class, 'branch_id');
+        $this->attributes['branch_id'] = json_encode($value);
     }
-
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Relationship with the staff
-    public function staff()
+    public function branch()
     {
-        return $this->belongsTo(User::class, 'staff_id');
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 }
