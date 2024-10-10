@@ -439,8 +439,8 @@ const CreateStockRequistion = (props: Props) => {
       <div className="bg-white w-full  mb-5 rounded-[12px] flex flex-col ">
         <div className="border-b flex justify-between flex-col px-[30px] md:flex-row ">
           <div>
-            <h1 className=" text-[24px] text-left py-4 text-primary font-bold flex mr-2">
-              <span className="mr-2 underline decoration-2 underline-offset-8">
+            <h1 className="text-3xl text-left py-4 text-primary font-bold flex mr-2">
+              <span className="text-3xl mr-2 underline decoration-2 underline-offset-8">
                 Stock
               </span>{" "}
               Requisition
