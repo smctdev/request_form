@@ -3,6 +3,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import { set } from "react-hook-form";
+import { Chip } from "@mui/material";
 
 type User = {
   id: number;
@@ -65,8 +66,6 @@ const AddAreaManagerModal = ({
           }
         );
 
-
-
         // Filter and map data to desired format
         const transformedData = response.data.data
           .filter((item: User) => item.position.trim() === "Area Manager")
@@ -80,7 +79,6 @@ const AddAreaManagerModal = ({
           }));
 
         setUsers(transformedData);
-
       } catch (error) {
         console.error("Error fetching users data:", error);
       }
@@ -109,7 +107,6 @@ const AddAreaManagerModal = ({
           }
         );
 
-     
         setBranches(response.data.data);
       } catch (error) {
         console.error("Error fetching branches:", error);
@@ -168,8 +165,6 @@ const AddAreaManagerModal = ({
           }
         );
 
-      
-
         // Assuming successful, close modal or show success message
         setIsLoading(false);
         closeModal();
@@ -196,7 +191,9 @@ const AddAreaManagerModal = ({
     return null;
   }
   const handleRemoveBranch = (branchIdToRemove: number) => {
-    setSelectedBranches(selectedBranches.filter(id => id !== branchIdToRemove));
+    setSelectedBranches(
+      selectedBranches.filter((id) => id !== branchIdToRemove)
+    );
   };
   return (
     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col">
@@ -232,7 +229,30 @@ const AddAreaManagerModal = ({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="p-2 mb-2  border border-gray-300 rounded-md "
                 />
-
+                <div className="mt-4 mb-4 px-4">
+                  {selectedBranches.map((branchId) => {
+                    const branch = branches.find((b) => b.id === branchId);
+                    return (
+                      <Chip
+                        key={branchId}
+                        label={
+                          <div className="flex flex-col">
+                            <span className="text-white">
+                              {branch?.branch_code}
+                            </span>
+                          </div>
+                        }
+                        onDelete={() => handleRemoveBranch(branchId)}
+                        deleteIcon={<XMarkIcon className="h-4 w-4 stroke-white" />}
+                        sx={{
+                          marginBottom: "5px",
+                          marginRight: "2px",
+                          backgroundColor: "#389df1"
+                        }}
+                      />
+                    );
+                  })}
+                </div>
                 <div className="px-4">
                   {branches.length === 0 ? (
                     <ClipLoader size={35} color={"#123abc"} loading={loading} />
@@ -315,26 +335,6 @@ const AddAreaManagerModal = ({
             )}
           </div>
         )}
-      </div>
-
-      <div className="bg-white w-10/12 sm:w-1/3 shadow-lg p-2 bottom-4 right-4 flex flex-wrap gap-2 ">
-        {selectedBranches.map((branchId) => {
-          const branch = branches.find((b) => b.id === branchId);
-          return (
-            <div key={branchId} className="bg-gray-300 p-3 rounded-sm mb-2 relative">
-             
-         <XMarkIcon
-          className="size-4 text-gray-500 absolute top-0 right-0  cursor-pointer"
-          onClick={() => handleRemoveBranch(branchId)}
-        />
-       
-              <div>
-              <p>{branch?.branch}</p>
-              <p>{branch?.branch_code}</p>
-              </div>
-            </div>
-          );
-        })}
       </div>
       <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex space-x-2">
         <button
