@@ -774,7 +774,6 @@ const CreateStockRequistion = (props: Props) => {
                 </ul>
               )}
             </div>
-
             <div className="flex justify-center pb-10 mt-20 space-x-3">
               <button
                 className={`bg-[#0275d8] hover:bg-[#6fbcff] ${buttonStyle}`}

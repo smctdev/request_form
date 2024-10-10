@@ -24,7 +24,7 @@ use App\Models\Branch;
 class RequestFormController extends Controller
 {
 
-    //CREATE REQUEST    
+    //CREATE REQUEST
     public function createRequest(Request $request)
     {
         try {
@@ -35,7 +35,7 @@ class RequestFormController extends Controller
                 'form_data' => 'required|string', // Temporarily string for decoding
                 'noted_by' => 'required|string',
                 'approved_by' => 'required|string',
-                'attachment.*' => 'file|mimes:pdf,png,jpg,jpeg',
+                'attachment.*' => 'file|mimes:pdf,png,jpg,jpeg,doc,docx,xls,xlsx,ppt,pptx,bmp,txt,zip,gif',
             ]);
 
             $userID = $validated['user_id'];
