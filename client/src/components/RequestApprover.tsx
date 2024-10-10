@@ -256,6 +256,7 @@ const RequestApprover = (props: Props) => {
             { headers }
           );
           setRequests(response.data.request_forms);
+          console.log(response.data.request_forms);
         } catch (error) {
           console.error("Error fetching requests data:", error);
         } finally {
@@ -268,7 +269,7 @@ const RequestApprover = (props: Props) => {
   }, [userId, notificationReceived]);
 
   const NoDataComponent = () => (
-    <div className="flex justify-center items-center h-64 text-gray-500">
+    <div className="flex items-center justify-center h-64 text-gray-500">
       <p className="text-lg">No records found</p>
     </div>
   );
@@ -467,16 +468,16 @@ const RequestApprover = (props: Props) => {
   ];
 
   return (
-    <div className="bg-graybg dark:bg-blackbg w-full h-lvh pb-10 pt-4 px-10 md:px-10 lg:px-30">
+    <div className="w-full px-10 pt-4 pb-10 bg-graybg dark:bg-blackbg h-lvh md:px-10 lg:px-30">
       <Link to="/request/sr">
         <button className="bg-primary text-white rounded-[12px] mb-2 w-[120px] sm:w-[151px] h-[34px] z-10">
           Send Request
         </button>
       </Link>
-      <div className="w-full h-auto drop-shadow-lg rounded-lg md:mr-4 relative">
-        <div className="bg-white rounded-lg w-full flex flex-col items-center overflow-x-auto">
+      <div className="relative w-full h-auto rounded-lg drop-shadow-lg md:mr-4">
+        <div className="flex flex-col items-center w-full overflow-x-auto bg-white rounded-lg">
           <div className="w-full border-b-2 md:px-30">
-            <ul className="px-2 md:px-30 flex justify-start items-center space-x-4 md:space-x-6 py-4 font-medium overflow-x-auto">
+            <ul className="flex items-center justify-start px-2 py-4 space-x-4 overflow-x-auto font-medium md:px-30 md:space-x-6">
               {items.map((item, index) => (
                 <li
                   key={index}
