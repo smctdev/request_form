@@ -628,13 +628,13 @@ const CreateLiquidation = (props: Props) => {
                     <thead className="bg-[#8EC7F7]">
                       <tr>
                         <th>Date</th>
-                        <th colSpan={3} className="border border-black">
+                        <th colSpan={4} className="border border-black">
                           Transportation
                         </th>
                         <th colSpan={3} className="border border-black">
                           Hotel
                         </th>
-                        <th colSpan={4} className="border border-black">
+                        <th colSpan={3} className="border border-black">
                           PER DIEM OTHER RELATED EXPENSES
                         </th>
                         <th></th>
