@@ -20,6 +20,7 @@ import SetupUser from '../components/SetupUser';
 import SetupBranch from '../components/SetupBranch';
 import SetupApprover from '../components/SetupApprover';
 import SetupAreaManager from '../components/SetupAreaManager';
+import SetupBranchHead from '../components/SetupBranchHead';
 import Help from '../components/Help';
 import HelpGuide from '../components/HelpGuide';
 import CustomRequest from '../components/CustomRequest';
@@ -38,19 +39,34 @@ import HelpSetup from '../components/HelpSetup';
 import SetupAVP from '../components/SetupAVP';
 import CreateDiscount from '../components/CreateDiscount';
 import PrintDiscount from '../components/PrintDiscount';
+import Preloader from '../loader/PreLoader';
+import { useUser } from '../context/UserContext';
 interface RouterProps {
   isdarkMode: boolean;
 }
+
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const { isAuthenticated, loading } = useUser();
+
+  if (loading) return <Preloader />;
+  return isAuthenticated ? children : <Navigate to="/login" />;
+};
+const PublicRoute = ({ children }: { children: JSX.Element }) => {
+  const { isAuthenticated, loading } = useUser();
+
+  if (loading) return <Preloader />;
+  return !isAuthenticated ? children : <Navigate to="/dashboard" />;
+};
 
 const Router: React.FC<RouterProps> = ({isdarkMode}) => {
   return (
     <div>
       <BrowserRouter>
         <Routes>
-        <Route path='/' element={<Navigate to="/login" />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/registration' element={<Registration />} />
-          <Route path='/forgotpassword' element={<ForgotPassword />} />
+        <Route path='/' element={<PublicRoute><Navigate to="/login" /></PublicRoute>} />
+          <Route path='/login' element={<PublicRoute><Login /></PublicRoute>} />
+          <Route path='/registration' element={<PublicRoute><Registration /></PublicRoute>} />
+          <Route path='/forgotpassword' element={<PublicRoute><ForgotPassword /></PublicRoute>} />
          
           <Route path='/dashboard' element={<App isdarkMode={isdarkMode} />}>
             <Route index element={<Dashboard />} />
@@ -106,6 +122,9 @@ const Router: React.FC<RouterProps> = ({isdarkMode}) => {
           </Route>
           <Route path='/setup/AreaManager' element={<App isdarkMode={isdarkMode} />}>
             <Route index element={<SetupAreaManager />} />
+          </Route>
+          <Route path='/setup/BranchHead' element={<App isdarkMode={isdarkMode} />}>
+            <Route index element={<SetupBranchHead />} />
           </Route>
           <Route path='/setup/AVP' element={<App isdarkMode={isdarkMode} />}>
             <Route index element={<SetupAVP />} />

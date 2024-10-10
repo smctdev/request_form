@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import DataTable from "react-data-table-component";
+import DataTable, { Alignment, SortOrder } from "react-data-table-component";
 import {
   PencilSquareIcon,
   TrashIcon,
@@ -92,6 +92,8 @@ const SetupBranch = (props: Props) => {
         setBranchList(response.data.data);
       } catch (error) {
         console.error("Error fetching branch data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -200,19 +202,23 @@ const SetupBranch = (props: Props) => {
     {
       name: "ID",
       selector: (row: Record) => row.id,
-      width: "60px",
+      width: "80px",
+      sortable: true,
     },
 
     {
       name: "Branch",
       selector: (row: Record) => row.branch,
+      sortable: true,
     },
     {
       name: "Branch Code",
       selector: (row: Record) => row.branch_code,
+      sortable: true,
     },
     {
       name: "Action",
+      sortable: true,
       cell: (row: Record) => (
         <div className="flex space-x-2">
           <PencilSquareIcon
@@ -255,7 +261,6 @@ const SetupBranch = (props: Props) => {
     } catch (error) {
       console.error("Error fetching branch data:", error);
     } finally {
-      setLoading(false);
     }
   };
 
@@ -289,17 +294,53 @@ const SetupBranch = (props: Props) => {
             </div>
           </div>
           {loading ? (
-            <div className="flex flex-col justify-center items-center h-64">
-              {/* <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div> */}
-              <ClipLoader color="#007bff" loading={loading} size={50} />
-              <p className="mt-2 text-gray-700 text-center">Please wait</p>
-            </div>
+            <table className="table" style={{ background: "white" }}>
+              <thead>
+                <tr>
+                  <th
+                    className="py-6"
+                    style={{ color: "black", fontWeight: "bold" }}
+                  >
+                    ID
+                  </th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>Branch</th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>
+                    Branch Code
+                  </th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <tr key={index}>
+                    <td className="w-full" colSpan={4}>
+                      <div className="flex justify-center">
+                        <div className="flex flex-col gap-4 w-full">
+                          <div className="skeleton h-12 w-full"></div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
             <DataTable
               columns={columns}
               data={filteredBranch}
               pagination
               striped
+              noDataComponent={
+                filteredBranch.length === 0 ? (
+                  <p className="flex flex-col justify-center items-center h-64">
+                    {filterTerm
+                      ? "No " + `"${filterTerm}"` + " found"
+                      : "No data available."}
+                  </p>
+                ) : (
+                  <ClipLoader color="#36d7b7" />
+                )
+              }
               customStyles={{
                 headRow: {
                   style: {

@@ -6,11 +6,13 @@ import {
   Routes,
   Route,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import Sidebar2 from "./components/Sidebar2";
 import { useUser } from "./context/UserContext";
 import "./index.css";
+import Preloader from "./loader/PreLoader";
 
 interface AppProps {
   isdarkMode: boolean;
@@ -34,19 +36,10 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
     window.innerWidth > 768
   );
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const {
-    userId,
-    firstName,
-    lastName,
-    email,
-    role,
-    branchCode,
-    contact,
-    signature,
-    updateUser,
-  } = useUser();
+  const { loading, setLoading } = useUser();
   const [userRole, setUserRole] = useState("");
   const id = localStorage.getItem("id");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -78,9 +71,14 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
             },
           }
         );
-
-        setUserRole(response.data.data.role);
-      } catch (error) {
+        if (response.status === 200) {
+          setUserRole(response.data.data.role);
+        }
+      } catch (error: any) {
+        if(error.response.status === 401){
+          navigate('/login');
+          setLoading(false);
+        }
         console.error("Error fetching branch data:", error);
       }
     };
@@ -127,6 +125,10 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
   const isMobileView = windowWidth < 768;
 
   const marginClass = isMobileView ? "ml-0" : isSidebarOpen ? "ml-20" : "ml-0";
+
+  if (loading) {
+    return <Preloader />;
+  }
 
   return (
     <div

@@ -69,6 +69,15 @@ class User extends Authenticatable
     {
         return $this->hasOne(Approver::class, 'user_id');
     }
+
+    public function approverStaff()
+    {
+        return $this->belongsTo(AVPFinanceStaff::class, 'staff_id');
+    }
+    public function userApprover()
+    {
+        return $this->belongsTo(AVPFinanceStaff::class, 'user_id');
+    }
     public function approvalProcess()
     {
         return $this->hasMany(ApprovalProcess::class);

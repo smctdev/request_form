@@ -19,6 +19,7 @@ import { set } from "react-hook-form";
 import ViewApproverModal from "./ViewApproverModal";
 import AddApproverModal from "./AddApproverModal";
 import axios from "axios";
+import { ClipLoader } from "react-spinners";
 
 type Props = {};
 
@@ -78,9 +79,10 @@ const SetupApprover = (props: Props) => {
   const [approverList, setApproverList] = useState<Record[]>([]);
   const [isLoading, setisLoading] = useState(false);
   const userId = localStorage.getItem("id");
-  const [filterTerm, setFilterTerm]= useState("");
+  const [filterTerm, setFilterTerm] = useState("");
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -100,8 +102,6 @@ const SetupApprover = (props: Props) => {
 
         setBranchList(branches);
         setBranchMap(branchMapping);
-
-   
       } catch (error) {
         console.error("Error fetching branch data:", error);
       }
@@ -117,8 +117,6 @@ const SetupApprover = (props: Props) => {
           console.error("User ID is missing");
           return;
         }
-
-      
 
         const token = localStorage.getItem("token");
         if (!token) {
@@ -136,7 +134,7 @@ const SetupApprover = (props: Props) => {
             headers,
           }
         );
-      
+
         // Transform data to match columns selector
         const transformedData = response.data.data.map(
           (item: Record, index: number) => ({
@@ -151,16 +149,17 @@ const SetupApprover = (props: Props) => {
         );
 
         setApproverList(transformedData);
-      
       } catch (error) {
         console.error("Error fetching approvers data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchApproverData();
   }, [userId]);
-  const filteredApproverlist = approverList.filter(approver =>
-    Object.values(approver).some(value =>
+  const filteredApproverlist = approverList.filter((approver) =>
+    Object.values(approver).some((value) =>
       String(value).toLowerCase().includes(filterTerm.toLowerCase())
     )
   );
@@ -182,7 +181,7 @@ const SetupApprover = (props: Props) => {
           headers,
         }
       );
-    
+
       // Transform data to match columns selector
       const transformedData = response.data.data.map(
         (item: Record, index: number) => ({
@@ -197,7 +196,6 @@ const SetupApprover = (props: Props) => {
       );
 
       setApproverList(transformedData);
-   
     } catch (error) {
       console.error("Error fetching approvers data:", error);
     }
@@ -205,7 +203,6 @@ const SetupApprover = (props: Props) => {
   const viewModalShow = (row: Record) => {
     setSelectedUser(row);
     setViewModalIsOpen(true);
-  
   };
 
   const viewModalClose = () => {
@@ -216,8 +213,6 @@ const SetupApprover = (props: Props) => {
   const deleteModalShow = (row: Record) => {
     setSelectedUser(row);
     setDeleteModal(true);
-
-
   };
 
   const closeDeleteModal = () => {
@@ -264,9 +259,7 @@ const SetupApprover = (props: Props) => {
     setShowDeletedSuccessModal(false);
   };
   const deleteUser = async () => {
-
     try {
-    
       if (!userId || !selectedUser) {
         console.error("User ID or selected user is missing");
         return;
@@ -287,9 +280,9 @@ const SetupApprover = (props: Props) => {
         {
           headers,
         }
-      );  
+      );
 
-      if (response.data.status) {   
+      if (response.data.status) {
         closeDeleteModal();
         openDeleteSuccessModal();
         refreshData();
@@ -303,29 +296,29 @@ const SetupApprover = (props: Props) => {
     }
   };
 
-
   const columns = [
     {
       name: "Name",
       selector: (row: Record) => row.name,
+      sortable: true,
     },
     {
       name: "Assigned Branches ",
+      sortable: true,
       selector: (row: Record) => {
         const branchId = parseInt(row.branch_code, 10);
         return branchMap.get(branchId) || "Unknown";
       },
     },
-      {
+    {
       name: "Action",
+      sortable: true,
       cell: (row: Record) => (
         <div className="flex space-x-2">
-           
           <TrashIcon
             className="text-[#A30D11] size-8 cursor-pointer"
             onClick={() => deleteModalShow(row)}
           />
-         
         </div>
       ),
     },
@@ -360,13 +353,51 @@ const SetupApprover = (props: Props) => {
               <MagnifyingGlassIcon className="h-5 w-5 text-black absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
-          <DataTable
-            columns={columns}
-            data={filteredApproverlist}
-            pagination
-            striped
-            customStyles={tableCustomStyles}
-          />
+          {loading ? (
+            <table className="table" style={{ background: "white" }}>
+              <thead>
+                <tr>
+                  <th className="py-6" style={{ color: "black", fontWeight: "bold" }}>Name</th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>
+                   Assigned Branches
+                  </th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <tr key={index}>
+                    <td className="w-full" colSpan={3}>
+                      <div className="flex justify-center">
+                        <div className="flex flex-col gap-4 w-full">
+                          <div className="skeleton h-12 w-full"></div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <DataTable
+              columns={columns}
+              data={filteredApproverlist}
+              pagination
+              striped
+              customStyles={tableCustomStyles}
+              noDataComponent={
+                filteredApproverlist.length === 0 ? (
+                  <p className="flex flex-col justify-center items-center h-64">
+                    {filterTerm
+                      ? "No " + `"${filterTerm}"` + " found"
+                      : "No data available."}
+                  </p>
+                ) : (
+                  <ClipLoader color="#36d7b7" />
+                )
+              }
+            />
+          )}
         </div>
       </div>
       <AddApproverModal

@@ -328,9 +328,12 @@ const Request = (props: Props) => {
         const headers = { Authorization: `Bearer ${token}` };
 
         axios
-          .delete(`${process.env.REACT_APP_API_BASE_URL}/delete-request/${record.id}`, {
-            headers,
-          })
+          .delete(
+            `${process.env.REACT_APP_API_BASE_URL}/delete-request/${record.id}`,
+            {
+              headers,
+            }
+          )
           .then(() => {
             Swal.fire({
               icon: "success",
@@ -390,11 +393,33 @@ const Request = (props: Props) => {
     </div>
   );
   const LoadingSpinner = () => (
-    <div className="flex flex-col justify-center items-center h-64">
-      {/* <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div> */}
-      <ClipLoader color="#007bff" loading={loading} size={50} />
-      <p className="mt-2 text-gray-700 text-center">Please wait</p>
-    </div>
+    <table className="table" style={{ background: "white" }}>
+      <thead>
+        <tr>
+          <th className="w-[80px] py-6" style={{ color: "black", fontWeight: "500" }}>
+            Request ID
+          </th>
+          <th style={{ color: "black", fontWeight: "500" }}>Request Type</th>
+          <th style={{ color: "black", fontWeight: "500" }}>Date</th>
+          <th style={{ color: "black", fontWeight: "500" }}>Branch</th>
+          <th style={{ color: "black", fontWeight: "500" }}>Status</th>
+          <th style={{ color: "black", fontWeight: "500" }}>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {Array.from({ length: 6 }).map((_, index) => (
+          <tr key={index}>
+            <td className="w-full" colSpan={6}>
+              <div className="flex justify-center">
+                <div className="flex flex-col gap-4 w-full">
+                  <div className="skeleton h-12 w-full"></div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 
   const refreshData = () => {
@@ -446,8 +471,16 @@ const Request = (props: Props) => {
     {
       name: "Branch",
       selector: (row: Record) => {
-        const branchId = parseInt(row.form_data[0].branch, 10);
-        return branchMap.get(branchId) || "Unknown";
+        // Ensure form_data exists and has at least one item with a branch field
+        if (
+          row.form_data &&
+          row.form_data.length > 0 &&
+          row.form_data[0].branch
+        ) {
+          const branchId = parseInt(row.form_data[0].branch, 10);
+          return branchMap.get(branchId) || "Unknown";
+        }
+        return "Unknown"; // Return "Unknown" if branch is unavailable
       },
       sortable: true,
     },

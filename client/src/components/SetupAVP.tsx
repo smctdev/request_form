@@ -126,7 +126,7 @@ const SetupAVP = (props: Props) => {
   const [viewModalIsOpen, setViewModalIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Record | null>(null);
   const [avpStaffList, setAVPStaffList] = useState<Record[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [filterTerm, setFilterTerm] = useState("");
   const [isLoading, setisLoading] = useState(false);
   const userId = localStorage.getItem("id");
@@ -144,7 +144,6 @@ const SetupAVP = (props: Props) => {
   useEffect(() => {
     const fetchApprovers = async () => {
       try {
-        setLoading(true);
         const userId = localStorage.getItem("id");
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/getStaff`,
@@ -156,9 +155,9 @@ const SetupAVP = (props: Props) => {
         );
 
         setAVPStaffList(response.data.data);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching approvers:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -169,7 +168,6 @@ const SetupAVP = (props: Props) => {
   useEffect(() => {
     const fetchAVPStaff = async () => {
       try {
-        setLoading(true);
         const userId = localStorage.getItem("id");
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/get-avpstaff-branch`,
@@ -181,10 +179,9 @@ const SetupAVP = (props: Props) => {
         );
 
         setStaffAVP(response.data.data);
-     
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching approvers:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -193,28 +190,24 @@ const SetupAVP = (props: Props) => {
   }, [modalIsOpen]);
 
   const refreshData = async () => {
-    
-      try {
-        setLoading(true);
-        const userId = localStorage.getItem("id");
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/get-avpstaff-branch`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-  
-        setStaffAVP(response.data.data);
-      } catch (error) {
-        console.error("Error fetching approvers:", error);
-      } finally {
-        setLoading(false); // Ensure loading is set to false regardless of success or failure
-      }
-    };
-  
+    try {
+      const userId = localStorage.getItem("id");
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/get-avpstaff-branch`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
+      setStaffAVP(response.data.data);
+    } catch (error) {
+      console.error("Error fetching approvers:", error);
+    } finally {
+      setLoading(false); // Ensure loading is set to false regardless of success or failure
+    }
+  };
 
   const viewModalShow = (row: Record) => {
     setSelectedUser(row);
@@ -275,6 +268,24 @@ const SetupAVP = (props: Props) => {
   const closeDeleteSuccessModal = () => {
     setShowDeletedSuccessModal(false);
   };
+
+  const filteredAVP = staffAVP.filter(
+    (avpstaff) =>
+      avpstaff.user.firstName
+        .toLowerCase()
+        .includes(filterTerm.toLowerCase()) ||
+      avpstaff.user.lastName.toLowerCase().includes(filterTerm.toLowerCase()) ||
+      avpstaff.staff.firstName
+        .toLowerCase()
+        .includes(filterTerm.toLowerCase()) ||
+      avpstaff.staff.lastName
+        .toLowerCase()
+        .includes(filterTerm.toLowerCase()) ||
+      avpstaff.branches.some((branch) =>
+        branch.toLowerCase().includes(filterTerm.toLowerCase())
+      )
+  );
+
   /* const getAssignedBranches = (row: Record) => {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2  space-y-2  sm:gap-2 sm:space-y-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 ">
@@ -326,19 +337,23 @@ const SetupAVP = (props: Props) => {
   const columns = [
     {
       name: "ID",
-      selector: (row: Record) => row.id, 
-      width: "60px",
+      selector: (row: Record) => row.id,
+      width: "80px",
+      sortable: true,
     },
     {
       name: "AVP",
+      sortable: true,
       selector: (row: Record) => `${row.user.firstName} ${row.user.lastName}`, // Displays the user's full name (string)
     },
     {
       name: "AVP Staff",
+      sortable: true,
       selector: (row: Record) => `${row.staff.firstName} ${row.staff.lastName}`, // Displays the staff's full name (string)
     },
     {
-      name: "AVP Staff",
+      name: "Assigned Branches",
+      sortable: true,
 
       cell: (row: Record) => (
         <ul className="flex flex-col md:flex-row md:flex-wrap">
@@ -353,10 +368,11 @@ const SetupAVP = (props: Props) => {
             </li>
           ))}
         </ul>
-      )
+      ),
     },
     {
       name: "Action",
+      sortable: true,
       cell: (row: Record) => (
         <div className="flex space-x-2">
           <PencilSquareIcon
@@ -403,21 +419,55 @@ const SetupAVP = (props: Props) => {
               <MagnifyingGlassIcon className="h-5 w-5 text-black absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
-          {isLoading ? (
-            <div className="flex justify-center items-center">
-              <ClipLoader color="#36d7b7" />
-            </div>
+          {loading ? (
+            <table className="table" style={{ background: "white" }}>
+              <thead>
+                <tr>
+                  <th
+                    className="w-[80px] py-6"
+                    style={{ color: "black", fontWeight: "bold" }}
+                  >
+                    ID
+                  </th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>AVP</th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>
+                    AVP Staff
+                  </th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>
+                    Assigned Branches
+                  </th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <tr key={index}>
+                    <td className="w-full" colSpan={5}>
+                      <div className="flex justify-center">
+                        <div className="flex flex-col gap-4 w-full">
+                          <div className="skeleton h-12 w-full"></div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
             <DataTable
               columns={columns}
-              data={staffAVP}
+              data={filteredAVP}
               pagination
               striped
-              progressPending={isLoading}
-              progressComponent={<p>Loading...</p>}
+              // progressPending={isLoading}
+              // progressComponent={<p>Loading...</p>}
               noDataComponent={
-                fetchCompleted && staffAVP.length === 0 ? (
-                  <p>No data available.</p>
+                filteredAVP.length === 0 ? (
+                  <p className="flex flex-col justify-center items-center h-64">
+                    {filterTerm
+                      ? "No " + `"${filterTerm}"` + " found"
+                      : "No data available."}
+                  </p>
                 ) : (
                   <ClipLoader color="#36d7b7" />
                 )

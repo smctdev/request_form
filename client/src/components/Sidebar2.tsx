@@ -11,6 +11,8 @@ import {
   ArrowLeftStartOnRectangleIcon,
   UserIcon,
   BuildingOfficeIcon,
+  MapIcon,
+  SwatchIcon,
   UserPlusIcon,
 } from "@heroicons/react/24/solid";
 import { Link, useLocation } from "react-router-dom";
@@ -49,7 +51,7 @@ const Sidebar2: React.FC<SidebarProps> = ({
   const [notificationReceived, setnotificationReceived] = useState(false);
   const [pendingCounts, setPendingCounts] = useState(0);
   const [user, setUser] = useState<User>({ id: 0 });
-  const { userId } = useUser();
+  const { userId, setIsAuthenticated } = useUser();
 
   const navItems: NavItem[] =
     role === "approver"
@@ -81,8 +83,13 @@ const Sidebar2: React.FC<SidebarProps> = ({
           { title: "AVP Staff", icon: UserGroupIcon, path: "/setup/AVP" },
           {
             title: "Area Manager",
-            icon: BeakerIcon,
+            icon: MapIcon,
             path: "/setup/AreaManager",
+          },
+          {
+            title: "Branch Head",
+            icon: SwatchIcon,
+            path: "/setup/BranchHead",
           },
           { title: "Help", icon: BookOpenIcon, path: "/help" },
         ]
@@ -183,6 +190,7 @@ const Sidebar2: React.FC<SidebarProps> = ({
     localStorage.removeItem("token");
     localStorage.removeItem("tokenExpiry");
     navigate("/login");
+    setIsAuthenticated(false)
   };
 
   const listStyle =

@@ -40,12 +40,12 @@ class RequestFormController extends Controller
 
             $userID = $validated['user_id'];
             $formType = $validated['form_type'];
-            $formDataArray = json_decode($validated['form_data'], true);
-            $notedByIds = json_decode($validated['noted_by'], true);
-            $approvedByIds = json_decode($validated['approved_by'], true);
-            /*  $formDataArray = $validated['form_data'];
-             $notedByIds = $validated['noted_by'];
-             $approvedByIds = $validated['approved_by'];  */
+                $formDataArray = json_decode($validated['form_data'], true);
+               $notedByIds = json_decode($validated['noted_by'], true);
+               $approvedByIds = json_decode($validated['approved_by'], true); 
+         /*    $formDataArray = $validated['form_data'];
+            $notedByIds = $validated['noted_by'];
+            $approvedByIds = $validated['approved_by']; */
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 return response()->json([
@@ -222,7 +222,7 @@ class RequestFormController extends Controller
 
 
             // Create the request form
-            $requestForm = RequestForm::create([
+            $requestFormData = RequestForm::create([
                 'user_id' => $userID,
                 'form_type' => $formType,
                 'form_data' => $encodedFormData, // Ensure it's JSON encoded,
@@ -233,17 +233,20 @@ class RequestFormController extends Controller
                 'branch_code' => $branchCode,
             ]);
 
-
             // Helper function to handle AVPFinance users and their staff
-            function handleAvpFinanceApproval($userId, &$approvalProcesses, &$level, $requestFormId, $branchId)
+            function handleAvpFinanceApproval($userId, &$approvalProcesses, &$level, $requestFormData, $branchId)
             {
+                // if (!$requestFormData) {
+                //     Log::error("Invalid RequestForm data passed to handleAvpFinanceApproval.");
+                //     return;
+                // }
                 // Check if the user is an AVPFinance
                 $user = DB::table('users')->where('id', $userId)->first();
                 if ($user && $user->position === 'AVP - Finance') {
                     // Fetch AVPFinance staff
                     $avpFinanceRecord = DB::table('a_v_p_finance_staff')->where('user_id', $userId)->first();
                     if ($avpFinanceRecord) {
-                        $avpStaffs = json_decode($avpFinanceRecord->staff_id, true); // Decode staff_id JSON
+                        $avpStaffs = $avpFinanceRecord->staff_id;
 
 
                         // Fetch staff's branch assignments
@@ -254,12 +257,12 @@ class RequestFormController extends Controller
 
                         if ($staffBranchAssignments) {
                             $staffBranches = json_decode($staffBranchAssignments, true); // Decode branch_id JSON
-
+                            Log::info($avpStaffs, $staffBranches);
                             // Check if the staff's branches include the request form branch
                             if (in_array($branchId, $staffBranches)) {
                                 $approvalProcesses[] = [
                                     'user_id' => $avpStaffs,
-                                    'request_form_id' => $requestFormId,
+                                    'request_form_id' => $requestFormData->id,
                                     'level' => $level,
                                     'status' => 'Pending',
                                     'created_at' => now(),
@@ -273,14 +276,17 @@ class RequestFormController extends Controller
                 }
 
                 // Add the AVPFinance user to the approval process
+
+
                 $approvalProcesses[] = [
                     'user_id' => $userId,
-                    'request_form_id' => $requestFormId,
+                    'request_form_id' => $requestFormData->id,
                     'level' => $level,
                     'status' => 'Pending',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
+                
                 $level++;
             }
 
@@ -298,7 +304,7 @@ class RequestFormController extends Controller
             foreach ($approvers as $approverGroup) {
                 foreach ($approverGroup['ids'] as $approverId) {
                     // Use the helper function to handle AVPFinance and their staff
-                    handleAvpFinanceApproval($approverId, $approvalProcesses, $level, $requestForm->id, $branchCode);
+                    handleAvpFinanceApproval($approverId, $approvalProcesses, $level, $requestFormData, $branchCode);
                 }
             }
 
@@ -308,16 +314,17 @@ class RequestFormController extends Controller
             // Notify the first approver (user 3 in this case)
             $firstApproverId = $notedByIds[0];
             $firstApprover = User::find($firstApproverId);
+            
             if ($firstApprover) {
-                $firstApprovalProcess = ApprovalProcess::where('request_form_id', $requestForm->id)
-                    ->where('user_id', $firstApproverId)
-                    ->where('level', 1)
-                    ->first();
+                $firstApprovalProcess = ApprovalProcess::where('request_form_id', $requestFormData->id)
+                ->where('level', 1)
+                ->first();
+                Log::info($firstApprovalProcess);
 
                 $firstApprover->notify(new ApprovalProcessNotification(
                     $firstApprovalProcess,
                     $firstApprover->firstName,
-                    $requestForm,
+                    $requestFormData,
                     $user->firstName,
                     $user->lastName
                 ));
@@ -327,7 +334,7 @@ class RequestFormController extends Controller
                 $date = now();
                 $type = 'App\Notifications\ApprovalProcessNotification';
                 $read_at = null;
-                event(new NotificationEvent(Auth::user()->id, $firstApprovalProcess->user->id));
+                //  event(new NotificationEvent($firstApprover->id, $message, $date,$type,$read_at));
             }
 
             // Commit transaction

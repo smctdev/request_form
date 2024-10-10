@@ -19,6 +19,7 @@ import Pusher from "pusher-js";
 import { set } from "react-hook-form";
 import Swal from "sweetalert2";
 import Echo from "../utils/Echo";
+import { useUser } from "../context/UserContext";
 
 interface NavProps {
   darkMode: boolean;
@@ -65,6 +66,8 @@ const Nav: React.FC<NavProps> = ({
   const [role, setRole] = useState("");
   const [notificationReceived, setnotificationReceived] = useState(false);
   const navigate = useNavigate();
+  const { setIsAuthenticated } = useUser();
+  const [profileLoading, setProfileLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -76,6 +79,7 @@ const Nav: React.FC<NavProps> = ({
         localStorage.removeItem("token");
         localStorage.removeItem("expires_at");
         navigate("/login"); // Redirect to login page
+        setIsAuthenticated(false);
         return;
       }
 
@@ -86,6 +90,7 @@ const Nav: React.FC<NavProps> = ({
 
         localStorage.removeItem("token");
         localStorage.removeItem("expires_at");
+        setIsAuthenticated(false);
         navigate("/login"); // Redirect to login page
       }
     };
@@ -204,6 +209,8 @@ const Nav: React.FC<NavProps> = ({
           "Error fetching user information from the database: ",
           error
         );
+      } finally {
+        setProfileLoading(false);
       }
     };
 
@@ -299,7 +306,10 @@ const Nav: React.FC<NavProps> = ({
   });
 
   const profilePictureUrl = profilePicture
-    ? `${process.env.REACT_APP_API_BASE_URL}/${profilePicture.replace(/\\/g, "/")}`
+    ? `${process.env.REACT_APP_URL_STORAGE}/${profilePicture.replace(
+        /\\/g,
+        "/"
+      )}`
     : Avatar;
 
   return (
@@ -367,21 +377,35 @@ const Nav: React.FC<NavProps> = ({
             )}
           </div>
           <div className={`${flexBetween} gap-2 relative`}>
-            <img
-              alt="logo"
-              className="cursor-pointer hidden sm:block rounded-full"
-              src={profilePictureUrl}
-              height={45}
-              width={45}
-              onClick={toggleProfileDropdown}
-            />
-            {/* USER NAME */}
-            <p
-              className="pl-2 lg:text-[18px] text-[12px] dark:text-white cursor-pointer"
-              onClick={toggleProfileDropdown}
-            >
-              {firstName} {lastName}
-            </p>
+            {profileLoading ? (
+              <div className="flex w-52 flex-col gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="skeleton h-16 w-16 shrink-0 rounded-full"></div>
+                  <div className="flex flex-col gap-4">
+                    <div className="skeleton h-9 w-28"></div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <img
+                  alt="logo"
+                  className="cursor-pointer hidden sm:block rounded-full"
+                  src={profilePictureUrl}
+                  height={45}
+                  width={45}
+                  onClick={toggleProfileDropdown}
+                />
+                {/* USER NAME */}
+                <p
+                  className="pl-2 lg:text-[18px] text-[12px] dark:text-white cursor-pointer"
+                  onClick={toggleProfileDropdown}
+                >
+                  {firstName} {lastName}
+                </p>
+              </>
+            )}
+
             {!isOpen ? (
               <ChevronDownIcon
                 className="size-[25px] text-black dark:text-white cursor-pointer"

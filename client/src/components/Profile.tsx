@@ -16,6 +16,10 @@ import SignatureCanvas from "react-signature-canvas";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
+interface Branch {
+  branch: string;
+}
+
 interface User {
   firstName: string;
   lastName: string;
@@ -27,7 +31,7 @@ interface User {
   userName: string;
   profile_picture: string;
   position: string;
-  branch: string;
+  branch: Branch;
 }
 
 const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
@@ -111,9 +115,9 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
           const userData = response.data.data;
           setUser(userData);
 
-          const branch = branchList.find(b => b.id === Number(userData.branch_code));
+          const branch = branchList.find(b => b.id === Number(userData?.branch_code));
           if (branch) {
-            setSelectedBranchCode(branch.branch_code);
+            setSelectedBranchCode(branch?.branch_code);
           }
         } else {
           throw new Error(response.data.message || "Failed to fetch user information");
@@ -365,7 +369,6 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
     setNewProfilePic(file); // Store the selected file in state
  
   };
-    
   return (
     <div className="bg-graybg dark:bg-blackbg w-full h-full py-4 px-4 md:px-10 lg:px-30 ">
       <div className="bg-white rounded-[12px] flex flex-col w-full px-4 md:px-8 lg:px-10 xl:px-12 py-[50px]">
@@ -419,7 +422,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
               </div>
               <div className="flex flex-col">
                 <p className="text-gray-400">Branch</p>
-                <p className="font-medium border p-2 rounded-md">{user.branch}</p>
+                <p className="font-medium border p-2 rounded-md">{user.branch?.branch}</p>
               </div>
             </div>
            
