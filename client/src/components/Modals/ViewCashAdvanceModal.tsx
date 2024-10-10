@@ -873,7 +873,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                   <td className={`${tableStyle} `}>
                     <p className="text-sm font-semibold">PER DIEM</p>
                   </td>
-                  <td className={`${inputStyle} p-2`}>
+                  <td className={`${inputStyle}`}>
                     {/* Display calculated total per diem */}
                     {newData.reduce(
                       (totalPerDiem, item) =>
