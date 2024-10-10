@@ -71,19 +71,11 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const token = localStorage.getItem("token");
     const fetchUserProfile = async () => {
-<<<<<<< Updated upstream
-      if (!token) {
-        setUserId(null);
-        setLoading(false); // Ensure loading is set to false
-        return;
-      }
-=======
       // if (!token) {
       //   setUserId(null);
       //   setLoading(false);
       //   return;
       // }
->>>>>>> Stashed changes
       try {
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/profile`,
