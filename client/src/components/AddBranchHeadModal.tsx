@@ -3,7 +3,6 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import { set } from "react-hook-form";
-import { Chip } from "@mui/material";
 
 type User = {
   id: number;
@@ -229,7 +228,7 @@ const AddBranchHeadModal = ({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="p-2 mb-2  border border-gray-300 rounded-md "
                 />
-                <div className="mt-4 mb-4 px-4">
+                {/* <div className="mt-4 mb-4 px-4">
                   {selectedBranches.map((branchId) => {
                     const branch = branches.find((b) => b.id === branchId);
                     return (
@@ -252,7 +251,7 @@ const AddBranchHeadModal = ({
                       />
                     );
                   })}
-                </div>
+                </div> */}
                 <div className="px-4">
                   {branches.length === 0 ? (
                     <ClipLoader size={35} color={"#123abc"} loading={loading} />

@@ -638,7 +638,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
                         Date
                       </th>
                       <th
-                        colSpan={3}
+                        colSpan={4}
                         className="border-2 border-black bg-[#8EC7F7]"
                       >
                         Transportation
@@ -650,8 +650,8 @@ const ViewLiquidationModal: React.FC<Props> = ({
                         Hotel
                       </th>
                       <th
-                        colSpan={4}
-                        className="border-2 border-black bg-[#8EC7F7]"
+                        colSpan={3}
+                        className="border-2 border-black bg-[#8EC7F7] whitespace-nowrap px-2"
                       >
                         PER DIEM OTHER RELATED EXPENSES
                       </th>
@@ -662,17 +662,17 @@ const ViewLiquidationModal: React.FC<Props> = ({
 
                       <th className={`${tableStyle}  w-2/12 `}>From</th>
                       <th className={`${tableStyle}w-2/12 `}>To</th>
-                      <th className={`${tableStyle} w-1/12`}>
+                      <th className={`${tableStyle} w-1/12 whitespace-nowrap`}>
                         Type of Transportation
                       </th>
                       <th className={`${tableStyle} w-10`}>Amount</th>
                       <th className={`${tableStyle}  w-2/12`}>Hotel</th>
                       <th className={`${tableStyle} w-2/12`}>Place</th>
                       <th className={`${tableStyle}`}>Amount</th>
-                      <th className={`${tableStyle}`}>Per Diem</th>
+                      <th className={`${tableStyle}whitespace-nowrap`}>Per Diem</th>
                       <th className={`${tableStyle}`}>Particulars</th>
                       <th className={`${tableStyle}`}>Amount</th>
-                      <th className={`${tableStyle}`}>Grand Total</th>
+                      <th className={`${tableStyle}whitespace-nowrap`}>Grand Total</th>
                     </tr>
                   </thead>
                   <tbody className={`${tableCellStyle}`}>
@@ -915,13 +915,13 @@ const ViewLiquidationModal: React.FC<Props> = ({
                   <td className={`${tableStyle}`}>
                     <p className="pl-2 pr-20 font-semibold ">Cash Advance</p>
                   </td>
-                  <td className={`${tableStyle}`}>
+                  <td className={`${inputStyle} font-bold text-right pr-10`}>
                     {isEditing ? (
                       <input
                         type="number"
                         value={newCashAdvance}
                         onChange={(e) => setNewCashAdvance(e.target.value)}
-                        className="w-full ml-2 font-bold bg-white"
+                        className="w-full font-bold text-right bg-white"
                         readOnly={!isEditing}
                       />
                     ) : (

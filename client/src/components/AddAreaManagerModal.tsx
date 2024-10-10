@@ -3,7 +3,6 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import { set } from "react-hook-form";
-import { Chip } from "@mui/material";
 
 type User = {
   id: number;
@@ -229,27 +228,25 @@ const AddAreaManagerModal = ({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="p-2 mb-2  border border-gray-300 rounded-md "
                 />
-                <div className="mt-4 mb-4 px-4">
+                <div className="mt-4 flex mb-4 px-4 flex-wrap">
                   {selectedBranches.map((branchId) => {
                     const branch = branches.find((b) => b.id === branchId);
                     return (
-                      <Chip
+                      <div
                         key={branchId}
-                        label={
-                          <div className="flex flex-col">
-                            <span className="text-white">
-                              {branch?.branch_code}
-                            </span>
-                          </div>
-                        }
-                        onDelete={() => handleRemoveBranch(branchId)}
-                        deleteIcon={<XMarkIcon className="h-4 w-4 stroke-white" />}
-                        sx={{
-                          marginBottom: "5px",
-                          marginRight: "2px",
-                          backgroundColor: "#389df1"
-                        }}
-                      />
+                        className="badge bg-[#389df1] border-none p-4 mb-1 mr-2 flex justify-between items-center"
+                      >
+                        <span className="text-white">
+                          {branch?.branch_code}
+                        </span>
+                        <button
+                          className="ml-2"
+                          onClick={() => handleRemoveBranch(branchId)}
+                          aria-label="Remove branch"
+                        >
+                          <XMarkIcon className="h-4 w-4 stroke-white" />
+                        </button>
+                      </div>
                     );
                   })}
                 </div>
