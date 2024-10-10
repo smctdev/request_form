@@ -567,16 +567,16 @@ const ViewRequestModal: React.FC<Props> = ({
                 <table className="border w-full table-auto lg:table-fixed">
                   <thead className="border border-black h-14 bg-[#8EC7F7]">
                     <tr className="border text-[10px]">
-                      <th className={`${inputStyle} w-1/12`}>QTY</th>
+                      <th className={`${inputStyle}`}>QTY</th>
                       <th
-                        className={`${inputStyle} w-1/3 break-words whitespace-normal`}
+                        className={`${inputStyle} break-words whitespace-normal`}
                       >
                         DESCRIPTION
                       </th>
-                      <th className={`${inputStyle} w-1/12`}>UNIT COST</th>
-                      <th className={`${inputStyle} w-1/12`}>TOTAL AMOUNT</th>
+                      <th className={`${inputStyle}whitespace-nowrap`}>UNIT COST</th>
+                      <th className={`${inputStyle}whitespace-nowrap`}>TOTAL AMOUNT</th>
                       <th
-                        className={`${inputStyle} w-1/4 break-words whitespace-normal`}
+                        className={`${inputStyle}break-words whitespace-nowrap `}
                       >
                         USAGE/REMARKS
                       </th>
@@ -654,14 +654,14 @@ const ViewRequestModal: React.FC<Props> = ({
                         ))
                       : editableRecord.form_data[0].items.map((item, index) => (
                           <tr key={index}>
-                            <td className={tableCellStyle}>{item.quantity}</td>
+                            <td className={`${tableCellStyle} text-center`}>{item.quantity}</td>
                             <td
                               className={`${tableCellStyle} break-words whitespace-normal`}
                             >
                               {item.description}
                             </td>
-                            <td className={tableCellStyle}>{item.unitCost}</td>
-                            <td className={tableCellStyle}>
+                            <td className={`${tableCellStyle} text-center`}>{item.unitCost}</td>
+                            <td className={`${tableCellStyle} text-center`}>
                               {item.totalAmount}
                             </td>
                             <td
