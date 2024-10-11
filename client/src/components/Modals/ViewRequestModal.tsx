@@ -27,6 +27,7 @@ interface Approver {
 type Record = {
   created_at: Date;
   id: number;
+  request_code: string;
   status: string;
   approvers_id: number;
   form_data: FormData[];
@@ -532,9 +533,8 @@ const ViewRequestModal: React.FC<Props> = ({
               </p>
             </div>
           </div>
-
-          <p className="font-medium text-[14px]">Request ID:#{record.id}</p>
-          <div className="flex items-center w-full md:w-1/2">
+          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
+          <div className="flex w-full md:w-1/2 items-center">
             <p>Status:</p>
             <p
               className={`${
