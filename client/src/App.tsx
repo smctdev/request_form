@@ -79,7 +79,7 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
           navigate('/login');
           setLoading(false);
         }
-        console.error("Error fetching branch data:", error);
+        // console.error("Error fetching branch data:", error);
       }
     };
 

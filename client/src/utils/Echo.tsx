@@ -7,7 +7,6 @@ const initializeEcho = () => {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    console.error("Bearer token is null or undefined");
     return null;
   }
 
