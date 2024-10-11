@@ -404,11 +404,9 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
   };
 
   const handleSaveSignature = async () => {
-    if (signatureRef.current) {
+    if (signature) {
       setSignatureButton(true);
-      // Convert the signature to a data URL
-      const signatureDataURL = signatureRef.current.toDataURL();
-
+      const signatureDataURL = signature.toDataURL();
       try {
         // Send the data URL to the backend API
         const response = await axios.post(
@@ -630,7 +628,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
             ) : (
               <SignatureCanvas
                 penColor="black"
-                ref={signatureRef}
+                ref={(ref) => setSignature(ref)}
                 canvasProps={{
                   className: "sigCanvas border border-black h-20 w-full",
                 }}
@@ -644,7 +642,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
             {!user?.signature && (
               <div className="flex mt-2">
                 <button
-                  onClick={handleClear}
+                  onClick={(e) => handleClear(e)}
                   className="p-1 mr-2 bg-gray-300 rounded-lg"
                 >
                   Clear
