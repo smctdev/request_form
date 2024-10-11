@@ -215,24 +215,24 @@ const EditAVPStaff = ({
     );
   };
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col">
+    <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="p-4 w-10/12 sm:w-1/3 relative bg-primary flex justify-center mx-20 border-b rounded-t-[12px]">
         <h2 className="text-center text-xl md:text-[32px] font-bold h-full text-white">
           Edit AVP
         </h2>
         <XMarkIcon
-          className="size-6 text-black absolute right-3 cursor-pointer"
+          className="absolute text-black cursor-pointer size-6 right-3"
           onClick={handleCancel}
         />
       </div>
-      <div className="bg-white w-10/12 sm:w-1/3 x-20 overflow-y-auto h-1/2 relative">
+      <div className="relative w-10/12 overflow-y-auto bg-white sm:w-1/3 x-20 h-1/2">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <ClipLoader size={35} color={"#123abc"} loading={loading} />
           </div>
         ) : (
           <div className="bg-white flex-col w-10/12 sm:w-full  rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex space-x-2">
-            <h3 className="text-lg font-bold p-4">
+            <h3 className="p-4 text-lg font-bold">
               Branches for {selectedUser.user.firstName}{" "}
               {selectedUser.user.lastName}:
             </h3>
@@ -241,9 +241,9 @@ const EditAVPStaff = ({
               placeholder="Search branches..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="p-2 mb-2  border border-gray-300 rounded-md "
+              className="p-2 mb-2 border border-gray-300 rounded-md "
             />
-            <div className="px-4 h-auto">
+            <div className="h-auto px-4">
               {branches.length === 0 ? (
                 <ClipLoader size={35} color={"#123abc"} loading={loading} />
               ) : (
@@ -259,9 +259,9 @@ const EditAVPStaff = ({
                   .map((branch) => (
                     <div
                       key={branch.id}
-                      className="flex items-center justify-between mb-2  bg-blue-100"
+                      className="flex items-center justify-between mb-2 bg-blue-100"
                     >
-                      <div className="flex w-full items-center justify-between  p-4">
+                      <div className="flex items-center justify-between w-full p-4">
                         <div>
                           <p>{branch.branch}</p>
                           <p>{branch.branch_code}</p>
@@ -271,7 +271,7 @@ const EditAVPStaff = ({
                             type="checkbox"
                             checked={selectedBranches.includes(branch.id)}
                             onChange={() => handleCheckboxChange(branch.id)}
-                            className="size-5 text-blue-500 cursor-pointer mx-1"
+                            className="mx-1 text-blue-500 cursor-pointer size-5"
                           />
                         </div>
                       </div>
@@ -282,16 +282,16 @@ const EditAVPStaff = ({
           </div>
         )}
       </div>
-      <div className="bg-white w-10/12 sm:w-1/3 shadow-lg p-2 bottom-4 right-4 flex flex-wrap gap-2 max-h-48 overflow-y-auto">
+      <div className="flex flex-wrap w-10/12 gap-2 p-2 overflow-y-auto bg-white shadow-lg sm:w-1/3 bottom-4 right-4 max-h-48">
         {selectedBranches.map((branchId) => {
           const branch = branches.find((b) => b.id === branchId);
           return (
             <div
               key={branchId}
-              className="bg-gray-300 p-3 rounded-sm mb-2 relative"
+              className="relative p-3 mb-2 bg-gray-300 rounded-sm"
             >
               <XMarkIcon
-                className="size-4 text-gray-500 absolute top-0 right-0  cursor-pointer"
+                className="absolute top-0 right-0 text-gray-500 cursor-pointer size-4"
                 onClick={() => handleRemoveBranch(branchId)}
               />
 
@@ -303,22 +303,22 @@ const EditAVPStaff = ({
           );
         })}
       </div>
-      <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex space-x-2">
-        <button
-          onClick={handleConfirmSelection}
-          className="bg-primary text-white h-12 font-bold py-2 px-4 rounded cursor-pointer"
-        >
-          {isLoading ? <ClipLoader color="#36d7b7" /> : "Update Area Manager"}
-        </button>
+      <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] justify-end shadow-lg p-2 bottom-4 right-4 flex space-x-2">
         <button
           onClick={handleCancel}
-          className="bg-red-500 text-white font-bold h-12 py-2 px-4 rounded cursor-pointer"
+          className="h-12 px-4 py-2 font-bold text-white bg-gray-500 rounded cursor-pointer hover:bg-gray-600"
         >
           Cancel
         </button>
+        <button
+          onClick={handleConfirmSelection}
+          className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer hover:bg-blue-400 bg-primary"
+        >
+          {isLoading ? <ClipLoader color="#36d7b7" /> : "Update Area Manager"}
+        </button>
       </div>
       {error && (
-        <div className="bg-red-500 text-white p-2 rounded mt-2">{error}</div>
+        <div className="p-2 mt-2 text-white bg-red-500 rounded">{error}</div>
       )}
     </div>
   );
