@@ -24,6 +24,7 @@ interface Approver {
 }
 type Record = {
   id: number;
+  request_code: string;
   created_at: Date;
   status: string;
   approvers_id: number;
@@ -623,7 +624,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
             </div>
           </div>
 
-          <p className="font-medium text-[14px]">Request ID:#{record.id}</p>
+          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
           <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
@@ -634,7 +635,9 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                   ? "bg-green"
                   : record.status.trim() === "Disapproved"
                   ? "bg-pink"
-                  : "bg-primary"
+                  : record.status.trim() === "Ongoing"
+                  ? "bg-primary"
+                  : "bg-blue-700"
               } rounded-lg  py-1 w-1/3
              font-medium text-[14px] text-center ml-2 text-white`}
             >

@@ -170,28 +170,28 @@ const AddApproverModal = ({
   }
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col  ">
+    <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50 ">
       <div className="p-4  w-10/12 md:w-1/2 lg:w-1/3 relative bg-primary flex justify-center mx-20  border-b rounded-t-[12px]">
         <h2 className="text-center  text-xl md:text-[32px] font-bold text-white">
           Add {entityType}
         </h2>
         <XMarkIcon
-          className="size-6 text-black absolute right-3 cursor-pointer"
+          className="absolute text-black cursor-pointer size-6 right-3"
           onClick={closeModal}
         />
       </div>
 
-      <div className="bg-white w-10/12 md:w-1/2 lg:w-1/3 x-20 overflow-y-auto overflow-x-hidden h-2/3 relative">
-        <div className="sm:mx-0 md:mx-4 sm:px-5 lg:px-5 lg:mx-0 my-2 relative w-full">
+      <div className="relative w-10/12 overflow-x-hidden overflow-y-auto bg-white md:w-1/2 lg:w-1/3 x-20 h-2/3">
+        <div className="relative w-full my-2 sm:mx-0 md:mx-4 sm:px-5 lg:px-5 lg:mx-0">
           <div className="relative flex-grow">
             <input
               type="text"
-              className="border bg-white border-black rounded-md pl-10 pr-3 py-2 w-full"
+              className="w-full py-2 pl-10 pr-3 bg-white border border-black rounded-md"
               value={filterTerm}
               onChange={(e) => setFilterTerm(e.target.value)}
               placeholder="Search approvers"
             />
-            <MagnifyingGlassIcon className="h-5 w-5 text-black absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+            <MagnifyingGlassIcon className="absolute w-5 h-5 text-black transform -translate-y-1/2 pointer-events-none left-3 top-1/2" />
           </div>
         </div>
         {loading ? (
@@ -207,7 +207,7 @@ const AddApproverModal = ({
                   index % 2 === 0 ? "bg-white" : "bg-blue-100"
                 }`}
               >
-                <div className="flex w-full items-center justify-between p-4">
+                <div className="flex items-center justify-between w-full p-4">
                   <div>
                     <p>{user.name}</p>
                     <p>{user.email}</p>
@@ -218,7 +218,7 @@ const AddApproverModal = ({
                       type="checkbox"
                       checked={selectedUsers.includes(user.id)}
                       onChange={() => handleCheckboxChange(user.id)}
-                      className="size-5 text-blue-500 cursor-pointer mx-1"
+                      className="mx-1 text-blue-500 cursor-pointer size-5"
                     />
                   </div>
                 </div>
@@ -228,18 +228,18 @@ const AddApproverModal = ({
         )}
       </div>
       {isButtonVisible && (
-        <div className="bg-white w-10/12 md:w-1/2 lg:w-1/4  rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex space-x-2">
-          <button
-            onClick={handleConfirmSelection}
-            className="bg-primary text-white  h-12 font-bold py-2 px-4 rounded cursor-pointer"
-          >
-            {isLoading ? <ClipLoader color="#36d7b7" /> : "Add Approver"}
-          </button>
+        <div className="bg-white w-10/12 md:w-1/2 lg:w-1/3 rounded-b-[12px] justify-end shadow-lg p-2 bottom-4 right-4 flex space-x-2">
           <button
             onClick={handleCancel}
-            className="bg-red-500 text-white font-bold  h-12 py-2 px-4 rounded cursor-pointer"
+            className="h-12 px-4 py-2 font-bold text-white bg-gray-500 rounded cursor-pointer hover:bg-gray-400"
           >
             Cancel
+          </button>
+          <button
+            onClick={handleConfirmSelection}
+            className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer bg-primary hover:bg-blue-400"
+          >
+            {isLoading ? <ClipLoader color="#36d7b7" /> : "Add Approver"}
           </button>
         </div>
       )}

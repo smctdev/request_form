@@ -420,16 +420,16 @@ const EditUserModal = ({
   ];
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col">
+    <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="p-6 w-10/12 md:w-2/5 bg-primary text-white rounded-t-[12px] shadow-xl relative">
         <h2 className="text-center text-xl md:text-[32px] font-bold">{`Edit ${entityType}`}</h2>
         <XMarkIcon
-          className="size-6 text-white absolute right-3 top-6 cursor-pointer"
+          className="absolute text-white cursor-pointer size-6 right-3 top-6"
           onClick={handleCancel}
         />
       </div>
       <div className="bg-white w-10/12 md:w-2/5 mx-auto rounded-b-[12px] shadow-lg overflow-y-auto p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* Render input fields dynamically */}
           {fields.map((field, index) => (
             <div key={index}>
@@ -556,22 +556,22 @@ const EditUserModal = ({
         {/* Custom fields section */}
         {entityType === "Custom" && (
           <div className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <p className={`${pStyle}`}>Name</p>
                 <input
                   type="text"
-                  className="w-full input input-bordered p-2 border rounded-lg"
+                  className="w-full p-2 border rounded-lg input input-bordered"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
                 {errorMessage && (
-                  <p className="text-red-500 text-sm">{errorMessage}</p>
+                  <p className="text-sm text-red-500">{errorMessage}</p>
                 )}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div className="grid grid-cols-1 gap-4 mt-6 md:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Noted By
@@ -624,20 +624,20 @@ const EditUserModal = ({
         {/* Error message */}
         <div className="mt-4">
           {errorMessage && (
-            <p className="text-red-600 text-sm">{errorMessage}</p>
+            <p className="text-sm text-red-600">{errorMessage}</p>
           )}
         </div>
 
         {/* Buttons */}
-        <div className="flex justify-end space-x-4 mt-6">
+        <div className="flex justify-end mt-6 space-x-4">
           <button
-            className="btn btn-secondary bg-gray-500 border-gray-500 hover:bg-gray-600 hover:border-gray-600 w-24"
+            className="w-24 text-white bg-gray-500 border-gray-500 btn btn-secondary hover:bg-gray-600 hover:border-gray-600"
             onClick={handleCancel}
           >
             Cancel
           </button>
           <button
-            className={`btn btn-primary bg-blue-500 border-blue-500 hover:bg-blue-600 hover:border-blue-600 text-white hover:text-white w-1/3`}
+            className={`btn btn-primary bg-primary border-primary hover:bg-blue-400 hover:border-blue-400 text-white hover:text-white w-1/3`}
             onClick={handleUpdate}
           >
             {loading ? <ClipLoader color="#36d7b7" /> : "Update"}

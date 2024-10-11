@@ -26,6 +26,7 @@ interface Approver {
 }
 type Record = {
   id: number;
+  request_code: string;
   created_at: Date;
   status: string;
   approvers_id: number;
@@ -559,7 +560,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
   return (
     <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="relative z-10 w-full p-4 px-10 overflow-scroll bg-white border-black rounded-t-lg shadow-lg md:mx-0 md:w-1/2 lg:w-2/3 space-y-auto h-4/5">
-        <div className="sticky flex justify-end cursor-pointer  top-2">
+        <div className="sticky flex justify-end cursor-pointer top-2">
           <XMarkIcon
             className="w-8 h-8 p-1 text-black bg-white rounded-full "
             onClick={closeModal}
@@ -600,7 +601,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
             </div>
           </div>
 
-          <p className="font-medium text-[14px]">Request ID:#{record.id}</p>
+          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
           <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
@@ -611,7 +612,9 @@ const ViewLiquidationModal: React.FC<Props> = ({
                   ? "bg-green"
                   : record.status.trim() === "Disapproved"
                   ? "bg-pink"
-                  : ""
+                  : record.status.trim() === "Ongoing"
+                  ? "bg-primary"
+                  : "bg-blue-700"
               } rounded-lg  py-1 w-1/3
              font-medium text-[14px] text-center ml-2 text-white`}
             >
