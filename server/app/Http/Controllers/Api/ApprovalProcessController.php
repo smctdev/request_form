@@ -142,6 +142,12 @@ class ApprovalProcessController extends Controller
                 } else {
                     $requestForm->status = 'Completed';
                     $formtype = $requestForm->form_type;
+
+                    $uniqueCode = $this->generateUniqueCode($formtype, $requestForm->branch_code);
+
+                    $requestForm->update([
+                        'completed_code' => $uniqueCode,
+                    ]);
                     $requestForm->save();
                     $employee = $requestForm->user;
                     $firstname = $employee->firstName;
@@ -213,6 +219,30 @@ class ApprovalProcessController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    private function generateUniqueCode($formType, $branchId)
+    {
+        $prefixes = [
+            'Application For Cash Advance' => 'CA',
+            'Cash Disbursement Requisition Slip' => 'CD',
+            'Liquidation of Actual Expense' => 'LAE',
+            'Purchase Order Requisition Slip' => 'PO',
+            'Refund Request' => 'RR',
+            'Stock Requisition Slip' => 'SRL',
+            'Discount Requisition Form' => 'DRF',
+        ];
+
+        if (isset($prefixes[$formType]) && $branchId) {
+            $count = RequestForm::where('form_type', $formType)
+                ->where('branch_code', $branchId)
+                ->where('status', 'Completed')
+                ->count();
+            $nextNumber = str_pad($count + 1, 7, '0', STR_PAD_LEFT);
+            return $prefixes[$formType] . $nextNumber;
+        }
+
+        return null;
     }
 
     public function getRequestFormsForApproval($user_id)
@@ -368,6 +398,7 @@ class ApprovalProcessController extends Controller
                     'branch' => (($acronym === "HO" ? 'ㅤ' : 'ㅤ' . $acronym . " - " ) .$branchNa->branch_name . 'ㅤ'),
                     'request_code' => "$branchName-$requestForm->request_code",
                     'approved_attachment' => $attachments,
+                    'completed_code' => $requestForm->completed_code
                 ];
             })->filter(); // Filter out null values
 

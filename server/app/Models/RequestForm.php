@@ -18,7 +18,8 @@ class RequestForm extends Model
         'approved_by',
         'branch_code',
         'request_code',
-        'status'
+        'status',
+        'completed_code'
     ];
 
     protected $attributes = [
