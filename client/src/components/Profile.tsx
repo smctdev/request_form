@@ -58,6 +58,9 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
   const [signature, setSignature] = useState<SignatureCanvas | null>(null);
   const [signatureButton, setSignatureButton] = useState(false);
   const [shouldRefresh, setShouldRefresh] = useState(false);
+  const [signatureError, setSignatureError] = useState("");
+  const [signatureLoading, setSignatureLoading] = useState(false);
+  const [signatureSuccess, setSignatureSuccess] = useState(false);
 
   const navigate = useNavigate();
 
@@ -138,7 +141,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
     };
 
     fetchUserInformation();
-  }, [token, id, branchList]);
+  }, [token, id, branchList, shouldRefresh]);
 
   const handleClear = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -197,7 +200,8 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
     navigate("/profile");
   };
   const closeSignatureSuccess = () => {
-    setSignatureButton(false);
+    setSignatureSuccess(false);
+    setShouldRefresh(true); // Set to true to trigger data refetch
     navigate("/profile");
   };
 
@@ -402,13 +406,13 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
     }
     return false;
   };
-
   const handleSaveSignature = async () => {
-    if (signature) {
-      setSignatureButton(true);
-      const signatureDataURL = signature.toDataURL();
-      try {
-        // Send the data URL to the backend API
+    setSignatureLoading(true);
+    try {
+      // Send the data URL to the backend API
+
+      if (signature && !signature.isEmpty()) {
+        const signatureDataURL = signature.toDataURL();
         const response = await axios.post(
           `${process.env.REACT_APP_API_BASE_URL}/update-signature/${id}`, // Ensure the URL is correct
           { signature: signatureDataURL },
@@ -419,14 +423,18 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
             },
           }
         );
-        setSignatureButton(false);
-      } catch (error) {
-        setSignatureButton(false);
-        console.error("Error saving signature:", error); // Log any errors
+        if (response.status === 200) {
+          setSignatureSuccess(true);
+          setSignatureError("");
+        }
+      } else {
+        setSignatureLoading(false);
+        setSignatureError("Please add signature first before saving.");
       }
-    } else {
-      setSignatureButton(false);
-      console.error("Signature reference is not set."); // Log if signatureRef.current is null
+    } catch (error) {
+      console.error("Error saving signature:", error); // Log any errors
+    } finally {
+      setSignatureLoading(false);
     }
   };
 
@@ -634,12 +642,10 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
                 }}
               />
             )}
-            {signatureEmpty && (
-              <span className="text-xs text-red-500">
-                Please provide a signature.
-              </span>
+            {signatureError && (
+              <span className="text-xs text-red-500">{signatureError}</span>
             )}
-            {!user?.signature && (
+            {user?.signature === null && (
               <div className="flex mt-2">
                 <button
                   onClick={(e) => handleClear(e)}
@@ -650,18 +656,18 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
                 <button
                   onClick={handleSaveSignature}
                   className={`bg-primary text-white p-2 rounded-lg flex items-center ${
-                    signatureButton ? "opacity-50 cursor-not-allowed" : ""
+                    signatureLoading ? "opacity-50 cursor-not-allowed" : ""
                   }`}
-                  disabled={signatureButton}
+                  disabled={signatureLoading}
                 >
-                  {signatureButton ? (
+                  {signatureLoading ? (
                     <ClipLoader
                       color="#ffffff" // Adjust the color to match your design
                       size={24} // Adjust the size if needed
                       className="mr-2"
                     />
                   ) : null}
-                  {signatureButton ? "Saving..." : "Save"}
+                  {signatureLoading ? "Saving..." : "Save"}
                 </button>
               </div>
             )}
@@ -694,7 +700,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
           </div>
         </div>
       )}
-      {signatureButton && (
+      {signatureSuccess && (
         <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50 ">
           <div className="relative flex flex-col items-center justify-center w-1/4 bg-white rounded-md ">
             <FontAwesomeIcon
