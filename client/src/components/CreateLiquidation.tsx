@@ -634,7 +634,7 @@ const CreateLiquidation = (props: Props) => {
                         <th colSpan={3} className="border border-black">
                           Hotel
                         </th>
-                        <th colSpan={3} className="border border-black">
+                        <th colSpan={5} className="border border-black">
                           PER DIEM OTHER RELATED EXPENSES
                         </th>
                       </tr>
@@ -933,15 +933,15 @@ const CreateLiquidation = (props: Props) => {
                           <td className="p-1 font-bold text-center border border-black">
                             ₱{item.grandTotal}
                           </td>
-                          <td>
-                            {tableData.length > 1 && (
+                          {tableData.length > 1 && (
+                            <td>
                               <TrashIcon
                                 className="text-[#e63c3c] size-7 cursor-pointer"
                                 onClick={() => handleRemoveItem(index)}
                                 title="Remove Item"
                               />
-                            )}
-                          </td>
+                            </td>
+                          )}
                         </tr>
                       ))}
                     </tbody>
