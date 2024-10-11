@@ -4,10 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import SquareLoader from "react-spinners/SquareLoader";
 import ClipLoader from "react-spinners/ClipLoader";
-import {
-  EyeIcon,
-  EyeSlashIcon,
-} from "@heroicons/react/24/solid";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import PropogateLoader from "react-spinners/PropagateLoader";
@@ -49,19 +46,23 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [newProfilePic, setNewProfilePic] = useState<File | null>(null);
-  const [branchList, setBranchList] = useState<{ id: number; branch_code: string }[]>([]);
+  const [branchList, setBranchList] = useState<
+    { id: number; branch_code: string }[]
+  >([]);
   const [selectedBranchCode, setSelectedBranchCode] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [submitting, setSubmitting]= useState(false);
-  const [showSuccessModal, setShowSuccessModal]= useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showSignatureSuccess, setShowSignatureSuccess] = useState(false);
   const [signatureEmpty, setSignatureEmpty] = useState(false);
   const [signature, setSignature] = useState<SignatureCanvas | null>(null);
   const [signatureButton, setSignatureButton] = useState(false);
   const [shouldRefresh, setShouldRefresh] = useState(false);
+  const [signatureError, setSignatureError] = useState("");
+  const [signatureLoading, setSignatureLoading] = useState(false);
+  const [signatureSuccess, setSignatureSuccess] = useState(false);
 
   const navigate = useNavigate();
-
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -75,12 +76,17 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
           Authorization: `Bearer ${token}`,
         };
 
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/view-branch`, { headers });
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`,
+          { headers }
+        );
         const branches = response.data.data;
-        const branchOptions = branches.map((branch: { id: number; branch_code: string }) => ({
-          id: branch.id,
-          branch_code: branch.branch_code,
-        }));
+        const branchOptions = branches.map(
+          (branch: { id: number; branch_code: string }) => ({
+            id: branch.id,
+            branch_code: branch.branch_code,
+          })
+        );
         setBranchList(branchOptions);
       } catch (error) {
         console.error("Error fetching branch data:", error);
@@ -89,17 +95,14 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
 
     fetchBranchData();
   }, [token]);
-  
+
   useEffect(() => {
     if (signature) {
       signature.toDataURL("image/png");
-      
     }
   }, [signature]);
- 
- 
-  useEffect(() => {
 
+  useEffect(() => {
     const fetchUserInformation = async () => {
       try {
         if (!token || !branchList.length) {
@@ -109,28 +112,37 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
         const headers = {
           Authorization: `Bearer ${token}`,
         };
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/profile`, { headers });
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/profile`,
+          { headers }
+        );
 
         if (response.data.status) {
           const userData = response.data.data;
           setUser(userData);
 
-          const branch = branchList.find(b => b.id === Number(userData?.branch_code));
+          const branch = branchList.find(
+            (b) => b.id === Number(userData?.branch_code)
+          );
           if (branch) {
             setSelectedBranchCode(branch?.branch_code);
           }
         } else {
-          throw new Error(response.data.message || "Failed to fetch user information");
+          throw new Error(
+            response.data.message || "Failed to fetch user information"
+          );
         }
       } catch (error: any) {
-        setError(error.response?.data?.message || "An error occurred while fetching user information");
+        setError(
+          error.response?.data?.message ||
+            "An error occurred while fetching user information"
+        );
       }
     };
 
     fetchUserInformation();
-  }, [token, id, branchList]);
+  }, [token, id, branchList, shouldRefresh]);
 
-  
   const handleClear = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     signature?.clear();
@@ -168,7 +180,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
         text: "Password changed successfully",
         confirmButtonText: "Close",
         confirmButtonColor: "#007bff",
-      })
+      });
       // alert("Password changed successfully");
       setLoading(false);
     } catch (error: any) {
@@ -188,7 +200,8 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
     navigate("/profile");
   };
   const closeSignatureSuccess = () => {
-    setSignatureButton(false);
+    setSignatureSuccess(false);
+    setShouldRefresh(true); // Set to true to trigger data refetch
     navigate("/profile");
   };
 
@@ -198,13 +211,80 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
 
   if (!user) {
     return (
-<div className="fixed inset-0 flex items-center justify-center bg-gray-200">
-  <div className="flex flex-col items-center">
-    <ClipLoader color="#007bff" size={80} />
-    <p className="mt-2 text-lg text-gray-700">Please wait...</p>
-  </div>
-</div>
+      <>
+        <div className="w-full h-full px-4 py-4 dark:bg-gray-900 md:px-10 lg:px-30">
+          <div className="flex flex-col w-full px-4 py-12 bg-white rounded-lg md:px-8 lg:px-10 xl:px-12">
+            <div className="flex flex-col items-center justify-center rounded-lg lg:flex-row">
+              <div className="flex flex-col items-start w-full px-4 text-left md:px-10">
+                <div className="flex flex-col items-center lg:flex-row md:items-start">
+                  <div className="border-4 rounded-full bg-slate-300 skeleton w-44 h-44"></div>
+                  <div className="flex flex-col mt-4 ml-2">
+                    <h1 className="w-56 h-8 mb-3 text-lg font-bold skeleton bg-slate-300 md:text-xl lg:text-2xl"></h1>
+                    <div>
+                      <p className="h-4 mb-3 cursor-pointer w-36 text-primary skeleton bg-slate-300"></p>
+                      <input type="file" className="hidden" />
+                    </div>
+                    <p className="w-40 h-4 italic font-semibold text-black skeleton bg-slate-300"></p>
+                  </div>
+                </div>
 
+                <h1 className="h-8 my-5 text-lg font-semibold md:text-xl w-44 lg:text-2xl skeleton bg-slate-300"></h1>
+                <div className="grid w-full grid-cols-1 gap-4 lg:gap-6">
+                  <div className="flex flex-col">
+                    <p className="w-32 h-4 mt-2 mb-2 text-gray-400 skeleton bg-slate-300"></p>
+                    <p className="p-2 font-medium border rounded-md skeleton h-9 bg-slate-300"></p>
+                  </div>
+                  <div className="flex flex-col">
+                    <p className="w-32 h-4 mt-2 mb-2 text-gray-400 skeleton bg-slate-300"></p>
+                    <p className="p-2 font-medium border rounded-md skeleton h-9 bg-slate-300"></p>
+                  </div>
+                  <div className="flex flex-col">
+                    <p className="w-32 h-4 mt-2 mb-2 text-gray-400 skeleton bg-slate-300"></p>
+                    <p className="p-2 font-medium border rounded-md skeleton h-9 bg-slate-300"></p>
+                  </div>
+                  <div className="flex flex-col">
+                    <p className="w-32 h-4 mt-2 mb-2 text-gray-400 skeleton bg-slate-300"></p>
+                    <p className="p-2 font-medium border rounded-md skeleton h-9 bg-slate-300"></p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full mt-4 md:mt-0 md:px-10">
+                <h1 className="h-8 my-8 text-lg font-semibold w-44 md:text-xl lg:text-2xl skeleton bg-slate-300"></h1>
+                <p className="w-32 h-4 mt-2 mb-2 text-gray-400 skeleton bg-slate-300"></p>
+                <div className="relative flex items-center w-full">
+                  <input
+                    type="password"
+                    className="w-full h-10 p-2 rounded-lg skeleton bg-slate-300"
+                  />
+                </div>
+                <p className="w-32 h-4 mt-2 mb-2 text-gray-400 skeleton bg-slate-300"></p>
+                <div className="relative flex items-center w-full">
+                  <input
+                    type="password"
+                    className="w-full h-10 p-2 rounded-lg skeleton bg-slate-300"
+                  />
+                </div>
+                <p className="w-32 h-4 mt-2 mb-2 text-gray-400 skeleton bg-slate-300"></p>
+                <div className="relative flex items-center w-full">
+                  <input
+                    type="password"
+                    className="w-full h-10 p-2 rounded-lg skeleton bg-slate-300"
+                  />
+                </div>
+                <button className="flex items-center justify-center w-full h-12 mt-4 text-white rounded-lg skeleton bg-primary"></button>
+              </div>
+
+              <div className="flex flex-col w-full mb-4 md:w-1/2">
+                <p className="w-10 h-4 mb-2 text-base lg:text-lg skeleton bg-slate-300"></p>
+                <div className="flex items-center justify-center overflow-hidden">
+                  <div className="w-full border skeleton bg-slate-300 h-28"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
     );
   }
 
@@ -259,7 +339,6 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
     inputRef.current?.click();
   };
 
-
   const profilePictureUrl = newProfilePic
     ? URL.createObjectURL(newProfilePic) // Create a temporary URL for the new profile picture
     : user?.profile_picture
@@ -268,60 +347,56 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
         "/"
       )}`
     : Avatar2;
-    const onSubmit = async () => {
-      try {
-        setSubmitting(true);
-    
-        const token = localStorage.getItem("token");
-        const id = localStorage.getItem("id");
-    
-        if (!token || !id) {
-          console.error("Token or ID is missing");
-          setSubmitting(false);
-          return;
-        }
-    
-        const formData = new FormData();
-    
-        // Ensure profile picture is a File object before appending
-        if (newProfilePic) {
-          formData.append("profile_picture", newProfilePic);
-        } else {
-          console.error("Profile picture is missing");
-          setSubmitting(false);
-          return;
-        }
-    
-        
-     
-        const response = await axios.post(
-          `${process.env.REACT_APP_API_BASE_URL}/update-profilepic/${id}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-    
-       
+  const onSubmit = async () => {
+    try {
+      setSubmitting(true);
+
+      const token = localStorage.getItem("token");
+      const id = localStorage.getItem("id");
+
+      if (!token || !id) {
+        console.error("Token or ID is missing");
         setSubmitting(false);
-        setShowSuccessModal(true);
-      } catch (error: any) {
-        console.error(
-          "Failed to update profile picture:",
-          error.response?.data || error.message
-        );
-        setSubmitting(false);
-        setShowSuccessModal(true);
+        return;
       }
-    };
-     const saveSignature = () => {
+
+      const formData = new FormData();
+
+      // Ensure profile picture is a File object before appending
+      if (newProfilePic) {
+        formData.append("profile_picture", newProfilePic);
+      } else {
+        console.error("Profile picture is missing");
+        setSubmitting(false);
+        return;
+      }
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/update-profilepic/${id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setSubmitting(false);
+      setShowSuccessModal(true);
+    } catch (error: any) {
+      console.error(
+        "Failed to update profile picture:",
+        error.response?.data || error.message
+      );
+      setSubmitting(false);
+      setShowSuccessModal(true);
+    }
+  };
+  const saveSignature = () => {
     if (signatureRef.current) {
       const signatureImage = signatureRef.current.toDataURL();
       // You can save signatureImage or set it to a form field for submission
-    
     }
   };
   const signatureIsEmpty = () => {
@@ -331,17 +406,13 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
     }
     return false;
   };
- 
-
   const handleSaveSignature = async () => {
-    if (signatureRef.current) {
-      setSignatureButton(true);
-      // Convert the signature to a data URL
-      const signatureDataURL = signatureRef.current.toDataURL();
-   
+    setSignatureLoading(true);
+    try {
+      // Send the data URL to the backend API
 
-      try {
-        // Send the data URL to the backend API
+      if (signature && !signature.isEmpty()) {
+        const signatureDataURL = signature.toDataURL();
         const response = await axios.post(
           `${process.env.REACT_APP_API_BASE_URL}/update-signature/${id}`, // Ensure the URL is correct
           { signature: signatureDataURL },
@@ -352,22 +423,24 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
             },
           }
         );
-        setSignatureButton(false);
-       
-      } catch (error) {
-        setSignatureButton(false);
-        console.error("Error saving signature:", error); // Log any errors
+        if (response.status === 200) {
+          setSignatureSuccess(true);
+          setSignatureError("");
+        }
+      } else {
+        setSignatureLoading(false);
+        setSignatureError("Please add signature first before saving.");
       }
-    } else {
-      setSignatureButton(false);
-      console.error("Signature reference is not set."); // Log if signatureRef.current is null
+    } catch (error) {
+      console.error("Error saving signature:", error); // Log any errors
+    } finally {
+      setSignatureLoading(false);
     }
   };
 
   const handleProfilePicUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setNewProfilePic(file); // Store the selected file in state
- 
   };
   return (
     <div className="w-full h-full px-4 py-4 bg-graybg dark:bg-blackbg md:px-10 lg:px-30 ">
@@ -379,7 +452,6 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
                 alt="profile"
                 src={profilePictureUrl}
                 className="rounded-full w-[180px] h-[180px] border-4 border-blue-600"
-          
               />
               <div className="flex flex-col mt-4 ml-2">
                 <h1 className="text-lg font-bold md:text-xl lg:text-2xl">
@@ -396,7 +468,9 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
                     onChange={handleProfilePicUpload}
                   />
                 </div>
-                <p className="italic font-semibold text-black">{user.position}</p>
+                <p className="italic font-semibold text-black">
+                  {user.position}
+                </p>
               </div>
             </div>
             <h1 className="my-5 text-lg font-semibold md:text-xl lg:text-2xl">
@@ -405,32 +479,43 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
             <div className="grid w-full grid-cols-1 gap-4 lg:gap-6">
               <div className="flex flex-col">
                 <p className="text-gray-400">Email</p>
-                <p className="p-2 font-medium border rounded-md">{user.email}</p>
+                <p className="p-2 font-medium border rounded-md">
+                  {user.email}
+                </p>
               </div>
               <div className="flex flex-col">
                 <p className="text-gray-400">Branch</p>
-                <p className="p-2 font-medium border rounded-md">{selectedBranchCode}</p>
+                <p className="p-2 font-medium border rounded-md">
+                  {selectedBranchCode}
+                </p>
               </div>
               <div className="flex flex-col">
                 <p className="text-gray-400">Contact</p>
-                <p className="p-2 font-medium border rounded-md">{user.contact}</p>
+                <p className="p-2 font-medium border rounded-md">
+                  {user.contact}
+                </p>
               </div>
               <div className="flex flex-col">
                 <p className="text-gray-400">Username</p>
-                <p className="p-2 font-medium border rounded-md">{user.userName}</p>
+                <p className="p-2 font-medium border rounded-md">
+                  {user.userName}
+                </p>
               </div>
               <div className="flex flex-col">
                 <p className="text-gray-400">Branch</p>
-                <p className="p-2 font-medium border rounded-md">{user.branch?.branch}</p>
+                <p className="p-2 font-medium border rounded-md">
+                  {user.branch?.branch}
+                </p>
               </div>
             </div>
-           
-            {newProfilePic && ( 
-             <div className="bg-black text-white w-full h-[48px] rounded-[12px] mt-4 flex items-center justify-center"> 
-        
-              <button className="text-white" onClick={onSubmit}>Upload Profile Picture</button>
+
+            {newProfilePic && (
+              <div className="bg-black text-white w-full h-[48px] rounded-[12px] mt-4 flex items-center justify-center">
+                <button className="text-white" onClick={onSubmit}>
+                  Upload Profile Picture
+                </button>
               </div>
-              )}
+            )}
           </div>
 
           <div className="w-full mt-4 md:mt-0 md:px-10 ">
@@ -510,68 +595,60 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
             <h1 className="mb-2 text-base lg:text-lg">Signature</h1>
             {user?.signature ? (
               <div className="flex items-center justify-center overflow-hidden">
-              <div className="relative overflow-hidden">
-                <img
-                  src={user.signature}
-                  className="w-full border border-black sigCanvas h-28"
-                  alt="signature"
-                  draggable="false"
-                  onContextMenu={(e) => e.preventDefault()}
-                />
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div
-                    className="text-gray-950 opacity-30"
-                    style={{
-                      backgroundImage:
-                        "repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) 100px)",
-                      backgroundSize: "400px 400px",
-                      width: "100%",
-                      height: "100%",
-                      fontSize: "1.2em",
-                      transform: "rotate(-12deg)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    SMCT Group of Companies SMCT Group of Companies{" "}
-                    <br />
-                    SMCT Group of Companies SMCT Group of Companies{" "}
-                    <br />
-                    SMCT Group of Companies SMCT Group of Companies{" "}
-                    <br />
-                    SMCT Group of Companies SMCT Group of Companies{" "}
-                    <br />
-                    SMCT Group of Companies SMCT Group of Companies{" "}
-                    <br /> SMCT Group of Companies SMCT Group of
-                    Companies
-                    <br />
-                    SMCT Group of Companies SMCT Group of Companies
-                    <br /> SMCT Group of Companies SMCT Group of
-                    Companies
+                <div className="relative overflow-hidden">
+                  <img
+                    src={user.signature}
+                    className="w-full border border-black sigCanvas h-28"
+                    alt="signature"
+                    draggable="false"
+                    onContextMenu={(e) => e.preventDefault()}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div
+                      className="text-gray-950 opacity-30"
+                      style={{
+                        backgroundImage:
+                          "repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) 100px)",
+                        backgroundSize: "400px 400px",
+                        width: "100%",
+                        height: "100%",
+                        fontSize: "1.2em",
+                        transform: "rotate(-12deg)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      SMCT Group of Companies SMCT Group of Companies <br />
+                      SMCT Group of Companies SMCT Group of Companies <br />
+                      SMCT Group of Companies SMCT Group of Companies <br />
+                      SMCT Group of Companies SMCT Group of Companies <br />
+                      SMCT Group of Companies SMCT Group of Companies <br />{" "}
+                      SMCT Group of Companies SMCT Group of Companies
+                      <br />
+                      SMCT Group of Companies SMCT Group of Companies
+                      <br /> SMCT Group of Companies SMCT Group of Companies
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
             ) : (
               <SignatureCanvas
                 penColor="black"
-                ref={signatureRef}
+                ref={(ref) => setSignature(ref)}
                 canvasProps={{
                   className: "sigCanvas border border-black h-20 w-full",
                 }}
               />
             )}
-            {signatureEmpty && (
-              <span className="text-xs text-red-500">
-                Please provide a signature.
-              </span>
+            {signatureError && (
+              <span className="text-xs text-red-500">{signatureError}</span>
             )}
-            {!user?.signature && (
+            {user?.signature === null && (
               <div className="flex mt-2">
                 <button
-                  onClick={handleClear}
+                  onClick={(e) => handleClear(e)}
                   className="p-1 mr-2 bg-gray-300 rounded-lg"
                 >
                   Clear
@@ -579,18 +656,18 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
                 <button
                   onClick={handleSaveSignature}
                   className={`bg-primary text-white p-2 rounded-lg flex items-center ${
-                    signatureButton ? "opacity-50 cursor-not-allowed" : ""
+                    signatureLoading ? "opacity-50 cursor-not-allowed" : ""
                   }`}
-                  disabled={signatureButton}
+                  disabled={signatureLoading}
                 >
-                  {signatureButton ? (
+                  {signatureLoading ? (
                     <ClipLoader
                       color="#ffffff" // Adjust the color to match your design
                       size={24} // Adjust the size if needed
                       className="mr-2"
                     />
                   ) : null}
-                  {signatureButton ? "Saving..." : "Save"}
+                  {signatureLoading ? "Saving..." : "Save"}
                 </button>
               </div>
             )}
@@ -623,7 +700,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
           </div>
         </div>
       )}
-      {signatureButton && (
+      {signatureSuccess && (
         <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50 ">
           <div className="relative flex flex-col items-center justify-center w-1/4 bg-white rounded-md ">
             <FontAwesomeIcon
