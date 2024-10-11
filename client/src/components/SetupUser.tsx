@@ -384,7 +384,7 @@ const SetupUser = (props: Props) => {
               <tbody>
                 {Array.from({ length: 6 }).map((_, index) => (
                   <tr key={index}>
-                    <td className="w-full" colSpan={10}>
+                    <td className="w-full border border-gray-200" colSpan={10}>
                       <div className="flex justify-center">
                         <div className="flex flex-col w-full gap-4">
                           <div className="w-full h-12 skeleton bg-slate-300"></div>
