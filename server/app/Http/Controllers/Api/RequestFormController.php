@@ -628,7 +628,7 @@ class RequestFormController extends Controller
 
             // Fetch request forms where user_id matches the current user's ID
             $requestForms = RequestForm::where('user_id', $currentUserId)
-                ->select('id', 'user_id', 'form_type', 'form_data', 'status', 'noted_by', 'approved_by', 'attachment', 'request_code', 'created_at')
+                ->select('id', 'user_id', 'form_type', 'form_data', 'status', 'noted_by', 'approved_by', 'attachment', 'request_code', 'created_at','completed_code')
                 ->with('approvalProcess')
                 ->get();
 
@@ -717,6 +717,7 @@ class RequestFormController extends Controller
                         'approver_name' => "{$pendingApprover->firstName} {$pendingApprover->lastName}",
                     ] : "No Pending Approver",
                     'request_code' => "$branchName-$requestForm->request_code",
+                    'completed_code' => $requestForm->completed_code
                 ];
             });
 
