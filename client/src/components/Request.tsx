@@ -562,19 +562,13 @@ const Request = (props: Props) => {
             {row.status.trim()}
           </div>
 
-          {/* Tooltip Icon */}
+          {/* Tooltip Icon and Tooltip Itself */}
           {(row.status === "Pending" || row.status === "Ongoing") && (
-            <div className="absolute z-10 flex items-center justify-center transition-opacity duration-300 transform -translate-x-full -translate-y-1/2 top-1/2 right-44 group-hover:opacity-100">
-              <QuestionMarkCircleIcon className="absolute w-6 h-6 text-gray-500" />
-            </div>
-          )}
-
-          {/* Tooltip */}
-          {(row.status === "Pending" || row.status === "Ongoing") && (
-            <div className="absolute z-40 hidden w-auto h-auto p-1 mt-2 mb-4 ml-10 text-black bg-gray-600 rounded-md shadow-lg drop-shadow-sm group-hover:block">
-              <p className="text-[11px] text-white">
-                Pending: {row.pending_approver.approver_name}
-              </p>
+            <div
+              className="tooltip tooltip-right flex items-center transition-opacity duration-300 transform ml-1 group-hover:opacity-100"
+              data-tip={`Pending: ${row.pending_approver.approver_name}`}
+            >
+              <QuestionMarkCircleIcon className="w-6 h-6 text-gray-500" />
             </div>
           )}
         </div>
