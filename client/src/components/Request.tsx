@@ -565,7 +565,7 @@ const Request = (props: Props) => {
           {/* Tooltip Icon and Tooltip Itself */}
           {(row.status === "Pending" || row.status === "Ongoing") && (
             <div
-              className="tooltip tooltip-right flex items-center transition-opacity duration-300 transform ml-1 group-hover:opacity-100"
+              className="tooltip tooltip-right flex items-center transition-opacity cursor-pointer z-20 duration-300 transform ml-1 group-hover:opacity-100"
               data-tip={`Pending: ${row.pending_approver.approver_name}`}
             >
               <QuestionMarkCircleIcon className="w-6 h-6 text-gray-500" />
