@@ -27,6 +27,7 @@ type Record = {
   total_discount: number;
   total_spotcash: number;
   id: number;
+  request_code: string;
   created_at: Date;
   status: string;
   approvers_id: number;
@@ -581,7 +582,7 @@ const ViewDiscountModal: React.FC<Props> = ({
             </div>
           </div>
 
-          <p className="font-medium text-[14px]">Request ID:#{record.id}</p>
+          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
           <div className="flex w-full md:w-1/2 items-center">
             <p>Status:</p>
             <p

@@ -26,6 +26,7 @@ interface Approver {
 }
 type Record = {
   id: number;
+  request_code: string;
   created_at: Date;
   status: string;
   approvers_id: number;
@@ -600,7 +601,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
             </div>
           </div>
 
-          <p className="font-medium text-[14px]">Request ID:#{record.id}</p>
+          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
           <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
