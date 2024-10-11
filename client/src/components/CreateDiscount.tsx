@@ -699,8 +699,17 @@ const CreateDiscount = (props: Props) => {
                       {tableData.map((item, index) => (
                         <tr key={index} className="border border-black">
                           {/* Brand Input */}
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `brand-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <input
+                              id={`brand-${index}`}
                               type="text"
                               value={item.brand}
                               onChange={(e) =>
@@ -731,11 +740,18 @@ const CreateDiscount = (props: Props) => {
                                 <p className="text-red-500">Brand Required</p>
                               )}
                           </td>
-
-                          {/* Other Columns */}
                           {/* Model Input */}
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `model-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <input
+                              id={`model-${index}`}
                               type="text"
                               value={item.model}
                               onChange={(e) =>
@@ -767,8 +783,17 @@ const CreateDiscount = (props: Props) => {
                           </td>
 
                           {/* Unit Input */}
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `unit-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <textarea
+                              id={`unit-${index}`}
                               value={item.unit}
                               onChange={(e) =>
                                 handleChange(index, "unit", e.target.value)
@@ -797,8 +822,17 @@ const CreateDiscount = (props: Props) => {
                           </td>
 
                           {/* Part No Input */}
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `part_no-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <textarea
+                              id={`part_no-${index}`}
                               value={item.partno}
                               onChange={(e) =>
                                 handleChange(index, "partno", e.target.value)
@@ -818,8 +852,17 @@ const CreateDiscount = (props: Props) => {
                           </td>
 
                           {/* Labor Charge Input */}
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `labor-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <input
+                              id={`labor-${index}`}
                               type="number"
                               value={item.labor}
                               onChange={(e) =>
@@ -830,8 +873,17 @@ const CreateDiscount = (props: Props) => {
                           </td>
 
                           {/* Spotcash Input */}
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `spotcash-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <input
+                              id={`spotcash-${index}`}
                               type="number"
                               value={item.spotcash}
                               onChange={(e) =>
@@ -855,8 +907,17 @@ const CreateDiscount = (props: Props) => {
                           </td>
 
                           {/* Discounted Price Input */}
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `discountedPrice-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <input
+                              id={`discountedPrice-${index}`}
                               type="number"
                               value={item.discountedPrice}
                               onChange={(e) =>
