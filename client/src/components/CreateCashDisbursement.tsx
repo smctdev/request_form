@@ -429,8 +429,8 @@ const CreateCashDisbursement = (props: Props) => {
       <div className="bg-white w-full mb-5 rounded-[12px] flex flex-col">
         <div className="border-b flex justify-between flex-col px-[30px] md:flex-row ">
           <div>
-            <h1 className=" text-[24px] text-left py-4 text-primary font-bold flex mr-2">
-              <span className="mr-2 underline decoration-2 underline-offset-8">
+            <h1 className="text-3xl text-left py-4 text-primary font-bold flex mr-2">
+              <span className="mr-2 text-3xl underline decoration-2 underline-offset-8">
                 Cash
               </span>{" "}
               Disbursement Requisition Slip
@@ -448,7 +448,6 @@ const CreateCashDisbursement = (props: Props) => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="px-[35px] mt-4">
             <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2 md:flex md:justify-start md:gap-2"></div>
-
             <div className="w-full mt-4 overflow-x-auto md:overflow-auto">
               <div className="w-full">
                 <div className="table-container">

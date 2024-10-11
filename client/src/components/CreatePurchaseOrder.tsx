@@ -433,8 +433,8 @@ const CreatePurchaseOrder = (props: Props) => {
       <div className="bg-white w-full mb-5 rounded-[12px] flex flex-col">
         <div className="border-b flex justify-between flex-col px-[30px] md:flex-row ">
           <div>
-            <h1 className=" text-[24px] text-left py-4 text-primary font-bold flex mr-2">
-              <span className="mr-2 underline decoration-2 underline-offset-8">
+            <h1 className="text-3xl text-left py-4 text-primary font-bold flex mr-2">
+              <span className="mr-2 text-3xl underline decoration-2 underline-offset-8">
                 Purchase
               </span>{" "}
               Order Requisition Slip
@@ -454,7 +454,7 @@ const CreatePurchaseOrder = (props: Props) => {
             <div>
               <div className="grid flex-row justify-start grid-cols-1 mt-2 space-y-2 sm:grid-cols-2 md:grid-cols-4 sm:mt-0 sm:space-y-0 sm:gap-4 lg:gap-0 lg:space-x-4">
                 <div className={`${itemDiv}`}>
-                  <p className="font-semibold">Supplier</p>
+                  <p className="font-semibold">Supplier Name</p>
                   <textarea
                     {...register("supplier", { required: true })}
                     className={`${inputStyle} h-[44px] p-1`}
@@ -465,7 +465,7 @@ const CreatePurchaseOrder = (props: Props) => {
                   )}
                 </div>
                 <div className={`${itemDiv}`}>
-                  <p className="font-semibold">Address</p>
+                  <p className="font-semibold">Supplier Address</p>
                   <textarea
                     {...register("address", { required: true })}
                     className={`${inputStyle} h-[44px] p-1`}
@@ -595,7 +595,7 @@ const CreatePurchaseOrder = (props: Props) => {
                           </td>
                           {/* Unit Cost Input */}
                           <td
-                            className="border border-black p-1"
+                            className="p-1 border border-black"
                             onClick={() => {
                               const input = document.getElementById(
                                 `unit_cost-${index}`

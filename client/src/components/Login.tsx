@@ -48,11 +48,13 @@ const Login: React.FC = () => {
   const submitData: SubmitHandler<UserCredentials> = async (data) => {
     try {
       setLoading(true);
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/login`, {
-        
-        email: data.email,
-        password: data.password,
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/login`,
+        {
+          email: data.email,
+          password: data.password,
+        }
+      );
 
       if (response.data.status) {
         updateUser(
@@ -97,7 +99,6 @@ const Login: React.FC = () => {
         // alert(JSON.stringify(response.data.message));
         setLoading(false);
       }
-      
     } catch (error) {
       // console.error(error);
       // alert("An error occurred while logging in. Please try again later.");
@@ -152,33 +153,32 @@ const Login: React.FC = () => {
             </div>
             <div className="mb-4">
               <h1 className="lg:text-lg text-base mb-2">Password</h1>
-              <div className=" flex justify-center items-center relative w-full ">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  {...register("password")}
-                  placeholder="Enter password"
-                  className={`${inputStyle}  autofill-input`}
-                />
-
-                {showPassword ? (
-                  <EyeSlashIcon
-                    className="size-[24px] absolute right-3 cursor-pointer "
-                    onClick={() => setShowPassword(!showPassword)}
+              {/* <div className=" flex justify-center items-center relative w-full "> */}
+              <input
+                type={showPassword ? "text" : "password"}
+                {...register("password")}
+                placeholder="Enter password"
+                className={`${inputStyle}  autofill-input`}
+              />
+              <div className="flex flex-row items-center">
+                <label className="cursor-pointer label">
+                  <input
+                    type="checkbox"
+                    checked={showPassword}
+                    defaultChecked
+                    className="checkbox checkbox-info checked:[--chkfg:white]"
+                    onChange={() => setShowPassword(!showPassword)}
                   />
-                ) : (
-                  <EyeIcon
-                    className="size-[24px] absolute right-3 cursor-pointer "
-                    onClick={() => setShowPassword(!showPassword)}
-                  />
-                )}
-              </div>
+                </label>
+                <span className="label-text">Show password</span>
+                </div>
               {errors.password && (
                 <p className="text-red-500 text-xs">
                   {" "}
                   {errors.password.message}
                 </p>
               )}
-              <div className="flex justify-end">
+              <div className="flex justify-center">
                 <Link to="/forgotpassword">
                   <p className=" font-medium lg:text-base text-xs mt-[12px]  cursor-pointer">
                     Forgot Password
