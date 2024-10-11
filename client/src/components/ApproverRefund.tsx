@@ -507,7 +507,7 @@ const ApproverRefund: React.FC<Props> = ({
         <div className="flex flex-col items-start justify-start w-full space-y-4">
           <div className="flex items-center justify-between w-full">
             <p className="font-medium text-[14px]">
-              Request ID: #{record.request_code}
+              Request ID: {record.request_code}
             </p>
             <div className="flex w-auto ">
               <p>Date: </p>
