@@ -51,6 +51,7 @@ type Record = {
   avp_staff: Approver[];
   requested_signature: string;
   requested_position: string;
+  completed_status: string;
 };
 interface Approver {
   id: number;
@@ -256,7 +257,6 @@ const RequestApprover = (props: Props) => {
             { headers }
           );
           setRequests(response.data.request_forms);
-          console.log(response.data.request_forms);
         } catch (error) {
           console.error("Error fetching requests data:", error);
         } finally {
@@ -329,6 +329,10 @@ const RequestApprover = (props: Props) => {
         return requests.filter(
           (item: Record) => item.status.trim() === "Approved"
         );
+      case 2: // Approved Requests
+        return requests.filter(
+          (item: Record) => item.completed_status.trim() === "Completed"
+        );
       case 3: // Unsuccessful Requests
         return requests.filter(
           (item: Record) =>
@@ -385,7 +389,9 @@ const RequestApprover = (props: Props) => {
           {/* Status Badge */}
           <div
             className={`${
-              row.status.trim() === "Pending"
+              row.completed_status === "Completed"
+                ? "bg-blue-700"
+                : row.status.trim() === "Pending"
                 ? "bg-yellow"
                 : row.status.trim() === "Approved"
                 ? "bg-green"
@@ -397,7 +403,9 @@ const RequestApprover = (props: Props) => {
                 : "bg-red-600"
             } rounded-lg py-1 px-3 text-start text-white flex`}
           >
-            {row.status.trim()}
+            {row.completed_status === "Completed"
+              ? row.completed_status.trim()
+              : row.status.trim()}
           </div>
 
           {/* Tooltip Icon */}

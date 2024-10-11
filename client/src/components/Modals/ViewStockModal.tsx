@@ -534,7 +534,7 @@ const ViewStockModal: React.FC<Props> = ({
                   ? "bg-pink"
                   : record.status.trim() === "Ongoing"
                   ? "bg-primary"
-                  : ""
+                  : "bg-blue-700"
               } rounded-lg  py-1 w-1/3
              font-medium text-[14px] text-center ml-2 text-white`}
             >
