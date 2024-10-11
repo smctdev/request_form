@@ -237,21 +237,21 @@ const AddBranchModal = ({
   
 
   return modalIsOpen ? (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col">
+    <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="p-4 w-7/12 md:w-2/6 relative bg-primary flex justify-center mx-20 border-b rounded-t-[12px]">
         <h2 className="text-center text-xl md:text-[32px] font-bold text-white">
           Add {entityType}
         </h2>
         <XMarkIcon
-          className="size-6 text-black absolute right-3 cursor-pointer"
+          className="absolute text-black cursor-pointer size-6 right-3"
           onClick={closeModal}
         />
       </div>
       <div className="bg-white w-7/12 md:w-2/6 x-20 rounded-b-[12px] shadow-lg overflow-y-auto">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mt-10 md:mx-5 gap-4">
+          <div className="gap-4 mt-10 md:mx-5">
             <div className="mb-4">
-              <p className="font-medium w-full">Branch</p>
+              <p className="w-full font-medium">Branch</p>
               <select
                 {...register("branch")}
                 className="w-full bg-[#F5F5F5] border select select-bordered border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -266,44 +266,44 @@ const AddBranchModal = ({
                 ))}
               </select>
               {errors.branch && (
-                <span className="text-red-500 text-xs">{errors.branch.message}</span>
+                <span className="text-xs text-red-500">{errors.branch.message}</span>
               )}
             </div>
             <div className="mb-4">
-              <p className="font-medium w-full">Branch Code</p>
+              <p className="w-full font-medium">Branch Code</p>
              <input
              type="text"
              onChange={(e) => setValue("branchCode", e.target.value)}
              className="w-full bg-[#F5F5F5] border input input-bordered border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
              />
               {errors.branchCode && (
-                <span className="text-red-500 text-xs">{errors.branchCode.message}</span>
+                <span className="text-xs text-red-500">{errors.branchCode.message}</span>
               )}
             </div>
             <div className="mb-4">
-              <p className="font-medium w-full">Branch Name</p>
+              <p className="w-full font-medium">Branch Name</p>
              <input
              type="text"
              onChange={(e) => setValue("branchNameInput", e.target.value)}
              className="w-full bg-[#F5F5F5] input input-bordered border border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
              />
              {backendError && (
-               <span className="text-red-500 text-xs">{backendError}</span>
+               <span className="text-xs text-red-500">{backendError}</span>
              )}
               {errors.branchNameInput && (
-                <span className="text-red-500 text-xs">{errors.branchNameInput.message}</span>
+                <span className="text-xs text-red-500">{errors.branchNameInput.message}</span>
               )}
             </div>
           </div>
-          <div className="flex lg:flex-row justify-center space-x-2 mt-5 md:mt-10 mb-10">
+          <div className="flex justify-center mt-5 mb-10 space-x-2 lg:flex-row md:mt-10">
             <button
-              className="bg-[#9C9C9C] p-2 h-12  w-1/2 sm:w-1/3 rounded-[12px] text-white font-medium"
+              className="bg-gray-500 p-2 h-12 hover:bg-gray-400 w-1/2 sm:w-1/3 rounded-[12px] text-white font-medium"
               onClick={closeModal}
             >
               Cancel
             </button>
             <button
-              className="bg-primary p-2 w-1/2 sm:w-1/3  h-12 rounded-[12px] text-white font-medium"
+              className="bg-primary hover:bg-blue-400 p-2 w-1/2 sm:w-1/3  h-12 rounded-[12px] text-white font-medium"
               type="submit"
               disabled={loading}
             >
