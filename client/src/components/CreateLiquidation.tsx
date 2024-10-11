@@ -7,6 +7,7 @@ import {
   CalendarIcon,
   MinusCircleIcon,
   PlusCircleIcon,
+  TrashIcon,
 } from "@heroicons/react/24/solid";
 import TextareaAutosize from "react-textarea-autosize";
 import { set, useForm } from "react-hook-form";
@@ -261,7 +262,7 @@ const CreateLiquidation = (props: Props) => {
     setTableData([...tableData]);
   };
 
-  const handleRemoveItem = () => {
+  const handleRemoveItem = (index: number) => {
     if (tableData.length > 1) {
       Swal.fire({
         title: "Are you sure?",
@@ -274,8 +275,7 @@ const CreateLiquidation = (props: Props) => {
         cancelButtonText: "Cancel",
       }).then((result) => {
         if (result.isConfirmed) {
-          const updatedItems = [...tableData];
-          updatedItems.pop();
+          const updatedItems = tableData.filter((_, i) => i !== index);
           setTableData(updatedItems);
         }
       });
@@ -307,7 +307,7 @@ const CreateLiquidation = (props: Props) => {
         perDiem: "",
         particulars: "",
         particularsAmount: "",
-        grandTotal: "0",
+        grandTotal: "0.00",
       },
     ]);
   }, [selectedRequestType]);
@@ -327,7 +327,7 @@ const CreateLiquidation = (props: Props) => {
         perDiem: "",
         particulars: "",
         particularsAmount: "",
-        grandTotal: "0",
+        grandTotal: "0.00",
       },
     ]);
   };
@@ -585,8 +585,8 @@ const CreateLiquidation = (props: Props) => {
       <div className="bg-white w-full mb-5 rounded-[12px] flex flex-col">
         <div className="border-b flex justify-between flex-col px-[30px] md:flex-row ">
           <div>
-            <h1 className=" text-[24px] text-left py-4 text-primary font-bold flex mr-2">
-              <span className="mr-2 underline decoration-2 underline-offset-8">
+            <h1 className="text-3xl text-left py-4 text-primary font-bold flex mr-2">
+              <span className="text-3xl mr-2 underline decoration-2 underline-offset-8">
                 Liquidation
               </span>{" "}
               of Actual Expense
@@ -634,10 +634,9 @@ const CreateLiquidation = (props: Props) => {
                         <th colSpan={3} className="border border-black">
                           Hotel
                         </th>
-                        <th colSpan={3} className="border border-black">
+                        <th colSpan={5} className="border border-black">
                           PER DIEM OTHER RELATED EXPENSES
                         </th>
-                        <th></th>
                       </tr>
                       <tr>
                         <th className={`${tableStyle}`}>Day</th>
@@ -659,8 +658,17 @@ const CreateLiquidation = (props: Props) => {
                     <tbody>
                       {tableData.map((item, index) => (
                         <tr key={index} className="border border-black">
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `day-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <input
+                              id={`day-${index}`}
                               type="date"
                               value={item.liquidationDate}
                               onChange={(e) =>
@@ -692,8 +700,17 @@ const CreateLiquidation = (props: Props) => {
                                 <p className="text-red-500">Date Required</p>
                               )}
                           </td>
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `from-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <textarea
+                              id={`from-${index}`}
                               value={item.from}
                               onChange={(e) =>
                                 handleChange(index, "from", e.target.value)
@@ -712,8 +729,17 @@ const CreateLiquidation = (props: Props) => {
                                 <p className="text-red-500">Required</p>
                               )}
                           </td>
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `to-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <textarea
+                              id={`to-${index}`}
                               value={item.to}
                               onChange={(e) =>
                                 handleChange(index, "to", e.target.value)
@@ -732,8 +758,17 @@ const CreateLiquidation = (props: Props) => {
                                 <p className="text-red-500">Required</p>
                               )}
                           </td>
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `type-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <textarea
+                              id={`type-${index}`}
                               value={item.transportation}
                               onChange={(e) =>
                                 handleChange(
@@ -745,8 +780,17 @@ const CreateLiquidation = (props: Props) => {
                               className={`${tableInput}`}
                             />
                           </td>
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `transportation_amount-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <input
+                              id={`transportation_amount-${index}`}
                               type="number"
                               value={item.transportationAmount}
                               onChange={(e) =>
@@ -759,8 +803,17 @@ const CreateLiquidation = (props: Props) => {
                               className={`${tableInput}`}
                             />
                           </td>
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `hotel_name-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <textarea
+                              id={`hotel_name-${index}`}
                               value={item.hotel}
                               onChange={(e) =>
                                 handleChange(index, "hotel", e.target.value)
@@ -768,8 +821,17 @@ const CreateLiquidation = (props: Props) => {
                               className={`${tableInput}`}
                             ></textarea>
                           </td>
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `hotel_address-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <textarea
+                              id={`hotel_address-${index}`}
                               value={item.hotelAddress}
                               onChange={(e) =>
                                 handleChange(
@@ -781,8 +843,17 @@ const CreateLiquidation = (props: Props) => {
                               className={`${tableInput}`}
                             />
                           </td>
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `hotel_amount-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <input
+                              id={`hotel_amount-${index}`}
                               type="number"
                               value={item.hotelAmount}
                               onChange={(e) =>
@@ -795,8 +866,17 @@ const CreateLiquidation = (props: Props) => {
                               className={`${tableInput}`}
                             />
                           </td>
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `per_diem-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <input
+                              id={`per_diem-${index}`}
                               type="number"
                               value={item.perDiem}
                               onChange={(e) =>
@@ -805,8 +885,17 @@ const CreateLiquidation = (props: Props) => {
                               className={`${tableInput}`}
                             />
                           </td>
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `particulars-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <textarea
+                              id={`particulars-${index}`}
                               value={item.particulars}
                               onChange={(e) =>
                                 handleChange(
@@ -818,8 +907,17 @@ const CreateLiquidation = (props: Props) => {
                               className={`${tableInput} focus:outline-0 resize-none h-[100px]  `}
                             />
                           </td>
-                          <td className="p-1 border border-black">
+                          <td
+                            className="p-1 border border-black"
+                            onClick={() => {
+                              const input = document.getElementById(
+                                `particulars_amount-${index}`
+                              );
+                              if (input) input.focus();
+                            }}
+                          >
                             <input
+                              id={`particulars_amount-${index}`}
                               type="number"
                               value={item.particularsAmount}
                               onChange={(e) =>
@@ -835,6 +933,15 @@ const CreateLiquidation = (props: Props) => {
                           <td className="p-1 font-bold text-center border border-black">
                             ₱{item.grandTotal}
                           </td>
+                          {tableData.length > 1 && (
+                            <td>
+                              <TrashIcon
+                                className="text-[#e63c3c] size-7 cursor-pointer"
+                                onClick={() => handleRemoveItem(index)}
+                                title="Remove Item"
+                              />
+                            </td>
+                          )}
                         </tr>
                       ))}
                     </tbody>
@@ -846,18 +953,6 @@ const CreateLiquidation = (props: Props) => {
               <hr className="w-full my-2 border-t-4 border-gray-400 border-dotted" />
 
               <div className="flex flex-row items-center gap-2">
-                {tableData.length > 1 && (
-                  <span
-                    className={`${buttonStyle} bg-pink flex items-center justify-center cursor-pointer hover:bg-white hover:border-4 hover:border-pink hover:text-pink`}
-                    onClick={handleRemoveItem}
-                  >
-                    <MinusCircleIcon
-                      className="w-5 h-5 mr-2"
-                      aria-hidden="true"
-                    />
-                    Remove Item
-                  </span>
-                )}
                 <span
                   className={`bg-yellow flex items-center cursor-pointer hover:bg-white hover:border-4 hover:border-yellow hover:text-yellow text-gray-950 max-w-md justify-center ${buttonStyle}`}
                   onClick={handleAddItem}
@@ -1076,7 +1171,9 @@ const CreateLiquidation = (props: Props) => {
                 onClick={handleFormSubmit}
                 disabled={loading}
               >
-                <span className="text-white hover:text-black">{loading ? "PLEASE WAIT..." : "CREATE REQUEST"}</span>
+                <span className="text-white hover:text-black">
+                  {loading ? "PLEASE WAIT..." : "CREATE REQUEST"}
+                </span>
               </button>
             </div>
           </div>

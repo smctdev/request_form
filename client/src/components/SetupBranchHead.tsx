@@ -347,13 +347,13 @@ const SetupBranchHead = (props: Props) => {
   };
   const getAssignedBranches = (row: Record) => {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2  space-y-2  sm:gap-2 sm:space-y-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 ">
+      <div className="grid grid-cols-1 space-y-2 sm:grid-cols-2 sm:gap-2 sm:space-y-0 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 ">
         {row.branches.map((branchInfo, index) => (
           <div
             className="bg-primary p-2 rounded-[12px] w-20 text-center "
             key={index}
           >
-            <ul className=" text-white">{branchInfo.data[0].branch_code}</ul>
+            <ul className="text-white ">{branchInfo.data[0].branch_code}</ul>
           </div>
         ))}
       </div>
@@ -421,7 +421,7 @@ const SetupBranchHead = (props: Props) => {
       cell: (row: Record) => (
         <div className="flex space-x-2">
           <PencilSquareIcon
-            className="text-primary size-8 cursor-pointer"
+            className="cursor-pointer text-primary size-8"
             onClick={() => editModalShow(row)}
           />
           <TrashIcon
@@ -436,13 +436,13 @@ const SetupBranchHead = (props: Props) => {
   const pStyle = "font-medium";
   const inputStyle = "border border-black rounded-md p-1";
   return (
-    <div className="bg-graybg dark:bg-blackbg h-full w-full pt-4 px-4 sm:px-10 md:px-10 lg:px-30 xl:px-30">
-      <div className=" h-auto drop-shadow-lg rounded-lg md:mr-4 w-full ">
-        <div className="bg-white rounded-lg w-full flex flex-col overflow-x-auto">
+    <div className="w-full h-full px-4 pt-4 bg-graybg dark:bg-blackbg sm:px-10 md:px-10 lg:px-30 xl:px-30">
+      <div className="w-full h-auto rounded-lg drop-shadow-lg md:mr-4">
+        <div className="flex flex-col w-full overflow-x-auto bg-white rounded-lg">
           <h1 className="pl-4 sm:pl-[30px] text-[24px] text-left py-4 text-primary font-bold mr-2 underline decoration-2 underline-offset-8">
             Branch Head
           </h1>
-          <div className="flex items-end justify-end  mx-2 bg-white">
+          <div className="flex items-end justify-end mx-2 bg-white">
             <div>
               <button
                 className="bg-primary text-white rounded-[12px] p-2"
@@ -452,16 +452,16 @@ const SetupBranchHead = (props: Props) => {
               </button>
             </div>
           </div>
-          <div className="sm:mx-0 md:mx-4 my-2 relative w-2/12">
+          <div className="relative w-2/12 my-2 sm:mx-0 md:mx-4">
             <div className="relative flex-grow">
               <input
                 type="text"
-                className="w-full border bg-white border-black rounded-md pl-10 pr-3 py-2"
+                className="w-full py-2 pl-10 pr-3 bg-white border border-black rounded-md"
                 value={filterTerm}
                 onChange={(e) => setFilterTerm(e.target.value)}
                 placeholder="Search Branch Head"
               />
-              <MagnifyingGlassIcon className="h-5 w-5 text-black absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+              <MagnifyingGlassIcon className="absolute w-5 h-5 text-black transform -translate-y-1/2 pointer-events-none left-3 top-1/2" />
             </div>
           </div>
           {loading ? (
@@ -484,10 +484,10 @@ const SetupBranchHead = (props: Props) => {
               <tbody>
                 {Array.from({ length: 6 }).map((_, index) => (
                   <tr key={index}>
-                    <td className="w-full" colSpan={4}>
+                    <td className="w-full border border-gray-200" colSpan={4}>
                       <div className="flex justify-center">
-                        <div className="flex flex-col gap-4 w-full">
-                          <div className="skeleton h-12 w-full"></div>
+                        <div className="flex flex-col w-full gap-4">
+                          <div className="w-full h-12 skeleton bg-slate-300"></div>
                         </div>
                       </div>
                     </td>
@@ -505,7 +505,7 @@ const SetupBranchHead = (props: Props) => {
               // progressComponent={<p>Loading...</p>}
               noDataComponent={
                 filteredBranchHead.length === 0 ? (
-                  <p className="flex flex-col justify-center items-center h-64">
+                  <p className="flex flex-col items-center justify-center h-64">
                     {filterTerm
                       ? "No " + `"${filterTerm}"` + " found"
                       : "No data available."}

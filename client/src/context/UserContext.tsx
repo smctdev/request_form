@@ -69,7 +69,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
     const fetchUserProfile = async () => {
       // if (!token) {
       //   setUserId(null);
@@ -77,6 +77,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
       //   return;
       // }
       try {
+
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/profile`,
           {
@@ -97,7 +98,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
           setIsAuthenticated(true);
         }
       } catch (error) {
-        console.error("Failed to fetch user profile", error);
+        // console.error("Failed to fetch user profile", error);
         setUserId(null);
       } finally {
         setLoading(false);

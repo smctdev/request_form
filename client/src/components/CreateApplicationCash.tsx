@@ -634,8 +634,8 @@ const CreateApplicationCash = (props: Props) => {
       <div className="bg-white w-full   mb-5 rounded-[12px] flex flex-col">
         <div className="border-b flex justify-between flex-col px-[30px] md:flex-row ">
           <div>
-            <h1 className=" text-[24px] text-left py-4 text-primary font-bold flex mr-2">
-              <span className="mr-2 underline decoration-2 underline-offset-8">
+            <h1 className=" text-3xl text-left py-4 text-primary font-bold flex mr-2">
+              <span className="mr-2 text-3xl underline decoration-2 underline-offset-8">
                 Application
               </span>{" "}
               For Cash Advance
@@ -719,8 +719,17 @@ const CreateApplicationCash = (props: Props) => {
                         <tbody>
                           {tableData.map((item, index) => (
                             <tr key={index} className="border border-black">
-                              <td className="p-1 border border-black ">
+                              <td
+                                className="p-1 border border-black "
+                                onClick={() => {
+                                  const input = document.getElementById(
+                                    `date-${index}`
+                                  );
+                                  if (input) input.focus();
+                                }}
+                              >
                                 <input
+                                  id={`date-${index}`}
                                   type="date"
                                   value={item.cashDate}
                                   onChange={(e) => {
@@ -761,8 +770,17 @@ const CreateApplicationCash = (props: Props) => {
                                   className={`cursor-not-allowed ${tableInput}`}
                                 />
                               </td>
-                              <td className="p-1 border border-black ">
+                              <td
+                                className="p-1 border border-black "
+                                onClick={() => {
+                                  const input = document.getElementById(
+                                    `from-${index}`
+                                  );
+                                  if (input) input.focus();
+                                }}
+                              >
                                 <input
+                                  id={`from-${index}`}
                                   type="text"
                                   value={item.from}
                                   onChange={(e) =>
@@ -798,8 +816,17 @@ const CreateApplicationCash = (props: Props) => {
                                   )}
                               </td>
 
-                              <td className="p-1 border border-black ">
+                              <td
+                                className="p-1 border border-black "
+                                onClick={() => {
+                                  const input = document.getElementById(
+                                    `to-${index}`
+                                  );
+                                  if (input) input.focus();
+                                }}
+                              >
                                 <input
+                                  id={`to-${index}`}
                                   type="text"
                                   value={item.to}
                                   onChange={(e) =>
@@ -832,9 +859,17 @@ const CreateApplicationCash = (props: Props) => {
                                     <p className="text-red-500">To Required</p>
                                   )}
                               </td>
-                              <td className="p-1 border border-black ">
+                              <td
+                                className="p-1 border border-black "
+                                onClick={() => {
+                                  const input = document.getElementById(
+                                    `activity-${index}`
+                                  );
+                                  if (input) input.focus();
+                                }}
+                              >
                                 <textarea
-                                  // id={`activity-${index}`}
+                                  id={`activity-${index}`}
                                   value={item.activity}
                                   onChange={(e) =>
                                     handleChange(
@@ -859,8 +894,17 @@ const CreateApplicationCash = (props: Props) => {
                                   }
                                 />
                               </td>
-                              <td className="p-1 border border-black">
+                              <td
+                                className="p-1 border border-black"
+                                onClick={() => {
+                                  const input = document.getElementById(
+                                    `hotel_name-${index}`
+                                  );
+                                  if (input) input.focus();
+                                }}
+                              >
                                 <textarea
+                                  id={`hotel_name-${index}`}
                                   value={item.hotel}
                                   onChange={(e) =>
                                     handleChange(index, "hotel", e.target.value)
@@ -881,8 +925,17 @@ const CreateApplicationCash = (props: Props) => {
                                   }
                                 />
                               </td>
-                              <td className="p-1 border border-black">
+                              <td
+                                className="p-1 border border-black"
+                                onClick={() => {
+                                  const input = document.getElementById(
+                                    `rate-${index}`
+                                  );
+                                  if (input) input.focus();
+                                }}
+                              >
                                 <input
+                                  id={`rate-${index}`}
                                   type="number"
                                   value={item.rate}
                                   onChange={(e) =>
@@ -901,8 +954,17 @@ const CreateApplicationCash = (props: Props) => {
                                   className={`${tableInput}`}
                                 />
                               </td>
-                              <td className="p-1 border border-black">
+                              <td
+                                className="p-1 border border-black"
+                                onClick={() => {
+                                  const input = document.getElementById(
+                                    `per_diem-${index}`
+                                  );
+                                  if (input) input.focus();
+                                }}
+                              >
                                 <input
+                                  id={`per_diem-${index}`}
                                   type="number"
                                   value={item.perDiem}
                                   onChange={(e) =>
@@ -925,7 +987,15 @@ const CreateApplicationCash = (props: Props) => {
                                   className={`${tableInput}`}
                                 />
                               </td>
-                              <td className="p-1 border border-black">
+                              <td
+                                className="p-1 border border-black"
+                                onClick={() => {
+                                  const input = document.getElementById(
+                                    `remarks-${index}`
+                                  );
+                                  if (input) input.focus();
+                                }}
+                              >
                                 <textarea
                                   id={`remarks-${index}`}
                                   value={item.remarks}

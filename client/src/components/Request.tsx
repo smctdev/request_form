@@ -203,6 +203,9 @@ const Request = (props: Props) => {
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
   const [loading, setLoading] = useState(true);
   const [notificationReceived, setnotificationReceived] = useState(false);
+  const [search, searchRequest] = useState("");
+
+  console.log("Requests", requests);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -365,31 +368,68 @@ const Request = (props: Props) => {
     setSelected(index);
   };
 
+  const handleSearchRequest = (event: React.ChangeEvent<HTMLInputElement>) => {
+    searchRequest(event.target.value.toLowerCase());
+  };
+
   const filteredData = () => {
+    let filteredRequests;
+
     switch (selected) {
-      case 0: // All Requests
-        return requests;
-      case 1: // Pending Requests
-        return requests.filter(
+      case 0:
+        filteredRequests = requests;
+        break;
+      case 1:
+        filteredRequests = requests.filter(
           (item: Record) =>
             item.status.trim() === "Pending" || item.status.trim() === "Ongoing"
         );
-      case 2: // Approved Requests
-        return requests.filter(
+        break;
+      case 2:
+        filteredRequests = requests.filter(
           (item: Record) => item.status.trim() === "Approved"
         );
-      case 3: // Unsuccessful Requests
-        return requests.filter(
+        break;
+      case 3:
+        filteredRequests = requests.filter(
           (item: Record) => item.status.trim() === "Disapproved"
         );
+        break;
       default:
-        return requests;
+        filteredRequests = requests;
     }
+
+    if (search.trim()) {
+      filteredRequests = filteredRequests.filter((item: Record) => {
+        const formattedDate = new Date(item.created_at).toLocaleDateString(
+          "en-US",
+          {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }
+        );
+        const branchId = parseInt(item.form_data[0].branch, 10);
+        const branchCode = branchMap.get(branchId)?.toLowerCase();
+
+        return (
+          item.request_code.toLowerCase().includes(search.toLowerCase()) ||
+          item.form_type.toLowerCase().includes(search.toLowerCase()) ||
+          formattedDate.toLowerCase().includes(search) ||
+          branchCode?.includes(search.toLowerCase()) ||
+          item.status.toLowerCase().includes(search.toLowerCase())
+        );
+      });
+    }
+
+    return filteredRequests;
   };
+
+  console.log(filteredData())
 
   const NoDataComponent = () => (
     <div className="flex items-center justify-center h-64 text-gray-500">
-      <p className="text-lg">No records found</p>
+      <p className="text-lg">No {search ? `"${search}"` : ""} records found</p>
     </div>
   );
 
@@ -556,25 +596,19 @@ const Request = (props: Props) => {
                 ? "bg-pink"
                 : row.status.trim() === "Ongoing"
                 ? "bg-blue-500"
-                : "bg-red-600"
+                : "bg-blue-700"
             } rounded-lg py-1 px-3 text-center text-white flex items-center`}
           >
             {row.status.trim()}
           </div>
 
-          {/* Tooltip Icon */}
+          {/* Tooltip Icon and Tooltip Itself */}
           {(row.status === "Pending" || row.status === "Ongoing") && (
-            <div className="absolute z-10 flex items-center justify-center transition-opacity duration-300 transform -translate-x-full -translate-y-1/2 top-1/2 right-44 group-hover:opacity-100">
-              <QuestionMarkCircleIcon className="absolute w-6 h-6 text-gray-500" />
-            </div>
-          )}
-
-          {/* Tooltip */}
-          {(row.status === "Pending" || row.status === "Ongoing") && (
-            <div className="absolute z-40 hidden w-auto h-auto p-1 mt-2 mb-4 ml-10 text-black bg-gray-600 rounded-md shadow-lg drop-shadow-sm group-hover:block">
-              <p className="text-[11px] text-white">
-                Pending: {row.pending_approver.approver_name}
-              </p>
+            <div
+              className="tooltip tooltip-right flex items-center transition-opacity cursor-pointer z-20 duration-300 transform ml-1 group-hover:opacity-100"
+              data-tip={`Pending: ${row.pending_approver.approver_name}`}
+            >
+              <QuestionMarkCircleIcon className="w-6 h-6 text-gray-500" />
             </div>
           )}
         </div>
@@ -624,18 +658,37 @@ const Request = (props: Props) => {
       <div className="relative w-full h-auto rounded-lg drop-shadow-lg md:mr-4 ">
         <div className="flex flex-col items-center w-full overflow-x-auto bg-white rounded-lg">
           <div className="w-full border-b-2 md:px-30">
-            <ul className="flex items-center justify-start px-2 py-4 space-x-4 overflow-x-auto font-medium md:px-30 md:space-x-6">
-              {items.map((item, index) => (
-                <li
-                  key={index}
-                  onClick={() => handleClick(index)}
-                  className={`cursor-pointer hover:text-primary px-2 ${
-                    selected === index ? "underline text-primary" : ""
-                  } underline-offset-8 decoration-primary decoration-2`}
+            <ul className="flex items-center justify-between px-2 py-4 space-x-4 overflow-x-auto font-medium md:px-30 md:space-x-6">
+              <div className="justify-start flex">
+                {items.map((item, index) => (
+                  <li
+                    key={index}
+                    onClick={() => handleClick(index)}
+                    className={`cursor-pointer hover:text-primary px-2 ${
+                      selected === index ? "underline text-primary" : ""
+                    } underline-offset-8 decoration-primary decoration-2`}
+                  >
+                    {item}
+                  </li>
+                ))}
+              </div>
+              <div className="group justify-end flex px-4 py-3 rounded-md border-2 border-blue-300 overflow-hidden max-w-md mx-auto font-[sans-serif] focus-within:ring-2 focus-within:ring-blue-400 focus-within:border-blue-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 192.904 192.904"
+                  width="16px"
+                  className="fill-gray-600 mr-3 rotate-90"
                 >
-                  {item}
-                </li>
-              ))}
+                  <path d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z"></path>
+                </svg>
+                <input
+                  type="email"
+                  placeholder="Search..."
+                  className="w-full outline-none bg-transparent text-gray-600 text-sm focus:outline-none"
+                  value={search}
+                  onChange={handleSearchRequest}
+                />
+              </div>
             </ul>
           </div>
           <div className="w-full overflow-x-auto">

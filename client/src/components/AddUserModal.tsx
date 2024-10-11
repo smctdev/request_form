@@ -193,22 +193,22 @@ const AddUserModal = ({
   const inputStyle = "border border-black rounded-md p-1 w-full";
   return (
     modalIsOpen && (
-      <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col ">
+      <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50 ">
         <div className=" p-4  w-7/12 md:w-2/5  relative bg-primary flex justify-center mx-20  border-b rounded-t-[12px]">
           <h2 className="text-center text-xl md:text-[32px] font-bold text-white">
             Add {entityType}
           </h2>
           <XMarkIcon
-            className="size-6 text-white absolute right-3 cursor-pointer"
+            className="absolute text-white cursor-pointer size-6 right-3"
             onClick={closeModal}
           />
         </div>
         <div className="bg-white w-7/12 md:w-2/5 x-20 rounded-b-[12px] shadow-lg  overflow-y-auto  h-2/3">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg mt-2">
+            <div className="max-w-4xl p-6 mx-auto mt-2 bg-white rounded-lg">
 
               {/* Form Fields */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 {/* First Name */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
@@ -218,10 +218,10 @@ const AddUserModal = ({
                     type="text"
                     {...register("firstName")}
                     placeholder="Enter first name"
-                    className="input input-bordered bg-white w-full mt-2"
+                    className="w-full mt-2 bg-white input input-bordered"
                   />
                   {errors.firstName && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {errors.firstName.message}
                     </span>
                   )}
@@ -236,10 +236,10 @@ const AddUserModal = ({
                     type="text"
                     {...register("lastName")}
                     placeholder="Enter last name"
-                    className="input input-bordered bg-white w-full mt-2"
+                    className="w-full mt-2 bg-white input input-bordered"
                   />
                   {errors.lastName && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {errors.lastName.message}
                     </span>
                   )}
@@ -254,10 +254,10 @@ const AddUserModal = ({
                     type="text"
                     {...register("email")}
                     placeholder="Enter email"
-                    className="input input-bordered bg-white w-full mt-2"
+                    className="w-full mt-2 bg-white input input-bordered"
                   />
                   {errors.email && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {errors.email.message}
                     </span>
                   )}
@@ -272,10 +272,10 @@ const AddUserModal = ({
                     type="text"
                     {...register("userName")}
                     placeholder="Enter username"
-                    className="input input-bordered bg-white w-full mt-2"
+                    className="w-full mt-2 bg-white input input-bordered"
                   />
                   {errors.userName && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {errors.userName.message}
                     </span>
                   )}
@@ -290,10 +290,10 @@ const AddUserModal = ({
                     type="text"
                     {...register("contact")}
                     placeholder="Enter contact number"
-                    className="input input-bordered bg-white w-full mt-2"
+                    className="w-full mt-2 bg-white input input-bordered"
                   />
                   {errors.contact && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {errors.contact.message}
                     </span>
                   )}
@@ -310,7 +310,7 @@ const AddUserModal = ({
                     render={({ field }) => (
                       <select
                         {...field}
-                        className="select select-bordered bg-white w-full mt-2"
+                        className="w-full mt-2 bg-white select select-bordered"
                         onChange={(e) => {
                           field.onChange(e);
                           handleBranchCodeChange(Number(e.target.value));
@@ -333,7 +333,7 @@ const AddUserModal = ({
                     )}
                   />
                   {errors.branchCode && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {errors.branchCode.message}
                     </span>
                   )}
@@ -351,12 +351,12 @@ const AddUserModal = ({
                       <input
                         {...field}
                         readOnly
-                        className="input input-bordered bg-white w-full mt-2"
+                        className="w-full mt-2 bg-white input input-bordered"
                       />
                     )}
                   />
                   {errors.branch && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {errors.branch.message}
                     </span>
                   )}
@@ -371,10 +371,10 @@ const AddUserModal = ({
                     type="text"
                     {...register("employee_id")}
                     placeholder="Enter your employee ID"
-                    className="input input-bordered bg-white w-full mt-2"
+                    className="w-full mt-2 bg-white input input-bordered"
                   />
                   {errors.employee_id && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {errors.employee_id.message}
                     </span>
                   )}
@@ -391,7 +391,7 @@ const AddUserModal = ({
                     render={({ field }) => (
                       <select
                         {...field}
-                        className="select select-bordered bg-white w-full mt-2"
+                        className="w-full mt-2 bg-white select select-bordered"
                       >
                         <option value="" hidden>Select Role</option>
                         <option value="" disabled>Select Role</option>
@@ -404,7 +404,7 @@ const AddUserModal = ({
                     )}
                   />
                   {errors.role && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {errors.role.message}
                     </span>
                   )}
@@ -421,7 +421,7 @@ const AddUserModal = ({
                     render={({ field }) => (
                       <select
                         {...field}
-                        className="select select-bordered bg-white w-full mt-2"
+                        className="w-full mt-2 bg-white select select-bordered"
                       >
                         <option value="" hidden>Select Position</option>
                         <option value="" disabled>Select Position</option>
@@ -434,7 +434,7 @@ const AddUserModal = ({
                     )}
                   />
                   {errors.position && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {errors.position.message}
                     </span>
                   )}
@@ -443,11 +443,11 @@ const AddUserModal = ({
 
               {/* Password Section */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mt-6">
+                <h3 className="mt-6 text-lg font-semibold text-gray-800">
                   Password
                 </h3>
-                <div className="border-t my-4"></div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="my-4 border-t"></div>
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                   {/* Password */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
@@ -458,7 +458,7 @@ const AddUserModal = ({
                         type={showPassword ? "text" : "password"}
                         {...register("password")}
                         placeholder="Enter password"
-                        className="input input-bordered bg-white w-full mt-2"
+                        className="w-full mt-2 bg-white input input-bordered"
                       />
                       {showPassword ? (
                         <EyeSlashIcon
@@ -473,7 +473,7 @@ const AddUserModal = ({
                       )}
                     </div>
                     {errors.password && (
-                      <span className="text-red-500 text-xs">
+                      <span className="text-xs text-red-500">
                         {errors.password.message}
                       </span>
                     )}
@@ -489,7 +489,7 @@ const AddUserModal = ({
                         type={showConfirmPassword ? "text" : "password"}
                         {...register("confirmPassword")}
                         placeholder="Confirm password"
-                        className="input input-bordered bg-white w-full mt-2"
+                        className="w-full mt-2 bg-white input input-bordered"
                       />
                       {showConfirmPassword ? (
                         <EyeSlashIcon
@@ -508,7 +508,7 @@ const AddUserModal = ({
                       )}
                     </div>
                     {errors.confirmPassword && (
-                      <span className="text-red-500 text-xs">
+                      <span className="text-xs text-red-500">
                         {errors.confirmPassword.message}
                       </span>
                     )}
@@ -517,10 +517,10 @@ const AddUserModal = ({
               </div>
 
               {/* Form Actions */}
-              <div className="flex justify-end gap-2 items-center mt-8">
+              <div className="flex items-center justify-end gap-2 mt-8">
                 <button
                   type="button"
-                  className="btn btn-secondary bg-gray-500 border-gray-500 hover:bg-gray-600 hover:border-gray-600 w-24"
+                  className="w-24 text-white bg-gray-500 border-gray-500 btn btn-secondary hover:bg-gray-600 hover:border-gray-600"
                   onClick={() => closeModal()}
                 >
                   Cancel
@@ -528,7 +528,7 @@ const AddUserModal = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`btn btn-primary bg-blue-500 border-blue-500 hover:bg-blue-600 hover:border-blue-600 text-white hover:text-white w-1/3`}
+                  className={`btn btn-primary bg-primary border-primary hover:bg-blue-400 hover:border-blue-400 text-white hover:text-white w-1/3`}
                 >
                   {loading ? "Submitting..." : "Add User"}
                 </button>

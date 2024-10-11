@@ -500,20 +500,21 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
         <div className="mt-2 ml-8">
           <div className="flex flex-wrap justify-start ">
             {/* Requested By Section */}
-            <div className="flex-grow mb-3">
-              <h3 className="mb-3 text-xs font-normal">Requested By:</h3>
-              <div className="relative flex flex-col items-center justify-center pt-3">
+            <div className="flex-grow mb-4">
+              <h3 className="mb-2 text-sm font-normal">Requested By:</h3>
+              <div className="relative flex flex-col items-center justify-center pt-4">
                 <img
                   className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
-                  src={printData?.id.requested_signature}
+                  src={printData?.user?.data?.signature}
                   alt="avatar"
                   width={120}
                 />
-                <p className="relative z-10 px-2 text-xs font-medium underline">
-                  {printData?.id.requested_by}
+                <p className="relative z-10 px-2 text-sm font-normal underline">
+                  {printData?.user?.data?.firstName}{" "}
+                  {printData?.user?.data?.lastName}
                 </p>
                 <p className="text-xs font-light text-center">
-                  {printData?.id.requested_position}
+                  {printData?.user?.data?.position}
                 </p>
               </div>
             </div>

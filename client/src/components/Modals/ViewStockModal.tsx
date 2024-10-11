@@ -27,6 +27,7 @@ interface Approver {
 
 type Record = {
   id: number;
+  request_code: string;
   created_at: Date;
   status: string;
   approvers_id: number;
@@ -511,7 +512,6 @@ const ViewStockModal: React.FC<Props> = ({
             <div>
               <h1 className="font-semibold text-[18px]">
                 Stock Requisition Slip
-                {record?.branch || 'n/a'}
               </h1>
             </div>
             <div className="flex w-auto ">
@@ -521,7 +521,7 @@ const ViewStockModal: React.FC<Props> = ({
               </p>
             </div>
           </div>
-          <p className="font-medium text-[14px]">Request ID:#{record.id}</p>
+          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
           <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
@@ -534,7 +534,7 @@ const ViewStockModal: React.FC<Props> = ({
                   ? "bg-pink"
                   : record.status.trim() === "Ongoing"
                   ? "bg-primary"
-                  : ""
+                  : "bg-blue-700"
               } rounded-lg  py-1 w-1/3
              font-medium text-[14px] text-center ml-2 text-white`}
             >

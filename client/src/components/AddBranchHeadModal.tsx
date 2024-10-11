@@ -67,7 +67,7 @@ const AddBranchHeadModal = ({
 
         // Filter and map data to desired format
         const transformedData = response.data.data
-          .filter((item: User) => item.position.trim() === "Area Manager")
+          .filter((item: User) => item.position.trim() === "Branch Supervisor/Manager")
           .map((item: User) => ({
             id: item.id,
             name: `${item.firstname} ${item.lastname}`,
@@ -195,30 +195,30 @@ const AddBranchHeadModal = ({
     );
   };
   return (
-    <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col">
+    <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="p-4 w-10/12 sm:w-1/3 relative bg-primary flex justify-center mx-20 border-b rounded-t-[12px]">
         <h2 className="text-center text-xl md:text-[32px] font-bold text-white">
           Add {entityType}
         </h2>
         <XMarkIcon
-          className="size-6 text-black absolute right-3 cursor-pointer"
+          className="absolute text-black cursor-pointer size-6 right-3"
           onClick={closeModal}
         />
       </div>
-      <div className="bg-white w-10/12 sm:w-1/3 x-20 overflow-y-auto h-2/3 relative">
+      <div className="relative w-10/12 overflow-y-auto bg-white sm:w-1/3 x-20 h-2/3">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <ClipLoader size={35} color={"#123abc"} loading={loading} />
           </div>
         ) : error ? (
-          <div className="text-red-500 p-4">
+          <div className="p-4 text-red-500">
             <ClipLoader size={35} color={"#123abc"} />
           </div>
         ) : (
           <div>
             {selectedUser ? (
               <div className="bg-white flex-col w-10/12 sm:w-full h-1/2 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex space-x-2">
-                <h3 className="text-lg font-bold p-4">
+                <h3 className="p-4 text-lg font-bold">
                   Branches for {`${selectedUser.name} `}:
                 </h3>
                 <input
@@ -226,9 +226,9 @@ const AddBranchHeadModal = ({
                   placeholder="Search branches..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="p-2 mb-2  border border-gray-300 rounded-md "
+                  className="p-2 mb-2 border border-gray-300 rounded-md "
                 />
-                {/* <div className="mt-4 mb-4 px-4">
+                {/* <div className="px-4 mt-4 mb-4">
                   {selectedBranches.map((branchId) => {
                     const branch = branches.find((b) => b.id === branchId);
                     return (
@@ -242,7 +242,7 @@ const AddBranchHeadModal = ({
                           </div>
                         }
                         onDelete={() => handleRemoveBranch(branchId)}
-                        deleteIcon={<XMarkIcon className="h-4 w-4 stroke-white" />}
+                        deleteIcon={<XMarkIcon className="w-4 h-4 stroke-white" />}
                         sx={{
                           marginBottom: "5px",
                           marginRight: "2px",
@@ -271,7 +271,7 @@ const AddBranchHeadModal = ({
                           key={branch.id}
                           className="flex items-center justify-between mb-2 bg-blue-100"
                         >
-                          <div className="flex w-full items-center justify-between p-4">
+                          <div className="flex items-center justify-between w-full p-4">
                             <div>
                               <p>{branch.branch}</p>
                               <p>{branch.branch_code}</p>
@@ -281,7 +281,7 @@ const AddBranchHeadModal = ({
                                 type="checkbox"
                                 checked={selectedBranches.includes(branch.id)}
                                 onChange={() => handleCheckboxChange(branch.id)}
-                                className="size-5 text-blue-500 cursor-pointer mx-1"
+                                className="mx-1 text-blue-500 cursor-pointer size-5"
                               />
                             </div>
                           </div>
@@ -296,13 +296,13 @@ const AddBranchHeadModal = ({
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                           ID
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                           Name
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                           Email
                         </th>
                       </tr>
@@ -316,13 +316,13 @@ const AddBranchHeadModal = ({
                           }`}
                           onClick={() => setSelectedUser(user)}
                         >
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          <td className="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
                             {user.id}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                             {`${user.name}`}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                             {user.email}
                           </td>
                         </tr>
@@ -338,13 +338,13 @@ const AddBranchHeadModal = ({
       <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 justify-end flex space-x-2">
         <button
           onClick={handleCancel}
-          className="bg-gray-500 text-white font-bold h-12 py-2 px-4 rounded cursor-pointer"
+          className="h-12 px-4 py-2 font-bold text-white bg-gray-500 rounded cursor-pointer hover:bg-gray-600"
         >
           Cancel
         </button>
         <button
           onClick={handleConfirmSelection}
-          className="bg-primary text-white h-12 font-bold py-2 px-4 rounded cursor-pointer"
+          className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer hover:bg-blue-400 bg-primary"
         >
           {isLoading ? <ClipLoader color="#36d7b7" /> : "Add Branch Head"}
         </button>

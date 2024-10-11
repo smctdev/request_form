@@ -139,7 +139,7 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
           </h1>
           <div className="flex flex-col items-center mt-2 font-bold">
             <h1 className="text-sm font-medium underline uppercase">
-              {printData?.requested_branch}
+              {printData?.user?.data?.branch?.branch}
             </h1>
             <h1 className="text-sm font-semibold">BRANCH</h1>
           </div>
@@ -219,17 +219,16 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
               <div className="relative flex flex-col items-center justify-center pt-3">
                 <img
                   className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
-                  src={printData?.id.requested_signature}
+                  src={printData?.user?.data?.signature}
                   alt="avatar"
                   width={120}
                 />
                 <p className="relative z-10 px-2 text-sm font-normal underline">
-                  {/* {printData?.user.data.firstName}{" "}
-                  {printData?.user.data.lastName} */}
-                  {printData?.id.requested_by}
+                  {printData?.user?.data?.firstName}{" "}
+                  {printData?.user?.data?.lastName}
                 </p>
                 <p className="text-xs font-light text-center">
-                  {printData?.id.requested_position}
+                  {printData?.user?.data?.position}
                 </p>
               </div>
             </div>
@@ -245,7 +244,7 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}

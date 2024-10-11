@@ -271,7 +271,7 @@ class ApprovalProcessController extends Controller
                 $isUserTurn = $previousLevelsApproved && $approvalProcess->status == 'Pending' && $approvalProcess->user_id == $user_id;
 
                 // Include request forms where the previous level has statuses of Approved, Disapproved, or Rejected by...
-                $isRelevantStatus = in_array($approvalProcess->status, ['Approved', 'Disapproved']) ||
+                $isRelevantStatus = in_array($approvalProcess->status, ['Approved', 'Completed', 'Disapproved']) ||
                     preg_match('/^Rejected by/', $approvalProcess->status);
 
                 if (!$isRelevantStatus && !$isUserTurn) {
@@ -383,6 +383,7 @@ class ApprovalProcessController extends Controller
                     'form_type' => $requestForm->form_type,
                     'form_data' => $requestForm->form_data, // Assuming form_data is JSON
                     'status' => $approvalProcess->status, // Include the actual status of the approval process
+                    'completed_status' => $requestForm->status, // Include the actual status of the approval process
                     'created_at' => $approvalProcess->created_at,
                     'updated_at' => $approvalProcess->updated_at,
                     'user_id' => $requestForm->user_id,
