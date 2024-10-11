@@ -48,15 +48,11 @@ interface RouterProps {
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated, loading } = useUser();
 
-  console.log(loading);
-
   if (loading) return <Preloader />;
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 const PublicRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated, loading } = useUser();
-
-  console.log(loading);
 
   if (loading) return <Preloader />;
   return !isAuthenticated ? children : <Navigate to="/dashboard" />;

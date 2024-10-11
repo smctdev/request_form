@@ -387,6 +387,8 @@ const Request = (props: Props) => {
     }
   };
 
+  console.log(filteredData())
+
   const NoDataComponent = () => (
     <div className="flex items-center justify-center h-64 text-gray-500">
       <p className="text-lg">No records found</p>
@@ -556,7 +558,7 @@ const Request = (props: Props) => {
                 ? "bg-pink"
                 : row.status.trim() === "Ongoing"
                 ? "bg-blue-500"
-                : "bg-red-600"
+                : "bg-blue-700"
             } rounded-lg py-1 px-3 text-center text-white flex items-center`}
           >
             {row.status.trim()}
