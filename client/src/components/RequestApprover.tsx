@@ -381,7 +381,7 @@ const RequestApprover = (props: Props) => {
       sortable: true,
       width: "200px",
       cell: (row: Record) => (
-        <div className="relative flex items-center group">
+        <div className="relative flex items-center w-full group">
           {/* Status Badge */}
           <div
             className={`${
@@ -389,31 +389,33 @@ const RequestApprover = (props: Props) => {
                 ? "bg-yellow"
                 : row.status.trim() === "Approved"
                 ? "bg-green"
-                : row.status.trim() === "Disapproved" ||
-                  row.status.trim().startsWith("Rejected")
+                : row.status.trim() === "Disapproved"
                 ? "bg-pink"
                 : row.status.trim() === "Ongoing"
                 ? "bg-blue-500"
                 : "bg-red-600"
-            } rounded-lg py-1 px-3 text-start text-white flex`}
+            } rounded-lg py-1 px-3 text-center text-white flex items-center`}
           >
             {row.status.trim()}
           </div>
 
-          {/* Tooltip Icon */}
-          {row.status === "Pending" && (
-            <div className="relative z-10 flex items-center justify-center ml-4 transition-opacity duration-300 transform -translate-x-full -translate-y-1/2 top-1/2 group-hover:opacity-100">
-              <QuestionMarkCircleIcon className="absolute w-6 h-6 text-gray-500" />
+          {/* Tooltip Icon and Tooltip Itself */}
+          {(row.status === "Pending" || row.status === "Ongoing") && (
+            <div
+              className="tooltip tooltip-right flex items-center z-20 cursor-pointer transition-opacity duration-300 transform ml-1 group-hover:opacity-100"
+              data-tip={`Pending: ${row.pending_approver}`}
+            >
+              <QuestionMarkCircleIcon className="w-6 h-6 text-gray-500" />
             </div>
           )}
           {/* Tooltip */}
-          {row.status === "Pending" && (
+          {/* {row.status === "Pending" && (
             <div className="absolute z-40 hidden w-full h-auto p-1 mt-2 mb-4 ml-10 text-black bg-gray-600 rounded-md shadow-lg drop-shadow-sm group-hover:block">
               <p className="text-[11px] text-white">
                 Pending: {row.pending_approver}
               </p>
             </div>
-          )}
+          )} */}
         </div>
       ),
     },
