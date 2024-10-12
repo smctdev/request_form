@@ -178,7 +178,10 @@ const ViewStockModal: React.FC<Props> = ({
         // Handle the parsed attachment
         const fileUrls = parsedAttachment.map(
           (filePath: string) =>
-            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+              /\\/g,
+              "/"
+            )}`
         );
         setAttachmentUrl(fileUrls);
       } else {
@@ -215,7 +218,6 @@ const ViewStockModal: React.FC<Props> = ({
       setIsFetchingApprovers(false);
     }
   };
-
 
   const handleEdit = () => {
     setEditedDate(editableRecord.form_data[0].date); // Initialize editedDate with the original date
@@ -502,7 +504,6 @@ const ViewStockModal: React.FC<Props> = ({
                     approvedBy: approvedBy,
                     notedBy: notedBy,
                     user: user,
-                    
                   }}
                 />
               )}
@@ -521,7 +522,9 @@ const ViewStockModal: React.FC<Props> = ({
               </p>
             </div>
           </div>
-          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
+          <p className="font-medium text-[14px]">
+            Request ID: {record.request_code}
+          </p>
           <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
@@ -1006,6 +1009,9 @@ const ViewStockModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -1033,6 +1039,9 @@ const ViewStockModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -1073,7 +1082,8 @@ const ViewStockModal: React.FC<Props> = ({
             ) : (
               !fetchingApprovers &&
               !isFetchingApprovers &&
-              (editableRecord.status === "Pending" || editableRecord.status === "Disapproved") && (
+              (editableRecord.status === "Pending" ||
+                editableRecord.status === "Disapproved") && (
                 <button
                   className="flex p-2 ml-2 text-white bg-blue-500 rounded-xl"
                   onClick={handleEdit}

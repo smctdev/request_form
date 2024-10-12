@@ -179,7 +179,10 @@ const ViewPurchaseModal: React.FC<Props> = ({
           // Construct file URLs
           const fileUrls = parsedAttachment.map(
             (filePath) =>
-              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+                /\\/g,
+                "/"
+              )}`
           );
           setAttachmentUrl(fileUrls);
         }
@@ -487,8 +490,10 @@ const ViewPurchaseModal: React.FC<Props> = ({
               </p>
             </div>
           </div>
-          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
-          <div className="flex w-full md:w-1/2 items-center">
+          <p className="font-medium text-[14px]">
+            Request ID: {record.request_code}
+          </p>
+          <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
               className={`${
@@ -945,6 +950,9 @@ const ViewPurchaseModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -972,6 +980,9 @@ const ViewPurchaseModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -1012,7 +1023,8 @@ const ViewPurchaseModal: React.FC<Props> = ({
             ) : (
               !fetchingApprovers &&
               !isFetchingApprovers &&
-              (editableRecord.status === "Pending" || editableRecord.status === "Disapproved") && (
+              (editableRecord.status === "Pending" ||
+                editableRecord.status === "Disapproved") && (
                 <button
                   className="flex p-2 ml-2 text-white bg-blue-500 rounded-xl"
                   onClick={handleEdit}

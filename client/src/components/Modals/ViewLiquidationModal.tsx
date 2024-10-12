@@ -198,7 +198,10 @@ const ViewLiquidationModal: React.FC<Props> = ({
           // Construct file URLs
           const fileUrls = parsedAttachment.map(
             (filePath) =>
-              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+                /\\/g,
+                "/"
+              )}`
           );
           setAttachmentUrl(fileUrls);
         }
@@ -217,11 +220,14 @@ const ViewLiquidationModal: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setUser(response.data);
     } catch (error) {
@@ -601,7 +607,9 @@ const ViewLiquidationModal: React.FC<Props> = ({
             </div>
           </div>
 
-          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
+          <p className="font-medium text-[14px]">
+            Request ID: {record.request_code}
+          </p>
           <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
@@ -672,10 +680,14 @@ const ViewLiquidationModal: React.FC<Props> = ({
                       <th className={`${tableStyle}  w-2/12`}>Hotel</th>
                       <th className={`${tableStyle} w-2/12`}>Place</th>
                       <th className={`${tableStyle}`}>Amount</th>
-                      <th className={`${tableStyle}whitespace-nowrap`}>Per Diem</th>
+                      <th className={`${tableStyle}whitespace-nowrap`}>
+                        Per Diem
+                      </th>
                       <th className={`${tableStyle}`}>Particulars</th>
                       <th className={`${tableStyle}`}>Amount</th>
-                      <th className={`${tableStyle}whitespace-nowrap`}>Grand Total</th>
+                      <th className={`${tableStyle}whitespace-nowrap`}>
+                        Grand Total
+                      </th>
                     </tr>
                   </thead>
                   <tbody className={`${tableCellStyle}`}>
@@ -1293,6 +1305,9 @@ const ViewLiquidationModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -1320,6 +1335,9 @@ const ViewLiquidationModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
