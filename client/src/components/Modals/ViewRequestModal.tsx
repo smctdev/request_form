@@ -173,7 +173,10 @@ const ViewRequestModal: React.FC<Props> = ({
           // Construct file URLs
           const fileUrls = parsedAttachment.map(
             (filePath) =>
-              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+                /\\/g,
+                "/"
+              )}`
           );
           setAttachmentUrl(fileUrls);
         }
@@ -533,8 +536,10 @@ const ViewRequestModal: React.FC<Props> = ({
               </p>
             </div>
           </div>
-          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
-          <div className="flex w-full md:w-1/2 items-center">
+          <p className="font-medium text-[14px]">
+            Request ID: {record.request_code}
+          </p>
+          <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
               className={`${
@@ -575,8 +580,12 @@ const ViewRequestModal: React.FC<Props> = ({
                       >
                         DESCRIPTION
                       </th>
-                      <th className={`${inputStyle}whitespace-nowrap`}>UNIT COST</th>
-                      <th className={`${inputStyle}whitespace-nowrap`}>TOTAL AMOUNT</th>
+                      <th className={`${inputStyle}whitespace-nowrap`}>
+                        UNIT COST
+                      </th>
+                      <th className={`${inputStyle}whitespace-nowrap`}>
+                        TOTAL AMOUNT
+                      </th>
                       <th
                         className={`${inputStyle}break-words whitespace-nowrap `}
                       >
@@ -656,13 +665,17 @@ const ViewRequestModal: React.FC<Props> = ({
                         ))
                       : editableRecord.form_data[0].items.map((item, index) => (
                           <tr key={index}>
-                            <td className={`${tableCellStyle} text-center`}>{item.quantity}</td>
+                            <td className={`${tableCellStyle} text-center`}>
+                              {item.quantity}
+                            </td>
                             <td
                               className={`${tableCellStyle} break-words whitespace-normal`}
                             >
                               {item.description}
                             </td>
-                            <td className={`${tableCellStyle} text-center`}>{item.unitCost}</td>
+                            <td className={`${tableCellStyle} text-center`}>
+                              {item.unitCost}
+                            </td>
                             <td className={`${tableCellStyle} text-center`}>
                               {item.totalAmount}
                             </td>
@@ -982,6 +995,9 @@ const ViewRequestModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -1009,6 +1025,9 @@ const ViewRequestModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -1049,7 +1068,8 @@ const ViewRequestModal: React.FC<Props> = ({
             ) : (
               !fetchingApprovers &&
               !isFetchingApprovers &&
-              (editableRecord.status === "Pending" || editableRecord.status === "Disapproved") && (
+              (editableRecord.status === "Pending" ||
+                editableRecord.status === "Disapproved") && (
                 <button
                   className="flex p-2 ml-2 text-white bg-blue-500 rounded-xl"
                   onClick={handleEdit}

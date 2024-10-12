@@ -428,7 +428,7 @@ const ApproversStock: React.FC<Props> = ({
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="relative z-10 w-full p-4 mx-10 overflow-scroll bg-white border-black rounded-t-lg shadow-lg md:mx-0 md:w-1/2 space-y-auto h-3/4">
-        <div className="sticky flex justify-end cursor-pointer  top-2">
+        <div className="sticky flex justify-end cursor-pointer top-2">
           <XMarkIcon
             className="w-8 h-8 p-1 text-black bg-white rounded-full "
             onClick={closeModal}
@@ -647,6 +647,9 @@ const ApproversStock: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }}
                               />
                             </div>
                           )}
@@ -712,6 +715,9 @@ const ApproversStock: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }}
                               />
                             </div>
                           )}

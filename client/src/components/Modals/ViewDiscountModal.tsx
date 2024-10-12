@@ -187,7 +187,10 @@ const ViewDiscountModal: React.FC<Props> = ({
           // Construct file URLs
           const fileUrls = parsedAttachment.map(
             (filePath) =>
-              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+                /\\/g,
+                "/"
+              )}`
           );
           setAttachmentUrl(fileUrls);
         }
@@ -581,9 +584,10 @@ const ViewDiscountModal: React.FC<Props> = ({
               </p>
             </div>
           </div>
-          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
-          <div className="flex w-full md:w-1/2 items-center">
-
+          <p className="font-medium text-[14px]">
+            Request ID: {record.request_code}
+          </p>
+          <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
               className={`${
@@ -853,14 +857,14 @@ const ViewDiscountModal: React.FC<Props> = ({
                               user.status.split(" ")[0] === "Rejected")) && (
                             <div className="absolute -top-4">
                               <img
-                              src={user.signature}
-                              alt="avatar"
-                              width={120}
-                              className="relative z-20 pointer-events-none"
-                              draggable="false"
-                              onContextMenu={(e) => e.preventDefault()}
-                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
-                            />
+                                src={user.signature}
+                                alt="avatar"
+                                width={120}
+                                className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
+                              />
                             </div>
                           )}
                           {/* Name */}
@@ -915,15 +919,15 @@ const ViewDiscountModal: React.FC<Props> = ({
                             (typeof user.status === "string" &&
                               user.status.split(" ")[0] === "Rejected")) && (
                             <div className="absolute -top-4">
-                             <img
-                              src={user.signature}
-                              alt="avatar"
-                              width={120}
-                              className="relative z-20 pointer-events-none"
-                              draggable="false"
-                              onContextMenu={(e) => e.preventDefault()}
-                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
-                            />
+                              <img
+                                src={user.signature}
+                                alt="avatar"
+                                width={120}
+                                className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
+                              />
                             </div>
                           )}
                           {/* Name */}
@@ -1035,6 +1039,9 @@ const ViewDiscountModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -1062,6 +1069,9 @@ const ViewDiscountModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -1102,7 +1112,8 @@ const ViewDiscountModal: React.FC<Props> = ({
             ) : (
               !fetchingApprovers &&
               !isFetchingApprovers &&
-              (editableRecord.status === "Pending" || editableRecord.status === "Disapproved") && (
+              (editableRecord.status === "Pending" ||
+                editableRecord.status === "Disapproved") && (
                 <button
                   className="flex p-2 ml-2 text-white bg-blue-500 rounded-xl"
                   onClick={handleEdit}
