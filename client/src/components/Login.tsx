@@ -2,12 +2,6 @@ import React, { useState, CSSProperties, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Slice from "./assets/Slice.png";
 import building from "./assets/building.jpg";
-import { useNavigate } from "react-router-dom";
-import {
-  EyeIcon,
-  EyeSlashIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/solid";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z, ZodType } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,11 +18,8 @@ const schema = z.object({
 });
 
 const Login: React.FC = () => {
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorMessge, setErrorMessage] = useState("");
   let [color, setColor] = useState("bg-primary");
   const { userId, firstName, lastName, updateUser } = useUser();
   const {
