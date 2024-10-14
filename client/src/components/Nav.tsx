@@ -68,6 +68,7 @@ const Nav: React.FC<NavProps> = ({
   const navigate = useNavigate();
   const { setIsAuthenticated } = useUser();
   const [profileLoading, setProfileLoading] = useState(true);
+  const { profile_picture } = useUser();
 
   useEffect(() => {
     const checkAuth = () => {
@@ -320,8 +321,8 @@ const Nav: React.FC<NavProps> = ({
     config: { tension: 250, friction: 15 },
   });
 
-  const profilePictureUrl = profilePicture
-    ? `${process.env.REACT_APP_URL_STORAGE}/${profilePicture.replace(
+  const profilePictureUrl = profile_picture
+    ? `${process.env.REACT_APP_URL_STORAGE}/${profile_picture.replace(
         /\\/g,
         "/"
       )}`
