@@ -243,7 +243,7 @@ const PrintCashDisbursement: React.FC<PrintRefundProps> = ({ data }) => {
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}
