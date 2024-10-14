@@ -65,7 +65,8 @@ const Login: React.FC = () => {
           response.data.role,
           response.data.branch_code,
           response.data.contact,
-          response.data.signature
+          response.data.signature,
+          response.data.profile_picture
         );
 
         localStorage.setItem("token", response.data.token);
