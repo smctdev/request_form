@@ -81,13 +81,8 @@ const Login: React.FC = () => {
         localStorage.setItem("employee_id", response.data.employee_id);
 
         localStorage.setItem("expires_at", response.data.expires_at);
-        if (response.data.role === "approver") {
-          navigate("/dashboard/approver");
-          window.location.reload();
-        } else {
-          navigate("/dashboard");
-          window.location.reload();
-        }
+
+        window.location.reload();
       } else {
         Swal.fire({
           icon: "error",
@@ -120,9 +115,9 @@ const Login: React.FC = () => {
     "w-full lg:max-w-[417px] lg:h-[56px] md:h-10  p-2 bg-gray-300 rounded-lg text-black";
   return (
     <div className="flex flex-row bg-[#FFFFFF] text-black">
-      <div className="w-full  lg:w-1/2 flex items-center justify-center p-8 bg-cover bg-center relative">
+      <div className="relative flex items-center justify-center w-full p-8 bg-center bg-cover lg:w-1/2">
         <img
-          className="absolute inset-0 object-cover w-full h-screen lg:hidden z-0"
+          className="absolute inset-0 z-0 object-cover w-full h-screen lg:hidden"
           src={building}
           alt="photo"
         />
@@ -133,7 +128,7 @@ const Login: React.FC = () => {
           </h1>
           <form onSubmit={handleSubmit(submitData, () => setLoading(false))}>
             <div className="mb-4">
-              <h1 className="lg:text-lg text-base mb-2">Email</h1>
+              <h1 className="mb-2 text-base lg:text-lg">Email</h1>
               <input
                 {...register("email", {
                   required: "Email is required",
@@ -146,15 +141,15 @@ const Login: React.FC = () => {
                 className={`${inputStyle} autofill-input`}
               />
               {errors.email && (
-                <p className="text-red-500 text-xs mt-1">
+                <p className="mt-1 text-xs text-red-500">
                   {" "}
                   {errors.email.message}
                 </p>
               )}
             </div>
             <div className="mb-4">
-              <h1 className="lg:text-lg text-base mb-2">Password</h1>
-              {/* <div className=" flex justify-center items-center relative w-full "> */}
+              <h1 className="mb-2 text-base lg:text-lg">Password</h1>
+              {/* <div className="relative flex items-center justify-center w-full "> */}
               <input
                 type={showPassword ? "text" : "password"}
                 {...register("password")}
@@ -172,9 +167,9 @@ const Login: React.FC = () => {
                   />
                 </label>
                 <span className="label-text">Show password</span>
-                </div>
+              </div>
               {errors.password && (
-                <p className="text-red-500 text-xs">
+                <p className="text-xs text-red-500">
                   {" "}
                   {errors.password.message}
                 </p>
@@ -203,18 +198,18 @@ const Login: React.FC = () => {
 
           <Link to="/registration">
             <div className="flex flex-row justify-center items-center mt-[10px]">
-              <p className="text-center italic lg:text-base text-sm">
+              <p className="text-sm italic text-center lg:text-base">
                 Don't have an account?{" "}
               </p>
-              <p className="pl-2 italic font-bold text-primary underline  lg:text-base text-sm">
+              <p className="pl-2 text-sm italic font-bold underline text-primary lg:text-base">
                 Sign Up
               </p>
             </div>
           </Link>
         </div>
       </div>
-      <div className="hidden lg:block w-1/2  items-center justify-center">
-        <img className="object-cover h-screen w-full" src={Slice} alt="photo" />
+      <div className="items-center justify-center hidden w-1/2 lg:block">
+        <img className="object-cover w-full h-screen" src={Slice} alt="photo" />
       </div>
     </div>
   );

@@ -982,12 +982,12 @@ const CreateLiquidation = (props: Props) => {
                       ₱&nbsp;
                       <input
                         type="number"
-                        {...register("cashAdvance", {
-                          required: "Cash Advance is required",
-                          validate: (value) =>
-                            parseFloat(value) > 0 ||
-                            "Cash Advance must be greater than 0",
-                        })}
+                        // {...register("cashAdvance", {
+                        //   required: "Cash Advance is required",
+                        //   validate: (value) =>
+                        //     parseFloat(value) > 0 ||
+                        //     "Cash Advance must be greater than 0",
+                        // })}
                         value={cashAdvance}
                         onChange={(e) => setCashAdvance(e.target.value)}
                         className="font-bold bg-white focus:outline-0"

@@ -270,7 +270,7 @@ const Dashboard: React.FC = () => {
               ? "bg-pink"
               : row.status.trim() === "Ongoing"
               ? "bg-primary"
-              : ""
+              : "bg-blue-700"
           } rounded-lg py-1 w-full md:w-full xl:w-3/4 2xl:w-2/4 text-center text-white`}
         >
           {row.status.trim()}
