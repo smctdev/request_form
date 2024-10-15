@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css'; // Global styles
-import App from './App'; // Main app component
+import './index.css';
 import Router from './router/Router'; // Router component for handling routes
 import { UserProvider } from './context/UserContext'; // User context provider
 

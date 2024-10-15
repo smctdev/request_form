@@ -3,25 +3,15 @@ import DataTable from "react-data-table-component";
 import {
   PencilSquareIcon,
   TrashIcon,
-  XMarkIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import AddUserModal from "./AddUserModal";
-import EditUserModal from "./EditUserModal";
 import SuccessModal from "./SuccessModal";
 import CompleteModal from "./CompleteModal";
 import DeleteSuccessModal from "./DeleteSucessModal";
 import DeleteModal from "./DeleteModal";
-import { set } from "react-hook-form";
-
-import AddApproverModal from "./AddApproverModal";
 import axios from "axios";
 import AddBranchHeadModal from "./AddBranchHeadModal";
 import EditBranchHead from "./EditBranchHead";
-import { ClipLoader } from "react-spinners";
 
 type Props = {};
 
@@ -42,28 +32,6 @@ interface Record {
   user: UserObject;
 }
 
-const tableCustomStyles = {
-  headRow: {
-    style: {
-      fontSize: "18px",
-      fontWeight: "bold",
-      color: "black",
-      backgroundColor: "#FFFF",
-    },
-  },
-  rows: {
-    style: {
-      color: "STRIPEDCOLOR",
-      backgroundColor: "STRIPEDCOLOR",
-    },
-    stripedStyle: {
-      color: "NORMALCOLOR",
-      backgroundColor: "#E7F1F9",
-    },
-  },
-};
-
-const deleteUser = async () => {};
 interface BranchHead {
   id: number;
   user_id: number;
@@ -105,32 +73,20 @@ interface User {
   employee_id: string;
 }
 const SetupBranchHead = (props: Props) => {
-  const [darkMode, setDarkMode] = useState(true);
-  const [selected, setSelected] = useState<number | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showDeletedSuccessModal, setShowDeletedSuccessModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  const [deleteSuccessModal, setDeleteSuccessModal] = useState(false);
-  const [viewModalIsOpen, setViewModalIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Record | null>(null);
   const [branchHeadList, setBranchHeadList] = useState<Record[]>([]);
   const [filterTerm, setFilterTerm] = useState("");
   const [isLoading, setisLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const userId = localStorage.getItem("id");
-  const [branchHead, setBranchHead] = useState<{
-    branches: any[];
-    user: any;
-    id: number;
-    user_id: number;
-    branch_id: number[];
-  } | null>(null);
-  const userData =
-    branchHeadList.length > 0 ? branchHeadList[0]?.user?.data ?? null : null;
   const [fetchCompleted, setFetchCompleted] = useState(false);
+
   useEffect(() => {
     const fetchApproverData = async () => {
       try {
@@ -286,15 +242,6 @@ const SetupBranchHead = (props: Props) => {
       setFetchCompleted(true);
     }
   };
-  const viewModalShow = (row: Record) => {
-    setSelectedUser(row);
-    setViewModalIsOpen(true);
-  };
-
-  const viewModalClose = () => {
-    setSelectedUser(null);
-    setViewModalIsOpen(false);
-  };
 
   const deleteModalShow = (row: Record) => {
     setSelectedUser(row);
@@ -388,9 +335,6 @@ const SetupBranchHead = (props: Props) => {
     } catch (error) {
       setisLoading(false);
       console.error("Error updating role:", error);
-      // Handle error state or show error message to the user
-      // Example: show error message in a toast or modal
-      // showErrorToast("Failed to update role. Please try again later.");
     }
   };
   const columns = [
@@ -433,8 +377,6 @@ const SetupBranchHead = (props: Props) => {
     },
   ];
 
-  const pStyle = "font-medium";
-  const inputStyle = "border border-black rounded-md p-1";
   return (
     <div className="w-full h-full px-4 pt-4 bg-graybg dark:bg-blackbg sm:px-10 md:px-10 lg:px-30 xl:px-30">
       <div className="w-full h-auto rounded-lg drop-shadow-lg md:mr-4">

@@ -4,17 +4,16 @@ import { BeatLoader } from "react-spinners";
 import axios from "axios";
 import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 import EditStockModalSuccess from "./EditStockModalSuccess";
-import { read } from "fs";
 import Avatar from "../assets/avatar.png";
 import PrintStock from "../PrintStock";
 import AddCustomModal from "../EditCustomModal";
-import { error } from "console";
-const get = localStorage.getItem("id");
+
 type Props = {
   closeModal: () => void;
   record: Record;
   refreshData: () => void;
 };
+
 interface Approver {
   id: number;
   firstName: string;
@@ -77,6 +76,7 @@ type Item = {
   totalAmount: string;
   remarks: string;
 };
+
 const tableStyle2 = "bg-white p-2";
 const inputStyle = "border border-black text-[12px] font-bold p-2";
 const tableCellStyle = `${inputStyle} w-20`;
@@ -93,14 +93,11 @@ const ViewStockModal: React.FC<Props> = ({
   const [editedApprovers, setEditedApprovers] = useState<number>(
     record.approvers_id
   );
-  const [comments, setComments] = useState("");
   const [loading, setLoading] = useState(false);
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [checkedPurpose, setCheckedPurpose] = useState<string | null>(null);
   const [savedSuccessfully, setSavedSuccessfully] = useState(false);
-  const [customApprovers, setCustomApprovers] = useState<Approver[]>([]);
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [isFetchingApprovers, setIsFetchingApprovers] = useState(false);
@@ -109,12 +106,10 @@ const ViewStockModal: React.FC<Props> = ({
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [attachmentUrl, setAttachmentUrl] = useState<string[]>([]);
   const [newAttachments, setNewAttachments] = useState<File[]>([]);
-  const [originalAttachments, setOriginalAttachments] = useState<string[]>([]);
   const [removedAttachments, setRemovedAttachments] = useState<
     (string | number)[]
   >([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
   const hasDisapprovedInNotedBy = notedBy.some(
@@ -156,9 +151,7 @@ const ViewStockModal: React.FC<Props> = ({
   const branchName = branchMap.get(branchId) || "Unknown";
 
   useEffect(() => {
-    const attachments = JSON.parse(record.attachment);
     const currentUserId = localStorage.getItem("id");
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
 
     setNewData(record.form_data[0].items.map((item) => ({ ...item })));
     setEditableRecord(record);
@@ -168,8 +161,6 @@ const ViewStockModal: React.FC<Props> = ({
     setEditedApprovers(record.approvers_id);
     if (currentUserId) {
       fetchUser(record.user_id);
-
-      /*  fetchCustomApprovers(record.id); */
     }
     try {
       // If record.attachment is a JSON string, parse it
@@ -193,6 +184,7 @@ const ViewStockModal: React.FC<Props> = ({
       console.error("Error parsing attachment:", error);
     }
   }, [record]);
+
   const fetchUser = async (id: number) => {
     setIsFetchingUser(true);
     setIsFetchingApprovers(true);
@@ -411,51 +403,14 @@ const ViewStockModal: React.FC<Props> = ({
   const openAddCustomModal = () => {
     setIsModalOpen(true);
   };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
+
   const closeModals = () => {
     setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
   };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
     setApprovedBy(approvedBy);
-  };
-
-  const fetchApprovers = async (userId: number) => {
-    setFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const approversData = Array.isArray(response.data.data)
-        ? response.data.data
-        : [];
-      setApprovers(approversData);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setFetchingApprovers(false);
-    }
   };
 
   const handlePrint = () => {
@@ -716,34 +671,6 @@ const ViewStockModal: React.FC<Props> = ({
               readOnly
             />
           </div>
-          {/*  <div className="w-full pr-12">
-            <h1>Approvers</h1>
-            {fetchingApprovers ? (
-              <p>Loading approvers...</p>
-            ) : (
-              <select
-                className="w-1/2 h-10 mt-2 border border-black rounded-lg"
-                value={
-                  isEditing ? editedApprovers : editableRecord.approvers_id
-                }
-                onChange={(e) => {
-                  const selectedApproverId = parseInt(e.target.value);
-
-                  setEditedApprovers(selectedApproverId);
-                }}
-                disabled={!isEditing}
-              >
-                <option value="" disabled>
-                  Approver List
-                </option>
-                {approvers.map((approver) => (
-                  <option key={approver.id} value={approver.id}>
-                    {approver.name}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div> */}
           {isEditing && (
             <div className="my-2">
               <button

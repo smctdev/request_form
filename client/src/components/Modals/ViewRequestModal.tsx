@@ -4,10 +4,10 @@ import { BeatLoader } from "react-spinners";
 import axios from "axios";
 import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 import EditStockModalSuccess from "./EditStockModalSuccess";
-import { set } from "react-hook-form";
 import Avatar from "../assets/avatar.png";
 import PrintRefund from "../PrintRefund";
 import AddCustomModal from "../EditCustomModal";
+
 type Props = {
   closeModal: () => void;
   record: Record;
@@ -75,6 +75,7 @@ type Item = {
   totalAmount: string;
   remarks: string;
 };
+
 const tableStyle2 = "bg-white p-2";
 const inputStyle = "border border-black text-[12px] font-bold p-2";
 const tableCellStyle = `${inputStyle} w-20`;
@@ -89,7 +90,6 @@ const ViewRequestModal: React.FC<Props> = ({
     record.approvers_id
   );
   const [isEditing, setIsEditing] = useState(false);
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [editedDate, setEditedDate] = useState("");
   const [loading, setLoading] = useState(false);
@@ -98,20 +98,15 @@ const ViewRequestModal: React.FC<Props> = ({
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
-  const [customApprovers, setCustomApprovers] = useState<any>({});
-  const [comments, setComments] = useState([]);
-  const [nameComments, setNameComments] = useState([]);
   const [user, setUser] = useState<any>({});
   const [isFetchingUser, setisFetchingUser] = useState(false);
   const [attachmentUrl, setAttachmentUrl] = useState<string[]>([]);
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [newAttachments, setNewAttachments] = useState<File[]>([]);
-  const [originalAttachments, setOriginalAttachments] = useState<string[]>([]);
   const [removedAttachments, setRemovedAttachments] = useState<
     (string | number)[]
   >([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
   const hasDisapprovedInNotedBy = notedBy.some(
@@ -153,9 +148,6 @@ const ViewRequestModal: React.FC<Props> = ({
 
   useEffect(() => {
     const currentUserId = localStorage.getItem("id");
-    const attachments = JSON.parse(record.attachment);
-    // Ensure currentUserId and userId are converted to numbers if they exist
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
     setNotedBy(editableRecord.noted_by);
     setApprovedBy(editableRecord.approved_by);
     setNewData(record.form_data[0].items.map((item) => ({ ...item })));
@@ -185,6 +177,7 @@ const ViewRequestModal: React.FC<Props> = ({
       console.error("Error parsing attachment:", error);
     }
   }, [record]);
+
   const fetchUser = async (id: number) => {
     setisFetchingUser(true);
     setisFetchingApprovers(true);
@@ -211,33 +204,7 @@ const ViewRequestModal: React.FC<Props> = ({
       setisFetchingApprovers(false);
     }
   };
-  /*  const fetchCustomApprovers = async (id: number) => {
-    setisFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/request-forms/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const { notedby, approvedby } = response.data;
-      setNotedBy(notedby);
-      setApprovedBy(approvedby);
-      setApprovers(approvers);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setisFetchingApprovers(false);
-    }
-  }; */
   const handleEdit = () => {
     setEditedDate(editableRecord.form_data[0].date); // Initialize editedDate with the original date
     setIsEditing(true);
@@ -265,15 +232,6 @@ const ViewRequestModal: React.FC<Props> = ({
   };
 
   const formatDate = (dateString: Date) => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
-  };
-  const formatDate2 = (dateString: string) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
@@ -320,6 +278,7 @@ const ViewRequestModal: React.FC<Props> = ({
       approvers_id: editedApprovers,
     }));
   };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       setNewAttachments(Array.from(event.target.files));
@@ -338,6 +297,7 @@ const ViewRequestModal: React.FC<Props> = ({
     // Remove the attachment from the current list
     setAttachmentUrl((prevUrls) => prevUrls.filter((_, i) => i !== index));
   };
+
   const handleSaveChanges = async () => {
     // Simple validation
     if (
@@ -429,54 +389,20 @@ const ViewRequestModal: React.FC<Props> = ({
   };
 
   if (!record) return null;
+
   const openAddCustomModal = () => {
     setIsModalOpen(true);
   };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
+
   const closeModals = () => {
     setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
   };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
     setApprovedBy(approvedBy);
   };
-  const fetchApprovers = async (userId: number) => {
-    setFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const approversData = Array.isArray(response.data.data)
-        ? response.data.data
-        : [];
-      setApprovers(approversData);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setFetchingApprovers(false);
-    }
-  };
   const handlePrint = () => {
     // Construct the data object to be passed
     const data = {
@@ -495,6 +421,7 @@ const ViewRequestModal: React.FC<Props> = ({
       newWindow.focus();
     }
   };
+
   return (
     <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="relative z-10 w-full p-4 mx-10 overflow-scroll bg-white border-black rounded-t-lg shadow-lg md:mx-0 md:w-1/2 space-y-auto h-3/4">
@@ -702,34 +629,6 @@ const ViewRequestModal: React.FC<Props> = ({
               readOnly
             />
           </div>
-          {/*   <div className="w-full pr-12">
-            <h1>Approvers</h1>
-            {fetchingApprovers ? (
-              <p>Loading approvers...</p>
-            ) : (
-              <select
-                className="w-1/2 h-10 mt-2 border border-black rounded-lg"
-                value={
-                  isEditing ? editedApprovers : editableRecord.approvers_id
-                }
-                onChange={(e) => {
-                  const selectedApproverId = parseInt(e.target.value);
-
-                  setEditedApprovers(selectedApproverId);
-                }}
-                disabled={!isEditing}
-              >
-                <option value="" disabled>
-                  Approver List
-                </option>
-                {approvers.flat().map((approver) => (
-                  <option key={approver.id} value={approver.id}>
-                    {approver.name}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div> */}
           {isEditing && (
             <div className="my-2">
               <button

@@ -1,30 +1,18 @@
 import React, { useState, useEffect } from "react";
-import Select from "react-select/dist/declarations/src/Select";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
-  CalendarIcon,
   MinusCircleIcon,
   PlusCircleIcon,
 } from "@heroicons/react/24/solid";
-import TextareaAutosize from "react-textarea-autosize";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import axios from "axios";
 import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ClipLoader from "react-spinners/ClipLoader";
 import AddCustomModal from "./AddCustomModal";
-import { table } from "console";
 import Swal from "sweetalert2";
-type CustomApprover = {
-  id: number;
-  name: string;
-  approvers: {
-    noted_by: { name: string }[];
-    approved_by: { name: string }[];
-  };
-};
+
 interface Approver {
   id: number;
   firstName: string;
@@ -32,6 +20,7 @@ interface Approver {
   position: string;
 }
 type Props = {};
+
 const requestType = [
   { title: "Stock Requisition", path: "/request/sr" },
   { title: "Purchase Order Requisition Slip", path: "/request/pors" },
@@ -41,6 +30,7 @@ const requestType = [
   { title: "Request for Refund", path: "/request/rfr" },
   { title: "Discount Request", path: "/request/dr" },
 ];
+
 const schema = z.object({
   cashAmount: z.string(),
   liquidationDate: z.string(),
@@ -61,19 +51,11 @@ const schema = z.object({
       unit: z.string().min(1, "Unit/Part/Job Description is required"),
       partno: z.string().optional(),
       labor: z.string().optional(),
-      // spotcash: z.string().min(1, "Spot cash is required"),
       discountedPrice: z.string().min(1, "Discounted price is required"),
     })
   ),
 });
 
-const brancheList = [
-  "Branch A",
-  "Branch B",
-  "Branch C",
-  "Branch D",
-  "Branch E",
-];
 type FormData = z.infer<typeof schema>;
 type TableDataItem = {
   brand: string;
@@ -96,35 +78,21 @@ const initialTableData: TableDataItem[] = Array.from({ length: 1 }, () => ({
 }));
 
 const tableStyle = "border border-black p-2";
-const inputStyle =
-  "w-full  border-2 rounded-[12px] pl-[10px] bg-white  autofill-input focus:outline-0";
 const inputStyle2 =
   "w-full   rounded-[12px] pl-[10px] bg-white  autofill-input focus:outline-0";
 const tableInput =
   "w-full h-full bg-white px-2 py-1 bg-white  autofill-input focus:outline-0";
-const itemDiv = "flex flex-col ";
 const buttonStyle = "h-[45px] w-[150px] rounded-[12px] text-white";
+
 const CreateDiscount = (props: Props) => {
-  const [totalBoatFare, setTotalBoatFare] = useState(0);
-  const [totalHotel, setTotalHotel] = useState(0);
   const [formData, setFormData] = useState<any>(null);
-  const [totalFare, setTotalFare] = useState(0);
-  const [totalContingency, setTotalContingency] = useState(0);
-  const [startDate, setStartDate] = useState(new Date());
   const navigate = useNavigate();
   const [file, setFile] = useState<File[]>([]);
-  const [customApprovers, setCustomApprovers] = useState<CustomApprover[]>([]);
-  const [selectedApproverList, setSelectedApproverList] = useState<
-    number | null
-  >(null);
   const [totalAmount, setTotalAmount] = useState({
     totalLabor: 0,
     totalSpotCash: 0,
     totalDiscountedPrice: 0,
   });
-  const [selectedApprover, setSelectedApprover] = useState<{ name: string }[]>(
-    []
-  );
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       // Convert FileList to array and set it
@@ -139,7 +107,6 @@ const CreateDiscount = (props: Props) => {
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [initialNotedBy, setInitialNotedBy] = useState<Approver[]>([]);
   const [initialApprovedBy, setInitialApprovedBy] = useState<Approver[]>([]);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
@@ -175,35 +142,7 @@ const CreateDiscount = (props: Props) => {
     setInitialNotedBy(notedBy);
     setInitialApprovedBy(approvedBy);
   }, [notedBy, approvedBy]);
-  /*  const fetchCustomApprovers = async () => {
-    try {
-      const id = localStorage.getItem("id");
-      const token = localStorage.getItem("token");
-      if (!token || !id) {
-        console.error("Token or user ID is missing");
-        return;
-      }
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (Array.isArray(response.data.data)) {
-        setCustomApprovers(response.data.data);
-      } else {
-        console.error("Unexpected response format:", response.data);
-        setCustomApprovers([]); // Ensure that customApprovers is always an array
-      }
-    } catch (error) {
-      console.error("Error fetching custom approvers:", error);
-      setCustomApprovers([]); // Ensure that customApprovers is always an array
-    }
-  }; */
   const getTotalAmount = () => {
     const totalLabor = tableData.reduce(
       (acc, item) => acc + Number(item.labor || 0),
@@ -221,10 +160,6 @@ const CreateDiscount = (props: Props) => {
     return { totalLabor, totalSpotCash, totalDiscountedPrice };
   };
 
-  const handleOpenConfirmationModal = () => {
-    setShowConfirmationModal(true);
-  };
-
   // Function to close the confirmation modal
   const handleCloseConfirmationModal = () => {
     setShowConfirmationModal(false);
@@ -233,11 +168,8 @@ const CreateDiscount = (props: Props) => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<FormData>();
 
-  const inputStyle =
-    "w-full max-w-[300px] border-2 border-black rounded-[12px] pl-[10px] bg-white";
   const [tableData, setTableData] = useState<TableDataItem[]>(initialTableData);
   const [selectedRequestType, setSelectedRequestType] = useState("/request/dr");
 
@@ -294,20 +226,6 @@ const CreateDiscount = (props: Props) => {
     const totals = getTotalAmount();
     setTotalAmount(totals);
   }, [tableData]);
-  const handleAddRow = () => {
-    setTableData([
-      ...tableData,
-      {
-        brand: "",
-        model: "",
-        unit: "",
-        partno: "",
-        labor: "",
-        spotcash: "",
-        discountedPrice: "",
-      },
-    ]);
-  };
 
   const handleRemoveItem = () => {
     if (tableData.length > 1) {
@@ -396,16 +314,11 @@ const CreateDiscount = (props: Props) => {
         setLoading(false); // Stop loading state
         return; // Prevent form submission
       }
-      // Calculate total per diem
-
-      // Calculate total amount
-
-      // Validate if any item fields are empty
 
       const formData = new FormData();
 
       file.forEach((file) => {
-        formData.append("attachment[]", file); // Use "attachment[]" to handle multiple files
+        formData.append("attachment[]", file);
       });
       const notedByIds = Array.isArray(notedBy)
         ? notedBy.map((person) => person.id)
@@ -458,19 +371,11 @@ const CreateDiscount = (props: Props) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
   const openAddCustomModal = () => {
     setIsModalOpen(true);
   };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
 
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
-  };
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
     setApprovedBy(approvedBy);
@@ -522,32 +427,6 @@ const CreateDiscount = (props: Props) => {
     }
   };
 
-  const handleBoatFareChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTotalBoatFare(parseFloat(e.target.value) || 0);
-  };
-
-  // Function to handle change in totalHotel input
-  const handleHotelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTotalHotel(parseFloat(e.target.value) || 0);
-  };
-
-  // Function to handle change in totalFare input
-  const handleFareChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTotalFare(parseFloat(e.target.value) || 0);
-  };
-
-  // Function to handle change in totalContingency input
-  const handleContingencyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTotalContingency(parseFloat(e.target.value) || 0);
-  };
-
-  const handleCancelSubmit = () => {
-    // Close the confirmation modal
-    setShowConfirmationModal(false);
-    // Reset formData state
-    setFormData(null);
-  };
-
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
 
@@ -557,6 +436,7 @@ const CreateDiscount = (props: Props) => {
   const handleFormSubmit = () => {
     setFormSubmitted(true);
   };
+
   const handleTextareaHeight = (index: number, field: string) => {
     const textarea = document.getElementById(
       `${field}-${index}`

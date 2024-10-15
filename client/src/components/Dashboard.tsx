@@ -9,10 +9,7 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 import DataTable from "react-data-table-component";
-import ClipLoader from "react-spinners/ClipLoader";
-import { set } from "react-hook-form";
-import { CheckIcon, ChartBarIcon } from "@heroicons/react/24/solid";
-import { useUser } from "../context/UserContext";
+import { ChartBarIcon } from "@heroicons/react/24/solid";
 
 interface FormData {
   purpose: string;
@@ -90,9 +87,7 @@ const Dashboard: React.FC = () => {
 
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
-  const { email, role, branchCode, contact, signature } = useUser();
   const firstName = localStorage.getItem("firstName");
-  const lastName = localStorage.getItem("lastName");
   const userId = localStorage.getItem("id");
 
   useEffect(() => {
@@ -393,13 +388,6 @@ const Dashboard: React.FC = () => {
             </span>
           </a>
         </p>
-        {/* {loading ? (
-          <div className="flex items-center justify-center h-full">
-            <ClipLoader color={"#123abc"} loading={loading} size={50} />
-          </div>
-        ) : (
-          <DataTable columns={columns} data={latestRequests} pagination />
-        )} */}
         <div>
           <DataTable
             className="data-table"

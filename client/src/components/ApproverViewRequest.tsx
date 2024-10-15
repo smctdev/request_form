@@ -10,6 +10,7 @@ type Record = {
   branch: string;
   status: string;
 };
+
 const tableCustomStyles = {
   headRow: {
     style: {
@@ -28,13 +29,14 @@ const tableCustomStyles = {
     },
   },
 };
+
 const ApproverViewRequest = (props: Props) => {
-  const [darkMode, setDarkMode] = useState(true);
   const [selected, setSelected] = useState(0);
 
   const handleClick = (index: number) => {
     setSelected(index);
   };
+
   const columns = [
     {
       name: "ID",
@@ -60,7 +62,7 @@ const ApproverViewRequest = (props: Props) => {
     {
       name: "Status",
       selector: (row: Record) => row.status,
-     
+
       cell: (row: Record) => (
         <div
           className={`${
@@ -888,19 +890,12 @@ const ApproverViewRequest = (props: Props) => {
       status: "Disapproved",
     },
   ];
+
   const items = [
     "All Requests",
     "Pending Requests",
     "Approved Requests",
     "Unsuccessful Requests",
-  ];
-  const titles = [
-    "Request ID",
-    "Type of Request",
-    "Date",
-    "Branch",
-    "Status",
-    "Action",
   ];
 
   return (

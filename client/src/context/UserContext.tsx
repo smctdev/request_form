@@ -6,7 +6,6 @@ import React, {
   useEffect,
 } from "react";
 import axios from "axios";
-import { set } from "react-hook-form";
 
 interface UserContextType {
   userId: string | null;
@@ -49,7 +48,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   const [branchCode, setBranchCode] = useState<string | null>(null);
   const [contact, setContact] = useState<string | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
-  const [profile_picture, setProfile_picture] = useState<string | undefined>("");
+  const [profile_picture, setProfile_picture] = useState<string | undefined>(
+    ""
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
@@ -76,15 +77,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   useEffect(() => {
-        const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
     const fetchUserProfile = async () => {
-      // if (!token) {
-      //   setUserId(null);
-      //   setLoading(false);
-      //   return;
-      // }
       try {
-
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/profile`,
           {
@@ -106,16 +101,15 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
           setIsAuthenticated(true);
         }
       } catch (error) {
-        // console.error("Failed to fetch user profile", error);
         setUserId(null);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchUserProfile();
   }, [profile_picture]);
-  
+
   return (
     <UserContext.Provider
       value={{

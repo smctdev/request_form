@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Slice from "./assets/Slice.png";
 import building from "./assets/building.jpg";
 import { useNavigate } from "react-router-dom";
-import { EyeIcon, EyeSlashIcon, XCircleIcon } from "@heroicons/react/24/solid";
-import axios from 'axios';
+import { XCircleIcon } from "@heroicons/react/24/solid";
+import axios from "axios";
 
 const ResetPassword: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -16,7 +16,6 @@ const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
 
   const handleResetPassword = async () => {
-   
     setError(null); // Clear any previous error message
     setSuccess(null); // Clear any previous success message
     setLoading(true); // Start the loading indicator
@@ -26,7 +25,7 @@ const ResetPassword: React.FC = () => {
       setLoading(false); // Stop the loading indicator
       return; // Exit the function early
     }
-    
+
     if (password !== confirmPassword) {
       setError("Passwords do not match"); // Set error if no email is provided
       setLoading(false); // Stop the loading indicator
@@ -34,19 +33,23 @@ const ResetPassword: React.FC = () => {
     }
     try {
       // Send a POST request to the password reset endpoint using axios
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/password/reset`, {
-        email, password,
-      });
-    
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/password/reset`,
+        {
+          email,
+          password,
+        }
+      );
 
-    
       setSuccess(response.data.message);
-      setEmail(""); 
+      setEmail("");
       navigate("/login");
     } catch (error: unknown) {
       // Handle the error response
       if (axios.isAxiosError(error) && error.response) {
-        setError(error.response.data.message || "An error occurred. Please try again."); // Set error message from the response data
+        setError(
+          error.response.data.message || "An error occurred. Please try again."
+        ); // Set error message from the response data
       } else {
         setError("An error occurred. Please try again."); // Set a generic error message
       }
@@ -55,8 +58,6 @@ const ResetPassword: React.FC = () => {
     }
   };
 
-  const inputStyle =
-    "w-full lg:max-w-[417px] lg:h-[56px] md:h-10  p-2 bg-gray-300 rounded-lg";
   return (
     <div className="flex flex-row">
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-cover bg-center relative">
@@ -74,9 +75,7 @@ const ResetPassword: React.FC = () => {
           <h1 className="text-2xl font-semibold text-center p-4 mt-4">
             Change your password
           </h1>
-          <p className="text-center p-4">
-           Enter your new password
-          </p>
+          <p className="text-center p-4">Enter your new password</p>
           <div className="px-6">
             <p className="mb-2">Email</p>
             <input
@@ -85,14 +84,14 @@ const ResetPassword: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full lg:max-w-[417px] lg:h-[56px] md:h-10  p-2 bg-gray-300 rounded-lg"
             />
-             <p className="my-2">Password</p>
+            <p className="my-2">Password</p>
             <input
               type="text"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full lg:max-w-[417px] lg:h-[56px] md:h-10  p-2 bg-gray-300 rounded-lg"
             />
-             <p className="my-2">Confirm Password</p>
+            <p className="my-2">Confirm Password</p>
             <input
               type="text"
               value={confirmPassword}

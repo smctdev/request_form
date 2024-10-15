@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import ClipLoader from "react-spinners/ClipLoader";
-import { PencilIcon } from "@heroicons/react/24/solid";
 import PrintCash from "./PrintCash";
 import BeatLoader from "react-spinners/BeatLoader";
-import PrintPurchase from "./PrintPurchase";
 import SMCTLogo from "./assets/SMCT.png";
 import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
 import ApproveSuccessModal from "./ApproveSuccessModal";
 import Avatar from "./assets/avatar.png";
+
 type Props = {
   closeModal: () => void;
   record: Record;
@@ -118,13 +116,11 @@ const ApproverCashAdvance: React.FC<Props> = ({
   const [loading, setLoading] = useState(false);
   const [approvers, setApprovers] = useState<Approver[]>([]);
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
-  const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
 
   const [avpstaff, setAvpstaff] = useState<Approver[]>([]);
-  const [customApprovers, setCustomApprovers] = useState<any>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [comments, setComments] = useState("");
   const [approveLoading, setApprovedLoading] = useState(false);
@@ -165,7 +161,6 @@ const ApproverCashAdvance: React.FC<Props> = ({
           console.error("Token is missing");
           return;
         }
-
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/profile`,
           {
@@ -191,7 +186,6 @@ const ApproverCashAdvance: React.FC<Props> = ({
 
     fetchUserInformation();
   }, []);
-
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -221,8 +215,6 @@ const ApproverCashAdvance: React.FC<Props> = ({
 
   useEffect(() => {
     const currentUserId = localStorage.getItem("id");
-
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
     setNotedBy(record.noted_by);
     setApprovedBy(record.approved_by);
     setAvpstaff(record.avp_staff);
@@ -243,7 +235,10 @@ const ApproverCashAdvance: React.FC<Props> = ({
         // Handle the parsed attachment
         const fileUrls = parsedAttachment.map(
           (filePath: string) =>
-            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+              /\\/g,
+              "/"
+            )}`
         );
         setAttachmentUrl(fileUrls);
       } else {
@@ -257,8 +252,6 @@ const ApproverCashAdvance: React.FC<Props> = ({
       ) {
         const approvedAttachmentString = record.approved_attachment[0]; // Access the first element
         const parsedApprovedAttachment = JSON.parse(approvedAttachmentString); // Parse the string to get the actual array
-       
-
         if (
           Array.isArray(parsedApprovedAttachment) &&
           parsedApprovedAttachment.length > 0
@@ -266,7 +259,6 @@ const ApproverCashAdvance: React.FC<Props> = ({
           // Access the first element of the array
           const formattedAttachment = parsedApprovedAttachment[0];
           setAttachment(formattedAttachment); // Set the state with the string
-        
         } else {
           console.warn(
             "Parsed approved attachment is not an array or is empty:",
@@ -313,7 +305,7 @@ const ApproverCashAdvance: React.FC<Props> = ({
       requestData.append("comment", comments);
 
       // Log the contents of requestData for debugging
-  
+
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/request-forms/${record.id}/process`,
         requestData,
@@ -358,7 +350,6 @@ const ApproverCashAdvance: React.FC<Props> = ({
     requestData.append("comment", comments);
 
     // Log the contents of requestData for debugging
-   
 
     try {
       setApprovedLoading(true);
@@ -572,7 +563,9 @@ const ApproverCashAdvance: React.FC<Props> = ({
         </div>
         <div className="flex flex-col items-start justify-start w-full space-y-4">
           <div className="flex items-center justify-between w-full">
-            <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
+            <p className="font-medium text-[14px]">
+              Request ID: {record.request_code}
+            </p>
             <div className="flex w-auto ">
               <p>Date: </p>
               <p className="pl-2 font-bold">{formatDate2(record.created_at)}</p>
@@ -1098,7 +1091,7 @@ const ApproverCashAdvance: React.FC<Props> = ({
               </div>
             )}
             {commentMessage && <p className="text-red-500">{commentMessage}</p>}
-         
+
             {/* Comments Section */}
             <ul className="flex flex-col w-full mb-4 space-y-4">
               {notedBy.filter((user) => user.comment).length > 0 ||

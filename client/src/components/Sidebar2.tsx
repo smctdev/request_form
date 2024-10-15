@@ -3,7 +3,6 @@ import Logo from "./assets/logo.png";
 import {
   ChartBarIcon,
   EnvelopeIcon,
-  BeakerIcon,
   DocumentCheckIcon,
   DocumentPlusIcon,
   UserGroupIcon,
@@ -18,9 +17,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Echo from "../utils/Echo";
-import Swal from "sweetalert2";
 import axios from "axios";
-import { set } from "react-hook-form";
 import { useUser } from "../context/UserContext";
 
 type NavItem = {
@@ -154,7 +151,7 @@ const Sidebar2: React.FC<SidebarProps> = ({
         const filtered = response.data.request_forms.filter(
           (request: any) => request.status === "Pending"
         );
-          setPendingCounts(filtered.length);
+        setPendingCounts(filtered.length);
       } catch (error) {
         console.error("Error fetching requests data:", error);
       }
@@ -191,7 +188,6 @@ const Sidebar2: React.FC<SidebarProps> = ({
     navigate("/login");
     setIsAuthenticated(false);
   };
-  
 
   const listStyle =
     "relative mx-2 group flex items-center text-[18px] text-gray-400 font-medium py-2 pr-3 px-2 cursor-pointer rounded-lg";
