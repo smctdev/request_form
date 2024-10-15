@@ -759,11 +759,11 @@ class RequestFormController extends Controller
             $user = Auth::user();
             $requestForm = RequestForm::where('id', $id)->where('user_id', $user->id)->firstOrFail();
 
-            if (in_array($requestForm->status, ['Ongoing', 'Approved', 'Disapproved'])) {
-                return response()->json([
-                    'message' => 'Request form cannot be deleted because it has already been processed'
-                ], 400);
-            }
+            // if (in_array($requestForm->status, ['Ongoing', 'Approved', 'Disapproved'])) {
+            //     return response()->json([
+            //         'message' => 'Request form cannot be deleted because it has already been processed'
+            //     ], 400);
+            // }
 
             $requestForm->delete();
 
