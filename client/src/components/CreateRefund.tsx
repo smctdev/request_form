@@ -1,22 +1,15 @@
 import React, { useState, useEffect } from "react";
-import Select from "react-select/dist/declarations/src/Select";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  CalendarIcon,
-  MinusCircleIcon,
-  PlusCircleIcon,
-  TrashIcon,
-} from "@heroicons/react/24/solid";
-import path from "path";
-import { Link, useNavigate } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form";
-import { z, ZodError } from "zod";
+import { PlusCircleIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import axios from "axios";
 import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ClipLoader from "react-spinners/ClipLoader";
 import AddCustomModal from "./AddCustomModal";
 import Swal from "sweetalert2";
+
 type CustomApprover = {
   id: number;
   name: string;
@@ -25,12 +18,14 @@ type CustomApprover = {
     approved_by: { name: string }[];
   };
 };
+
 interface Approver {
   id: number;
   firstName: string;
   lastName: string;
   position: string;
 }
+
 const schema = z.object({
   approver_list_id: z.number(),
   approver: z.string(),
@@ -61,23 +56,15 @@ const requestType = [
 
 const inputStyle =
   "w-full h-full bg-white px-2 py-1 bg-white  autofill-input focus:outline-0";
-const itemDiv = "flex flex-col ";
 const buttonStyle = "h-[45px] w-[150px] rounded-[12px] text-white";
+
 const CreateRefund = (props: Props) => {
-  const [startDate, setStartDate] = useState(new Date());
   const [selectedRequestType, setSelectedRequestType] =
     useState("/request/rfr");
   const [formData, setFormData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [customApprovers, setCustomApprovers] = useState<CustomApprover[]>([]);
-  const [selectedApproverList, setSelectedApproverList] = useState<
-    number | null
-  >(null);
-  const [selectedApprover, setSelectedApprover] = useState<{ name: string }[]>(
-    []
-  );
   const [file, setFile] = useState<File[]>([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [validationErrors, setValidationErrors] = useState<
@@ -87,10 +74,8 @@ const CreateRefund = (props: Props) => {
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [initialNotedBy, setInitialNotedBy] = useState<Approver[]>([]);
   const [initialApprovedBy, setInitialApprovedBy] = useState<Approver[]>([]);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {
-    register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
@@ -123,45 +108,6 @@ const CreateRefund = (props: Props) => {
       remarks: "",
     },
   ]);
-  /*  useEffect(() => {
-    fetchCustomApprovers();
-  }, []); */
-
-  /* const fetchCustomApprovers = async () => {
-    try {
-      const id = localStorage.getItem("id");
-      const token = localStorage.getItem("token");
-      if (!token || !id) {
-        console.error("Token or user ID is missing");
-        return;
-      }
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (Array.isArray(response.data.data)) {
-        setCustomApprovers(response.data.data);
-      } else {
-        console.error("Unexpected response format:", response.data);
-        setCustomApprovers([]); // Ensure that customApprovers is always an array
-      }
-
-   
-    } catch (error) {
-      console.error("Error fetching custom approvers:", error);
-      setCustomApprovers([]); // Ensure that customApprovers is always an array
-    }
-  }; */
-
-  const handleOpenConfirmationModal = () => {
-    setShowConfirmationModal(true);
-  };
 
   // Function to close the confirmation modal
   const handleCloseConfirmationModal = () => {
@@ -262,16 +208,6 @@ const CreateRefund = (props: Props) => {
   const openAddCustomModal = () => {
     setIsModalOpen(true);
   };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
-  };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
@@ -320,13 +256,6 @@ const CreateRefund = (props: Props) => {
   };
 
   const navigate = useNavigate();
-
-  const handleCancelSubmit = () => {
-    // Close the confirmation modal
-    setShowConfirmationModal(false);
-    // Reset formData state
-    setFormData(null);
-  };
 
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);

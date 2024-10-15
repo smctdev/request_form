@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useForm, SubmitHandler, Controller, set } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Avatar3 from "./assets/avatar.png";
 import axios from "axios";
 import PropogateLoader from "react-spinners/PropagateLoader";
-import SuccessModalSubmit from "./SuccessModalSubmit";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import SignatureCanvas from "react-signature-canvas";
-import { profile } from "console";
+
 interface User {
   firstName: string;
   lastName: string;
@@ -39,12 +38,7 @@ const schema = z.object({
   userName: z.string().nonempty("Username is required"),
   position: z.string().nonempty("Position is required"),
 });
-const adminOptions = [
-  { label: "", value: "" },
-  { label: "Admin", value: "Admin" },
-  { label: "User", value: "User" },
-  { label: "Approver", value: "approver" },
-];
+
 const roleOptions = [
   { label: "", value: "" },
   { label: "Accounting Clerk", value: "Accounting Clerk" },
@@ -80,7 +74,7 @@ const roleOptions = [
 
 const pinputStyle =
   "font-medium border-2 border-black rounded-[12px] p-2 w-full";
-const baseUrl = `${process.env.REACT_APP_API_BASE_URL}/storage/profile_pictures/`;
+
 const UpdateInformation = () => {
   const signatureRef = useRef<SignatureCanvas>(null);
   const {
@@ -106,7 +100,6 @@ const UpdateInformation = () => {
   const [newPosition, setNewPosition] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showSignatureSuccess, setShowSignatureSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
   const id = localStorage.getItem("id");
   const [signatureEmpty, setSignatureEmpty] = useState(false);
@@ -173,7 +166,6 @@ const UpdateInformation = () => {
             },
           }
         );
-      
 
         if (response.data.status) {
           setUser(response.data.data);
@@ -223,8 +215,6 @@ const UpdateInformation = () => {
   };
 
   const onSubmit: SubmitHandler<User> = async (data) => {
-  
-
     try {
       setSubmitting(true);
 
@@ -276,8 +266,8 @@ const UpdateInformation = () => {
       if (newProfilePic) {
         formData.append("profile_picture", newProfilePic);
       }
-    
-        const response = await axios.post(
+
+      const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/update-profile/${id}`,
         formData,
         {
@@ -288,7 +278,6 @@ const UpdateInformation = () => {
         }
       );
 
-    
       setSubmitting(false);
       setShowSuccessModal(true);
     } catch (error: any) {
@@ -305,7 +294,7 @@ const UpdateInformation = () => {
     const selectedBranch = branchList.find(
       (branch) => branch.id === selectedBranchId
     );
-   
+
     if (selectedBranch) {
       setValue("branch", selectedBranch.branch);
     } else {
@@ -313,30 +302,14 @@ const UpdateInformation = () => {
     }
   };
 
-
   const handleClear = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     signature?.clear();
   };
 
-  const saveSignature = () => {
-    if (signatureRef.current) {
-      const signatureImage = signatureRef.current.toDataURL();
-      // You can save signatureImage or set it to a form field for submission
-    
-    }
-  };
-  const signatureIsEmpty = () => {
-    if (signature && signature.isEmpty && signature.isEmpty()) {
-      setSignatureEmpty(true);
-      return true;
-    }
-    return false;
-  };
   useEffect(() => {
     if (signature) {
       signature.toDataURL("image/png");
-  
     }
   }, [signature]);
   const handleImageClick = () => {
@@ -348,7 +321,6 @@ const UpdateInformation = () => {
       setSignatureButton(true);
       // Convert the signature to a data URL
       const signatureDataURL = signatureRef.current.toDataURL();
-    
 
       try {
         // Send the data URL to the backend API
@@ -363,7 +335,6 @@ const UpdateInformation = () => {
           }
         );
         setSignatureButton(false);
-      
       } catch (error) {
         setSignatureButton(false);
         console.error("Error saving signature:", error); // Log any errors
@@ -377,7 +348,6 @@ const UpdateInformation = () => {
   const handleProfilePicUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setNewProfilePic(file); // Store the selected file in state
-  
   };
   return (
     <div className="bg-graybg dark:bg-blackbg w-full h-screen pt-4 px-4 md:px-10 lg:px-30">

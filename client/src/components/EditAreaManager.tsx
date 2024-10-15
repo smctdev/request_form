@@ -37,14 +37,10 @@ const EditAreaManager = ({
   editModal,
   editModalClose,
   openSuccessModal,
-  entityType,
   selectedUser,
   refreshData,
   areaManagerId,
   modalIsOpen,
-  closeModal,
-  openCompleteModal,
-  closeSuccessModal
 }: {
   editModal: boolean;
   openCompleteModal: any;
@@ -61,14 +57,15 @@ const EditAreaManager = ({
   const [loading, setLoading] = useState(false);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [selectedBranches, setSelectedBranches] = useState<number[]>([]);
-  const [initialSelectedBranches, setInitialSelectedBranches] = useState<number[]>([]);
+  const [initialSelectedBranches, setInitialSelectedBranches] = useState<
+    number[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [areaManagerData, setAreaManagerData] = useState<Record | null>(null);
 
   useEffect(() => {
-
     const fetchBranches = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -87,7 +84,6 @@ const EditAreaManager = ({
           }
         );
 
-      
         setAreaManagerData(response.data.data);
 
         // If selectedUser has branches, pre-select them
@@ -125,8 +121,6 @@ const EditAreaManager = ({
           }
         );
 
-     ;
-
         // Assuming your API response includes selected branch IDs for the area manager
         const selectedBranchIds = response.data.selected_branches.map(
           (branch: any) => branch.id
@@ -163,7 +157,6 @@ const EditAreaManager = ({
           }
         );
 
-      
         setBranches(response.data.data);
       } catch (error) {
         console.error("Error fetching branches:", error);
@@ -197,6 +190,7 @@ const EditAreaManager = ({
     if (selectedBranches.length > 0) {
       setIsLoading(true);
       setError("");
+
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -207,13 +201,11 @@ const EditAreaManager = ({
           Authorization: `Bearer ${token}`,
         };
 
-        // Example of PUT request to update area manager with selectedBranches
         const putData = {
           user_id: selectedUser.user_id,
           branch_id: selectedBranches, // Ensure this is an array of branch IDs
         };
-        
-       
+
         const response = await axios.post(
           `${process.env.REACT_APP_API_BASE_URL}/update-area-manager/${selectedUser.user_id}`,
           putData,
@@ -222,13 +214,11 @@ const EditAreaManager = ({
           }
         );
 
-     
-
         // Assuming successful, close modal or show success message
         openSuccessModal();
         editModalClose();
-        refreshData(); 
-        setIsLoading(false);// Refresh parent data if needed
+        refreshData();
+        setIsLoading(false); // Refresh parent data if needed
       } catch (error) {
         console.error("Error updating area manager:", error);
         setIsLoading(false);
@@ -246,8 +236,11 @@ const EditAreaManager = ({
   };
 
   const handleRemoveBranch = (branchIdToRemove: number) => {
-    setSelectedBranches(selectedBranches.filter(id => id !== branchIdToRemove));
+    setSelectedBranches(
+      selectedBranches.filter((id) => id !== branchIdToRemove)
+    );
   };
+
   return (
     <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="p-4 w-10/12 sm:w-1/3 relative bg-primary flex justify-center mx-20 border-b rounded-t-[12px]">
@@ -321,16 +314,18 @@ const EditAreaManager = ({
         {selectedBranches.map((branchId) => {
           const branch = branches.find((b) => b.id === branchId);
           return (
-            <div key={branchId} className="relative p-3 mb-2 bg-gray-300 rounded-sm">
-             
-         <XMarkIcon
-          className="absolute top-0 right-0 text-gray-500 cursor-pointer size-4"
-          onClick={() => handleRemoveBranch(branchId)}
-        />
-       
+            <div
+              key={branchId}
+              className="relative p-3 mb-2 bg-gray-300 rounded-sm"
+            >
+              <XMarkIcon
+                className="absolute top-0 right-0 text-gray-500 cursor-pointer size-4"
+                onClick={() => handleRemoveBranch(branchId)}
+              />
+
               <div>
-              <p>{branch?.branch}</p>
-              <p>{branch?.branch_code}</p>
+                <p>{branch?.branch}</p>
+                <p>{branch?.branch_code}</p>
               </div>
             </div>
           );
@@ -351,9 +346,7 @@ const EditAreaManager = ({
         </button>
       </div>
       {error && (
-        <div className="p-2 mt-2 text-white bg-red-500 rounded">
-          {error}
-        </div>
+        <div className="p-2 mt-2 text-white bg-red-500 rounded">{error}</div>
       )}
     </div>
   );

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import ClipLoader from "react-spinners/ClipLoader";
 import { PencilIcon } from "@heroicons/react/24/outline";
 import EditStockModalSuccess from "./EditStockModalSuccess";
 import BeatLoader from "react-spinners/BeatLoader";
-import PrintCash from "../PrintCashDisbursement";
 import Avatar from "../assets/avatar.png";
 import PrintCashDisbursement from "../PrintCashDisbursement";
 import AddCustomModal from "../EditCustomModal";
@@ -93,21 +91,18 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
     record.approvers_id
   );
   const [editedDate, setEditedDate] = useState("");
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [loading, setLoading] = useState(false);
   const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
-  const [customApprovers, setCustomApprovers] = useState<any>({});
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
   const [isFetchingUser, setisFetchingUser] = useState(false);
   const [user, setUser] = useState<any>({});
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [attachmentUrl, setAttachmentUrl] = useState<string[]>([]);
   const [newAttachments, setNewAttachments] = useState<File[]>([]);
-  const [originalAttachments, setOriginalAttachments] = useState<string[]>([]);
   const [removedAttachments, setRemovedAttachments] = useState<
     (string | number)[]
   >([]);

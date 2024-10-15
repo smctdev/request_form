@@ -1,24 +1,17 @@
 import React, { useEffect, useState } from "react";
-// import Avatar from "./assets/avatar.png"; // Example import for avatar
-// import { useLocation } from "react-router-dom";
-// import { table } from "console";
 import SMCTLogo from "./assets/SMCT.png";
 import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
 import HOLogo from "./assets/logo.png";
 import { toWords } from "number-to-words";
-// import { ToWords } from "to-words";
+
 type PrintRefundProps = {
   data?: any;
 };
 
-// const tableStyle = "border border-black px-4 py-2";
 const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
-  // const location = useLocation();
-  const [printData, setPrintData] = useState<any>(null); // State to hold print data
-  // const queryParams = new URLSearchParams(location.search);
-  // const serializedData = queryParams.get("data");
+  const [printData, setPrintData] = useState<any>(null);
 
   let logo;
   if (printData?.user?.data?.branch === "Strong Motocentrum, Inc.") {
@@ -57,28 +50,6 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
 
     return date.toLocaleDateString("en-US", options);
   };
-
-  // useEffect(() => {
-  //   // Retrieve the data from localStorage
-  //   const storedData = localStorage.getItem("printData");
-  //   if (storedData) {
-  //     const parsedData = JSON.parse(storedData);
-  //     setPrintData(parsedData); // Set the printData state
-  //   }
-
-  //   localStorage.removeItem("printData");
-  // }, []);
-
-  // useEffect(() => {
-  //   if (printData !== null) {
-  //     window.print();
-
-  //     window.onafterprint = () => {
-  //       localStorage.removeItem("printData"); // Clean up after printing
-  //       window.close(); // Close the tab after printing or canceling
-  //     };
-  //   }
-  // }, [printData]);
 
   useEffect(() => {
     const storedData = localStorage.getItem("printData");
@@ -370,11 +341,6 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
             <h1 className="text-base font-semibold">BRANCH</h1>
           </div>
         </div>
-
-        {/*   
-      <p>Status: {printData.status}</p>
-      
-     <p>Date: {formatDate(data.date)}</p> */}
         <div className="flex justify-center w-full">
           <table className="border w-[70%] mr-2 h-auto">
             <thead className="border border-black ">
@@ -494,9 +460,6 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
             </tbody>
           </table>
         </div>
-        {/* <p className="mt-2 ml-8 text-xs font-medium uppercase">
-          Grand Total: {printData?.id.form_data[0].grand_total}
-        </p> */}
         <div className="mt-2 ml-8">
           <div className="flex flex-wrap justify-start ">
             {/* Requested By Section */}

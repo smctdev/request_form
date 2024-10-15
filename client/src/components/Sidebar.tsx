@@ -6,20 +6,12 @@ import {
   BeakerIcon,
   ArrowLeftStartOnRectangleIcon,
   ArrowLeftCircleIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
   BookOpenIcon,
   DocumentCheckIcon,
   DocumentPlusIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
-import Nav from "./Nav";
-
-type Submenu = {
-  title: string;
-  path: string;
-};
 
 type NavItem = {
   title: string;
@@ -35,12 +27,8 @@ interface SidebarProps {
   toggleSidebar: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ darkMode, role,  isSidebarVisible, toggleSidebar }) => {
+const Sidebar: React.FC<SidebarProps> = ({ darkMode, role }) => {
   const [open, setOpen] = useState(false);
-  const [submenuOpen, setSubMenuOpen] = useState<string | null>(null);
-
-
-
 
   const navItems: NavItem[] =
     role === "approver"
@@ -167,9 +155,7 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, role,  isSidebarVisible, to
         ];
 
   useEffect(() => {
-    const handleResize = () => {
-   
-    };
+    const handleResize = () => {};
 
     window.addEventListener("resize", handleResize);
 
@@ -184,7 +170,6 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, role,  isSidebarVisible, to
   const iconStyle = "size-[26px] group-hover:text-primary ";
   return (
     <div className={`${darkMode ? "dark" : "light"} dark:bg-blackD h-full`}>
-      
       <div
         className={`bg-white dark:bg-blackD w-60
         } h-full`}
@@ -224,15 +209,11 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, role,  isSidebarVisible, to
                   >
                     <div
                       className={`p-2
-                         ${
-                        !open ? "hover:bg-[#E0E0F9] rounded-lg" : ""
-                      }`}
+                         ${!open ? "hover:bg-[#E0E0F9] rounded-lg" : ""}`}
                     >
                       <item.icon className={iconStyle} />
                     </div>
-                    <p className={`${pStyle}`}>
-                      {item.title}
-                    </p>
+                    <p className={`${pStyle}`}>{item.title}</p>
                   </li>
                 </Link>
               ))}

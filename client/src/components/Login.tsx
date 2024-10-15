@@ -1,15 +1,9 @@
-import React, { useState, CSSProperties, useEffect } from "react";
+import React, { useState, CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import Slice from "./assets/Slice.png";
 import building from "./assets/building.jpg";
-import { useNavigate } from "react-router-dom";
-import {
-  EyeIcon,
-  EyeSlashIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/solid";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { z, ZodType } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import BounceLoader from "react-spinners/ClipLoader";
@@ -24,13 +18,9 @@ const schema = z.object({
 });
 
 const Login: React.FC = () => {
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorMessge, setErrorMessage] = useState("");
-  let [color, setColor] = useState("bg-primary");
-  const { userId, firstName, lastName, updateUser } = useUser();
+  const { updateUser } = useUser();
   const {
     register,
     handleSubmit,
@@ -38,12 +28,6 @@ const Login: React.FC = () => {
   } = useForm<UserCredentials>({
     resolver: zodResolver(schema),
   });
-
-  const override: CSSProperties = {
-    display: "block",
-    margin: "0 auto",
-    borderColor: "red",
-  };
 
   const submitData: SubmitHandler<UserCredentials> = async (data) => {
     try {
@@ -92,12 +76,9 @@ const Login: React.FC = () => {
           confirmButtonText: "Close",
           confirmButtonColor: "#dc3545",
         });
-        // alert(JSON.stringify(response.data.message));
         setLoading(false);
       }
     } catch (error) {
-      // console.error(error);
-      // alert("An error occurred while logging in. Please try again later.");
       Swal.fire({
         icon: "error",
         iconColor: "#dc3545",
@@ -106,7 +87,6 @@ const Login: React.FC = () => {
         confirmButtonText: "Close",
         confirmButtonColor: "#dc3545",
       });
-      // alert(JSON.stringify(response.data.message));
       setLoading(false);
     }
   };
@@ -149,7 +129,6 @@ const Login: React.FC = () => {
             </div>
             <div className="mb-4">
               <h1 className="mb-2 text-base lg:text-lg">Password</h1>
-              {/* <div className="relative flex items-center justify-center w-full "> */}
               <input
                 type={showPassword ? "text" : "password"}
                 {...register("password")}

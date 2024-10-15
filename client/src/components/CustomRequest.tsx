@@ -1,25 +1,13 @@
 import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
-import {
-  PencilSquareIcon,
-  TrashIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import AddUserModal from "./AddUserModal";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import EditUserModal from "./EditUserModal";
-import SuccessModal from "./SuccessModal";
 import CompleteModal from "./CompleteModal";
 import DeleteSuccessModal from "./DeleteSucessModal";
 import DeleteModal from "./DeleteModal";
-import { set } from "react-hook-form";
-import ViewApproverModal from "./ViewApproverModal";
-import AddCustomModal from "./AddCustomModal";
 import axios from "axios";
-import { format } from "path";
 import { ClipLoader } from "react-spinners";
+
 type Props = {};
 
 type Record = {
@@ -34,13 +22,15 @@ type Record = {
   firstname: string;
   lastname: string;
 };
+
 type Approved_by = {
-firstname: string;
-name: string;
-id: number;
-lastname: string;
-data: Record;
+  firstname: string;
+  name: string;
+  id: number;
+  lastname: string;
+  data: Record;
 };
+
 const tableCustomStyles = {
   headRow: {
     style: {
@@ -61,102 +51,100 @@ const tableCustomStyles = {
     },
   },
 };
-interface ViewApproverModalProps {
-  modalIsOpen: boolean;
-  closeModal: () => void;
-  user: Record | null;
-}
 
-const pStyle = "font-medium";
-const inputStyle = "border border-black rounded-md p-1";
 const CustomRequest = (props: Props) => {
-  const [darkMode, setDarkMode] = useState(true);
-  const [selected, setSelected] = useState<number | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showDeletedSuccessModal, setShowDeletedSuccessModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  const [deleteSuccessModal, setDeleteSuccessModal] = useState(false);
-  const [viewModalIsOpen, setViewModalIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Record | null>(null);
   const [requests, setRequests] = useState<Record[]>([]);
   const userId = localStorage.getItem("id");
-  const [formattedRequests, setFormattedRequests] = useState<Record[]>([]);
   const [loading, setLoading] = useState(false);
-/*   useEffect(() => {
-    fetchRequests();
-  }, [userId]);  */// useEffect will re-run whenever userId changes
 
   useEffect(() => {
     const fetchRequests = () => {
       if (userId) {
         setLoading(true);
-       
+
         const token = localStorage.getItem("token");
         if (!token) {
           console.error("Token is missing");
           return;
         }
-  
+
         const headers = {
           Authorization: `Bearer ${token}`,
         };
-  
+
         axios
-          .get(`${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`, {
-            headers,
-          })
+          .get(
+            `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`,
+            {
+              headers,
+            }
+          )
           .then(async (response) => {
-          
             const responseData = response.data;
             if (!Array.isArray(responseData.data)) {
               console.error("Expected data to be an array:", responseData);
               return;
             }
-  
+
             const customApprovers: any[] = responseData.data;
-  
+
             const formattedRequests: Record[] = [];
-  
+
             for (let item of customApprovers) {
               let notedByDetails: any[] = [];
               let approvedByDetails: any[] = [];
-  
+
               // Parse noted_by and approved_by arrays
               let notedByArray = JSON.parse(item.noted_by);
               let approvedByArray = JSON.parse(item.approved_by);
-  
+
               // Fetch details for noted_by
               for (let notedById of notedByArray) {
-           
                 await axios
-                  .get(`${process.env.REACT_APP_API_BASE_URL}/approvers/${notedById}`, {
-                    headers,
-                  })
+                  .get(
+                    `${process.env.REACT_APP_API_BASE_URL}/approvers/${notedById}`,
+                    {
+                      headers,
+                    }
+                  )
                   .then((response) => {
                     notedByDetails.push(response.data);
                   })
                   .catch((error) => {
-                    console.error(`Error fetching approver ${notedById} details:`, error);
+                    console.error(
+                      `Error fetching approver ${notedById} details:`,
+                      error
+                    );
                   });
               }
-  
+
               // Fetch details for approved_by
               for (let approvedById of approvedByArray) {
                 await axios
-                  .get(`${process.env.REACT_APP_API_BASE_URL}/approvers/${approvedById}`, {
-                    headers,
-                  })
+                  .get(
+                    `${process.env.REACT_APP_API_BASE_URL}/approvers/${approvedById}`,
+                    {
+                      headers,
+                    }
+                  )
                   .then((response) => {
                     approvedByDetails.push(response.data);
                   })
                   .catch((error) => {
-                    console.error(`Error fetching approver ${approvedById} details:`, error);
+                    console.error(
+                      `Error fetching approver ${approvedById} details:`,
+                      error
+                    );
                   });
               }
-          
+
               formattedRequests.push({
                 id: item.id,
                 name: item.name,
@@ -171,7 +159,7 @@ const CustomRequest = (props: Props) => {
               });
             }
             setLoading(false);
-          
+
             setRequests(formattedRequests);
           })
           .catch((error) => {
@@ -180,10 +168,9 @@ const CustomRequest = (props: Props) => {
           });
       }
     };
-  
+
     fetchRequests();
   }, [userId]);
-  
 
   const deleteUser = async () => {
     try {
@@ -191,25 +178,24 @@ const CustomRequest = (props: Props) => {
         console.error("User ID or selected user is missing");
         return;
       }
-  
+
       const token = localStorage.getItem("token");
       if (!token) {
         console.error("Token is missing");
         return;
       }
-  
+
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-  
+
       // Properly interpolate selectedUser.id into the URL
       const response = await axios.delete(
         `${process.env.REACT_APP_API_BASE_URL}/delete-custom-approvers/${selectedUser.id}`,
         { headers }
       );
-  
-      if (response.data.message === 'Custom approvers deleted successfully') {
-     
+
+      if (response.data.message === "Custom approvers deleted successfully") {
         closeDeleteModal();
         openDeleteSuccessModal();
         refreshData();
@@ -222,11 +208,11 @@ const CustomRequest = (props: Props) => {
       // Handle error scenario, show error message or alert
     }
   };
-  
+
   const refreshData = () => {
     if (userId) {
       setLoading(true);
-    
+
       const token = localStorage.getItem("token");
       if (!token) {
         console.error("Token is missing");
@@ -238,11 +224,13 @@ const CustomRequest = (props: Props) => {
       };
 
       axios
-        .get(`${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`, {
-          headers,
-        })
+        .get(
+          `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`,
+          {
+            headers,
+          }
+        )
         .then(async (response) => {
-        
           const responseData = response.data;
           if (!Array.isArray(responseData.data)) {
             console.error("Expected data to be an array:", responseData);
@@ -263,37 +251,48 @@ const CustomRequest = (props: Props) => {
 
             // Fetch details for noted_by
             for (let notedById of notedByArray) {
-         
               await axios
-                .get(`${process.env.REACT_APP_API_BASE_URL}/approvers/${notedById}`, {
-                  headers,
-                })
+                .get(
+                  `${process.env.REACT_APP_API_BASE_URL}/approvers/${notedById}`,
+                  {
+                    headers,
+                  }
+                )
                 .then((response) => {
                   notedByDetails.push(response.data);
                 })
                 .catch((error) => {
-                  console.error(`Error fetching approver ${notedById} details:`, error);
+                  console.error(
+                    `Error fetching approver ${notedById} details:`,
+                    error
+                  );
                 });
             }
 
             // Fetch details for approved_by
             for (let approvedById of approvedByArray) {
               await axios
-                .get(`${process.env.REACT_APP_API_BASE_URL}/approvers/${approvedById}`, {
-                  headers,
-                })
+                .get(
+                  `${process.env.REACT_APP_API_BASE_URL}/approvers/${approvedById}`,
+                  {
+                    headers,
+                  }
+                )
                 .then((response) => {
                   approvedByDetails.push(response.data);
                 })
                 .catch((error) => {
-                  console.error(`Error fetching approver ${approvedById} details:`, error);
+                  console.error(
+                    `Error fetching approver ${approvedById} details:`,
+                    error
+                  );
                 });
             }
-         
+
             formattedRequests.push({
               id: item.id,
               name: item.name,
-              firstName: "", 
+              firstName: "",
               lastName: "",
               firstname: "",
               lastname: "",
@@ -304,7 +303,7 @@ const CustomRequest = (props: Props) => {
             });
           }
           setLoading(false);
-        
+
           setRequests(formattedRequests);
         })
         .catch((error) => {
@@ -312,26 +311,15 @@ const CustomRequest = (props: Props) => {
           console.error("Error fetching requests data:", error);
         });
     }
-  
   };
 
-
-
-
-
   const deleteModalShow = (row: Record) => {
-  
     setSelectedUser(row);
     setDeleteModal(true);
   };
 
   const closeDeleteModal = () => {
     setDeleteModal(false);
-  };
-
-  const editModalShow = (row: Record) => {
-    setSelectedUser(row);
-    setEditModal(true);
   };
 
   const editModalClose = () => {
@@ -342,9 +330,6 @@ const CustomRequest = (props: Props) => {
     setModalIsOpen(true);
   };
 
-  const closeModal = () => {
-    setModalIsOpen(false);
-  };
   const openCompleteModal = () => {
     setShowCompleteModal(true);
     setModalIsOpen(false);
@@ -358,19 +343,14 @@ const CustomRequest = (props: Props) => {
     setEditModal(false);
   };
 
-  const closeSuccessModal = () => {
-    setShowSuccessModal(false);
-  };
   const openDeleteSuccessModal = () => {
     setShowDeletedSuccessModal(true);
     setDeleteModal(false);
   };
 
-
   const closeDeleteSuccessModal = () => {
     setShowDeletedSuccessModal(false);
   };
-
 
   const columns = [
     {
@@ -378,23 +358,23 @@ const CustomRequest = (props: Props) => {
       selector: (row: Record) => row.id,
       width: "10%",
     },
-   
+
     {
       name: "Name",
       selector: (row: Record) => row.name,
       width: "25%",
     },
     {
-      name:"Noted By",
+      name: "Noted By",
       cell: (row: Record) => (
         <div className="w-full">
           {row.noted_by_details && row.noted_by_details.length > 0 ? (
             <div className="grid md:grid-cols-3">
               {row.noted_by_details.map((approver) => (
-               <div
-               className="w-full md:w-3/4 text-center px-2  bg-pink rounded-[12px] py-2 text-white flex justify-center items-center  my-1"
-               key={approver.data.id}
-             >
+                <div
+                  className="w-full md:w-3/4 text-center px-2  bg-pink rounded-[12px] py-2 text-white flex justify-center items-center  my-1"
+                  key={approver.data.id}
+                >
                   {`${approver.data.firstname} ${approver.data.lastname}`}
                 </div>
               ))}
@@ -402,8 +382,6 @@ const CustomRequest = (props: Props) => {
           ) : (
             <div className="w-full text-center mb-2">No Approved By</div>
           )}
-          
-         
         </div>
       ),
     },
@@ -425,27 +403,22 @@ const CustomRequest = (props: Props) => {
           ) : (
             <div className="w-full text-center mb-2">No Approved By</div>
           )}
-          
-         
         </div>
       ),
     },
 
-     {
+    {
       name: "Modify",
       cell: (row: Record) => (
         <div className="flex space-x-2 ">
-         
           <TrashIcon
             className="text-[#A30D11] size-8 cursor-pointer"
             onClick={() => deleteModalShow(row)}
           />
-          
         </div>
       ),
       width: "14%",
     },
-    
   ];
 
   return (
@@ -466,21 +439,21 @@ const CustomRequest = (props: Props) => {
             </div>
           </div>
           {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <ClipLoader size={50} color={"#123abc"} loading={loading} />
-        </div>
-      ) : (
-        <DataTable
-          columns={columns}
-          data={requests}
-          pagination
-          striped
-          customStyles={tableCustomStyles}
-        />
-      )}
+            <div className="flex justify-center items-center h-64">
+              <ClipLoader size={50} color={"#123abc"} loading={loading} />
+            </div>
+          ) : (
+            <DataTable
+              columns={columns}
+              data={requests}
+              pagination
+              striped
+              customStyles={tableCustomStyles}
+            />
+          )}
         </div>
       </div>
-    
+
       <DeleteModal
         refreshData={refreshData}
         onDelete={deleteUser}

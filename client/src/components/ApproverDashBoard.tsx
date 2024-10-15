@@ -7,15 +7,8 @@ import {
   faCheck,
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  format,
-  startOfWeek,
-  startOfMonth,
-  endOfMonth,
-  startOfYear,
-  endOfYear,
-} from "date-fns";
-import { CheckIcon, ChartBarIcon } from "@heroicons/react/24/solid";
+import { format, startOfWeek, endOfMonth } from "date-fns";
+import { ChartBarIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import {
   BarChart,
@@ -28,8 +21,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useUser } from '../context/UserContext';
-
 
 type Props = {};
 
@@ -74,17 +65,7 @@ interface Request {
   status: string;
 }
 
-interface ApprovalProcess {
-  id: number;
-  user_id: number;
-  request_id: number;
-  status: string;
-  created_at: string;
-  updated_at: string;
-}
-
 const ApproverDashboard: React.FC<Props> = ({}) => {
-  const [darkMode, setDarkMode] = useState(true);
   const [records, setRecords] = useState<Request[]>([]);
   const [totalRequests, setTotalRequests] = useState(0);
   const [approvedRequests, setApprovedRequests] = useState(0);
@@ -103,10 +84,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
   const [barChartData, setBarChartData] = useState<
     { name: string; Request: number }[]
   >([]);
-  const [isFetching, setIsFetching] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("thisMonth");
   const [loading, setLoading] = useState(false);
-  const [requests, setRequests] = useState<Request[]>([]);
   const [totalRequestsSent, setTotalRequestsSent] = useState<number | null>(
     null
   );
@@ -119,11 +97,9 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
   const [totalDisapprovedRequests, setTotalDisapprovedRequests] = useState<
     number | null
   >(null);
+  const firstName = localStorage.getItem("firstName");
+  const userId = localStorage.getItem("id");
 
-  const { email, role, branchCode, contact, signature } = useUser();
-  const firstName = localStorage.getItem("firstName")
-  const lastName = localStorage.getItem("lastName")
-  const userId = localStorage.getItem("id")
   useEffect(() => {
     if (userId) {
       setLoading(true);
@@ -140,96 +116,97 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
 
       // Fetch total requests sent
       axios
-        .get(`${process.env.REACT_APP_API_BASE_URL}/total-request-sent/${userId}`, {
-          headers,
-        })
-      
+        .get(
+          `${process.env.REACT_APP_API_BASE_URL}/total-request-sent/${userId}`,
+          {
+            headers,
+          }
+        )
+
         .then((response) => {
-         
           setTotalRequestsSent(response.data.totalRequestSent);
           setTotalPendingRequests(response.data.totalPendingRequest);
           setTotalApprovedRequests(response.data.totalApprovedRequest);
           setTotalDisapprovedRequests(response.data.totalDisapprovedRequest);
           setLoading(false);
-          
         })
-        
+
         .catch((error) => {
           console.error("Error fetching total requests sent:", error);
           setLoading(false);
         });
     }
   }, [userId]);
+
   const fetchData = async () => {
     try {
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("id");
-  
+
       if (!token || !userId) {
         console.error("Token or userId is missing");
         return;
       }
-  
+
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-  
+
       const response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/request-forms/for-approval/${userId}`,
         { headers }
       );
-  
+
       const requests: Request[] = response.data.request_forms || []; // Use the defined type
-  
+
       setRecords(requests);
       setTotalRequests(requests.length);
-  
+
       let approvedCount = 0;
       let pendingCount = 0;
       let unsuccessfulCount = 0;
-  
+
       requests.forEach((request: Request) => {
-        const status = request.status.toLowerCase();      
+        const status = request.status.toLowerCase();
         if (status.includes("approved")) {
           approvedCount++;
         } else if (status.includes("pending")) {
           pendingCount++;
-        } else if (status.includes("rejected") || status.includes("disapproved")) {
-
+        } else if (
+          status.includes("rejected") ||
+          status.includes("disapproved")
+        ) {
           unsuccessfulCount++;
-    
         }
       });
-  
+
       setApprovedRequests(approvedCount);
       setPendingRequests(pendingCount);
       setUnsuccessfulRequests(unsuccessfulCount);
       processAreaChartData(requests);
       processBarChartData(requests);
-  
     } catch (error) {
       console.error("Error fetching requests data:", error);
     }
   };
-  
+
   const error = console.error;
-console.error = (...args: any) => {
-  if (/defaultProps/.test(args[0])) return;
-  error(...args);
-};
+  console.error = (...args: any) => {
+    if (/defaultProps/.test(args[0])) return;
+    error(...args);
+  };
 
   const processAreaChartData = (requests: Request[]) => {
     const today = new Date();
     let startDate: Date;
     let endDate: Date;
-  
+
     // Set startDate to January 1 of the current year
     startDate = new Date(today.getFullYear(), 0, 1); // January 1 of the current year
-    
+
     // Set endDate to the last day of the current month
     endDate = endOfMonth(today);
 
-  
     const aggregatedData: {
       [key: string]: {
         total: number;
@@ -239,7 +216,7 @@ console.error = (...args: any) => {
         rejected: number;
       };
     } = {};
-  
+
     requests.forEach((record) => {
       const recordDate = new Date(record.created_at);
       if (recordDate >= startDate && recordDate <= endDate) {
@@ -265,7 +242,7 @@ console.error = (...args: any) => {
         }
       }
     });
-  
+
     const allMonths = [
       "Jan",
       "Feb",
@@ -280,7 +257,7 @@ console.error = (...args: any) => {
       "Nov",
       "Dec",
     ];
-  
+
     const areaChartData = allMonths.map((month) => ({
       name: month,
       Total: Math.floor(aggregatedData[month]?.total || 0),
@@ -289,11 +266,9 @@ console.error = (...args: any) => {
       Disapproved: Math.floor(aggregatedData[month]?.disapproved || 0),
       Rejected: Math.floor(aggregatedData[month]?.rejected || 0),
     }));
-  
+
     setAreaChartData(areaChartData);
   };
-  
-  
 
   const processBarChartData = (requests: Request[]) => {
     const today = new Date();
@@ -320,13 +295,12 @@ console.error = (...args: any) => {
     }));
 
     setBarChartData(barChartData);
-  
   };
 
   useEffect(() => {
     fetchData();
   }, []);
-  
+
   return (
     <div className="bg-graybg dark:bg-blackbg h-full pt-[26px] px-[30px] pb-20">
       <div className="bg-primary w-full sm:w-full h-[210px] rounded-[12px] pl-[30px] flex flex-row justify-between items-center">
@@ -445,10 +419,10 @@ console.error = (...args: any) => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis
-                domain={[0, "auto"]} 
+                domain={[0, "auto"]}
                 ticks={[20, 60, 90, 150]}
-                allowDecimals={false} 
-                tickFormatter={(value) => Math.floor(value).toString()} 
+                allowDecimals={false}
+                tickFormatter={(value) => Math.floor(value).toString()}
               />
               <Tooltip />
               <Area
@@ -479,7 +453,7 @@ console.error = (...args: any) => {
                 fillOpacity={0.3}
                 fill="#E73774"
               />
-                <Area
+              <Area
                 type="monotone"
                 dataKey="Rejected"
                 stroke="#Ff0000" // Red for unapproved requests
@@ -504,8 +478,8 @@ console.error = (...args: any) => {
               <YAxis
                 tickFormatter={(value) => Math.floor(value).toString()}
                 allowDecimals={false}
-                domain={[0, "auto"]} 
-                ticks={[20, 60, 90, 150]} 
+                domain={[0, "auto"]}
+                ticks={[20, 60, 90, 150]}
               />
               <Tooltip />
               <Bar dataKey="Request" fill="#8884d8" />
