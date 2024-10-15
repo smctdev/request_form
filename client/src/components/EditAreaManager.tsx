@@ -253,14 +253,14 @@ const EditAreaManager = ({
         />
       </div>
       <div className="relative w-10/12 overflow-y-auto bg-white sm:w-1/3 x-20 h-1/2">
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center h-full">
-            <ClipLoader size={35} color={"#123abc"} loading={loading} />
+            <ClipLoader size={35} color={"#123abc"} loading = {true} />
           </div>
         ) : (
           <div className="bg-white flex-col w-10/12 sm:w-full  rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex space-x-2">
             <h3 className="p-4 text-lg font-bold">
-              Branches for{" "}
+              Branches fors{" "}
               {`${selectedUser?.user.data.firstName} ${selectedUser?.user.data.lastName}`}
               :
             </h3>
@@ -273,7 +273,7 @@ const EditAreaManager = ({
             />
             <div className="h-auto px-4">
               {branches.length === 0 ? (
-                <ClipLoader size={35} color={"#123abc"} loading={loading} />
+                <ClipLoader size={35} color={"#123abc"} loading={true} />
               ) : (
                 branches
                   .filter((branch) => {
