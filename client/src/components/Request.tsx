@@ -8,11 +8,8 @@ import ViewCashDisbursementModal from "./Modals/ViewCashDisbursementModal";
 import ViewCashAdvanceModal from "./Modals/ViewCashAdvanceModal";
 import ViewLiquidationModal from "./Modals/ViewLiquidationModal";
 import ViewRequestModal from "./Modals/ViewRequestModal";
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import ViewDiscountModal from "./Modals/ViewDiscountModal";
-import { ClipLoader } from "react-spinners";
-import { text } from "stream/consumers";
 import Swal from "sweetalert2";
 import Echo from "../utils/Echo";
 type Props = {};
@@ -197,7 +194,6 @@ const Request = (props: Props) => {
   const [requests, setRequests] = useState<Record[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<Record | null>(null);
-  const [sortOrder, setSortOrder] = useState("desc");
   const userId = localStorage.getItem("id");
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
@@ -425,7 +421,7 @@ const Request = (props: Props) => {
     return filteredRequests;
   };
 
-  console.log(filteredData())
+  console.log(filteredData());
 
   const NoDataComponent = () => (
     <div className="flex items-center justify-center h-64 text-gray-500">
@@ -465,56 +461,6 @@ const Request = (props: Props) => {
       </tbody>
     </table>
   );
-  // const LoadingSpinner = () => {
-  //   const skeletonStyle = {
-  //     width: '100%',
-  //     height: '3rem', // h-12
-  //     backgroundColor: '#e2e8f0', // slate-200
-  //     animation: 'fade 1s infinite alternate',
-  //   };
-
-  //   return (
-  //     <table className="table" style={{ background: "white" }}>
-  //       <thead>
-  //         <tr>
-  //           <th className="w-[80px] py-6" style={{ color: "black", fontWeight: "500" }}>
-  //             Request ID
-  //           </th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Request Type</th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Date</th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Branch</th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Status</th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Action</th>
-  //         </tr>
-  //       </thead>
-  //       <tbody>
-  //         {Array.from({ length: 6 }).map((_, index) => (
-  //           <tr key={index}>
-  //             <td className="w-full border border-gray-200" colSpan={6}>
-  //               <div className="flex justify-center">
-  //                 <div className="flex flex-col w-full gap-4">
-  //                   <div style={skeletonStyle}></div>
-  //                 </div>
-  //               </div>
-  //             </td>
-  //           </tr>
-  //         ))}
-  //       </tbody>
-  //       <style>
-  //         {`
-  //           @keyframes fade {
-  //             0% {
-  //               background-color: #e2e8f0; /* slate-200 */
-  //             }
-  //             100% {
-  //               background-color: #d1d5db; /* gray-300 */
-  //             }
-  //           }
-  //         `}
-  //       </style>
-  //     </table>
-  //   );
-  // };
 
   const refreshData = () => {
     if (userId) {

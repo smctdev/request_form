@@ -46,7 +46,11 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({
             {/* Profile Picture Section */}
             <div className="flex flex-col items-center mb-8">
               <img
-                src={user.profile_picture ? `${process.env.REACT_APP_URL_STORAGE}/${user.profile_picture}` : Avatar} // Default image if no profile image exists
+                src={
+                  user.profile_picture
+                    ? `${process.env.REACT_APP_URL_STORAGE}/${user.profile_picture}`
+                    : Avatar
+                } // Default image if no profile image exists
                 alt="Profile"
                 className="w-32 h-32 rounded-full border-4 border-primary mb-4"
               />

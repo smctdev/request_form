@@ -14,9 +14,7 @@ import Avatar from "./assets/avatar.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { format } from "date-fns";
-import { useSpring, animated } from "@react-spring/web"; // Import useSpring and animated from @react-spring/web
-import Pusher from "pusher-js";
-import { set } from "react-hook-form";
+import { useSpring, animated } from "@react-spring/web";
 import Swal from "sweetalert2";
 import Echo from "../utils/Echo";
 import { useUser } from "../context/UserContext";
@@ -40,17 +38,10 @@ const Nav: React.FC<NavProps> = ({
   toggleDarkMode,
   currentPage,
   toggleSidebar,
-  isSidebarVisible,
   isSidebarOpen,
-  updateUserInfo,
 }) => {
   const flexBetween = "flex items-center justify-between";
   const listProfile = "px-4 hover:bg-[#E0E0F9] cursor-pointer py-2";
-  const listNotification =
-    "px-4 hover:bg-[#E0E0F9] cursor-pointer py-4 border-b flex items-center justify-around";
-  const divNotification =
-    "size-8 flex items-center justify-center bg-black rounded-full";
-  const iconNotifcation = "size-5 text-white cursor-pointer";
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenNotif, setIsOpenNotif] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -61,7 +52,6 @@ const Nav: React.FC<NavProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [profilePicture, setProfilePicture] = useState("");
-  const [sidebar, setSidebar] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0); // State to keep track of unread notifications
   const [role, setRole] = useState("");
   const [notificationReceived, setnotificationReceived] = useState(false);
@@ -217,20 +207,20 @@ const Nav: React.FC<NavProps> = ({
       }
     };
 
-      // Check local storage for user info
-  const storedUserInfo = localStorage.getItem("userInfo");
-  if (storedUserInfo) {
-    const parsedUserInfo = JSON.parse(storedUserInfo);
-    setUserInfo(parsedUserInfo);
-    setFirstName(parsedUserInfo.firstName);
-    setLastName(parsedUserInfo.lastName);
-    setProfilePicture(parsedUserInfo.profile_picture);
-    setRole(parsedUserInfo.role);
-    setProfileLoading(false); // Set loading to false since we got data from local storage
-  } else {
-    // Fetch from database if not found in local storage
-    fetchUserInfoFromDatabase();
-  }
+    // Check local storage for user info
+    const storedUserInfo = localStorage.getItem("userInfo");
+    if (storedUserInfo) {
+      const parsedUserInfo = JSON.parse(storedUserInfo);
+      setUserInfo(parsedUserInfo);
+      setFirstName(parsedUserInfo.firstName);
+      setLastName(parsedUserInfo.lastName);
+      setProfilePicture(parsedUserInfo.profile_picture);
+      setRole(parsedUserInfo.role);
+      setProfileLoading(false); // Set loading to false since we got data from local storage
+    } else {
+      // Fetch from database if not found in local storage
+      fetchUserInfoFromDatabase();
+    }
   }, []);
 
   useEffect(() => {
@@ -394,14 +384,13 @@ const Nav: React.FC<NavProps> = ({
           </div>
           <div className={`${flexBetween} gap-2 relative`}>
             {profileLoading ? (
-                <div className="relative flex flex-col gap-4 w-52">
+              <div className="relative flex flex-col gap-4 w-52">
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-full shrink-0 bg-slate-300 skeleton"></div>
                   <div className="flex flex-col gap-4">
                     <div className="h-9 w-28 bg-slate-300 skeleton"></div>
                   </div>
                 </div>
-                
               </div>
             ) : (
               <>

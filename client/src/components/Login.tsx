@@ -1,15 +1,9 @@
-import React, { useState, CSSProperties, useEffect } from "react";
+import React, { useState, CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import Slice from "./assets/Slice.png";
 import building from "./assets/building.jpg";
-import { useNavigate } from "react-router-dom";
-import {
-  EyeIcon,
-  EyeSlashIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/solid";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { z, ZodType } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import BounceLoader from "react-spinners/ClipLoader";
@@ -24,13 +18,9 @@ const schema = z.object({
 });
 
 const Login: React.FC = () => {
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorMessge, setErrorMessage] = useState("");
-  let [color, setColor] = useState("bg-primary");
-  const { userId, firstName, lastName, updateUser } = useUser();
+  const { updateUser } = useUser();
   const {
     register,
     handleSubmit,
@@ -38,12 +28,6 @@ const Login: React.FC = () => {
   } = useForm<UserCredentials>({
     resolver: zodResolver(schema),
   });
-
-  const override: CSSProperties = {
-    display: "block",
-    margin: "0 auto",
-    borderColor: "red",
-  };
 
   const submitData: SubmitHandler<UserCredentials> = async (data) => {
     try {
@@ -81,13 +65,8 @@ const Login: React.FC = () => {
         localStorage.setItem("employee_id", response.data.employee_id);
 
         localStorage.setItem("expires_at", response.data.expires_at);
-        if (response.data.role === "approver") {
-          navigate("/dashboard/approver");
-          window.location.reload();
-        } else {
-          navigate("/dashboard");
-          window.location.reload();
-        }
+
+        window.location.reload();
       } else {
         Swal.fire({
           icon: "error",
@@ -97,12 +76,9 @@ const Login: React.FC = () => {
           confirmButtonText: "Close",
           confirmButtonColor: "#dc3545",
         });
-        // alert(JSON.stringify(response.data.message));
         setLoading(false);
       }
     } catch (error) {
-      // console.error(error);
-      // alert("An error occurred while logging in. Please try again later.");
       Swal.fire({
         icon: "error",
         iconColor: "#dc3545",
@@ -111,7 +87,6 @@ const Login: React.FC = () => {
         confirmButtonText: "Close",
         confirmButtonColor: "#dc3545",
       });
-      // alert(JSON.stringify(response.data.message));
       setLoading(false);
     }
   };
@@ -120,9 +95,9 @@ const Login: React.FC = () => {
     "w-full lg:max-w-[417px] lg:h-[56px] md:h-10  p-2 bg-gray-300 rounded-lg text-black";
   return (
     <div className="flex flex-row bg-[#FFFFFF] text-black">
-      <div className="w-full  lg:w-1/2 flex items-center justify-center p-8 bg-cover bg-center relative">
+      <div className="relative flex items-center justify-center w-full p-8 bg-center bg-cover lg:w-1/2">
         <img
-          className="absolute inset-0 object-cover w-full h-screen lg:hidden z-0"
+          className="absolute inset-0 z-0 object-cover w-full h-screen lg:hidden"
           src={building}
           alt="photo"
         />
@@ -133,7 +108,7 @@ const Login: React.FC = () => {
           </h1>
           <form onSubmit={handleSubmit(submitData, () => setLoading(false))}>
             <div className="mb-4">
-              <h1 className="lg:text-lg text-base mb-2">Email</h1>
+              <h1 className="mb-2 text-base lg:text-lg">Email</h1>
               <input
                 {...register("email", {
                   required: "Email is required",
@@ -146,15 +121,14 @@ const Login: React.FC = () => {
                 className={`${inputStyle} autofill-input`}
               />
               {errors.email && (
-                <p className="text-red-500 text-xs mt-1">
+                <p className="mt-1 text-xs text-red-500">
                   {" "}
                   {errors.email.message}
                 </p>
               )}
             </div>
             <div className="mb-4">
-              <h1 className="lg:text-lg text-base mb-2">Password</h1>
-              {/* <div className=" flex justify-center items-center relative w-full "> */}
+              <h1 className="mb-2 text-base lg:text-lg">Password</h1>
               <input
                 type={showPassword ? "text" : "password"}
                 {...register("password")}
@@ -172,9 +146,9 @@ const Login: React.FC = () => {
                   />
                 </label>
                 <span className="label-text">Show password</span>
-                </div>
+              </div>
               {errors.password && (
-                <p className="text-red-500 text-xs">
+                <p className="text-xs text-red-500">
                   {" "}
                   {errors.password.message}
                 </p>
@@ -203,18 +177,18 @@ const Login: React.FC = () => {
 
           <Link to="/registration">
             <div className="flex flex-row justify-center items-center mt-[10px]">
-              <p className="text-center italic lg:text-base text-sm">
+              <p className="text-sm italic text-center lg:text-base">
                 Don't have an account?{" "}
               </p>
-              <p className="pl-2 italic font-bold text-primary underline  lg:text-base text-sm">
+              <p className="pl-2 text-sm italic font-bold underline text-primary lg:text-base">
                 Sign Up
               </p>
             </div>
           </Link>
         </div>
       </div>
-      <div className="hidden lg:block w-1/2  items-center justify-center">
-        <img className="object-cover h-screen w-full" src={Slice} alt="photo" />
+      <div className="items-center justify-center hidden w-1/2 lg:block">
+        <img className="object-cover w-full h-screen" src={Slice} alt="photo" />
       </div>
     </div>
   );

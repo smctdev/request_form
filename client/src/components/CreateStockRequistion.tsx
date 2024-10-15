@@ -1,36 +1,22 @@
 import React, { useState, useEffect } from "react";
-import Select from "react-select/dist/declarations/src/Select";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  CalendarIcon,
-  MinusCircleIcon,
-  PlusCircleIcon,
-  TrashIcon,
-} from "@heroicons/react/24/solid";
-import path from "path";
-import { Link, useNavigate } from "react-router-dom";
-import { useForm, Controller, set } from "react-hook-form";
-import { custom, z, ZodError } from "zod";
+import { PlusCircleIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import axios from "axios";
 import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ClipLoader from "react-spinners/ClipLoader";
 import AddCustomModal from "./AddCustomModal";
 import Swal from "sweetalert2";
-type CustomApprover = {
-  id: number;
-  name: string;
-  approvers: {
-    noted_by: { name: string }[];
-    approved_by: { name: string }[];
-  };
-};
+
 interface Approver {
   id: number;
   firstName: string;
   lastName: string;
   position: string;
 }
+
 const schema = z.object({
   purpose: z.string(),
   approver_list_id: z.number(),
@@ -60,43 +46,32 @@ const requestType = [
   { title: "Discount Request", path: "/request/dr" },
 ];
 
-const inputStyle =
-  "w-full   border-2 border-black rounded-[12px] pl-[10px] bg-white  autofill-input";
-const itemDiv = "flex flex-col ";
 const buttonStyle = "h-[45px] w-[150px] rounded-[12px] text-white";
 const tableStyle = "border border-black p-2 border-collapse";
 const inputStyle2 =
   "w-full   rounded-[12px] pl-[10px] bg-white  autofill-input focus:outline-0";
+
 const CreateStockRequistion = (props: Props) => {
-  const [startDate, setStartDate] = useState(new Date());
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formData, setFormData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const userId = localStorage.getItem("id");
   const [file, setFile] = useState<File[]>([]);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
-  const [filebase64, setFileBase64] = useState<string>("");
-  const [customApprovers, setCustomApprovers] = useState<CustomApprover[]>([]);
   const [initialNotedBy, setInitialNotedBy] = useState<Approver[]>([]);
   const [initialApprovedBy, setInitialApprovedBy] = useState<Approver[]>([]);
-  const [selectedApproverList, setSelectedApproverList] = useState<
-    number | null
-  >(null);
-  const [selectedApprover, setSelectedApprover] = useState<{ name: string }[]>(
-    []
-  );
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       // Convert FileList to array and set it
       setFile(Array.from(e.target.files));
     }
   };
+
   useEffect(() => {
     setInitialNotedBy(notedBy);
     setInitialApprovedBy(approvedBy);
@@ -129,40 +104,6 @@ const CreateStockRequistion = (props: Props) => {
       remarks: "",
     },
   ]);
-
-  /* const fetchCustomApprovers = async () => {
-    try {
-      const id = localStorage.getItem("id");
-      const token = localStorage.getItem("token");
-      if (!token || !id) {
-        console.error("Token or user ID is missing");
-        return;
-      }
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (Array.isArray(response.data.data)) {
-        setCustomApprovers(response.data.data);
-      } else {
-        console.error("Unexpected response format:", response.data);
-        setCustomApprovers([]); // Ensure that customApprovers is always an array
-      }
-    } catch (error) {
-      console.error("Error fetching custom approvers:", error);
-      setCustomApprovers([]); // Ensure that customApprovers is always an array
-    }
-  };
- */
-  const handleOpenConfirmationModal = () => {
-    setShowConfirmationModal(true);
-  };
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -266,16 +207,6 @@ const CreateStockRequistion = (props: Props) => {
   const openAddCustomModal = () => {
     setIsModalOpen(true);
   };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
-  };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
@@ -318,13 +249,6 @@ const CreateStockRequistion = (props: Props) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCancelSubmit = () => {
-    // Close the confirmation modal
-    setShowConfirmationModal(false);
-    // Reset formData state
-    setFormData(null);
   };
 
   const handleCloseSuccessModal = () => {
@@ -536,158 +460,6 @@ const CreateStockRequistion = (props: Props) => {
                 )}
               </div>
             </div>
-
-            {/* {items.map((item, index) => (
-              <div key={index} className="flex flex-col mt-5 mb-4">
-                <label className="font-semibold">ITEM {index + 1}</label>
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-5">
-                  <div className={`${itemDiv}`}>
-                    <label className="font-semibold">Quantity:</label>
-                    <input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) =>
-                        handleInputChange(index, "quantity", e.target.value)
-                      }
-                      onKeyDown={(e) => {
-                        // Prevent non-digit input
-                        if (
-                          !/[0-9]/.test(e.key) &&
-                          e.key !== "Backspace" &&
-                          e.key !== "Tab"
-                        ) {
-                          e.preventDefault();
-                        }
-                      }}
-                      className={`${inputStyle} h-[44px]`}
-                    />
-                    {validationErrors[`items.${index}.quantity`] &&
-                      formSubmitted && (
-                        <p className="text-red-500">
-                          {validationErrors[`items.${index}.quantity`]}
-                        </p>
-                      )}
-                    {!item.quantity &&
-                      formSubmitted &&
-                      !validationErrors[`items.${index}.quantity`] && (
-                        <p className="text-red-500">Quantity Required</p>
-                      )}
-                  </div>
-                  <div key={index} className={itemDiv}>
-                    <label className="font-semibold">Description:</label>
-                    <textarea
-                      id={`description-${index}`}
-                      value={item.description}
-                      onChange={(e) =>
-                        handleInputChange(index, "description", e.target.value)
-                      }
-                      className={`${inputStyle}`}
-                      style={{ minHeight: "100px", maxHeight: "400px" }} // Minimum height 100px, maximum height 400px (optional)
-                      onFocus={() => handleTextareaHeight(index, "description")} // Adjust height on focus
-                      onBlur={() => handleTextareaHeight(index, "description")} // Adjust height on blur
-                      onInput={() => handleTextareaHeight(index, "description")} // Adjust height on input change
-                    />
-                    {validationErrors?.[`items.${index}.description`] &&
-                      formSubmitted && (
-                        <p className="text-red-500">
-                          {validationErrors[`items.${index}.description`]}
-                        </p>
-                      )}
-                    {!item.description &&
-                      formSubmitted &&
-                      !validationErrors?.[`items.${index}.description`] && (
-                        <p className="text-red-500">Description Required</p>
-                      )}
-                  </div>
-                  <div className={`${itemDiv}`}>
-                    <label className="font-semibold">Unit Cost:</label>
-                    <input
-                      type="number"
-                      value={item.unitCost}
-                      onChange={(e) =>
-                        handleInputChange(index, "unitCost", e.target.value)
-                      }
-                      onKeyDown={(e) => {
-                        // Prevent non-digit input
-                        if (
-                          !/[0-9]/.test(e.key) &&
-                          e.key !== "Backspace" &&
-                          e.key !== "Tab"
-                        ) {
-                          e.preventDefault();
-                        }
-                      }}
-                      placeholder="₱"
-                      className={`${inputStyle} h-[44px]`}
-                    />
-                    {validationErrors[`items.${index}.unitCost`] &&
-                      formSubmitted && (
-                        <p className="text-red-500">
-                          {validationErrors[`items.${index}.unitCost`]}
-                        </p>
-                      )}
-                    {!item.unitCost &&
-                      formSubmitted &&
-                      !validationErrors[`items.${index}.unitCost`] && (
-                        <p className="text-red-500">Unit Cost Required</p>
-                      )}
-                  </div>
-                  <div className={`${itemDiv} `}>
-                    <label className="font-semibold">Total Amount:</label>
-                    <input
-                      type="number"
-                      value={item.totalAmount}
-                      onChange={(e) =>
-                        handleInputChange(index, "totalAmount", e.target.value)
-                      }
-                      placeholder="₱"
-                      className={`${inputStyle} h-[44px]`}
-                      readOnly
-                    />
-                    {validationErrors[`items.${index}.totalAmount`] &&
-                      formSubmitted && (
-                        <p className="text-red-500">
-                          {validationErrors[`items.${index}.totalAmount`]}
-                        </p>
-                      )}
-                    {!item.totalAmount &&
-                      formSubmitted &&
-                      !validationErrors[`items.${index}.totalAmount`] && (
-                        <p className="text-red-500">Total Amount Required</p>
-                      )}
-                  </div>
-                  <div className={`${itemDiv}`}>
-                    <label className="font-semibold">Usage/Remarks</label>
-                    <textarea
-                      id={`remarks-${index}`}
-                      value={item.remarks}
-                      onChange={(e) =>
-                        handleInputChange(index, "remarks", e.target.value)
-                      }
-                      className={`${inputStyle}`}
-                      style={{ minHeight: "100px", maxHeight: "400px" }} // Minimum height 100px, maximum height 400px (optional)
-                      onFocus={() => handleTextareaHeight(index, "remarks")} // Adjust height on focus
-                      onBlur={() => handleTextareaHeight(index, "remarks")} // Adjust height on blur
-                      onInput={() => handleTextareaHeight(index, "remarks")} // Adjust height on input change
-                    />
-                    <div className="flex justify-end gap-2 mt-2">
-                      {items.length > 1 && (
-                        <span
-                          className={`${buttonStyle} bg-pink flex items-center justify-center cursor-pointer hover:bg-white hover:border-4 hover:border-pink hover:text-pink`}
-                          onClick={() => handleRemoveItem(index)}
-                        >
-                          <MinusCircleIcon
-                            className="w-5 h-5 mr-2"
-                            aria-hidden="true"
-                          />
-                          Remove Item
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))} */}
 
             <div className="w-full mt-4 overflow-x-auto md:overflow-auto">
               <div className="w-full">

@@ -2,21 +2,20 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { BeatLoader } from "react-spinners";
 import axios from "axios";
-import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 import PrintRefund from "./PrintRefund";
-import { set } from "react-hook-form";
 import Avatar from "./assets/avatar.png";
-import { useNavigate } from "react-router-dom";
 import SMCTLogo from "./assets/SMCT.png";
 import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
 import ApproveSuccessModal from "./ApproveSuccessModal";
+
 type Props = {
   closeModal: () => void;
   record: Record;
   refreshData: () => void;
 };
+
 interface Approver {
   id: number;
   firstname: string;
@@ -30,6 +29,7 @@ interface Approver {
   status: string;
   branch: string;
 }
+
 type Record = {
   id: number;
   request_code: string;
@@ -84,6 +84,7 @@ type Item = {
   totalAmount: string;
   remarks: string;
 };
+
 const inputStyle = "border border-black text-[12px] font-bold p-2";
 const tableCellStyle = `${inputStyle} w-20`;
 const ApproverRefund: React.FC<Props> = ({
@@ -98,23 +99,18 @@ const ApproverRefund: React.FC<Props> = ({
   );
   const [attachment, setAttachment] = useState<any>([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [editedDate, setEditedDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
   const [isFetchingUser, setisFetchingUser] = useState(false);
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
-  const [customApprovers, setCustomApprovers] = useState<any>({});
   const [comments, setComments] = useState("");
-  const [nameComments, setNameComments] = useState([]);
   const [user, setUser] = useState<any>({});
   const [approveLoading, setApprovedLoading] = useState(false);
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
-  const navigate = useNavigate();
   const [modalStatus, setModalStatus] = useState<"approved" | "disapproved">(
     "approved"
   );
@@ -229,7 +225,10 @@ const ApproverRefund: React.FC<Props> = ({
         // Handle the parsed attachment
         const fileUrls = parsedAttachment.map(
           (filePath: string) =>
-            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+              /\\/g,
+              "/"
+            )}`
         );
         setAttachmentUrl(fileUrls);
       } else {
@@ -276,11 +275,14 @@ const ApproverRefund: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setUser(response.data);
     } catch (error) {
@@ -385,15 +387,6 @@ const ApproverRefund: React.FC<Props> = ({
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
-  };
   const formatDate2 = (dateString: Date) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {

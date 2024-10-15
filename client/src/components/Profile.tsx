@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import Avatar2 from "./assets/avatar.png";
-import { Link } from "react-router-dom";
 import axios from "axios";
-import SquareLoader from "react-spinners/SquareLoader";
 import ClipLoader from "react-spinners/ClipLoader";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import PropogateLoader from "react-spinners/PropagateLoader";
-import { set } from "react-hook-form";
 import SignatureCanvas from "react-signature-canvas";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -54,7 +51,6 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showSignatureSuccess, setShowSignatureSuccess] = useState(false);
   const [signatureEmpty, setSignatureEmpty] = useState(false);
   const [signature, setSignature] = useState<SignatureCanvas | null>(null);
   const [signatureButton, setSignatureButton] = useState(false);
@@ -383,8 +379,10 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
           },
         }
       );
-      
-      setProfile_picture(newProfilePic ? profilePictureUrl : user?.profile_picture);
+
+      setProfile_picture(
+        newProfilePic ? profilePictureUrl : user?.profile_picture
+      );
       setSubmitting(false);
       setShowSuccessModal(true);
     } catch (error: any) {

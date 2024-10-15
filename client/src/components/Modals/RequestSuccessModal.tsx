@@ -1,5 +1,4 @@
 import React from 'react';
-import { XMarkIcon } from '@heroicons/react/24/outline'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 
@@ -7,16 +6,12 @@ interface RequestSuccessModalProps {
   onClose: () => void; 
 }
 
-
 const RequestSuccessModal: React.FC<RequestSuccessModalProps> = ({ onClose }) => {
   const handleOkayClick = () => {
  
     onClose();
   };
-    
 
-    const pStyle="font-medium";
-const inputStyle="border border-black rounded-md p-1";
 return (
 
     <div className="z-10 fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col ">

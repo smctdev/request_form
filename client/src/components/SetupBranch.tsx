@@ -1,24 +1,17 @@
 import React, { useState, useEffect } from "react";
-import DataTable, { Alignment, SortOrder } from "react-data-table-component";
+import DataTable from "react-data-table-component";
 import {
   PencilSquareIcon,
   TrashIcon,
-  XMarkIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddBranchModal from "./AddBranchModal";
 import EditUserModal from "./EditUserModal";
-import SuccessModal from "./SuccessModal";
 import CompleteModal from "./CompleteModal";
 import DeleteSuccessModal from "./DeleteSucessModal";
 import DeleteModal from "./DeleteModal";
-import { set } from "react-hook-form";
 import ViewBranchModal from "./ViewBranchModal";
 import axios from "axios";
-import SquareLoader from "react-spinners/SquareLoader";
 import { ClipLoader } from "react-spinners";
 
 export type Branch = {
@@ -37,24 +30,13 @@ type Record = {
   user_id: number;
 };
 
-interface ViewBranchModalProps {
-  modalIsOpen: boolean;
-  closeModal: () => void;
-  user: Record | null;
-}
-
-const pStyle = "font-medium";
-const inputStyle = "border border-black rounded-md p-1";
 const SetupBranch = (props: Props) => {
-  const [darkMode, setDarkMode] = useState(true);
-  const [selected, setSelected] = useState<number | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showDeletedSuccessModal, setShowDeletedSuccessModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  const [deleteSuccessModal, setDeleteSuccessModal] = useState(false);
   const [viewModalIsOpen, setViewModalIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Record | null>(null);
   const [branchList, setBranchList] = useState<Record[]>([]);
@@ -142,9 +124,6 @@ const SetupBranch = (props: Props) => {
     } catch (error) {
       setisLoading(false);
       console.error("Error updating role:", error);
-      // Handle error state or show error message to the user
-      // Example: show error message in a toast or modal
-      // showErrorToast("Failed to update role. Please try again later.");
     }
   };
 
@@ -186,9 +165,6 @@ const SetupBranch = (props: Props) => {
     setEditModal(false);
   };
 
-  const closeSuccessModal = () => {
-    setShowSuccessModal(false);
-  };
   const openDeleteSuccessModal = () => {
     setShowDeletedSuccessModal(true);
     setDeleteModal(false);

@@ -1,14 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import ViewStockModal from "./Modals/ViewStockModal";
-import ViewPurchaseModal from "./Modals/ViewPurchaseModal";
-import ViewCashDisbursementModal from "./Modals/ViewCashDisbursementModal";
-import ViewCashAdvanceModal from "./Modals/ViewCashAdvanceModal";
-import ViewLiquidationModal from "./Modals/ViewLiquidationModal";
-import ViewRequestModal from "./Modals/ViewRequestModal";
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import ApproversStock from "./ApproverStock";
 import ApproverPurchase from "./ApproverPurchase";
 import ApproverCashAdvance from "./ApproverCashAdvance";
@@ -16,10 +9,7 @@ import ApproverCashDisbursement from "./ApproverCashDisbursement";
 import ApproverLiquidation from "./ApproverLiquidation";
 import ApproverRefund from "./ApproverRefund";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
-import { request } from "http";
-import { record } from "zod";
 import ApproverDiscount from "./ApproverDiscount";
-import { ClipLoader } from "react-spinners";
 import Echo from "../utils/Echo";
 import Swal from "sweetalert2";
 type Props = {};
@@ -171,7 +161,6 @@ const RequestApprover = (props: Props) => {
   const [requests, setRequests] = useState<Record[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<Record | null>(null);
-  const [sortOrder, setSortOrder] = useState("desc");
   const userId = localStorage.getItem("id");
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
@@ -447,14 +436,6 @@ const RequestApprover = (props: Props) => {
               <QuestionMarkCircleIcon className="w-6 h-6 text-gray-500" />
             </div>
           )}
-          {/* Tooltip */}
-          {/* {row.status === "Pending" && (
-            <div className="absolute z-40 hidden w-full h-auto p-1 mt-2 mb-4 ml-10 text-black bg-gray-600 rounded-md shadow-lg drop-shadow-sm group-hover:block">
-              <p className="text-[11px] text-white">
-                Pending: {row.pending_approver}
-              </p>
-            </div>
-          )} */}
         </div>
       ),
     },

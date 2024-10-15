@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useForm, Controller, set } from "react-hook-form";
-import { z, ZodType } from "zod";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { error } from "console";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import ClipLoader from "react-spinners/ClipLoader";
 import {
   EyeIcon,
   EyeSlashIcon,
-  CheckCircleIcon,
 } from "@heroicons/react/24/solid";
 
 type UserCredentials = z.infer<typeof schema>;
@@ -85,7 +81,6 @@ const AddUserModal = ({
   entityType: string;
   refreshData: () => void;
 }) => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -189,8 +184,7 @@ const AddUserModal = ({
   const onSubmit = (data: UserCredentials) => {
     submitData(data);
   };
-  const pStyle = "font-medium w-full";
-  const inputStyle = "border border-black rounded-md p-1 w-full";
+
   return (
     modalIsOpen && (
       <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50 ">
