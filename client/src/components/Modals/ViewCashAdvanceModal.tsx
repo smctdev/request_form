@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import ClipLoader from "react-spinners/ClipLoader";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import EditStockModalSuccess from "./EditStockModalSuccess";
 import BeatLoader from "react-spinners/BeatLoader";
 import Avatar from "../assets/avatar.png";
 import PrintCash from "../PrintCash";
 import AddCustomModal from "../EditCustomModal";
+
 type Props = {
   closeModal: () => void;
   record: Record;
   refreshData: () => void;
 };
+
 interface Approver {
   id: number;
   firstName: string;
@@ -22,6 +23,7 @@ interface Approver {
   signature: string;
   status: string;
 }
+
 type Record = {
   id: number;
   request_code: string;
@@ -77,7 +79,6 @@ type FormData = {
 // Define the Item type
 type Item = {
   cashDate: string;
-
   quantity: string;
   description: string;
   unitCost: string;
@@ -92,10 +93,10 @@ type Item = {
   amount: string;
   perDiem: string;
 };
+
 const headerStyle = "border border-black bg-[#8EC7F7] w-2/12 text-sm p-2";
 const inputStyle = "border border-black text-[12px] font-bold";
 const tableStyle = "border border-black px-1";
-const tableStyle2 = "bg-white p-2";
 const tableCellStyle = `${inputStyle} py-2 px-1 w-10 wrap-text  break-words`;
 const ViewCashAdvanceModal: React.FC<Props> = ({
   closeModal,
@@ -114,22 +115,18 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
     record.approvers_id
   );
   const [loading, setLoading] = useState(false);
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
-  const [customApprovers, setCustomApprovers] = useState<any>(null);
   const [isFetchingApprovers, setIsFetchingApprovers] = useState(false);
   const [isFetchingUser, setIsFetchingUser] = useState(false);
   const [user, setUser] = useState<any>({});
   const [attachmentUrl, setAttachmentUrl] = useState<string[]>([]);
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [newAttachments, setNewAttachments] = useState<File[]>([]);
-  const [originalAttachments, setOriginalAttachments] = useState<string[]>([]);
   const [removedAttachments, setRemovedAttachments] = useState<
     Array<string | number>
   >([]);
@@ -146,7 +143,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
     const fetchBranchData = async () => {
       try {
         const response = await axios.get(
-           `${process.env.REACT_APP_API_BASE_URL}/view-branch`
+          `${process.env.REACT_APP_API_BASE_URL}/view-branch`
         );
         const branches = response.data.data;
 
@@ -174,8 +171,6 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
 
   useEffect(() => {
     const currentUserId = localStorage.getItem("id");
-    const attachments = JSON.parse(record.attachment);
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
     setNotedBy(editableRecord.noted_by);
     setApprovedBy(editableRecord.approved_by);
     setNewData(record.form_data[0].items.map((item) => ({ ...item })));
@@ -197,7 +192,10 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
           // Construct file URLs
           const fileUrls = parsedAttachment.map(
             (filePath) =>
-               `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+                /\\/g,
+                "/"
+              )}`
           );
           setAttachmentUrl(fileUrls);
         }
@@ -206,32 +204,6 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
       console.error("Error parsing attachment:", error);
     }
   }, [record]);
-  // const fetchUser = async (id: number) => {
-  //   setisFetchingUser(true);
-  //   setisFetchingApprovers(true);
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     if (!token) {
-  //       throw new Error("Token is missing");
-  //     }
-
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_API_BASE_URL}/view-user/${id}`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     setUser(response.data);
-  //   } catch (error) {
-  //     console.error("Failed to fetch approvers:", error);
-  //   } finally {
-  //     setisFetchingUser(false);
-  //     setisFetchingApprovers(false);
-  //   }
-  // };
 
   const fetchUser = async (id: number) => {
     setIsFetchingUser(true);
@@ -263,8 +235,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
     setIsEditing(false);
     setAttachmentUrl(attachmentUrl);
     setNewAttachments([]); // Clear new attachments
-    setRemovedAttachments([]); // Reset removed attachments
-    // Reset newData to original values
+    setRemovedAttachments([]);
     setNewData(record.form_data[0].items.map((item) => ({ ...item })));
     setEditedApprovers(record.approvers_id);
     setEditableRecord((prevState) => ({
@@ -319,12 +290,6 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
 
     // Remove the attachment from the current list
     setAttachmentUrl((prevUrls) => prevUrls.filter((_, i) => i !== index));
-  };
-
-  const getDayFromDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
-    return days[date.getDay()];
   };
 
   const formatDate = (dateString: Date) => {
@@ -487,80 +452,19 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
     }));
   };
 
-  const fetchCustomApprovers = async (id: number) => {
-    setIsFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/request-forms/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const { notedby, approvedby } = response.data;
-      setNotedBy(notedby);
-      setApprovedBy(approvedby);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setIsFetchingApprovers(false);
-    }
-  };
   const openAddCustomModal = () => {
     setIsModalOpen(true);
   };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
+
   const closeModals = () => {
     setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
   };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
     setApprovedBy(approvedBy);
   };
-  const fetchApprovers = async (userId: number) => {
-    setFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const approversData = Array.isArray(response.data.data)
-        ? response.data.data
-        : [];
-      setApprovers(approversData);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setFetchingApprovers(false);
-    }
-  };
   const handlePrint = () => {
     // Construct the data object to be passed
     const data = {
@@ -624,7 +528,9 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
             </div>
           </div>
 
-          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
+          <p className="font-medium text-[14px]">
+            Request ID: {record.request_code}
+          </p>
           <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
@@ -656,292 +562,325 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
           </div>
           <div className="flex">
             <div className="mr-5">
-          <div className="w-full overflow-x-auto">
-            <div className="w-full border-collapse">
-              <table className="w-full border border-collapse border-black lg:overflow-auto xl:table-fixed">
-                <thead>
-                <tr>
+              <div className="w-full overflow-x-auto">
+                <div className="w-full border-collapse">
+                  <table className="w-full border border-collapse border-black lg:overflow-auto xl:table-fixed">
+                    <thead>
+                      <tr>
                         <th className="border border-black bg-[#8EC7F7]"></th>
                         <th className="border border-black bg-[#8EC7F7]"></th>
-                        <th colSpan={2} className="text-center text-sm bg-[#8EC7F7]">Itinerary</th>
+                        <th
+                          colSpan={2}
+                          className="text-center text-sm bg-[#8EC7F7]"
+                        >
+                          Itinerary
+                        </th>
                         <th className="border border-black bg-[#8EC7F7]"></th>
-                        <th colSpan={2} className="text-center text-sm bg-[#8EC7F7]">Hotel</th>
+                        <th
+                          colSpan={2}
+                          className="text-center text-sm bg-[#8EC7F7]"
+                        >
+                          Hotel
+                        </th>
                         <th className="border border-black bg-[#8EC7F7]"></th>
                         <th className="border border-black bg-[#8EC7F7]"></th>
                       </tr>
-                  <tr>
-                    <th className={`${headerStyle}`}>Date</th>
-                    <th className={`${headerStyle}`}>Day</th>
-                    <th className={`${headerStyle}`}>From</th>
-                    <th className={`${headerStyle}`}>To</th>
-                    <th className={`${headerStyle}`}>Activity</th>
-                    <th className={`${headerStyle}`}>Name</th>
-                    <th className={`${headerStyle}`}>Rate</th>
-                    <th className={`${headerStyle}`}>Per Diem</th>
-                    <th className={`${headerStyle}`}>Remarks</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {isEditing
-                    ? newData.map((item, index) => (
-                        <tr key={index}>
-                          <td className="break-words tableCellStyle">
-                            <input
-                              type="date"
-                              value={item.cashDate}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "cashDate",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full bg-white"
-                            />
-                          </td>
-                          <td className="break-words border-2 border-black tableCellStyle">
-                            <input
-                              type="text"
-                              value={item.day}
-                              onChange={(e) =>
-                                handleItemChange(index, "day", e.target.value)
-                              }
-                              className="w-full bg-white"
-                            />
-                          </td>
-                          <td className="break-words border-2 border-black tableCellStyle">
-                            <input
-                              type="text"
-                              value={item.from}
-                              onChange={(e) =>
-                                handleItemChange(index, "from", e.target.value)
-                              }
-                              className="w-full bg-white"
-                            />
-                          </td>
-                          <td className="break-words border-2 border-black tableCellStyle">
-                            <input
-                              type="text"
-                              value={item.to}
-                              onChange={(e) =>
-                                handleItemChange(index, "to", e.target.value)
-                              }
-                              className="w-full bg-white"
-                            />
-                          </td>
-                          <td className="break-words border-2 border-black tableCellStyle">
-                            <input
-                              type="text"
-                              value={item.activity}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "activity",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full bg-white"
-                            />
-                          </td>
-                          <td className="break-words border-2 border-black tableCellStyle">
-                            <input
-                              type="text"
-                              value={item.hotel}
-                              onChange={(e) =>
-                                handleItemChange(index, "hotel", e.target.value)
-                              }
-                              className="w-full bg-white"
-                            />
-                          </td>
-                          <td className="break-words border-2 border-black tableCellStyle">
-                            <input
-                              type="text"
-                              value={item.rate}
-                              onChange={(e) =>
-                                handleItemChange(index, "rate", e.target.value)
-                              }
-                              className="w-full bg-white"
-                            />
-                          </td>
-                          <td className="break-words border-2 border-black tableCellStyle">
-                            <input
-                              type="text"
-                              value={item.perDiem}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "perDiem",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full bg-white"
-                            />
-                          </td>
-                          <td className="break-words border-2 border-black tableCellStyle">
-                            <input
-                              type="text"
-                              value={item.remarks}
-                              onChange={(e) =>
-                                handleItemChange(
-                                  index,
-                                  "remarks",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full bg-white"
-                            />
-                          </td>
-                        </tr>
-                      ))
-                    : editableRecord.form_data[0].items.map((item, index) => (
-                        <tr key={index}>
-                          <td className={tableCellStyle}>
-                            {formatDate2(item.cashDate)}
-                          </td>
-                          <td className={tableCellStyle}>{item.day}</td>
-                          <td className={tableCellStyle}>{item.from}</td>
-                          <td className={tableCellStyle}>{item.to}</td>
-                          <td className={tableCellStyle}>{item.activity}</td>
-                          <td className={tableCellStyle}>{item.hotel}</td>
-                          <td className={tableCellStyle}>{item.rate}</td>
-                          <td className={tableCellStyle}>{item.perDiem}</td>
-                          <td className={tableCellStyle}>{item.remarks}</td>
-                        </tr>
-                      ))}
-                </tbody>
-              </table>
+                      <tr>
+                        <th className={`${headerStyle}`}>Date</th>
+                        <th className={`${headerStyle}`}>Day</th>
+                        <th className={`${headerStyle}`}>From</th>
+                        <th className={`${headerStyle}`}>To</th>
+                        <th className={`${headerStyle}`}>Activity</th>
+                        <th className={`${headerStyle}`}>Name</th>
+                        <th className={`${headerStyle}`}>Rate</th>
+                        <th className={`${headerStyle}`}>Per Diem</th>
+                        <th className={`${headerStyle}`}>Remarks</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {isEditing
+                        ? newData.map((item, index) => (
+                            <tr key={index}>
+                              <td className="break-words tableCellStyle">
+                                <input
+                                  type="date"
+                                  value={item.cashDate}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "cashDate",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="w-full bg-white"
+                                />
+                              </td>
+                              <td className="break-words border-2 border-black tableCellStyle">
+                                <input
+                                  type="text"
+                                  value={item.day}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "day",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="w-full bg-white"
+                                />
+                              </td>
+                              <td className="break-words border-2 border-black tableCellStyle">
+                                <input
+                                  type="text"
+                                  value={item.from}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "from",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="w-full bg-white"
+                                />
+                              </td>
+                              <td className="break-words border-2 border-black tableCellStyle">
+                                <input
+                                  type="text"
+                                  value={item.to}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "to",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="w-full bg-white"
+                                />
+                              </td>
+                              <td className="break-words border-2 border-black tableCellStyle">
+                                <input
+                                  type="text"
+                                  value={item.activity}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "activity",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="w-full bg-white"
+                                />
+                              </td>
+                              <td className="break-words border-2 border-black tableCellStyle">
+                                <input
+                                  type="text"
+                                  value={item.hotel}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "hotel",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="w-full bg-white"
+                                />
+                              </td>
+                              <td className="break-words border-2 border-black tableCellStyle">
+                                <input
+                                  type="text"
+                                  value={item.rate}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "rate",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="w-full bg-white"
+                                />
+                              </td>
+                              <td className="break-words border-2 border-black tableCellStyle">
+                                <input
+                                  type="text"
+                                  value={item.perDiem}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "perDiem",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="w-full bg-white"
+                                />
+                              </td>
+                              <td className="break-words border-2 border-black tableCellStyle">
+                                <input
+                                  type="text"
+                                  value={item.remarks}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "remarks",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="w-full bg-white"
+                                />
+                              </td>
+                            </tr>
+                          ))
+                        : editableRecord.form_data[0].items.map(
+                            (item, index) => (
+                              <tr key={index}>
+                                <td className={tableCellStyle}>
+                                  {formatDate2(item.cashDate)}
+                                </td>
+                                <td className={tableCellStyle}>{item.day}</td>
+                                <td className={tableCellStyle}>{item.from}</td>
+                                <td className={tableCellStyle}>{item.to}</td>
+                                <td className={tableCellStyle}>
+                                  {item.activity}
+                                </td>
+                                <td className={tableCellStyle}>{item.hotel}</td>
+                                <td className={tableCellStyle}>{item.rate}</td>
+                                <td className={tableCellStyle}>
+                                  {item.perDiem}
+                                </td>
+                                <td className={tableCellStyle}>
+                                  {item.remarks}
+                                </td>
+                              </tr>
+                            )
+                          )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
             </div>
-          </div>
-          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-          </div>
-          <div>
-          <div className="inline-block w-full">
-            <table className="border border-black h-fit">
-              <thead>
-                <tr>
-                  <th colSpan={2} className="bg-[#8EC7F7]">
-                    <p className="font-semibold text-[12px]">
-                      SUMMARY OF EXPENSES TO BE INCURRED (for C/A)
-                    </p>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className={`${tableStyle}`}>
-                    <p className="text-sm font-semibold">BOAT FARE</p>
-                  </td>
-                  <td className={`${inputStyle}`}>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={newTotalBoatFare}
-                        onChange={(e) => setNewTotalBoatFare(e.target.value)}
-                        className="w-full bg-white"
-                        readOnly={!isEditing}
-                      />
-                    ) : (
-                      parseFloat(
-                        editableRecord.form_data[0].totalBoatFare
-                      ).toFixed(2)
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td className={`${tableStyle}`}>
-                    <p className="text-sm font-semibold">HOTEL</p>
-                  </td>
-                  <td className={`${inputStyle}`}>
-                    {/* {isEditing ? (
-                      <input
-                        type="number"
-                        value={newTotalHotel}
-                        onChange={(e) => setNewTotalHotel(e.target.value)}
-                        className="w-full bg-white"
-                        readOnly={!isEditing}
-                      />
-                    ) : (
-                      parseFloat(
-                        editableRecord.form_data[0].totalHotel
-                      ).toFixed(2)
-                    )} */}
-                    {newData.reduce(
-                      (totalHotelRate, item) =>
-                        totalHotelRate + Number(item.rate),
-                      0
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td className={`${tableStyle} `}>
-                    <p className="text-sm font-semibold">PER DIEM</p>
-                  </td>
-                  <td className={`${inputStyle}`}>
-                    {/* Display calculated total per diem */}
-                    {newData.reduce(
-                      (totalPerDiem, item) =>
-                        totalPerDiem + Number(item.perDiem),
-                      0
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td className={`${tableStyle}`}>
-                    <p className="text-sm font-semibold">FARE</p>
-                  </td>
-                  <td className={`${inputStyle}`}>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={newTotalFare}
-                        onChange={(e) => setNewTotalFare(e.target.value)}
-                        className="w-full bg-white"
-                        readOnly={!isEditing}
-                      />
-                    ) : (
-                      parseFloat(editableRecord.form_data[0].totalFare).toFixed(
-                        2
-                      )
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td className={`${tableStyle}`}>
-                    <p className="text-sm font-semibold">CONTINGENCY</p>
-                  </td>
-                  <td className={`${inputStyle}`}>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={newTotalContingency}
-                        onChange={(e) => setNewTotalContingency(e.target.value)}
-                        className="w-full bg-white"
-                        readOnly={!isEditing}
-                      />
-                    ) : (
-                      parseFloat(
-                        editableRecord.form_data[0].totalContingency
-                      ).toFixed(2)
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td className={`${tableStyle} py-1`}></td>
-                  <td className={`${tableStyle}`}></td>
-                </tr>
-                <tr>
-                  <td className={`${tableStyle} font-bold text-sm`}>TOTAL</td>
-                  <td className={`${tableStyle} whitespace-nowrap text-center font-bold`}>
-                    ₱{" "}
-                    {isEditing
-                      ? calculateGrandTotal()
-                      : editableRecord.form_data[0].grand_total}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          </div>
+            <div>
+              <div className="inline-block w-full">
+                <table className="border border-black h-fit">
+                  <thead>
+                    <tr>
+                      <th colSpan={2} className="bg-[#8EC7F7]">
+                        <p className="font-semibold text-[12px]">
+                          SUMMARY OF EXPENSES TO BE INCURRED (for C/A)
+                        </p>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className={`${tableStyle}`}>
+                        <p className="text-sm font-semibold">BOAT FARE</p>
+                      </td>
+                      <td className={`${inputStyle}`}>
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={newTotalBoatFare}
+                            onChange={(e) =>
+                              setNewTotalBoatFare(e.target.value)
+                            }
+                            className="w-full bg-white"
+                            readOnly={!isEditing}
+                          />
+                        ) : (
+                          parseFloat(
+                            editableRecord.form_data[0].totalBoatFare
+                          ).toFixed(2)
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className={`${tableStyle}`}>
+                        <p className="text-sm font-semibold">HOTEL</p>
+                      </td>
+                      <td className={`${inputStyle}`}>
+                        {newData.reduce(
+                          (totalHotelRate, item) =>
+                            totalHotelRate + Number(item.rate),
+                          0
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className={`${tableStyle} `}>
+                        <p className="text-sm font-semibold">PER DIEM</p>
+                      </td>
+                      <td className={`${inputStyle}`}>
+                        {/* Display calculated total per diem */}
+                        {newData.reduce(
+                          (totalPerDiem, item) =>
+                            totalPerDiem + Number(item.perDiem),
+                          0
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className={`${tableStyle}`}>
+                        <p className="text-sm font-semibold">FARE</p>
+                      </td>
+                      <td className={`${inputStyle}`}>
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={newTotalFare}
+                            onChange={(e) => setNewTotalFare(e.target.value)}
+                            className="w-full bg-white"
+                            readOnly={!isEditing}
+                          />
+                        ) : (
+                          parseFloat(
+                            editableRecord.form_data[0].totalFare
+                          ).toFixed(2)
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className={`${tableStyle}`}>
+                        <p className="text-sm font-semibold">CONTINGENCY</p>
+                      </td>
+                      <td className={`${inputStyle}`}>
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={newTotalContingency}
+                            onChange={(e) =>
+                              setNewTotalContingency(e.target.value)
+                            }
+                            className="w-full bg-white"
+                            readOnly={!isEditing}
+                          />
+                        ) : (
+                          parseFloat(
+                            editableRecord.form_data[0].totalContingency
+                          ).toFixed(2)
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className={`${tableStyle} py-1`}></td>
+                      <td className={`${tableStyle}`}></td>
+                    </tr>
+                    <tr>
+                      <td className={`${tableStyle} font-bold text-sm`}>
+                        TOTAL
+                      </td>
+                      <td
+                        className={`${tableStyle} whitespace-nowrap text-center font-bold`}
+                      >
+                        ₱{" "}
+                        {isEditing
+                          ? calculateGrandTotal()
+                          : editableRecord.form_data[0].grand_total}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
           {isEditing && (
             <div className="my-2">
@@ -1208,6 +1147,9 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -1235,6 +1177,9 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">

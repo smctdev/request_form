@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import BeatLoader from "react-spinners/BeatLoader";
-import EditStockModalSuccess from "./Modals/EditStockModalSuccess";
-import { set } from "react-hook-form";
 import PrintPurchase from "./PrintPurchase";
 import Avatar from "./assets/avatar.png";
 import SMCTLogo from "./assets/SMCT.png";
@@ -11,6 +9,7 @@ import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
 import ApproveSuccessModal from "./ApproveSuccessModal";
+
 type Props = {
   closeModal: () => void;
   record: Record;
@@ -88,10 +87,8 @@ const ApproverPurchase: React.FC<Props> = ({
   const [editableRecord, setEditableRecord] = useState(record);
   const [newData, setNewData] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
-  const [cancelLoading, setCancelLoading] = useState(false);
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
-  const [editedDate, setEditedDate] = useState("");
   const [editedApprovers, setEditedApprovers] = useState<number>(
     record.approvers_id
   );
@@ -100,11 +97,9 @@ const ApproverPurchase: React.FC<Props> = ({
   const [position, setPosition] = useState("");
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [newSupplier, setNewSupplier] = useState("");
   const [newAddress, setNewAddress] = useState("");
-  const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [comments, setComments] = useState("");
   const [avpstaff, setAvpstaff] = useState<Approver[]>([]);
   const [isFetchingUser, setisFetchingUser] = useState(false);
@@ -201,8 +196,6 @@ const ApproverPurchase: React.FC<Props> = ({
   }, []);
 
   useEffect(() => {
-    const currentUserId = localStorage.getItem("id");
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
     setNotedBy(record.noted_by);
     setApprovedBy(record.approved_by);
     setAvpstaff(record.avp_staff);
@@ -220,7 +213,10 @@ const ApproverPurchase: React.FC<Props> = ({
         // Handle the parsed attachment
         const fileUrls = parsedAttachment.map(
           (filePath: string) =>
-            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+              /\\/g,
+              "/"
+            )}`
         );
         setAttachmentUrl(fileUrls);
       } else {
@@ -266,11 +262,14 @@ const ApproverPurchase: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setUser(response.data);
     } catch (error) {
@@ -611,6 +610,9 @@ const ApproverPurchase: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }}
                               />
                             </div>
                           )}
@@ -671,6 +673,9 @@ const ApproverPurchase: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }}
                               />
                             </div>
                           )}
@@ -766,6 +771,9 @@ const ApproverPurchase: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }}
                           />
                         </div>
                         <div className="flex flex-row w-full" key={index}>
@@ -790,6 +798,9 @@ const ApproverPurchase: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }}
                           />
                         </div>
                         <div className="flex flex-row w-full" key={index}>
@@ -813,6 +824,9 @@ const ApproverPurchase: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }}
                           />
                         </div>
                         <div className="flex flex-row w-full" key={index}>

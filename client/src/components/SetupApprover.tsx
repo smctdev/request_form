@@ -1,21 +1,10 @@
 import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
-import {
-  PencilSquareIcon,
-  TrashIcon,
-  XMarkIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import AddUserModal from "./AddUserModal";
+import { TrashIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import EditUserModal from "./EditUserModal";
-import SuccessModal from "./SuccessModal";
 import CompleteModal from "./CompleteModal";
 import DeleteSuccessModal from "./DeleteSucessModal";
 import DeleteModal from "./DeleteModal";
-import { set } from "react-hook-form";
 import ViewApproverModal from "./ViewApproverModal";
 import AddApproverModal from "./AddApproverModal";
 import axios from "axios";
@@ -56,28 +45,17 @@ const tableCustomStyles = {
     },
   },
 };
-interface ViewApproverModalProps {
-  modalIsOpen: boolean;
-  closeModal: () => void;
-  user: Record | null;
-}
 
-const pStyle = "font-medium";
-const inputStyle = "border border-black rounded-md p-1";
 const SetupApprover = (props: Props) => {
-  const [darkMode, setDarkMode] = useState(true);
-  const [selected, setSelected] = useState<number | null>(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showDeletedSuccessModal, setShowDeletedSuccessModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  const [deleteSuccessModal, setDeleteSuccessModal] = useState(false);
   const [viewModalIsOpen, setViewModalIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Record | null>(null);
   const [approverList, setApproverList] = useState<Record[]>([]);
-  const [isLoading, setisLoading] = useState(false);
   const userId = localStorage.getItem("id");
   const [filterTerm, setFilterTerm] = useState("");
   const [branchList, setBranchList] = useState<any[]>([]);
@@ -219,10 +197,6 @@ const SetupApprover = (props: Props) => {
     setDeleteModal(false);
   };
 
-  const editModalShow = (row: Record) => {
-    setEditModal(true);
-  };
-
   const editModalClose = () => {
     setEditModal(false);
   };
@@ -247,9 +221,6 @@ const SetupApprover = (props: Props) => {
     setEditModal(false);
   };
 
-  const closeSuccessModal = () => {
-    setShowSuccessModal(false);
-  };
   const openDeleteSuccessModal = () => {
     setShowDeletedSuccessModal(true);
     setDeleteModal(false);
@@ -357,9 +328,14 @@ const SetupApprover = (props: Props) => {
             <table className="table" style={{ background: "white" }}>
               <thead>
                 <tr>
-                  <th className="py-6" style={{ color: "black", fontWeight: "bold" }}>Name</th>
+                  <th
+                    className="py-6"
+                    style={{ color: "black", fontWeight: "bold" }}
+                  >
+                    Name
+                  </th>
                   <th style={{ color: "black", fontWeight: "bold" }}>
-                   Assigned Branches
+                    Assigned Branches
                   </th>
                   <th style={{ color: "black", fontWeight: "bold" }}>Action</th>
                 </tr>

@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { BeatLoader } from "react-spinners";
-import { request } from "http";
 import PrintStock from "./PrintStock";
 import Avatar from "./assets/avatar.png";
 import SMCTLogo from "./assets/SMCT.png";
 import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
-import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ApproveSuccessModal from "./ApproveSuccessModal";
+
 type Props = {
   closeModal: () => void;
   record: Record;
@@ -94,15 +93,11 @@ const ApproversStock: React.FC<Props> = ({
   record,
   refreshData,
 }) => {
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [checkedPurpose, setCheckedPurpose] = useState("");
   const [comments, setComments] = useState("");
   const [loading, setLoading] = useState(false);
-  const [removedAttachments, setRemovedAttachments] = useState<
-    (string | number)[]
-  >([]);
   const [attachment, setAttachment] = useState<any>([]);
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
@@ -113,9 +108,6 @@ const ApproversStock: React.FC<Props> = ({
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [approveLoading, setApprovedLoading] = useState(false);
-  const [editedApprovers, setEditedApprovers] = useState<number>(
-    record.approvers_id
-  );
   const [file, setFile] = useState<File[]>([]);
   const [commentMessage, setCommentMessage] = useState("");
   const [attachmentUrl, setAttachmentUrl] = useState<string[]>([]);
@@ -179,6 +171,7 @@ const ApproversStock: React.FC<Props> = ({
 
     fetchUserInformation();
   }, []);
+
   useEffect(() => {
     const fetchBranchData = async () => {
       try {
@@ -206,8 +199,6 @@ const ApproversStock: React.FC<Props> = ({
   }, []);
 
   useEffect(() => {
-    // Log the entire record object to understand its structure
-
     // Fetch user data based on user_id
     fetchUser(record.user_id);
 
@@ -222,14 +213,16 @@ const ApproversStock: React.FC<Props> = ({
         const parsedAttachment = JSON.parse(record.attachment);
         const fileUrls = parsedAttachment.map(
           (filePath: string) =>
-            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+              /\\/g,
+              "/"
+            )}`
         );
         setAttachmentUrl(fileUrls);
       } else {
         console.warn("Attachment is not a JSON string:", record.attachment);
       }
 
-      // Check if approved_attachment is an array with a string element
       if (
         Array.isArray(record.approved_attachment) &&
         record.approved_attachment.length > 0
@@ -261,18 +254,6 @@ const ApproversStock: React.FC<Props> = ({
     }
   }, [record]); // Dependency on record
 
-  const handleRemoveAttachment = (index: number) => {
-    // Get the path of the attachment to be removed
-    const attachmentPath = attachmentUrl[index].split(
-      "storage/attachments/"
-    )[1];
-
-    // Add the path to the removedAttachments state
-    setRemovedAttachments((prevRemoved) => [...prevRemoved, attachmentPath]);
-
-    // Remove the attachment from the current list
-    setAttachmentUrl((prevUrls) => prevUrls.filter((_, i) => i !== index));
-  };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       // Convert FileList to array and set it
@@ -288,11 +269,14 @@ const ApproversStock: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setUser(response.data);
     } catch (error) {
@@ -301,8 +285,6 @@ const ApproversStock: React.FC<Props> = ({
       setisFetchingUser(false);
     }
   };
-
-
 
   const formatDate2 = (dateString: Date) => {
     const date = new Date(dateString);
@@ -428,7 +410,7 @@ const ApproversStock: React.FC<Props> = ({
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="relative z-10 w-full p-4 mx-10 overflow-scroll bg-white border-black rounded-t-lg shadow-lg md:mx-0 md:w-1/2 space-y-auto h-3/4">
-        <div className="sticky flex justify-end cursor-pointer  top-2">
+        <div className="sticky flex justify-end cursor-pointer top-2">
           <XMarkIcon
             className="w-8 h-8 p-1 text-black bg-white rounded-full "
             onClick={closeModal}
@@ -495,37 +477,6 @@ const ApproversStock: React.FC<Props> = ({
           <p className="font-medium text-[14px]">
             Purpose: {record.form_data[0].purpose}
           </p>
-
-          {/* <div className="flex flex-col md:flex-row md:space-x-2">
-            <label>
-              Repo. Recon
-              <input
-                type="checkbox"
-                checked={checkedPurpose === "Repo. Recon"}
-                readOnly
-                className="size-4"
-              />
-            </label>
-            <label>
-              Repair & Maintenance
-              <input
-                type="checkbox"
-                checked={checkedPurpose === "Repair & Maintenance"}
-                readOnly
-                className="size-4"
-              />
-            </label>
-            <label>
-              Office/Service Used
-              <input
-                type="checkbox"
-                checked={checkedPurpose === "Office/Service Used"}
-                readOnly
-                className="size-4"
-              />
-            </label>
-          </div> */}
-
           <div className="w-full mt-4 overflow-x-auto">
             <div className="w-full border-collapse ">
               <div className="table-container">
@@ -647,6 +598,9 @@ const ApproversStock: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }}
                               />
                             </div>
                           )}
@@ -712,6 +666,9 @@ const ApproversStock: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }}
                               />
                             </div>
                           )}

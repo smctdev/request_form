@@ -3,18 +3,17 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import BeatLoader from "react-spinners/BeatLoader";
 import EditStockModalSuccess from "./EditStockModalSuccess";
-import { ClipLoader } from "react-spinners";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import Avatar from "../assets/avatar.png";
 import PrintLiquidation from "../PrintLiquidation";
 import AddCustomModal from "../EditCustomModal";
-import { request } from "http";
-import { parse } from "path";
+
 type Props = {
   closeModal: () => void;
   record: Record;
   refreshData: () => void;
 };
+
 interface Approver {
   id: number;
   firstName: string;
@@ -24,6 +23,7 @@ interface Approver {
   signature: string;
   status: string;
 }
+
 type Record = {
   id: number;
   request_code: string;
@@ -100,8 +100,6 @@ const input2Style = "  border-2 border-black rounded-[12px] text-sm";
 const inputStyles =
   "  border-2 border-black rounded-[12px] pl-[10px] text-end pr-10 font-bold text-sm";
 const tableCellStyle = "border-2 border-black  text-center p-2 text-sm";
-const tableInput = "w-full h-full bg-white px-2 py-1";
-const itemDiv = "flex flex-col  w-3/4";
 const ViewLiquidationModal: React.FC<Props> = ({
   closeModal,
   record,
@@ -110,12 +108,10 @@ const ViewLiquidationModal: React.FC<Props> = ({
   const [editableRecord, setEditableRecord] = useState(record);
   const [newData, setNewData] = useState<Item[]>([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [cashAdvance, setCashAdvance] = useState("");
   const [loading, setLoading] = useState(false);
   const [editedApprovers, setEditedApprovers] = useState<number>(
     record.approvers_id
   );
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -124,17 +120,14 @@ const ViewLiquidationModal: React.FC<Props> = ({
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
-  const [customApprovers, setCustomApprovers] = useState<Approver[]>([]);
   const [isFetchingUser, setisFetchingUser] = useState(false);
   const [user, setUser] = useState<any>({});
   const [attachmentUrl, setAttachmentUrl] = useState<string[]>([]);
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [newAttachments, setNewAttachments] = useState<File[]>([]);
-  const [originalAttachments, setOriginalAttachments] = useState<string[]>([]);
   const [removedAttachments, setRemovedAttachments] = useState<
     (string | number)[]
   >([]);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
@@ -177,9 +170,6 @@ const ViewLiquidationModal: React.FC<Props> = ({
 
   useEffect(() => {
     const currentUserId = localStorage.getItem("id");
-    const attachments = JSON.parse(record.attachment);
-    // Ensure currentUserId and userId are converted to numbers if they exist
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
     setNotedBy(editableRecord.noted_by);
     setApprovedBy(editableRecord.approved_by);
     setNewData(record.form_data[0].items.map((item) => ({ ...item })));
@@ -198,7 +188,10 @@ const ViewLiquidationModal: React.FC<Props> = ({
           // Construct file URLs
           const fileUrls = parsedAttachment.map(
             (filePath) =>
-              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+                /\\/g,
+                "/"
+              )}`
           );
           setAttachmentUrl(fileUrls);
         }
@@ -217,11 +210,14 @@ const ViewLiquidationModal: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setUser(response.data);
     } catch (error) {
@@ -231,6 +227,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
       setisFetchingApprovers(false);
     }
   };
+
   const handleCancelEdit = () => {
     setIsEditing(false);
     setEditedApprovers(record.approvers_id);
@@ -264,32 +261,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
     const short = cashAdvance - totalExpense;
     return short.toFixed(2);
   };
-  const fetchCustomApprovers = async (id: number) => {
-    setisFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/request-forms/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const { notedby, approvedby } = response.data;
-      setNotedBy(notedby);
-      setApprovedBy(approvedby);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setisFetchingApprovers(false);
-    }
-  };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       setNewAttachments(Array.from(event.target.files));
@@ -308,6 +280,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
     // Remove the attachment from the current list
     setAttachmentUrl((prevUrls) => prevUrls.filter((_, i) => i !== index));
   };
+
   const handleEdit = () => {
     setEditedDate(editableRecord.form_data[0].date);
 
@@ -323,6 +296,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
     };
     return date.toLocaleDateString("en-US", options);
   };
+
   const formatDate2 = (dateString: string) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -490,54 +464,20 @@ const ViewLiquidationModal: React.FC<Props> = ({
       approvers_id: editedApprovers,
     }));
   };
+
   const openAddCustomModal = () => {
     setIsModalOpen(true);
   };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
+
   const closeModals = () => {
     setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
   };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
     setApprovedBy(approvedBy);
   };
-  const fetchApprovers = async (userId: number) => {
-    setFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const approversData = Array.isArray(response.data.data)
-        ? response.data.data
-        : [];
-      setApprovers(approversData);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setFetchingApprovers(false);
-    }
-  };
   const handlePrint = () => {
     // Construct the data object to be passed
     const data = {
@@ -601,7 +541,9 @@ const ViewLiquidationModal: React.FC<Props> = ({
             </div>
           </div>
 
-          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
+          <p className="font-medium text-[14px]">
+            Request ID: {record.request_code}
+          </p>
           <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
@@ -672,10 +614,14 @@ const ViewLiquidationModal: React.FC<Props> = ({
                       <th className={`${tableStyle}  w-2/12`}>Hotel</th>
                       <th className={`${tableStyle} w-2/12`}>Place</th>
                       <th className={`${tableStyle}`}>Amount</th>
-                      <th className={`${tableStyle}whitespace-nowrap`}>Per Diem</th>
+                      <th className={`${tableStyle}whitespace-nowrap`}>
+                        Per Diem
+                      </th>
                       <th className={`${tableStyle}`}>Particulars</th>
                       <th className={`${tableStyle}`}>Amount</th>
-                      <th className={`${tableStyle}whitespace-nowrap`}>Grand Total</th>
+                      <th className={`${tableStyle}whitespace-nowrap`}>
+                        Grand Total
+                      </th>
                     </tr>
                   </thead>
                   <tbody className={`${tableCellStyle}`}>
@@ -1293,6 +1239,9 @@ const ViewLiquidationModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -1320,6 +1269,9 @@ const ViewLiquidationModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">

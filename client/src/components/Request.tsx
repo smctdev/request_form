@@ -8,11 +8,8 @@ import ViewCashDisbursementModal from "./Modals/ViewCashDisbursementModal";
 import ViewCashAdvanceModal from "./Modals/ViewCashAdvanceModal";
 import ViewLiquidationModal from "./Modals/ViewLiquidationModal";
 import ViewRequestModal from "./Modals/ViewRequestModal";
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import ViewDiscountModal from "./Modals/ViewDiscountModal";
-import { ClipLoader } from "react-spinners";
-import { text } from "stream/consumers";
 import Swal from "sweetalert2";
 import Echo from "../utils/Echo";
 type Props = {};
@@ -197,7 +194,6 @@ const Request = (props: Props) => {
   const [requests, setRequests] = useState<Record[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<Record | null>(null);
-  const [sortOrder, setSortOrder] = useState("desc");
   const userId = localStorage.getItem("id");
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
@@ -508,56 +504,6 @@ const Request = (props: Props) => {
       </tbody>
     </table>
   );
-  // const LoadingSpinner = () => {
-  //   const skeletonStyle = {
-  //     width: '100%',
-  //     height: '3rem', // h-12
-  //     backgroundColor: '#e2e8f0', // slate-200
-  //     animation: 'fade 1s infinite alternate',
-  //   };
-
-  //   return (
-  //     <table className="table" style={{ background: "white" }}>
-  //       <thead>
-  //         <tr>
-  //           <th className="w-[80px] py-6" style={{ color: "black", fontWeight: "500" }}>
-  //             Request ID
-  //           </th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Request Type</th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Date</th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Branch</th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Status</th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Action</th>
-  //         </tr>
-  //       </thead>
-  //       <tbody>
-  //         {Array.from({ length: 6 }).map((_, index) => (
-  //           <tr key={index}>
-  //             <td className="w-full border border-gray-200" colSpan={6}>
-  //               <div className="flex justify-center">
-  //                 <div className="flex flex-col w-full gap-4">
-  //                   <div style={skeletonStyle}></div>
-  //                 </div>
-  //               </div>
-  //             </td>
-  //           </tr>
-  //         ))}
-  //       </tbody>
-  //       <style>
-  //         {`
-  //           @keyframes fade {
-  //             0% {
-  //               background-color: #e2e8f0; /* slate-200 */
-  //             }
-  //             100% {
-  //               background-color: #d1d5db; /* gray-300 */
-  //             }
-  //           }
-  //         `}
-  //       </style>
-  //     </table>
-  //   );
-  // };
 
   const refreshData = () => {
     if (userId) {
@@ -725,7 +671,7 @@ const Request = (props: Props) => {
                   <path d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z"></path>
                 </svg>
                 <input
-                  type="email"
+                  type="search"
                   placeholder="Search..."
                   className="w-full text-sm text-gray-600 bg-transparent outline-none focus:outline-none"
                   value={search}

@@ -33,19 +33,22 @@ const ViewBranchModal: React.FC<ViewBranchModalProps> = ({
           onClick={closeModal}
         />
       </div>
-      <div className='bg-white w-1/2 rounded-b-[12px] shadow-lg   lg:overflow h-auto px-14'>     
-      {user && (
-  <div className='grid mb-10 lg:grid-cols-2 justify-items-center place-content-center mt-5  gap-4'>
-    {Object.entries(user).map(([key, value]) => (
-      <div key={key} className="w-2/3 sm:w-full    ">
-        <p className="font-bold">{`${key.replace(/_/g, ' ').charAt(0).toUpperCase() + key.replace(/_/g, ' ').slice(1)}`}</p>
-        <div className="border p-2 border-black rounded-[12px] overflow-auto">
-          <p className="break-words">{value}</p>
-        </div>
-      </div>
-    ))}
-  </div>
-)}
+      <div className="bg-white w-1/2 rounded-b-[12px] shadow-lg   lg:overflow h-auto px-14">
+        {user && (
+          <div className="grid mb-10 lg:grid-cols-2 justify-items-center place-content-center mt-5  gap-4">
+            {Object.entries(user).map(([key, value]) => (
+              <div key={key} className="w-2/3 sm:w-full    ">
+                <p className="font-bold">{`${
+                  key.replace(/_/g, " ").charAt(0).toUpperCase() +
+                  key.replace(/_/g, " ").slice(1)
+                }`}</p>
+                <div className="border p-2 border-black rounded-[12px] overflow-auto">
+                  <p className="break-words">{value}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,31 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Select from "react-select/dist/declarations/src/Select";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  CalendarIcon,
-  MinusCircleIcon,
-  PlusCircleIcon,
-  TrashIcon,
-} from "@heroicons/react/24/solid";
-import TextareaAutosize from "react-textarea-autosize";
-import { set, useForm } from "react-hook-form";
-import { z, ZodError } from "zod";
+import { PlusCircleIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import axios from "axios";
 import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ClipLoader from "react-spinners/ClipLoader";
-import { useUser } from "../context/UserContext";
 import AddCustomModal from "./AddCustomModal";
 import Swal from "sweetalert2";
-type CustomApprover = {
-  id: number;
-  name: string;
-  approvers: {
-    noted_by: { name: string }[];
-    approved_by: { name: string }[];
-  };
-};
+
 interface Approver {
   id: number;
   firstName: string;
@@ -108,7 +92,6 @@ const itemDiv = "flex flex-col  w-3/4";
 
 const buttonStyle = "h-[45px] w-[150px] rounded-[12px] text-white";
 const CreateLiquidation = (props: Props) => {
-  const [startDate, setStartDate] = useState(new Date());
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [cashAdvance, setCashAdvance] = useState("0");
@@ -118,19 +101,14 @@ const CreateLiquidation = (props: Props) => {
   const [name, setName] = useState("");
   const [signature, setSignature] = useState("");
   const [file, setFile] = useState<File[]>([]);
-  const [customApprovers, setCustomApprovers] = useState<CustomApprover[]>([]);
   const [selectedApproverList, setSelectedApproverList] = useState<
     number | null
   >(null);
   const [employeeID, setEmployeeID] = useState<string | null>(null);
-  const [selectedApprover, setSelectedApprover] = useState<{ name: string }[]>(
-    []
-  );
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [initialNotedBy, setInitialNotedBy] = useState<Approver[]>([]);
   const [initialApprovedBy, setInitialApprovedBy] = useState<Approver[]>([]);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {
     formState: { errors: formErrors },
@@ -144,6 +122,7 @@ const CreateLiquidation = (props: Props) => {
       setFile(Array.from(e.target.files));
     }
   };
+  
   useEffect(() => {
     setInitialNotedBy(notedBy);
     setInitialApprovedBy(approvedBy);
@@ -182,46 +161,8 @@ const CreateLiquidation = (props: Props) => {
     },
   ]);
   const [tableData, setTableData] = useState<TableDataItem[]>(initialTableData);
-  const { userId, firstName, lastName, email, role, branchCode, contact } =
-    useUser();
   const [selectedRequestType, setSelectedRequestType] =
     useState("/request/loae");
-
-  /*  useEffect(() => {
-    fetchCustomApprovers();
-  }, []);
- */
-  /*   const fetchCustomApprovers = async () => {
-    try {
-      const id = localStorage.getItem("id");
-      const token = localStorage.getItem("token");
-      if (!token || !id) {
-        console.error("Token or user ID is missing");
-        return;
-      }
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (Array.isArray(response.data.data)) {
-        setCustomApprovers(response.data.data);
-      } else {
-        console.error("Unexpected response format:", response.data);
-        setCustomApprovers([]); // Ensure that customApprovers is always an array
-      }
-
-   
-    } catch (error) {
-      console.error("Error fetching custom approvers:", error);
-      setCustomApprovers([]); // Ensure that customApprovers is always an array
-    }
-  }; */
 
   const handleChange = (
     index: number,
@@ -256,11 +197,7 @@ const CreateLiquidation = (props: Props) => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<FormData>();
-  const handleAddRow = () => {
-    setTableData([...tableData]);
-  };
 
   const handleRemoveItem = (index: number) => {
     if (tableData.length > 1) {
@@ -333,23 +270,16 @@ const CreateLiquidation = (props: Props) => {
   };
 
   useEffect(() => {
-    // Retrieve values from localStorage
     const storedFirstName = localStorage.getItem("firstName");
     const storedLastName = localStorage.getItem("lastName");
     const signature = localStorage.getItem("signature");
     const employee_id = localStorage.getItem("employee_id");
-    // Combine first name and last name
     const fullName = `${storedFirstName} ${storedLastName}`.trim();
 
-    // Update the state variable with the combined name
     setName(fullName);
     setEmployeeID(String(employee_id));
     setSignature(signature || "");
   }, []);
-
-  const handleOpenConfirmationModal = () => {
-    setShowConfirmationModal(true);
-  };
 
   // Function to close the confirmation modal
   const handleCloseConfirmationModal = () => {
@@ -380,7 +310,6 @@ const CreateLiquidation = (props: Props) => {
       const firstName = localStorage.getItem("firstName");
       const lastName = localStorage.getItem("lastName");
       setName(firstName + " " + lastName);
-      const eSig = localStorage.getItem("signature");
       const branch_code = localStorage.getItem("branch_code");
 
       if (!token || !userId) {
@@ -468,27 +397,20 @@ const CreateLiquidation = (props: Props) => {
       setLoading(false);
     }
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
   const openAddCustomModal = () => {
     setIsModalOpen(true);
-  };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
   };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
     setApprovedBy(approvedBy);
   };
+
   const handleConfirmSubmit = async () => {
     // Close the confirmation modal
     setShowConfirmationModal(false);
@@ -530,32 +452,16 @@ const CreateLiquidation = (props: Props) => {
     }
   };
 
-  const handleCancelSubmit = () => {
-    // Close the confirmation modal
-    setShowConfirmationModal(false);
-    // Reset formData state
-    setFormData(null);
-  };
-
-  const handleInputChange = (
-    index: number,
-    field: keyof (typeof items)[0],
-    value: string
-  ) => {
-    const updatedItems = [...items];
-    updatedItems[index][field] = value;
-    setItems(updatedItems);
-  };
   const navigate = useNavigate();
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
-
     navigate("/request");
   };
 
   const handleFormSubmit = () => {
     setFormSubmitted(true);
   };
+
   return (
     <div className="bg-graybg dark:bg-blackbg h-full pt-[15px] px-[30px] pb-[15px]">
       {loading && (
@@ -615,12 +521,6 @@ const CreateLiquidation = (props: Props) => {
                 )}
               </div>
             </div>
-
-            {/* <div className="w-full px-4 mt-10 ">
-              <h1 className="text-[24px] font-semibold">
-                Liquidation of Actual Expense
-              </h1>
-            </div> */}
             <div className="w-full mt-4 overflow-x-auto">
               <div className="w-full border border-collapse border-black ">
                 <div className="table-container">
@@ -982,12 +882,6 @@ const CreateLiquidation = (props: Props) => {
                       ₱&nbsp;
                       <input
                         type="number"
-                        {...register("cashAdvance", {
-                          required: "Cash Advance is required",
-                          validate: (value) =>
-                            parseFloat(value) > 0 ||
-                            "Cash Advance must be greater than 0",
-                        })}
                         value={cashAdvance}
                         onChange={(e) => setCashAdvance(e.target.value)}
                         className="font-bold bg-white focus:outline-0"

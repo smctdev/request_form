@@ -16,6 +16,8 @@ interface UserContextType {
   branchCode: string | null;
   contact: string | null;
   signature: string | null;
+  profile_picture: string | undefined;
+  setProfile_picture: React.Dispatch<React.SetStateAction<string | undefined>>;
   isAuthenticated: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,7 +29,8 @@ interface UserContextType {
     role: string,
     branchCode: string,
     contact: string,
-    signature: string
+    signature: string,
+    profile_picture: string
   ) => void;
   loading: boolean;
 }
@@ -45,6 +48,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   const [branchCode, setBranchCode] = useState<string | null>(null);
   const [contact, setContact] = useState<string | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
+  const [profile_picture, setProfile_picture] = useState<string | undefined>(
+    ""
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
@@ -56,7 +62,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     role: string,
     branchCode: string,
     contact: string,
-    signature: string
+    signature: string,
+    profile_picture: string
   ) => {
     setUserId(userId);
     setFirstName(firstName);
@@ -66,18 +73,13 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     setBranchCode(branchCode);
     setContact(contact);
     setSignature(signature);
+    setProfile_picture(profile_picture);
   };
 
   useEffect(() => {
-        const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
     const fetchUserProfile = async () => {
-      // if (!token) {
-      //   setUserId(null);
-      //   setLoading(false);
-      //   return;
-      // }
       try {
-
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/profile`,
           {
@@ -95,19 +97,19 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
           setBranchCode(response.data.data.branchCode);
           setContact(response.data.data.contact);
           setSignature(response.data.data.signature);
+          setProfile_picture(response.data.data.profile_picture);
           setIsAuthenticated(true);
         }
       } catch (error) {
-        // console.error("Failed to fetch user profile", error);
         setUserId(null);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchUserProfile();
-  }, []);
-  
+  }, [profile_picture]);
+
   return (
     <UserContext.Provider
       value={{
@@ -122,6 +124,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         branchCode,
         contact,
         signature,
+        profile_picture,
+        setProfile_picture,
         updateUser,
         loading,
       }}

@@ -2,9 +2,6 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
-import EyeSlashIcon from "@heroicons/react/24/solid/EyeSlashIcon";
-import { EyeIcon } from "@heroicons/react/24/solid";
-import { set } from "react-hook-form";
 import Swal from "sweetalert2";
 
 type EntityType = "User" | "Branch" | "Custom" | "Approver";
@@ -37,9 +34,6 @@ const EditUserModal = ({
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState<boolean>(false);
   const [notedBy, setNotedBy] = useState<number[]>([]);
   const [approvedBy, setApprovedBy] = useState<number[]>([]);
   const [approvers, setApprovers] = useState<any[]>([]);
@@ -68,7 +62,6 @@ const EditUserModal = ({
           }
         );
         const branches = response.data.data;
-        // Assuming response.data.data is the array of branches
         const branchOptions = branches.map(
           (branch: { id: number; branch_code: string; branch: string }) => ({
             id: branch.id,
@@ -105,7 +98,6 @@ const EditUserModal = ({
             ...(response.data.sameBranchApprovers || []),
           ];
 
-          // Update state with the combined approvers data
           setApprovers(allApprovers);
 
           setLoading(false);
@@ -121,7 +113,6 @@ const EditUserModal = ({
   useEffect(() => {
     if (editModal && selectedUser) {
       setName(selectedUser.name || "");
-      // Set the approvedBy state when the modal opens
       setApprovedBy(selectedUser.approved_by || []);
       setNotedBy(selectedUser.noted_by || []);
     }
@@ -158,7 +149,6 @@ const EditUserModal = ({
   }, [selectedUser]);
 
   const handleCancel = () => {
-    // Reset state to selectedUser data
     if (selectedUser) {
       setFirstName(selectedUser.firstname);
       setLastName(selectedUser.lastname);
@@ -440,8 +430,12 @@ const EditUserModal = ({
                   value={editedRole}
                   onChange={(e) => setEditedRole(e.target.value)}
                 >
-                  <option value="" hidden>Select Role</option>
-                  <option value="" disabled>Select Role</option>
+                  <option value="" hidden>
+                    Select Role
+                  </option>
+                  <option value="" disabled>
+                    Select Role
+                  </option>
                   {positionOptions.map((option, index) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
@@ -456,8 +450,12 @@ const EditUserModal = ({
                     handleBranchCodeChange(Number(e.target.value))
                   }
                 >
-                  <option value="" hidden>Select Branch Code</option>
-                  <option value="" disabled>Select Branch Code</option>
+                  <option value="" hidden>
+                    Select Branch Code
+                  </option>
+                  <option value="" disabled>
+                    Select Branch Code
+                  </option>
                   {branchList.map((branch) => (
                     <option key={branch.id} value={branch.id}>
                       {branch.branch_code}
@@ -470,9 +468,12 @@ const EditUserModal = ({
                   value={editedPosition}
                   onChange={(e) => setEditedPosition(e.target.value)}
                 >
-                  
-                  <option value="" hidden>Select Position</option>
-                  <option value="" disabled>Select Position</option>
+                  <option value="" hidden>
+                    Select Position
+                  </option>
+                  <option value="" disabled>
+                    Select Position
+                  </option>
                   {roleOptions.map((option, index) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
@@ -491,8 +492,12 @@ const EditUserModal = ({
                   value={editedBranch}
                   onChange={(e) => setEditedBranch(e.target.value)}
                 >
-                <option value="" hidden>Select Branch</option>
-                <option value="" disabled>Select Branch</option>
+                  <option value="" hidden>
+                    Select Branch
+                  </option>
+                  <option value="" disabled>
+                    Select Branch
+                  </option>
                   {branch.length > 0 ? (
                     branch.map((branchItem) => (
                       <option key={branchItem} value={branchItem}>

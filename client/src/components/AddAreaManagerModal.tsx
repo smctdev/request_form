@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
-import { set } from "react-hook-form";
 
 type User = {
   id: number;
@@ -164,7 +163,6 @@ const AddAreaManagerModal = ({
           }
         );
 
-        // Assuming successful, close modal or show success message
         setIsLoading(false);
         closeModal();
         openCompleteModal(); // Implement your completion modal or alert
@@ -175,7 +173,6 @@ const AddAreaManagerModal = ({
         // Handle error state or show error message
       }
     } else {
-      // Handle case where user or branches are not selected
       console.warn("Please select a user and at least one branch.");
     }
   };
@@ -194,6 +191,7 @@ const AddAreaManagerModal = ({
       selectedBranches.filter((id) => id !== branchIdToRemove)
     );
   };
+
   return (
     <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="p-4 w-10/12 sm:w-1/3 relative bg-primary flex justify-center mx-20 border-b rounded-t-[12px]">

@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import Avatar2 from "./assets/avatar.png";
-import { Link } from "react-router-dom";
 import axios from "axios";
-import SquareLoader from "react-spinners/SquareLoader";
 import ClipLoader from "react-spinners/ClipLoader";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import PropogateLoader from "react-spinners/PropagateLoader";
-import { set } from "react-hook-form";
 import SignatureCanvas from "react-signature-canvas";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useUser } from "../context/UserContext";
 
 interface Branch {
   branch: string;
@@ -44,7 +42,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
   const [newPassword, setNewPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setChangePasswordLoading] = useState(false);
   const [newProfilePic, setNewProfilePic] = useState<File | null>(null);
   const [branchList, setBranchList] = useState<
     { id: number; branch_code: string }[]
@@ -53,7 +51,6 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showSignatureSuccess, setShowSignatureSuccess] = useState(false);
   const [signatureEmpty, setSignatureEmpty] = useState(false);
   const [signature, setSignature] = useState<SignatureCanvas | null>(null);
   const [signatureButton, setSignatureButton] = useState(false);
@@ -61,6 +58,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
   const [signatureError, setSignatureError] = useState("");
   const [signatureLoading, setSignatureLoading] = useState(false);
   const [signatureSuccess, setSignatureSuccess] = useState(false);
+  const { setProfile_picture } = useUser();
 
   const navigate = useNavigate();
 
@@ -154,7 +152,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
       return;
     }
     try {
-      setLoading(true);
+      setChangePasswordLoading(true);
       if (newPassword !== confirmNewPassword) {
         console.error("The new password fields confirmation does not match.");
         return;
@@ -182,9 +180,9 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
         confirmButtonColor: "#007bff",
       });
       // alert("Password changed successfully");
-      setLoading(false);
+      setChangePasswordLoading(false);
     } catch (error: any) {
-      setLoading(false);
+      setChangePasswordLoading(false);
       console.error(
         "Failed to change password:",
         error.response?.data?.message || error.message
@@ -302,7 +300,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
     formData.append("profile_picture", newProfilePic);
 
     try {
-      setLoading(true);
+      setChangePasswordLoading(true);
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/upload-profile-pic/${id}`,
         formData,
@@ -331,7 +329,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
         error.response?.data?.message || error.message
       );
     } finally {
-      setLoading(false);
+      setChangePasswordLoading(false);
     }
   };
 
@@ -382,6 +380,9 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
         }
       );
 
+      setProfile_picture(
+        newProfilePic ? profilePictureUrl : user?.profile_picture
+      );
       setSubmitting(false);
       setShowSuccessModal(true);
     } catch (error: any) {

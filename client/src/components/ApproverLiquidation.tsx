@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import BeatLoader from "react-spinners/BeatLoader";
-import PrintPurchase from "./PrintPurchase";
-import { ClipLoader } from "react-spinners";
-import { PencilIcon } from "@heroicons/react/24/solid";
 import Avatar from "./assets/avatar.png";
 import SMCTLogo from "./assets/SMCT.png";
 import DSMLogo from "./assets/DSM.jpg";
@@ -12,11 +9,13 @@ import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
 import ApproveSuccessModal from "./ApproveSuccessModal";
 import PrintLiquidation from "./PrintLiquidation";
+
 type Props = {
   closeModal: () => void;
   record: Record;
   refreshData: () => void;
 };
+
 interface Approver {
   id: number;
   firstname: string;
@@ -30,6 +29,7 @@ interface Approver {
   status: string;
   branch: string;
 }
+
 type Record = {
   request_code: string;
   employeeID: string;
@@ -88,14 +88,13 @@ type Item = {
   particularsAmount: string;
   grandTotal: string;
 };
+
 const tableStyle = "border-2 border-black p-2 text-xs ";
 const inputStyle = "  border-2 border-black rounded-[12px] pl-[10px]";
 const input2Style = "  border-2 border-black rounded-[12px] ";
 const inputStyles =
   "  border-2 border-black rounded-[12px] pl-[10px] text-end pr-10 font-bold";
 const tableCellStyle = `${inputStyle} text-center  `;
-const tableInput = "w-full h-full bg-white px-2 py-1";
-const itemDiv = "flex flex-col  w-3/4";
 const ApproverLiquidation: React.FC<Props> = ({
   closeModal,
   record,
@@ -104,26 +103,18 @@ const ApproverLiquidation: React.FC<Props> = ({
   const [editableRecord, setEditableRecord] = useState(record);
   const [newData, setNewData] = useState<Item[]>([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [cashAdvance, setCashAdvance] = useState("");
   const [loading, setLoading] = useState(false);
-  const [editedApprovers, setEditedApprovers] = useState<number>(
-    record.approvers_id
-  );
   const [commentMessage, setCommentMessage] = useState("");
   const [approveLoading, setApprovedLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [comments, setComments] = useState("");
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
-  const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [editedDate, setEditedDate] = useState("");
   const [newCashAdvance, setNewCashAdvance] = useState("");
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [avpstaff, setAvpstaff] = useState<Approver[]>([]);
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
-  const [customApprovers, setCustomApprovers] = useState<Approver[]>([]);
   const [user, setUser] = useState<any>({});
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [isFetchingUser, setisFetchingUser] = useState(false);
@@ -220,9 +211,6 @@ const ApproverLiquidation: React.FC<Props> = ({
 
   useEffect(() => {
     const currentUserId = localStorage.getItem("id");
-    const employeeId = localStorage.getItem("employee_id");
-    // Ensure currentUserId and userId are converted to numbers if they exist
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
     setNotedBy(record.noted_by);
     setApprovedBy(record.approved_by);
     setAvpstaff(record.avp_staff);
@@ -237,7 +225,10 @@ const ApproverLiquidation: React.FC<Props> = ({
         // Handle the parsed attachment
         const fileUrls = parsedAttachment.map(
           (filePath: string) =>
-            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+              /\\/g,
+              "/"
+            )}`
         );
         setAttachmentUrl(fileUrls);
       } else {
@@ -283,11 +274,14 @@ const ApproverLiquidation: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setUser(response.data);
     } catch (error) {
@@ -425,55 +419,6 @@ const ApproverLiquidation: React.FC<Props> = ({
     return date.toLocaleDateString("en-US", options);
   };
 
-  const handleItemChange = (
-    index: number,
-    field: keyof Item,
-    value: string
-  ) => {
-    const newDataCopy = [...newData];
-    newDataCopy[index] = { ...newDataCopy[index], [field]: value };
-    setErrorMessage("");
-
-    // Calculate the new grandTotal for the row
-    const hotelAmount = parseFloat(newDataCopy[index].hotelAmount) || 0;
-    const perDiem = parseFloat(newDataCopy[index].perDiem) || 0;
-    const particularsAmount =
-      parseFloat(newDataCopy[index].particularsAmount) || 0;
-    const grandTotal = hotelAmount + perDiem + particularsAmount;
-
-    // Update the grandTotal in the newDataCopy
-    newDataCopy[index] = {
-      ...newDataCopy[index],
-      grandTotal: grandTotal.toString(),
-    };
-
-    // Calculate the totalExpense by summing up all the grandTotal values
-    const totalExpense = newDataCopy.reduce((total, item) => {
-      return total + parseFloat(item.grandTotal);
-    }, 0);
-
-    // Update the state with the new data and totalExpense
-    setNewData(newDataCopy);
-
-    // Calculate the short amount
-    const cashAdvance =
-      parseFloat(editableRecord.form_data[0].cashAdvance) || 0;
-    const short = totalExpense - cashAdvance;
-
-    // Update the editableRecord with new totalExpense and short values
-    setEditableRecord((prevState) => ({
-      ...prevState,
-      form_data: [
-        {
-          ...prevState.form_data[0],
-          totalExpense: totalExpense.toString(),
-          short: short.toFixed(2),
-        },
-      ],
-      approvers_id: editedApprovers,
-    }));
-  };
-
   const handlePrint = () => {
     // Construct the data object to be passed
     const data = {
@@ -494,6 +439,7 @@ const ApproverLiquidation: React.FC<Props> = ({
       newWindow.focus();
     }
   };
+
   return (
     <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="relative z-10 w-full p-4 px-10 overflow-scroll bg-white border-black rounded-t-lg shadow-lg md:mx-0 md:w-1/2 lg:w-2/3 space-y-auto h-4/5">
@@ -842,6 +788,9 @@ const ApproverLiquidation: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }}
                               />
                             </div>
                           )}
@@ -902,6 +851,9 @@ const ApproverLiquidation: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }}
                               />
                             </div>
                           )}

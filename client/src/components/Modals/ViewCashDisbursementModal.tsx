@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import ClipLoader from "react-spinners/ClipLoader";
 import { PencilIcon } from "@heroicons/react/24/outline";
 import EditStockModalSuccess from "./EditStockModalSuccess";
 import BeatLoader from "react-spinners/BeatLoader";
-import PrintCash from "../PrintCashDisbursement";
 import Avatar from "../assets/avatar.png";
 import PrintCashDisbursement from "../PrintCashDisbursement";
 import AddCustomModal from "../EditCustomModal";
@@ -93,21 +91,18 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
     record.approvers_id
   );
   const [editedDate, setEditedDate] = useState("");
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [loading, setLoading] = useState(false);
   const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
-  const [customApprovers, setCustomApprovers] = useState<any>({});
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
   const [isFetchingUser, setisFetchingUser] = useState(false);
   const [user, setUser] = useState<any>({});
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [attachmentUrl, setAttachmentUrl] = useState<string[]>([]);
   const [newAttachments, setNewAttachments] = useState<File[]>([]);
-  const [originalAttachments, setOriginalAttachments] = useState<string[]>([]);
   const [removedAttachments, setRemovedAttachments] = useState<
     (string | number)[]
   >([]);
@@ -173,7 +168,10 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
           // Construct file URLs
           const fileUrls = parsedAttachment.map(
             (filePath) =>
-              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+                /\\/g,
+                "/"
+              )}`
           );
           setAttachmentUrl(fileUrls);
         }
@@ -472,8 +470,10 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
               </p>
             </div>
           </div>
-          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
-          <div className="flex w-full md:w-1/2 items-center">
+          <p className="font-medium text-[14px]">
+            Request ID: {record.request_code}
+          </p>
+          <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
               className={`${
@@ -651,7 +651,7 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                         {/* Signature */}
                         {user.data?.signature && (
                           <div className="absolute -top-4">
-                           <img
+                            <img
                               src={user.data?.signature}
                               alt="avatar"
                               width={120}
@@ -709,14 +709,14 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                               user.status.split(" ")[0] === "Rejected")) && (
                             <div className="absolute -top-4">
                               <img
-                              src={user.signature}
-                              alt="avatar"
-                              width={120}
-                              className="relative z-20 pointer-events-none"
-                              draggable="false"
-                              onContextMenu={(e) => e.preventDefault()}
-                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
-                            />
+                                src={user.signature}
+                                alt="avatar"
+                                width={120}
+                                className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
+                              />
                             </div>
                           )}
                           {/* Name */}
@@ -771,15 +771,15 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                             (typeof user.status === "string" &&
                               user.status.split(" ")[0] === "Rejected")) && (
                             <div className="absolute -top-4">
-                             <img
-                              src={user.signature}
-                              alt="avatar"
-                              width={120}
-                              className="relative z-20 pointer-events-none"
-                              draggable="false"
-                              onContextMenu={(e) => e.preventDefault()}
-                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
-                            />
+                              <img
+                                src={user.signature}
+                                alt="avatar"
+                                width={120}
+                                className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
+                              />
                             </div>
                           )}
                           {/* Name */}
@@ -891,6 +891,9 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -918,6 +921,9 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -958,7 +964,8 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
             ) : (
               !fetchingApprovers &&
               !isFetchingApprovers &&
-              (editableRecord.status === "Pending" || editableRecord.status === "Disapproved") && (
+              (editableRecord.status === "Pending" ||
+                editableRecord.status === "Disapproved") && (
                 <button
                   className="flex p-2 ml-2 text-white bg-blue-500 rounded-xl"
                   onClick={handleEdit}

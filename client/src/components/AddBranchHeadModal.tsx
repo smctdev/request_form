@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
-import { set } from "react-hook-form";
 
 type User = {
   id: number;
@@ -65,9 +64,10 @@ const AddBranchHeadModal = ({
           }
         );
 
-        // Filter and map data to desired format
         const transformedData = response.data.data
-          .filter((item: User) => item.position.trim() === "Branch Supervisor/Manager")
+          .filter(
+            (item: User) => item.position.trim() === "Branch Supervisor/Manager"
+          )
           .map((item: User) => ({
             id: item.id,
             name: `${item.firstname} ${item.lastname}`,
@@ -87,6 +87,7 @@ const AddBranchHeadModal = ({
       fetchUsers();
     }
   }, [modalIsOpen]);
+
   useEffect(() => {
     const fetchBranches = async () => {
       try {
@@ -163,7 +164,6 @@ const AddBranchHeadModal = ({
             headers,
           }
         );
-
         // Assuming successful, close modal or show success message
         setIsLoading(false);
         closeModal();
@@ -189,11 +189,7 @@ const AddBranchHeadModal = ({
   if (!modalIsOpen) {
     return null;
   }
-  const handleRemoveBranch = (branchIdToRemove: number) => {
-    setSelectedBranches(
-      selectedBranches.filter((id) => id !== branchIdToRemove)
-    );
-  };
+
   return (
     <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="p-4 w-10/12 sm:w-1/3 relative bg-primary flex justify-center mx-20 border-b rounded-t-[12px]">
@@ -228,30 +224,6 @@ const AddBranchHeadModal = ({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="p-2 mb-2 border border-gray-300 rounded-md "
                 />
-                {/* <div className="px-4 mt-4 mb-4">
-                  {selectedBranches.map((branchId) => {
-                    const branch = branches.find((b) => b.id === branchId);
-                    return (
-                      <Chip
-                        key={branchId}
-                        label={
-                          <div className="flex flex-col">
-                            <span className="text-white">
-                              {branch?.branch_code}
-                            </span>
-                          </div>
-                        }
-                        onDelete={() => handleRemoveBranch(branchId)}
-                        deleteIcon={<XMarkIcon className="w-4 h-4 stroke-white" />}
-                        sx={{
-                          marginBottom: "5px",
-                          marginRight: "2px",
-                          backgroundColor: "#389df1"
-                        }}
-                      />
-                    );
-                  })}
-                </div> */}
                 <div className="px-4">
                   {branches.length === 0 ? (
                     <ClipLoader size={35} color={"#123abc"} loading={loading} />

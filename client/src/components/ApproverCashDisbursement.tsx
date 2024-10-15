@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { BeatLoader } from "react-spinners";
 import axios from "axios";
-import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 import PrintCashDisbursement from "./PrintCashDisbursement";
-import { set } from "react-hook-form";
 import Avatar from "./assets/avatar.png";
 import { useNavigate } from "react-router-dom";
 import SMCTLogo from "./assets/SMCT.png";
@@ -18,6 +16,7 @@ type Props = {
   record: Record;
   refreshData: () => void;
 };
+
 interface Approver {
   id: number;
   firstname: string;
@@ -31,6 +30,7 @@ interface Approver {
   status: string;
   branch: string;
 }
+
 type Record = {
   request_code: string;
   created_at: Date;
@@ -98,20 +98,16 @@ const ApproverCashDisbursement: React.FC<Props> = ({
     record.approvers_id
   );
   const [isEditing, setIsEditing] = useState(false);
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [editedDate, setEditedDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
   const [isFetchingUser, setisFetchingUser] = useState(false);
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [avpstaff, setAvpstaff] = useState<Approver[]>([]);
-  const [customApprovers, setCustomApprovers] = useState<any>({});
   const [comments, setComments] = useState("");
-  const [nameComments, setNameComments] = useState([]);
   const [user, setUser] = useState<any>({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
@@ -211,9 +207,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
 
   useEffect(() => {
     const currentUserId = localStorage.getItem("id");
-
-    // Ensure currentUserId and userId are converted to numbers if they exist
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
     setNotedBy(record.noted_by);
     setApprovedBy(record.approved_by);
     setAvpstaff(record.avp_staff);
@@ -293,34 +286,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
       console.error("Failed to fetch approvers:", error);
     } finally {
       setisFetchingUser(false);
-    }
-  };
-
-  const fetchCustomApprovers = async (id: number) => {
-    setisFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/request-forms/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const { notedby, approvedby } = response.data;
-      setNotedBy(notedby);
-      setApprovedBy(approvedby);
-      setApprovers(approvers);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setisFetchingApprovers(false);
     }
   };
 
@@ -423,16 +388,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
-  };
-
   const formatDate2 = (dateString: Date) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -502,10 +457,11 @@ const ApproverCashDisbursement: React.FC<Props> = ({
       newWindow.focus();
     }
   };
+
   return (
     <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="relative z-10 w-full p-4 mx-10 overflow-scroll bg-white border-black rounded-t-lg shadow-lg md:mx-0 md:w-1/2 space-y-auto h-3/4">
-        <div className="sticky flex justify-end cursor-pointer  top-2">
+        <div className="sticky flex justify-end cursor-pointer top-2">
           <XMarkIcon
             className="w-8 h-8 p-1 text-black bg-white rounded-full "
             onClick={closeModal}
@@ -754,6 +710,9 @@ const ApproverCashDisbursement: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }}
                               />
                             </div>
                           )}
@@ -814,6 +773,9 @@ const ApproverCashDisbursement: React.FC<Props> = ({
                                 alt="avatar"
                                 width={120}
                                 className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }}
                               />
                             </div>
                           )}

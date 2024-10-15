@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 
@@ -24,15 +24,12 @@ interface Approver {
   status: string;
 }
 
-
 const AddCustomModal: React.FC<AddCustomModalProps> = ({
   modalIsOpen,
   closeModal,
-  openCompleteModal,
   entityType,
   initialNotedBy,
   initialApprovedBy,
-  refreshData,
   handleAddCustomData,
 }) => {
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
@@ -69,12 +66,14 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
             (approver) => approver.id !== currentUserId
           );
 
-          const uniqueIds = new Set(currentUsers.map((approver) => approver.id));
+          const uniqueIds = new Set(
+            currentUsers.map((approver) => approver.id)
+          );
           const uniqueApprovers = allApprovers.filter(
             (approver) =>
               uniqueIds.has(approver.id) && uniqueIds.delete(approver.id)
           );
-         
+
           setApprovers(uniqueApprovers);
           setLoading(false);
         } catch (error) {
@@ -87,8 +86,8 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
     }
   }, [modalIsOpen]);
 
-  const filteredApprovers = approvers.filter(approver =>
-    Object.values(approver).some(value =>
+  const filteredApprovers = approvers.filter((approver) =>
+    Object.values(approver).some((value) =>
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
@@ -97,19 +96,19 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
     setApprovedBy([]);
   };
   const toggleNotedBy = (approver: Approver) => {
-    const isApproved = approvedBy.some(a => a.id === approver.id);
-    setNotedBy(prevNotedBy =>
-      prevNotedBy.some(a => a.id === approver.id)
-        ? prevNotedBy.filter(a => a.id !== approver.id)
+    const isApproved = approvedBy.some((a) => a.id === approver.id);
+    setNotedBy((prevNotedBy) =>
+      prevNotedBy.some((a) => a.id === approver.id)
+        ? prevNotedBy.filter((a) => a.id !== approver.id)
         : [...prevNotedBy, approver]
     );
   };
 
   const toggleApprovedBy = (approver: Approver) => {
-    const isNoted = notedBy.some(a => a.id === approver.id);
-    setApprovedBy(prevApprovedBy =>
-      prevApprovedBy.some(a => a.id === approver.id)
-        ? prevApprovedBy.filter(a => a.id !== approver.id)
+    const isNoted = notedBy.some((a) => a.id === approver.id);
+    setApprovedBy((prevApprovedBy) =>
+      prevApprovedBy.some((a) => a.id === approver.id)
+        ? prevApprovedBy.filter((a) => a.id !== approver.id)
         : [...prevApprovedBy, approver]
     );
   };
@@ -123,7 +122,9 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
 
   const handleAddCustomRequest = () => {
     if (notedBy.length === 0 || approvedBy.length === 0) {
-      setErrorMessage("You must select at least one noted by and one approved by.");
+      setErrorMessage(
+        "You must select at least one noted by and one approved by."
+      );
       return;
     }
 
@@ -161,16 +162,19 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
             <div>
               <h1 className="text-lg font-medium">Noted By</h1>
               {filteredApprovers.map((approver, index) => {
-                const isNoted = notedBy.some(a => a.id === approver.id);
-                const isApproved = approvedBy.some(a => a.id === approver.id);
+                const isNoted = notedBy.some((a) => a.id === approver.id);
+                const isApproved = approvedBy.some((a) => a.id === approver.id);
                 const isDisabled = isNoted || isApproved;
-                const highlightClass = isNoted && isApproved ? "bg-yellow-100" : "";
+                const highlightClass =
+                  isNoted && isApproved ? "bg-yellow-100" : "";
 
                 return (
                   <div key={index} className="flex items-center mb-2">
                     <input
                       type="checkbox"
-                      className={`h-5 w-5 mr-2 ${isDisabled ? "cursor-not-allowed" : ""}`}
+                      className={`h-5 w-5 mr-2 ${
+                        isDisabled ? "cursor-not-allowed" : ""
+                      }`}
                       id={`noted_by_${index}`}
                       checked={isNoted}
                       onChange={() => {
@@ -193,16 +197,19 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
             <div>
               <h1 className="text-lg font-medium">Approved By</h1>
               {filteredApprovers.map((approver, index) => {
-                const isNoted = notedBy.some(a => a.id === approver.id);
-                const isApproved = approvedBy.some(a => a.id === approver.id);
+                const isNoted = notedBy.some((a) => a.id === approver.id);
+                const isApproved = approvedBy.some((a) => a.id === approver.id);
                 const isDisabled = isNoted || isApproved;
-                const highlightClass = isNoted && isApproved ? "bg-yellow-100" : "";
+                const highlightClass =
+                  isNoted && isApproved ? "bg-yellow-100" : "";
 
                 return (
                   <div key={index} className="flex items-center mb-2">
                     <input
                       type="checkbox"
-                      className={`h-5 w-5 mr-2 ${isDisabled ? "cursor-not-allowed" : ""}`}
+                      className={`h-5 w-5 mr-2 ${
+                        isDisabled ? "cursor-not-allowed" : ""
+                      }`}
                       id={`approved_by_${index}`}
                       checked={isApproved}
                       onChange={() => {
@@ -228,7 +235,7 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
           )}
         </div>
         <div className="p-4 flex-col md:flex-row gap-2 bg-gray-100 flex justify-end rounded-b-lg">
-        <button
+          <button
             type="button"
             onClick={handleResetSelection}
             className="bg-gray-300 px-2 hover:bg-gray-400 text-gray-800 font-medium py-2  rounded "

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import Swal from "sweetalert2";
@@ -28,11 +28,9 @@ interface Approver {
 const AddCustomModal: React.FC<AddCustomModalProps> = ({
   modalIsOpen,
   closeModal,
-  openCompleteModal,
   entityType,
   initialNotedBy,
   initialApprovedBy,
-  refreshData,
   handleAddCustomData,
 }) => {
   const [notedBy, setNotedBy] = useState<Approver[]>([]);

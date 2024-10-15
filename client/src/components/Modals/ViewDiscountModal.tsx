@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import ClipLoader from "react-spinners/ClipLoader";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import EditStockModalSuccess from "./EditStockModalSuccess";
 import BeatLoader from "react-spinners/BeatLoader";
 import Avatar from "../assets/avatar.png";
 import PrintCash from "../PrintCash";
 import AddCustomModal from "../EditCustomModal";
+
 type Props = {
   closeModal: () => void;
   record: Record;
   refreshData: () => void;
 };
+
 interface Approver {
   id: number;
   firstName: string;
@@ -22,6 +23,7 @@ interface Approver {
   signature: string;
   status: string;
 }
+
 type Record = {
   total_labor: number;
   total_discount: number;
@@ -92,8 +94,6 @@ type Item = {
 };
 
 const inputStyle = "border border-black text-[12px] font-bold p-2 h-14";
-const tableStyle = "border border-black p-2";
-const tableStyle2 = "bg-white p-2";
 const tableCellStyle = `${inputStyle}  w-10 wrap-text  break-words`;
 const ViewDiscountModal: React.FC<Props> = ({
   closeModal,
@@ -108,22 +108,18 @@ const ViewDiscountModal: React.FC<Props> = ({
     record.approvers_id
   );
   const [loading, setLoading] = useState(false);
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
-  const [customApprovers, setCustomApprovers] = useState<any>(null);
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
   const [isFetchingUser, setisFetchingUser] = useState(false);
   const [user, setUser] = useState<any>({});
   const [attachmentUrl, setAttachmentUrl] = useState<string[]>([]);
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [newAttachments, setNewAttachments] = useState<File[]>([]);
-  const [originalAttachments, setOriginalAttachments] = useState<string[]>([]);
   const [removedAttachments, setRemovedAttachments] = useState<
     Array<string | number>
   >([]);
@@ -187,7 +183,10 @@ const ViewDiscountModal: React.FC<Props> = ({
           // Construct file URLs
           const fileUrls = parsedAttachment.map(
             (filePath) =>
-              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+              `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+                /\\/g,
+                "/"
+              )}`
           );
           setAttachmentUrl(fileUrls);
         }
@@ -268,12 +267,6 @@ const ViewDiscountModal: React.FC<Props> = ({
     setAttachmentUrl((prevUrls) => prevUrls.filter((_, i) => i !== index));
   };
 
-  const getDayFromDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
-    return days[date.getDay()];
-  };
-
   const formatDate = (dateString: Date) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -283,15 +276,7 @@ const ViewDiscountModal: React.FC<Props> = ({
     };
     return date.toLocaleDateString("en-US", options);
   };
-  const formatDate2 = (dateString: string) => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
-  };
+
   if (!record) return null;
 
   const handleSaveChanges = async () => {
@@ -445,80 +430,19 @@ const ViewDiscountModal: React.FC<Props> = ({
     }));
   };
 
-  const fetchCustomApprovers = async (id: number) => {
-    setisFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/request-forms/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const { notedby, approvedby } = response.data;
-      setNotedBy(notedby);
-      setApprovedBy(approvedby);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setisFetchingApprovers(false);
-    }
-  };
   const openAddCustomModal = () => {
     setIsModalOpen(true);
   };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
+
   const closeModals = () => {
     setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
   };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
     setApprovedBy(approvedBy);
   };
-  const fetchApprovers = async (userId: number) => {
-    setFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const approversData = Array.isArray(response.data.data)
-        ? response.data.data
-        : [];
-      setApprovers(approversData);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setFetchingApprovers(false);
-    }
-  };
   const handlePrint = () => {
     // Construct the data object to be passed
     const data = {
@@ -581,9 +505,10 @@ const ViewDiscountModal: React.FC<Props> = ({
               </p>
             </div>
           </div>
-          <p className="font-medium text-[14px]">Request ID: {record.request_code}</p>
-          <div className="flex w-full md:w-1/2 items-center">
-
+          <p className="font-medium text-[14px]">
+            Request ID: {record.request_code}
+          </p>
+          <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
               className={`${
@@ -853,14 +778,14 @@ const ViewDiscountModal: React.FC<Props> = ({
                               user.status.split(" ")[0] === "Rejected")) && (
                             <div className="absolute -top-4">
                               <img
-                              src={user.signature}
-                              alt="avatar"
-                              width={120}
-                              className="relative z-20 pointer-events-none"
-                              draggable="false"
-                              onContextMenu={(e) => e.preventDefault()}
-                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
-                            />
+                                src={user.signature}
+                                alt="avatar"
+                                width={120}
+                                className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
+                              />
                             </div>
                           )}
                           {/* Name */}
@@ -915,15 +840,15 @@ const ViewDiscountModal: React.FC<Props> = ({
                             (typeof user.status === "string" &&
                               user.status.split(" ")[0] === "Rejected")) && (
                             <div className="absolute -top-4">
-                             <img
-                              src={user.signature}
-                              alt="avatar"
-                              width={120}
-                              className="relative z-20 pointer-events-none"
-                              draggable="false"
-                              onContextMenu={(e) => e.preventDefault()}
-                              style={{ filter: "blur(1px)" }} // Optional: Apply a blur
-                            />
+                              <img
+                                src={user.signature}
+                                alt="avatar"
+                                width={120}
+                                className="relative z-20 pointer-events-none"
+                                draggable="false"
+                                onContextMenu={(e) => e.preventDefault()}
+                                style={{ filter: "blur(1px)" }} // Optional: Apply a blur
+                              />
                             </div>
                           )}
                           {/* Name */}
@@ -1035,6 +960,9 @@ const ViewDiscountModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -1062,6 +990,9 @@ const ViewDiscountModal: React.FC<Props> = ({
                             src={Avatar}
                             height={35}
                             width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
                           />
                         </div>
                         <div className="flex flex-row w-full">
@@ -1102,7 +1033,8 @@ const ViewDiscountModal: React.FC<Props> = ({
             ) : (
               !fetchingApprovers &&
               !isFetchingApprovers &&
-              (editableRecord.status === "Pending" || editableRecord.status === "Disapproved") && (
+              (editableRecord.status === "Pending" ||
+                editableRecord.status === "Disapproved") && (
                 <button
                   className="flex p-2 ml-2 text-white bg-blue-500 rounded-xl"
                   onClick={handleEdit}
