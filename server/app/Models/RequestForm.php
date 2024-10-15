@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RequestForm extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'form_type',
@@ -25,7 +26,7 @@ class RequestForm extends Model
     protected $attributes = [
         'status' => 'Pending',
     ];
-    
+
     protected $casts = [
         'attachment' => 'array',
         'approved_by' => 'array',

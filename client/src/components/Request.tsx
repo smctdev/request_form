@@ -205,7 +205,6 @@ const Request = (props: Props) => {
   const [notificationReceived, setnotificationReceived] = useState(false);
   const [search, searchRequest] = useState("");
 
-  console.log("Requests", requests);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -302,13 +301,59 @@ const Request = (props: Props) => {
     // Check if the status is not "Pending"
     if (record.status !== "Pending") {
       Swal.fire({
-        icon: "error",
-        title: "Cannot Delete",
-        text: "You cannot delete this request as it is already appr",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "Close",
+        icon: "info",
+        title: "Request Approved",
+        html:
+          `<strong>Are you sure you want to delete this request, even though it has already been approved?</strong> <br/>` +
+          "Request Code: " +
+          record.request_code +
+          " <br/> Request Type: " +
+          record.form_type,
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, Delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setLoading(true);
+          const token = localStorage.getItem("token");
+          if (!token) return;
+          const headers = { Authorization: `Bearer ${token}` };
+
+          axios
+            .delete(
+              `${process.env.REACT_APP_API_BASE_URL}/delete-request/${record.id}`,
+              {
+                headers,
+              }
+            )
+            .then(() => {
+              Swal.fire({
+                icon: "success",
+                title: "Deleted!",
+                text: `The request was successfully deleted.`,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Close",
+              });
+              refreshData();
+            })
+            .catch((error) => {
+              console.error("Error deleting request:", error);
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong!",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Close",
+              });
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        }
       });
-      return; // Exit the function if the condition is not met
+
+      return;
     }
 
     Swal.fire({
@@ -424,8 +469,6 @@ const Request = (props: Props) => {
 
     return filteredRequests;
   };
-
-  console.log(filteredData())
 
   const NoDataComponent = () => (
     <div className="flex items-center justify-center h-64 text-gray-500">
@@ -605,7 +648,7 @@ const Request = (props: Props) => {
           {/* Tooltip Icon and Tooltip Itself */}
           {(row.status === "Pending" || row.status === "Ongoing") && (
             <div
-              className="tooltip tooltip-right flex items-center transition-opacity cursor-pointer z-20 duration-300 transform ml-1 group-hover:opacity-100"
+              className="z-20 flex items-center ml-1 transition-opacity duration-300 transform cursor-pointer tooltip tooltip-right group-hover:opacity-100"
               data-tip={`Pending: ${row.pending_approver.approver_name}`}
             >
               <QuestionMarkCircleIcon className="w-6 h-6 text-gray-500" />
@@ -659,7 +702,7 @@ const Request = (props: Props) => {
         <div className="flex flex-col items-center w-full overflow-x-auto bg-white rounded-lg">
           <div className="w-full border-b-2 md:px-30">
             <ul className="flex items-center justify-between px-2 py-4 space-x-4 overflow-x-auto font-medium md:px-30 md:space-x-6">
-              <div className="justify-start flex">
+              <div className="flex justify-start">
                 {items.map((item, index) => (
                   <li
                     key={index}
@@ -677,14 +720,14 @@ const Request = (props: Props) => {
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 192.904 192.904"
                   width="16px"
-                  className="fill-gray-600 mr-3 rotate-90"
+                  className="mr-3 rotate-90 fill-gray-600"
                 >
                   <path d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z"></path>
                 </svg>
                 <input
                   type="email"
                   placeholder="Search..."
-                  className="w-full outline-none bg-transparent text-gray-600 text-sm focus:outline-none"
+                  className="w-full text-sm text-gray-600 bg-transparent outline-none focus:outline-none"
                   value={search}
                   onChange={handleSearchRequest}
                 />
