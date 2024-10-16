@@ -54,7 +54,7 @@ const EditAreaManager = ({
   closeSuccessModal: any;
   refreshData: any;
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [selectedBranches, setSelectedBranches] = useState<number[]>([]);
   const [initialSelectedBranches, setInitialSelectedBranches] = useState<

@@ -52,8 +52,7 @@ const Nav: React.FC<NavProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [profilePicture, setProfilePicture] = useState("");
-  const [unreadCount, setUnreadCount] = useState(0); // State to keep track of unread notifications
-  const [role, setRole] = useState("");
+  const [unreadCount, setUnreadCount] = useState(0);
   const [notificationReceived, setnotificationReceived] = useState(false);
   const navigate = useNavigate();
   const { setIsAuthenticated } = useUser();
@@ -193,7 +192,6 @@ const Nav: React.FC<NavProps> = ({
           setLastName(userData.lastName);
           setFirstName(userData.firstName);
           setProfilePicture(userData.profile_picture);
-          setRole(userData.role);
         } else {
           console.error("Unexpected response structure:", response.data);
         }
@@ -215,7 +213,6 @@ const Nav: React.FC<NavProps> = ({
       setFirstName(parsedUserInfo.firstName);
       setLastName(parsedUserInfo.lastName);
       setProfilePicture(parsedUserInfo.profile_picture);
-      setRole(parsedUserInfo.role);
       setProfileLoading(false); // Set loading to false since we got data from local storage
     } else {
       // Fetch from database if not found in local storage

@@ -8,7 +8,6 @@ import HOLogo from "./assets/logo.png";
 type PrintRefundProps = {
   data?: any;
 };
-const tableStyle = " border-black border py-4 font-bold";
 const PrintDiscount: React.FC<PrintRefundProps> = ({ data }) => {
   const [printData, setPrintData] = useState<any>(null);
   let logo;

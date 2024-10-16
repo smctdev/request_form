@@ -47,7 +47,7 @@ const EditAVPStaff = ({
   closeSuccessModal: any;
   refreshData: any;
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [selectedBranches, setSelectedBranches] = useState<number[]>([]);
   const [initialSelectedBranches, setInitialSelectedBranches] = useState<
@@ -126,6 +126,8 @@ const EditAVPStaff = ({
         console.error("Error fetching branches:", error);
         setError("Failed to fetch branches");
         setBranches([]);
+      } finally{
+        setLoading(false)
       }
     };
 
