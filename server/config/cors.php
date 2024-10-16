@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:6001', 'http://122.53.61.91:6001'],
+    'allowed_origins' => ['http://localhost:6001', 'http://136.239.196.178:5001'],
 
     'allowed_origins_patterns' => [],
 

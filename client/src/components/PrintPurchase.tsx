@@ -12,15 +12,15 @@ type PrintRefundProps = {
 const PrintPurchase: React.FC<PrintRefundProps> = ({ data }) => {
   const [printData, setPrintData] = useState<any>(null); // State to hold print data
   let logo;
-  if (printData?.user?.data?.branch === "Strong Motocentrum, Inc.") {
+  if (printData?.user?.data?.branch.branch === "Strong Moto Centrum, Inc.") {
     logo = <img src={SMCTLogo} alt="SMCT Logo" />;
-  } else if (printData?.user?.data?.branch === "DES Strong Motors Inc.") {
+  } else if (printData?.user?.data?.branch.branch === "DES Strong Motors Inc.") {
     logo = <img src={DSMLogo} alt="DSM Logo" width="50%" />;
-  } else if (printData?.user?.data?.branch === "DES Appliance Plaza Inc.") {
+  } else if (printData?.user?.data?.branch.branch === "DES Appliance Plaza Inc.") {
     logo = <img src={DAPLogo} alt="DAP Logo" width="50%" />;
-  } else if (printData?.user?.data?.branch === "Honda Des Inc.") {
+  } else if (printData?.user?.data?.branch.branch === "Honda Des, Inc.") {
     logo = <img src={HDILogo} alt="HDI Logo" width="50%" />;
-  } else if (printData?.user?.data?.branch === "Head Office") {
+  } else if (printData?.user?.data?.branch.branch === "Head Office") {
     logo = (
       <div className="flex items-center justify-center">
         <img src={HOLogo} alt="HO Logo" className="w-44" />
