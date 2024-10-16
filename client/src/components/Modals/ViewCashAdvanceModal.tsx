@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import ClipLoader from "react-spinners/ClipLoader";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import EditStockModalSuccess from "./EditStockModalSuccess";
 import BeatLoader from "react-spinners/BeatLoader";
 import Avatar from "../assets/avatar.png";
 import PrintCash from "../PrintCash";
 import AddCustomModal from "../EditCustomModal";
+
 type Props = {
   closeModal: () => void;
   record: Record;
   refreshData: () => void;
 };
+
 interface Approver {
   id: number;
   firstName: string;
@@ -22,6 +23,7 @@ interface Approver {
   signature: string;
   status: string;
 }
+
 type Record = {
   id: number;
   request_code: string;
@@ -77,7 +79,6 @@ type FormData = {
 // Define the Item type
 type Item = {
   cashDate: string;
-
   quantity: string;
   description: string;
   unitCost: string;
@@ -92,10 +93,10 @@ type Item = {
   amount: string;
   perDiem: string;
 };
+
 const headerStyle = "border border-black bg-[#8EC7F7] w-2/12 text-sm p-2";
 const inputStyle = "border border-black text-[12px] font-bold";
 const tableStyle = "border border-black px-1";
-const tableStyle2 = "bg-white p-2";
 const tableCellStyle = `${inputStyle} py-2 px-1 w-10 wrap-text  break-words`;
 const ViewCashAdvanceModal: React.FC<Props> = ({
   closeModal,
@@ -114,22 +115,18 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
     record.approvers_id
   );
   const [loading, setLoading] = useState(false);
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
-  const [customApprovers, setCustomApprovers] = useState<any>(null);
   const [isFetchingApprovers, setIsFetchingApprovers] = useState(false);
   const [isFetchingUser, setIsFetchingUser] = useState(false);
   const [user, setUser] = useState<any>({});
   const [attachmentUrl, setAttachmentUrl] = useState<string[]>([]);
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [newAttachments, setNewAttachments] = useState<File[]>([]);
-  const [originalAttachments, setOriginalAttachments] = useState<string[]>([]);
   const [removedAttachments, setRemovedAttachments] = useState<
     Array<string | number>
   >([]);
@@ -174,8 +171,6 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
 
   useEffect(() => {
     const currentUserId = localStorage.getItem("id");
-    const attachments = JSON.parse(record.attachment);
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
     setNotedBy(editableRecord.noted_by);
     setApprovedBy(editableRecord.approved_by);
     setNewData(record.form_data[0].items.map((item) => ({ ...item })));
@@ -209,32 +204,6 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
       console.error("Error parsing attachment:", error);
     }
   }, [record]);
-  // const fetchUser = async (id: number) => {
-  //   setisFetchingUser(true);
-  //   setisFetchingApprovers(true);
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     if (!token) {
-  //       throw new Error("Token is missing");
-  //     }
-
-  //     const response = await axios.get(
-  //       `${process.env.REACT_APP_API_BASE_URL}/view-user/${id}`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     setUser(response.data);
-  //   } catch (error) {
-  //     console.error("Failed to fetch approvers:", error);
-  //   } finally {
-  //     setisFetchingUser(false);
-  //     setisFetchingApprovers(false);
-  //   }
-  // };
 
   const fetchUser = async (id: number) => {
     setIsFetchingUser(true);
@@ -266,8 +235,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
     setIsEditing(false);
     setAttachmentUrl(attachmentUrl);
     setNewAttachments([]); // Clear new attachments
-    setRemovedAttachments([]); // Reset removed attachments
-    // Reset newData to original values
+    setRemovedAttachments([]);
     setNewData(record.form_data[0].items.map((item) => ({ ...item })));
     setEditedApprovers(record.approvers_id);
     setEditableRecord((prevState) => ({
@@ -322,12 +290,6 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
 
     // Remove the attachment from the current list
     setAttachmentUrl((prevUrls) => prevUrls.filter((_, i) => i !== index));
-  };
-
-  const getDayFromDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
-    return days[date.getDay()];
   };
 
   const formatDate = (dateString: Date) => {
@@ -490,80 +452,19 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
     }));
   };
 
-  const fetchCustomApprovers = async (id: number) => {
-    setIsFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/request-forms/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const { notedby, approvedby } = response.data;
-      setNotedBy(notedby);
-      setApprovedBy(approvedby);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setIsFetchingApprovers(false);
-    }
-  };
   const openAddCustomModal = () => {
     setIsModalOpen(true);
   };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
+
   const closeModals = () => {
     setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
   };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
     setApprovedBy(approvedBy);
   };
-  const fetchApprovers = async (userId: number) => {
-    setFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const approversData = Array.isArray(response.data.data)
-        ? response.data.data
-        : [];
-      setApprovers(approversData);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setFetchingApprovers(false);
-    }
-  };
   const handlePrint = () => {
     // Construct the data object to be passed
     const data = {
@@ -897,19 +798,6 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                         <p className="text-sm font-semibold">HOTEL</p>
                       </td>
                       <td className={`${inputStyle}`}>
-                        {/* {isEditing ? (
-                      <input
-                        type="number"
-                        value={newTotalHotel}
-                        onChange={(e) => setNewTotalHotel(e.target.value)}
-                        className="w-full bg-white"
-                        readOnly={!isEditing}
-                      />
-                    ) : (
-                      parseFloat(
-                        editableRecord.form_data[0].totalHotel
-                      ).toFixed(2)
-                    )} */}
                         {newData.reduce(
                           (totalHotelRate, item) =>
                             totalHotelRate + Number(item.rate),

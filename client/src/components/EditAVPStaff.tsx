@@ -34,11 +34,6 @@ const EditAVPStaff = ({
   entityType,
   selectedUser,
   refreshData,
-  areaManagerId,
-  modalIsOpen,
-  closeModal,
-  openCompleteModal,
-  closeSuccessModal,
 }: {
   editModal: boolean;
   openCompleteModal: any;
@@ -52,7 +47,7 @@ const EditAVPStaff = ({
   closeSuccessModal: any;
   refreshData: any;
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [selectedBranches, setSelectedBranches] = useState<number[]>([]);
   const [initialSelectedBranches, setInitialSelectedBranches] = useState<
@@ -61,40 +56,37 @@ const EditAVPStaff = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [areaManagerData, setAreaManagerData] = useState<Record | null>(null);
   const [branchList, setBranchList] = useState<Record[]>([]);
 
   useEffect(() => {
     const fetchAreaManagerData = async () => {
-     
       try {
         const token = localStorage.getItem("token");
         if (!token) {
           throw new Error("Token is missing");
         }
-  
+
         const headers = {
           Authorization: `Bearer ${token}`,
         };
-  
+
         if (!selectedUser || !selectedUser.id) {
-       
           return;
         }
-  
+
         // Fetch area manager data
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/get-avpstaff-branch/${selectedUser.id}`,
           { headers }
         );
-  
+
         if (response.data && response.data.data) {
           const branchData = response.data.data;
           setBranchList(branchData);
-      
+
           // Assuming branchList contains an array of branches
-       setSelectedBranches(branchData.branches)
-  
+          setSelectedBranches(branchData.branches);
+
           setError("");
         } else {
           throw new Error("No data found in the response");
@@ -104,12 +96,11 @@ const EditAVPStaff = ({
         setError("Failed to fetch area manager data");
       }
     };
-  
+
     if (selectedUser && selectedUser.id) {
       fetchAreaManagerData();
     }
-  }, [selectedUser]); 
-
+  }, [selectedUser]);
 
   useEffect(() => {
     const fetchBranches = async () => {
@@ -135,6 +126,8 @@ const EditAVPStaff = ({
         console.error("Error fetching branches:", error);
         setError("Failed to fetch branches");
         setBranches([]);
+      } finally{
+        setLoading(false)
       }
     };
 
@@ -158,7 +151,7 @@ const EditAVPStaff = ({
   if (!editModal) {
     return null;
   }
- 
+
   const handleConfirmSelection = async () => {
     if (selectedBranches.length > 0) {
       setIsLoading(true);
@@ -176,8 +169,8 @@ const EditAVPStaff = ({
         // Example of PUT request to update area manager with selectedBranches
         const putData = {
           user_id: selectedUser.user.id,
-          branch_id: selectedBranches, 
-          staff_id: selectedUser.staff.id
+          branch_id: selectedBranches,
+          staff_id: selectedUser.staff.id,
         };
 
         const response = await axios.put(
@@ -214,6 +207,7 @@ const EditAVPStaff = ({
       selectedBranches.filter((id) => id !== branchIdToRemove)
     );
   };
+
   return (
     <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="p-4 w-10/12 sm:w-1/3 relative bg-primary flex justify-center mx-20 border-b rounded-t-[12px]">

@@ -4,15 +4,16 @@ import axios from "axios";
 import BeatLoader from "react-spinners/BeatLoader";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import EditStockModalSuccess from "./EditStockModalSuccess";
-import ClipLoader from "react-spinners/ClipLoader";
 import Avatar from "../assets/avatar.png";
 import PrintPurchase from "../PrintPurchase";
 import AddCustomModal from "../EditCustomModal";
+
 type Props = {
   closeModal: () => void;
   record: Record;
   refreshData: () => void;
 };
+
 interface Approver {
   id: number;
   firstName: string;
@@ -71,6 +72,7 @@ type FormData = {
   supplier: string;
   address: string;
 };
+
 type Item = {
   quantity: string;
   description: string;
@@ -78,6 +80,7 @@ type Item = {
   totalAmount: string;
   remarks: string;
 };
+
 const tableStyle2 = "bg-white p-2";
 const inputStyle = "border border-black bg text-[12px] font-bold p-2 h-14";
 const tableCellStyle = `${inputStyle}  w-20`;
@@ -95,27 +98,22 @@ const ViewPurchaseModal: React.FC<Props> = ({
     record.approvers_id
   );
   const [errorMessage, setErrorMessage] = useState("");
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [newSupplier, setNewSupplier] = useState("");
   const [newAddress, setNewAddress] = useState("");
   const [savedSuccessfully, setSavedSuccessfully] = useState(false);
-  const [comments, setComments] = useState("");
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
-  const [customApprovers, setCustomApprovers] = useState<any>(null);
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
   const [isFetchingUser, setisFetchingUser] = useState(false);
   const [user, setUser] = useState<any>({});
   const [attachmentUrl, setAttachmentUrl] = useState<string[]>([]);
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [newAttachments, setNewAttachments] = useState<File[]>([]);
-  const [originalAttachments, setOriginalAttachments] = useState<string[]>([]);
   const [removedAttachments, setRemovedAttachments] = useState<
     (string | number)[]
   >([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
   const hasDisapprovedInNotedBy = notedBy.some(
@@ -157,9 +155,6 @@ const ViewPurchaseModal: React.FC<Props> = ({
   const branchName = branchMap.get(branchId) || "Unknown";
   useEffect(() => {
     const currentUserId = localStorage.getItem("id");
-    const attachments = JSON.parse(record.attachment);
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
-
     setNewData(record.form_data[0].items.map((item) => ({ ...item })));
     setEditableRecord(record);
     setNotedBy(editableRecord.noted_by);
@@ -245,6 +240,7 @@ const ViewPurchaseModal: React.FC<Props> = ({
       ],
     }));
   };
+
   const formatDate = (dateString: Date) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -256,11 +252,6 @@ const ViewPurchaseModal: React.FC<Props> = ({
   };
 
   if (!record) return null;
-
-  const parsedItems: Item[] =
-    typeof record.form_data === "string"
-      ? JSON.parse(record.form_data)
-      : record.form_data;
 
   const handleItemChange = (
     index: number,
@@ -407,27 +398,20 @@ const ViewPurchaseModal: React.FC<Props> = ({
       );
     }
   };
+
   const openAddCustomModal = () => {
     setIsModalOpen(true);
   };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
+
   const closeModals = () => {
     setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
   };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
     setApprovedBy(approvedBy);
   };
+
   const handlePrint = () => {
     // Construct the data object to be passed
     const data = {
@@ -446,6 +430,7 @@ const ViewPurchaseModal: React.FC<Props> = ({
       newWindow.focus();
     }
   };
+
   return (
     <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="relative z-10 w-full p-4 mx-10 overflow-scroll bg-white border-black rounded-t-lg shadow-lg md:mx-0 md:w-1/2 space-y-auto h-3/4">

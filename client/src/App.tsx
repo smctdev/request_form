@@ -46,7 +46,6 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
       setWindowWidth(window.innerWidth);
     };
 
-    // Update sidebar visibility based on window width
     if (windowWidth > 768) {
       setIsSidebarVisible(true);
     } else {
@@ -79,23 +78,19 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
           navigate('/login');
           setLoading(false);
         }
-        // console.error("Error fetching branch data:", error);
       }
     };
 
     fetchBranchData();
   }, [id]);
 
-  // Disable right-click across the entire app
   useEffect(() => {
     const handleRightClick = (event: MouseEvent) => {
       event.preventDefault();
     };
 
-    // Attach the event listener to the document
     document.addEventListener("contextmenu", handleRightClick);
 
-    // Clean up the event listener on component unmount
     return () => {
       document.removeEventListener("contextmenu", handleRightClick);
     };

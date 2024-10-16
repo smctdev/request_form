@@ -37,14 +37,10 @@ const EditAreaManager = ({
   editModal,
   editModalClose,
   openSuccessModal,
-  entityType,
   selectedUser,
   refreshData,
   areaManagerId,
   modalIsOpen,
-  closeModal,
-  openCompleteModal,
-  closeSuccessModal
 }: {
   editModal: boolean;
   openCompleteModal: any;
@@ -58,17 +54,17 @@ const EditAreaManager = ({
   closeSuccessModal: any;
   refreshData: any;
 }) => {
-  const [loading, setLoading] = useState(false);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [selectedBranches, setSelectedBranches] = useState<number[]>([]);
-  const [initialSelectedBranches, setInitialSelectedBranches] = useState<number[]>([]);
+  const [initialSelectedBranches, setInitialSelectedBranches] = useState<
+    number[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [areaManagerData, setAreaManagerData] = useState<Record | null>(null);
 
   useEffect(() => {
-
     const fetchBranches = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -87,7 +83,6 @@ const EditAreaManager = ({
           }
         );
 
-      
         setAreaManagerData(response.data.data);
 
         // If selectedUser has branches, pre-select them
@@ -125,8 +120,6 @@ const EditAreaManager = ({
           }
         );
 
-     ;
-
         // Assuming your API response includes selected branch IDs for the area manager
         const selectedBranchIds = response.data.selected_branches.map(
           (branch: any) => branch.id
@@ -163,7 +156,6 @@ const EditAreaManager = ({
           }
         );
 
-      
         setBranches(response.data.data);
       } catch (error) {
         console.error("Error fetching branches:", error);
@@ -197,6 +189,7 @@ const EditAreaManager = ({
     if (selectedBranches.length > 0) {
       setIsLoading(true);
       setError("");
+
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -207,13 +200,11 @@ const EditAreaManager = ({
           Authorization: `Bearer ${token}`,
         };
 
-        // Example of PUT request to update area manager with selectedBranches
         const putData = {
           user_id: selectedUser.user_id,
           branch_id: selectedBranches, // Ensure this is an array of branch IDs
         };
-        
-       
+
         const response = await axios.post(
           `${process.env.REACT_APP_API_BASE_URL}/update-area-manager/${selectedUser.user_id}`,
           putData,
@@ -222,13 +213,11 @@ const EditAreaManager = ({
           }
         );
 
-     
-
         // Assuming successful, close modal or show success message
         openSuccessModal();
         editModalClose();
-        refreshData(); 
-        setIsLoading(false);// Refresh parent data if needed
+        refreshData();
+        setIsLoading(false); // Refresh parent data if needed
       } catch (error) {
         console.error("Error updating area manager:", error);
         setIsLoading(false);
@@ -246,8 +235,11 @@ const EditAreaManager = ({
   };
 
   const handleRemoveBranch = (branchIdToRemove: number) => {
-    setSelectedBranches(selectedBranches.filter(id => id !== branchIdToRemove));
+    setSelectedBranches(
+      selectedBranches.filter((id) => id !== branchIdToRemove)
+    );
   };
+
   return (
     <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="p-4 w-10/12 sm:w-1/3 relative bg-primary flex justify-center mx-20 border-b rounded-t-[12px]">
@@ -260,14 +252,14 @@ const EditAreaManager = ({
         />
       </div>
       <div className="relative w-10/12 overflow-y-auto bg-white sm:w-1/3 x-20 h-1/2">
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center h-full">
-            <ClipLoader size={35} color={"#123abc"} loading={loading} />
+            <ClipLoader size={35} color={"#123abc"} loading = {true} />
           </div>
         ) : (
           <div className="bg-white flex-col w-10/12 sm:w-full  rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex space-x-2">
             <h3 className="p-4 text-lg font-bold">
-              Branches for{" "}
+              Branches fors{" "}
               {`${selectedUser?.user.data.firstName} ${selectedUser?.user.data.lastName}`}
               :
             </h3>
@@ -278,9 +270,31 @@ const EditAreaManager = ({
               onChange={(e) => setSearchQuery(e.target.value)}
               className="p-2 mb-2 border border-gray-300 rounded-md "
             />
+            <div className="flex flex-wrap px-4 mt-4 mb-4">
+                  {selectedBranches.map((branchId) => {
+                    const branch = branches.find((b) => b.id === branchId);
+                    return (
+                      <div
+                        key={branchId}
+                        className="badge bg-[#389df1] border-none p-4 mb-1 mr-2 flex justify-between items-center"
+                      >
+                        <span className="text-white">
+                          {branch?.branch_code}
+                        </span>
+                        <button
+                          className="ml-2"
+                          onClick={() => handleRemoveBranch(branchId)}
+                          aria-label="Remove branch"
+                        >
+                          <XMarkIcon className="w-4 h-4 stroke-white" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
             <div className="h-auto px-4">
               {branches.length === 0 ? (
-                <ClipLoader size={35} color={"#123abc"} loading={loading} />
+                <ClipLoader size={35} color={"#123abc"} loading={true} />
               ) : (
                 branches
                   .filter((branch) => {
@@ -317,25 +331,6 @@ const EditAreaManager = ({
           </div>
         )}
       </div>
-      <div className="flex flex-wrap w-10/12 gap-2 p-2 overflow-y-auto bg-white shadow-lg sm:w-1/3 bottom-4 right-4 max-h-48">
-        {selectedBranches.map((branchId) => {
-          const branch = branches.find((b) => b.id === branchId);
-          return (
-            <div key={branchId} className="relative p-3 mb-2 bg-gray-300 rounded-sm">
-             
-         <XMarkIcon
-          className="absolute top-0 right-0 text-gray-500 cursor-pointer size-4"
-          onClick={() => handleRemoveBranch(branchId)}
-        />
-       
-              <div>
-              <p>{branch?.branch}</p>
-              <p>{branch?.branch_code}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
       <div className="bg-white w-10/12 sm:w-1/3 justify-end rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex space-x-2">
         <button
           onClick={handleCancel}
@@ -351,9 +346,7 @@ const EditAreaManager = ({
         </button>
       </div>
       {error && (
-        <div className="p-2 mt-2 text-white bg-red-500 rounded">
-          {error}
-        </div>
+        <div className="p-2 mt-2 text-white bg-red-500 rounded">{error}</div>
       )}
     </div>
   );

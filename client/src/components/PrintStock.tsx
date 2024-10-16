@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Avatar from "./assets/avatar.png"; // Example import for avatar
-import { useLocation } from "react-router-dom";
-import { table } from "console";
 import SMCTLogo from "./assets/SMCT.png";
 import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
@@ -12,10 +9,7 @@ type PrintRefundProps = {
 };
 
 const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
-  const location = useLocation();
   const [printData, setPrintData] = useState<any>(null); // State to hold print data
-  const queryParams = new URLSearchParams(location.search);
-  const serializedData = queryParams.get("data");
   let logo;
   if (printData?.user?.data?.branch === "Strong Motocentrum, Inc.") {
     logo = <img src={SMCTLogo} alt="SMCT Logo" />;
@@ -54,53 +48,31 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
     return date.toLocaleDateString("en-US", options);
   };
 
-  // useEffect(() => {
-  //   // Retrieve the data from localStorage
-  //   const storedData = localStorage.getItem("printData");
-  //   if (storedData) {
-  //     const parsedData = JSON.parse(storedData);
-  //     setPrintData(parsedData); // Set the printData state
-  //   }
-
-  //   localStorage.removeItem("printData");
-  // }, []);
-
-  // useEffect(() => {
-  //   if (printData !== null) {
-  //     window.print();
-
-  //     window.onafterprint = () => {
-  //       localStorage.removeItem("printData"); // Clean up after printing
-  //       window.close(); // Close the tab after printing or canceling
-  //     };
-  //   }
-  // }, [printData]);
-
   useEffect(() => {
     const storedData = localStorage.getItem("printData");
     if (storedData) {
       const parsedData = JSON.parse(storedData);
       setPrintData(parsedData);
     }
-  
+
     localStorage.removeItem("printData");
   }, []);
-  
+
   useEffect(() => {
     if (printData !== null) {
       let isPrinting = false;
-  
+
       window.onbeforeprint = () => {
         isPrinting = true;
       };
-  
+
       window.onafterprint = () => {
         localStorage.removeItem("printData");
         window.close();
       };
-  
+
       window.print();
-  
+
       setTimeout(() => {
         if (!isPrinting) {
           window.close();
@@ -149,26 +121,18 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
             Purpose: {printData?.purpose}
           </p>
         </div>
-        {/* <div className="flex justify-end pr-6">
-          <p className="flex mb-1 text-sm font-medium ">
-            Date:{" "}
-            <p className="mb-1 ml-2 text-sm font-normal underline">
-              {formatDate(printData?.id.created_at)}
-            </p>
-          </p>
-        </div> */}
-        {/*   
-      <p>Status: {printData.status}</p>
-      
-     <p>Date: {formatDate(data.date)}</p> */}
         <div className="flex justify-center w-full">
           <table className="w-full border-separate border-spacing-x-4">
             <thead>
               <tr>
                 <th className="text-sm font-medium">QUANTITY</th>
                 <th className="text-sm font-medium">DESCRIPTION</th>
-                <th className="text-sm font-medium whitespace-nowrap">UNIT COST</th>
-                <th className="text-sm font-medium whitespace-nowrap">TOTAL AMOUNT</th>
+                <th className="text-sm font-medium whitespace-nowrap">
+                  UNIT COST
+                </th>
+                <th className="text-sm font-medium whitespace-nowrap">
+                  TOTAL AMOUNT
+                </th>
                 <th className="text-sm font-medium">REMARKS</th>
               </tr>
             </thead>
@@ -207,9 +171,6 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
             </tbody>
           </table>
         </div>
-        {/* <p className="mt-2 ml-4 text-sm font-medium uppercase">
-          Grand Total: ₱ {printData?.id.form_data[0].grand_total}
-        </p> */}
 
         <div className="mt-4 ">
           <div className="flex flex-wrap justify-start ">

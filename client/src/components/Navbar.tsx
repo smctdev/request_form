@@ -1,6 +1,5 @@
 import React from 'react';
 import { MoonIcon } from "@heroicons/react/24/solid";
-import Avatar from "./assets/avatar.png";
 
 type Props = {}
 

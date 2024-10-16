@@ -37,14 +37,10 @@ const EditBranchHead = ({
   editModal,
   editModalClose,
   openSuccessModal,
-  entityType,
   selectedUser,
   refreshData,
   branchHeadId,
   modalIsOpen,
-  closeModal,
-  openCompleteModal,
-  closeSuccessModal
 }: {
   editModal: boolean;
   openCompleteModal: any;
@@ -58,17 +54,18 @@ const EditBranchHead = ({
   closeSuccessModal: any;
   refreshData: any;
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [selectedBranches, setSelectedBranches] = useState<number[]>([]);
-  const [initialSelectedBranches, setInitialSelectedBranches] = useState<number[]>([]);
+  const [initialSelectedBranches, setInitialSelectedBranches] = useState<
+    number[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [branchHeadData, setBranchHeadData] = useState<Record | null>(null);
 
   useEffect(() => {
-
     const fetchBranches = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -87,7 +84,6 @@ const EditBranchHead = ({
           }
         );
 
-      
         setBranchHeadData(response.data.data);
 
         // If selectedUser has branches, pre-select them
@@ -98,6 +94,8 @@ const EditBranchHead = ({
       } catch (error) {
         console.error("Error fetching branches:", error);
         // Handle error state or show error message
+      } finally{
+        setLoading(false)
       }
     };
 
@@ -124,8 +122,6 @@ const EditBranchHead = ({
             headers,
           }
         );
-
-     ;
 
         // Assuming your API response includes selected branch IDs for the branch head
         const selectedBranchIds = response.data.selected_branches.map(
@@ -163,7 +159,6 @@ const EditBranchHead = ({
           }
         );
 
-      
         setBranches(response.data.data);
       } catch (error) {
         console.error("Error fetching branches:", error);
@@ -212,8 +207,7 @@ const EditBranchHead = ({
           user_id: selectedUser.user_id,
           branch_id: selectedBranches, // Ensure this is an array of branch IDs
         };
-        
-       
+
         const response = await axios.post(
           `${process.env.REACT_APP_API_BASE_URL}/update-branch-head/${selectedUser.user_id}`,
           putData,
@@ -222,13 +216,11 @@ const EditBranchHead = ({
           }
         );
 
-     
-
         // Assuming successful, close modal or show success message
         openSuccessModal();
         editModalClose();
-        refreshData(); 
-        setIsLoading(false);// Refresh parent data if needed
+        refreshData();
+        setIsLoading(false); // Refresh parent data if needed
       } catch (error) {
         console.error("Error updating branch head:", error);
         setIsLoading(false);
@@ -246,7 +238,9 @@ const EditBranchHead = ({
   };
 
   const handleRemoveBranch = (branchIdToRemove: number) => {
-    setSelectedBranches(selectedBranches.filter(id => id !== branchIdToRemove));
+    setSelectedBranches(
+      selectedBranches.filter((id) => id !== branchIdToRemove)
+    );
   };
   return (
     <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
@@ -321,16 +315,18 @@ const EditBranchHead = ({
         {selectedBranches.map((branchId) => {
           const branch = branches.find((b) => b.id === branchId);
           return (
-            <div key={branchId} className="relative p-3 mb-2 bg-gray-300 rounded-sm">
-             
-         <XMarkIcon
-          className="absolute top-0 right-0 text-gray-500 cursor-pointer size-4"
-          onClick={() => handleRemoveBranch(branchId)}
-        />
-       
+            <div
+              key={branchId}
+              className="relative p-3 mb-2 bg-gray-300 rounded-sm"
+            >
+              <XMarkIcon
+                className="absolute top-0 right-0 text-gray-500 cursor-pointer size-4"
+                onClick={() => handleRemoveBranch(branchId)}
+              />
+
               <div>
-              <p>{branch?.branch}</p>
-              <p>{branch?.branch_code}</p>
+                <p>{branch?.branch}</p>
+                <p>{branch?.branch_code}</p>
               </div>
             </div>
           );
@@ -351,9 +347,7 @@ const EditBranchHead = ({
         </button>
       </div>
       {error && (
-        <div className="p-2 mt-2 text-white bg-red-500 rounded">
-          {error}
-        </div>
+        <div className="p-2 mt-2 text-white bg-red-500 rounded">{error}</div>
       )}
     </div>
   );

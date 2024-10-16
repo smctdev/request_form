@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
-import { set } from "react-hook-form";
 
 type User = {
   id: number;
@@ -37,7 +36,7 @@ const AddAVPModal = ({
   entityType: string;
   refreshData: () => void;
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -47,12 +46,8 @@ const AddAVPModal = ({
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [avpList, setAvpList] = useState<User[]>([]);
-  const [selectedAVPStaff, setSelectedAVPStaff] = useState<User | null>(null);
   const [selectedAVP, setSelectedAVP] = useState<User | null>(null);
 
-  const handleAVPStaffSelection = (avpStaff: User) => {
-    setSelectedAVPStaff(avpStaff);
-  };
   useEffect(() => {
     const fetchAVP = async () => {
       try {
@@ -72,9 +67,8 @@ const AddAVPModal = ({
             headers,
           }
         );
-   
+
         setAvpList(response.data.HOApprovers);
-        
       } catch (error) {
         console.error("Error fetching users data:", error);
       }
@@ -105,9 +99,10 @@ const AddAVPModal = ({
         );
 
         setUsers(response.data.HOApprovers);
-    
       } catch (error) {
         console.error("Error fetching users data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -180,11 +175,10 @@ const AddAVPModal = ({
           Authorization: `Bearer ${token}`,
         };
 
-    
         const postData = {
           branch_id: selectedBranches,
           staff_id: selectedUser.id,
-          user_id: selectedAVP?.id 
+          user_id: selectedAVP?.id,
         };
 
         const response = await axios.post(
@@ -195,26 +189,25 @@ const AddAVPModal = ({
           }
         );
 
-        // Assuming successful, close modal or show success message
         setIsLoading(false);
         closeModal();
         openCompleteModal(); // Implement your completion modal or alert
         refreshData(); // Refresh parent data if needed
         setSelectedAVP(null);
         setSelectedBranches([]);
-        setSelectedAVPStaff(null);
       } catch (error: unknown) {
         setIsLoading(false); // Ensure loading state is cleared
-  
-        // Type guard to check if the error is an AxiosError
+
         if (axios.isAxiosError(error)) {
           // Check if the error has a response from the server
           if (error.response) {
             // Log the full error for debugging purposes
             console.error("Error response data:", error.response.data);
-  
+
             // Set the error message from the backend
-            setError(error.response.data.message || "An unexpected error occurred.");
+            setError(
+              error.response.data.message || "An unexpected error occurred."
+            );
           } else {
             // If there’s no response, log a general error
             console.error("Error creating area manager:", error.message);
@@ -262,7 +255,7 @@ const AddAVPModal = ({
       <div className="relative w-10/12 overflow-y-auto bg-white sm:w-1/3 x-20 h-2/3">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <ClipLoader size={35} color={"#123abc"} loading={loading} />
+            <ClipLoader size={35} color={"#389df1"} loading={loading} />
           </div>
         ) : (
           <div>
@@ -290,8 +283,7 @@ const AddAVPModal = ({
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                      {users.map((user: User) => (
-
+                        {users.map((user: User) => (
                           <tr
                             key={user.id}
                             className={`cursor-pointer hover:bg-gray-200 `}
@@ -326,7 +318,30 @@ const AddAVPModal = ({
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="p-2 mb-2 border border-gray-300 rounded-md"
                         />
-
+                        <div className="flex flex-wrap px-4 mt-4 mb-4">
+                          {selectedBranches.map((branchId) => {
+                            const branch = branches.find(
+                              (b) => b.id === branchId
+                            );
+                            return (
+                              <div
+                                key={branchId}
+                                className="badge bg-[#389df1] border-none p-4 mb-1 mr-2 flex justify-between items-center"
+                              >
+                                <span className="text-white">
+                                  {branch?.branch_code}
+                                </span>
+                                <button
+                                  className="ml-2"
+                                  onClick={() => handleRemoveBranch(branchId)}
+                                  aria-label="Remove branch"
+                                >
+                                  <XMarkIcon className="w-4 h-4 stroke-white" />
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
                         <div className="px-4">
                           {branches.length === 0 ? (
                             <ClipLoader
@@ -406,53 +421,25 @@ const AddAVPModal = ({
           </div>
         )}
       </div>
-      {/* Selected Branches Section */}
-      {selectedBranches.length > 0 && (
-        <div className="flex flex-col w-10/12 p-2 bg-white shadow-lg sm:w-1/3 bottom-4 right-4 ">
-        <div className="flex flex-wrap gap-2 ">
-          {selectedBranches.map((branchId) => {
-            const branch = branches.find((b) => b.id === branchId);
-            return (
-              <div
-                key={branchId}
-                className="relative p-3 mb-2 bg-gray-300 rounded-sm"
-              >
-                <XMarkIcon
-                  className="absolute top-0 right-0 text-gray-500 cursor-pointer size-4"
-                  onClick={() => handleRemoveBranch(branchId)}
-                />
-                <div>
-                  <p>{branch?.branch}</p>
-                  <p>{branch?.branch_code}</p>
-                </div>
-              </div>
-            );
-          })}
-            
+      {isButtonVisible ? (
+        <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2">
+          <button
+            onClick={handleCancel}
+            className="h-12 px-4 py-2 font-bold text-white bg-gray-500 rounded cursor-pointer hover:bg-gray-600"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleConfirmSelection}
+            className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer bg-primary hover:bg-blue-400"
+          >
+            {isLoading ? <ClipLoader color="#36d7b7" /> : "Add AVP Staff"}
+          </button>
         </div>
-        <div>
-          {error && (
-            <p className="text-red-500">{error}</p>
-          )}
-        </div>
-        </div>
+      ) : (
+        <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2" />
       )}
 
-   
-      <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2">
-        <button
-          onClick={handleCancel}
-          className="h-12 px-4 py-2 font-bold text-white bg-gray-500 rounded cursor-pointer hover:bg-gray-600"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleConfirmSelection}
-          className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer bg-primary hover:bg-blue-400"
-        >
-          {isLoading ? <ClipLoader color="#36d7b7" /> : "Add AVP Staff"}
-        </button>
-      </div>
     </div>
   );
 };

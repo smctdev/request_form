@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from "react";
-import Select from "react-select/dist/declarations/src/Select";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  CalendarIcon,
-  MinusCircleIcon,
-  PlusCircleIcon,
-  TrashIcon,
-} from "@heroicons/react/24/solid";
+import { PlusCircleIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
-import { set, useForm } from "react-hook-form";
-import { z, ZodError } from "zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import axios from "axios";
 import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ClipLoader from "react-spinners/ClipLoader";
 import AddCustomModal from "./AddCustomModal";
 import Swal from "sweetalert2";
+
 type Props = {};
 const requestType = [
   { title: "Stock Requisition", path: "/request/sr" },
@@ -34,12 +28,14 @@ type CustomApprover = {
     approved_by: { name: string }[];
   };
 };
+
 interface Approver {
   id: number;
   firstName: string;
   lastName: string;
   position: string;
 }
+
 const schema = z.object({
   approver_list_id: z.number(),
   approver: z.string(),
@@ -71,13 +67,6 @@ const CreatePurchaseOrder = (props: Props) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formData, setFormData] = useState<any>(null);
-  const [customApprovers, setCustomApprovers] = useState<CustomApprover[]>([]);
-  const [selectedApproverList, setSelectedApproverList] = useState<
-    number | null
-  >(null);
-  const [selectedApprover, setSelectedApprover] = useState<{ name: string }[]>(
-    []
-  );
   const [file, setFile] = useState<File[]>([]);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [validationErrors, setValidationErrors] = useState<
@@ -87,7 +76,6 @@ const CreatePurchaseOrder = (props: Props) => {
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [initialNotedBy, setInitialNotedBy] = useState<Approver[]>([]);
   const [initialApprovedBy, setInitialApprovedBy] = useState<Approver[]>([]);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {
     formState: { errors: formErrors },
@@ -101,6 +89,7 @@ const CreatePurchaseOrder = (props: Props) => {
       setFile(Array.from(e.target.files));
     }
   };
+
   useEffect(() => {
     setInitialNotedBy(notedBy);
     setInitialApprovedBy(approvedBy);
@@ -129,39 +118,6 @@ const CreatePurchaseOrder = (props: Props) => {
     formState: { errors },
   } = useForm<FormData>();
 
-  /*  useEffect(() => {
-    fetchCustomApprovers();
-  }, []);
-
-  const fetchCustomApprovers = async () => {
-    try {
-        const id = localStorage.getItem("id");
-        const token = localStorage.getItem("token");
-        if (!token || !id) {
-            console.error("Token or user ID is missing");
-            return;
-        }
-
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        if (Array.isArray(response.data.data)) {
-            setCustomApprovers(response.data.data);
-        } else {
-            console.error("Unexpected response format:", response.data);
-            setCustomApprovers([]); // Ensure that customApprovers is always an array
-        }
-
-      
-    } catch (error) {
-        console.error("Error fetching custom approvers:", error);
-        setCustomApprovers([]); // Ensure that customApprovers is always an array
-    }
-};
- */
   const onSubmit = async (data: any) => {
     try {
       const token = localStorage.getItem("token");
@@ -266,16 +222,6 @@ const CreatePurchaseOrder = (props: Props) => {
   const openAddCustomModal = () => {
     setIsModalOpen(true);
   };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
-  };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
@@ -335,13 +281,6 @@ const CreatePurchaseOrder = (props: Props) => {
     setFormSubmitted(true);
   };
 
-  const handleCancelSubmit = () => {
-    // Close the confirmation modal
-    setShowConfirmationModal(false);
-    // Reset formData state
-    setFormData(null);
-  };
-
   const handleRemoveItem = (index: number) => {
     if (items.length > 1) {
       Swal.fire({
@@ -393,9 +332,9 @@ const CreatePurchaseOrder = (props: Props) => {
         updatedItems[index].totalAmount = "";
       }
     }
-
     setItems(updatedItems);
   };
+
   const handleTextareaHeight = (index: number, field: string) => {
     const textarea = document.getElementById(
       `${field}-${index}`
@@ -405,6 +344,7 @@ const CreatePurchaseOrder = (props: Props) => {
       textarea.style.height = `${Math.max(textarea.scrollHeight, 100)}px`; // Set to scroll height or minimum 100px
     }
   };
+
   return (
     <div className="bg-graybg dark:bg-blackbg h-full pt-[15px] px-[30px] pb-[15px]">
       {loading && (

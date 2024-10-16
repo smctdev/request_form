@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { BeatLoader } from "react-spinners";
 import axios from "axios";
-import PencilIcon from "@heroicons/react/24/solid/PencilIcon";
 import PrintCashDisbursement from "./PrintCashDisbursement";
-import { set } from "react-hook-form";
 import Avatar from "./assets/avatar.png";
 import { useNavigate } from "react-router-dom";
 import SMCTLogo from "./assets/SMCT.png";
@@ -18,6 +16,7 @@ type Props = {
   record: Record;
   refreshData: () => void;
 };
+
 interface Approver {
   id: number;
   firstname: string;
@@ -31,6 +30,7 @@ interface Approver {
   status: string;
   branch: string;
 }
+
 type Record = {
   request_code: string;
   created_at: Date;
@@ -49,6 +49,7 @@ type Record = {
   requested_by: string;
   requested_signature: string;
   requested_position: string;
+  completed_status: string;
 };
 
 type FormData = {
@@ -98,20 +99,16 @@ const ApproverCashDisbursement: React.FC<Props> = ({
     record.approvers_id
   );
   const [isEditing, setIsEditing] = useState(false);
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [editedDate, setEditedDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
   const [isFetchingUser, setisFetchingUser] = useState(false);
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [avpstaff, setAvpstaff] = useState<Approver[]>([]);
-  const [customApprovers, setCustomApprovers] = useState<any>({});
   const [comments, setComments] = useState("");
-  const [nameComments, setNameComments] = useState([]);
   const [user, setUser] = useState<any>({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
@@ -211,9 +208,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
 
   useEffect(() => {
     const currentUserId = localStorage.getItem("id");
-
-    // Ensure currentUserId and userId are converted to numbers if they exist
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
     setNotedBy(record.noted_by);
     setApprovedBy(record.approved_by);
     setAvpstaff(record.avp_staff);
@@ -230,7 +224,10 @@ const ApproverCashDisbursement: React.FC<Props> = ({
         // Handle the parsed attachment
         const fileUrls = parsedAttachment.map(
           (filePath: string) =>
-            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+              /\\/g,
+              "/"
+            )}`
         );
         setAttachmentUrl(fileUrls);
       } else {
@@ -244,7 +241,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
       ) {
         const approvedAttachmentString = record.approved_attachment[0]; // Access the first element
         const parsedApprovedAttachment = JSON.parse(approvedAttachmentString); // Parse the string to get the actual array
-      
 
         if (
           Array.isArray(parsedApprovedAttachment) &&
@@ -253,7 +249,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
           // Access the first element of the array
           const formattedAttachment = parsedApprovedAttachment[0];
           setAttachment(formattedAttachment); // Set the state with the string
-         
         } else {
           console.warn(
             "Parsed approved attachment is not an array or is empty:",
@@ -296,34 +291,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
     }
   };
 
-  const fetchCustomApprovers = async (id: number) => {
-    setisFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
-
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/request-forms/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const { notedby, approvedby } = response.data;
-      setNotedBy(notedby);
-      setApprovedBy(approvedby);
-      setApprovers(approvers);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setisFetchingApprovers(false);
-    }
-  };
-
   const handleDisapprove = async () => {
     const userId = localStorage.getItem("id") ?? "";
     try {
@@ -348,7 +315,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
       requestData.append("comment", comments);
 
       // Log the contents of requestData for debugging
-    
+
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/request-forms/${record.id}/process`,
         requestData,
@@ -397,8 +364,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
     requestData.append("action", "approve");
     requestData.append("comment", comments);
 
- 
-   
     try {
       setApprovedLoading(true);
 
@@ -421,16 +386,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
       console.error("Error approving request form:", errorMessage);
       setCommentMessage(errorMessage);
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
   };
 
   const formatDate2 = (dateString: Date) => {
@@ -502,6 +457,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
       newWindow.focus();
     }
   };
+
   return (
     <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="relative z-10 w-full p-4 mx-10 overflow-scroll bg-white border-black rounded-t-lg shadow-lg md:mx-0 md:w-1/2 space-y-auto h-3/4">
@@ -552,24 +508,25 @@ const ApproverCashDisbursement: React.FC<Props> = ({
               <p className="pl-2 font-bold">{formatDate2(record.created_at)}</p>
             </div>
           </div>
-          <div className="flex items-center w-full md:w-1/2">
-            <p>Status:</p>
-            <p
-              className={`${
-                record.status.trim() === "Pending"
-                  ? "bg-yellow"
-                  : record.status.trim() === "Approved"
-                  ? "bg-green"
-                  : record.status.trim() === "Disapproved"
-                  ? "bg-pink"
-                  : "bg-pink"
-              } rounded-lg  py-1 w-1/3
-             font-medium text-[14px] text-center ml-2 text-white`}
-            >
-              {" "}
-              {record.status}
-            </p>
-          </div>
+          {record.completed_status !== "Completed" && (
+            <div className="flex items-center w-full md:w-1/2">
+              <p>Status:</p>
+              <p
+                className={`${
+                  record.status.trim() === "Pending"
+                    ? "bg-yellow"
+                    : record.status.trim() === "Approved"
+                    ? "bg-green"
+                    : record.status.trim() === "Disapproved"
+                    ? "bg-pink"
+                    : "bg-pink"
+                } rounded-lg  py-1 w-1/3 font-medium text-[14px] text-center ml-2 text-white`}
+              >
+                {" "}
+                {record.status}
+              </p>
+            </div>
+          )}
           <div className="w-full mt-4 overflow-x-auto">
             <div className="w-full border-collapse ">
               <div className="table-container">

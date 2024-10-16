@@ -1,37 +1,24 @@
 import React, { useState, useEffect } from "react";
-import Select from "react-select/dist/declarations/src/Select";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  CalendarIcon,
-  MinusCircleIcon,
-  PlusCircleIcon,
-} from "@heroicons/react/24/solid";
-import TextareaAutosize from "react-textarea-autosize";
+import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import axios from "axios";
 import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ClipLoader from "react-spinners/ClipLoader";
 import AddCustomModal from "./AddCustomModal";
-import { table } from "console";
 import Swal from "sweetalert2";
-type CustomApprover = {
-  id: number;
-  name: string;
-  approvers: {
-    noted_by: { name: string }[];
-    approved_by: { name: string }[];
-  };
-};
+
 interface Approver {
   id: number;
   firstName: string;
   lastName: string;
   position: string;
 }
+
 type Props = {};
+
 const requestType = [
   { title: "Stock Requisition", path: "/request/sr" },
   { title: "Purchase Order Requisition Slip", path: "/request/pors" },
@@ -70,13 +57,6 @@ const schema = z.object({
   ),
 });
 
-const brancheList = [
-  "Branch A",
-  "Branch B",
-  "Branch C",
-  "Branch D",
-  "Branch E",
-];
 type FormData = z.infer<typeof schema>;
 type TableDataItem = {
   cashDate: string;
@@ -91,9 +71,22 @@ type TableDataItem = {
   remarks: string;
 };
 
+const today = new Date();
+const cashDate = today.toISOString().split("T")[0];
+
+const day = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+][today.getDay()];
+
 const initialTableData: TableDataItem[] = Array.from({ length: 1 }, () => ({
-  cashDate: "",
-  day: "",
+  cashDate: cashDate,
+  day: day,
   from: "",
   to: "",
   activity: "",
@@ -105,30 +98,21 @@ const initialTableData: TableDataItem[] = Array.from({ length: 1 }, () => ({
 }));
 
 const tableStyle = "border border-black p-2";
-const inputStyle =
-  "w-full  border-2 rounded-[12px] pl-[10px] bg-white  autofill-input focus:outline-0";
 const inputStyle2 =
   "w-full   rounded-[12px] pl-[10px] bg-white  autofill-input focus:outline-0";
 const tableInput =
   "w-full h-full bg-white px-2 py-1 bg-white  autofill-input focus:outline-0";
 const itemDiv = "flex flex-col ";
 const buttonStyle = "h-[45px] w-[150px] rounded-[12px] text-white";
+
 const CreateApplicationCash = (props: Props) => {
   const [totalBoatFare, setTotalBoatFare] = useState(0);
   const [totalHotel, setTotalHotel] = useState(0);
   const [formData, setFormData] = useState<any>(null);
   const [totalFare, setTotalFare] = useState(0);
   const [totalContingency, setTotalContingency] = useState(0);
-  const [startDate, setStartDate] = useState(new Date());
   const navigate = useNavigate();
   const [file, setFile] = useState<File[]>([]);
-  const [customApprovers, setCustomApprovers] = useState<CustomApprover[]>([]);
-  const [selectedApproverList, setSelectedApproverList] = useState<
-    number | null
-  >(null);
-  const [selectedApprover, setSelectedApprover] = useState<{ name: string }[]>(
-    []
-  );
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       // Convert FileList to array and set it
@@ -143,7 +127,6 @@ const CreateApplicationCash = (props: Props) => {
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
   const [initialNotedBy, setInitialNotedBy] = useState<Approver[]>([]);
   const [initialApprovedBy, setInitialApprovedBy] = useState<Approver[]>([]);
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {
     formState: { errors: formErrors },
@@ -167,8 +150,8 @@ const CreateApplicationCash = (props: Props) => {
     }[]
   >([
     {
-      cashDate: "",
-      day: "",
+      cashDate: new Date().toISOString().split("T")[0],
+      day: day,
       from: "",
       to: "",
       activity: "",
@@ -184,39 +167,6 @@ const CreateApplicationCash = (props: Props) => {
     setInitialNotedBy(notedBy);
     setInitialApprovedBy(approvedBy);
   }, [notedBy, approvedBy]);
-  /*  const fetchCustomApprovers = async () => {
-    try {
-      const id = localStorage.getItem("id");
-      const token = localStorage.getItem("token");
-      if (!token || !id) {
-        console.error("Token or user ID is missing");
-        return;
-      }
-
-      const response = await axios.get(
-        `http://localhost:6002/api/custom-approvers/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (Array.isArray(response.data.data)) {
-        setCustomApprovers(response.data.data);
-      } else {
-        console.error("Unexpected response format:", response.data);
-        setCustomApprovers([]); // Ensure that customApprovers is always an array
-      }
-    } catch (error) {
-      console.error("Error fetching custom approvers:", error);
-      setCustomApprovers([]); // Ensure that customApprovers is always an array
-    }
-  }; */
-
-  const handleOpenConfirmationModal = () => {
-    setShowConfirmationModal(true);
-  };
 
   // Function to close the confirmation modal
   const handleCloseConfirmationModal = () => {
@@ -247,7 +197,6 @@ const CreateApplicationCash = (props: Props) => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<FormData>();
 
   const inputStyle =
@@ -286,8 +235,8 @@ const CreateApplicationCash = (props: Props) => {
   useEffect(() => {
     setTableData([
       {
-        cashDate: "",
-        day: "",
+        cashDate: new Date().toISOString().split("T")[0],
+        day: day,
         from: "",
         to: "",
         activity: "",
@@ -299,24 +248,6 @@ const CreateApplicationCash = (props: Props) => {
       },
     ]);
   }, [selectedRequestType]);
-
-  const handleAddRow = () => {
-    setTableData([
-      ...tableData,
-      {
-        cashDate: "",
-        day: "",
-        from: "",
-        to: "",
-        activity: "",
-        hotel: "",
-        rate: "",
-        amount: "",
-        perDiem: "",
-        remarks: "",
-      },
-    ]);
-  };
 
   const handleRemoveItem = () => {
     if (tableData.length > 1) {
@@ -341,12 +272,40 @@ const CreateApplicationCash = (props: Props) => {
 
   const handleAddItem = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevent form submission
+    const lastRow = tableData[tableData.length - 1];
+    let nextDate = new Date();
+
+    let nextDay = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ][nextDate.getDay()];
+
+    if (lastRow?.cashDate) {
+      const lastDate = new Date(lastRow.cashDate);
+      nextDate = new Date(lastDate.setDate(lastDate.getDate() + 1));
+      nextDay = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ][nextDate.getDay()];
+    }
+
+    const formattedNextDate = nextDate.toISOString().split("T")[0];
 
     setTableData([
       ...tableData,
       {
-        cashDate: "",
-        day: "",
+        cashDate: formattedNextDate,
+        day: nextDay,
         from: "",
         to: "",
         activity: "",
@@ -357,14 +316,6 @@ const CreateApplicationCash = (props: Props) => {
         remarks: "",
       },
     ]);
-  };
-
-  const calculateTotalPerDiem = (items: TableDataItem[]) => {
-    const totalPerDiem = items.reduce(
-      (total, item) => total + parseFloat(item.perDiem || "0"),
-      0
-    );
-    return totalPerDiem.toFixed(2);
   };
 
   const onSubmit = async (data: FormData) => {
@@ -494,18 +445,9 @@ const CreateApplicationCash = (props: Props) => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
   const openAddCustomModal = () => {
     setIsModalOpen(true);
-  };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
   };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
@@ -664,14 +606,6 @@ const CreateApplicationCash = (props: Props) => {
                   <p className="text-red-500">Department is required</p>
                 )}
               </div>
-
-              {/* <div className={`${itemDiv}`}>
-                <p>Usage/Remarks</p>
-                <textarea
-                  {...register("remarks")}
-                  className={`${inputStyle} h-[100px]`}
-                />
-              </div> */}
               <div className={`${itemDiv}`}>
                 <p className="font-semibold">Liquidation Date</p>
                 <input
@@ -1090,15 +1024,6 @@ const CreateApplicationCash = (props: Props) => {
                           <p className="font-semibold">HOTEL</p>
                         </td>
                         <td className={`${tableStyle}`}>
-                          {/* <input
-                        type="number"
-                        {...register("totalHotel", { required: true })}
-                        className="font-bold text-center bg-white"
-                        value={totalHotel.toFixed(2)}
-                        onChange={handleHotelChange}
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                      /> */}
                           <input
                             className="font-bold text-center"
                             value={`${totalHotelRate.toFixed(
@@ -1120,7 +1045,6 @@ const CreateApplicationCash = (props: Props) => {
                             )}\u00A0\u00A0\u00A0\u00A0`}
                             disabled
                           />
-                          {/* <p className="font-bold">{totalPerDiem.toFixed(2)}</p> */}
                         </td>
                       </tr>
 

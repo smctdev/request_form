@@ -1,23 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Slice from "./assets/Slice.png";
 import building from "./assets/building.jpg";
-import Select from "react-select";
-import { useForm, Controller, set } from "react-hook-form";
-import { z, ZodType } from "zod";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { error } from "console";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import BounceLoader from "react-spinners/ClipLoader";
-import SignaturePad from "react-signature-pad-wrapper";
 import SignatureCanvas from "react-signature-canvas";
-import {
-  EyeIcon,
-  EyeSlashIcon,
-  CheckCircleIcon,
-} from "@heroicons/react/24/solid";
-import { sign } from "crypto";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
 
 type UserCredentials = z.infer<typeof schema>;
@@ -51,7 +43,6 @@ const roleOptions = [
   { label: "Sales Representative", value: "Sales Representative" },
   { label: "Senior Web Developer", value: "Senior Web Developer" },
   { label: "Vice President", value: "Vice President" },
-
 ];
 
 const schema = z
@@ -77,7 +68,8 @@ const schema = z
 
 const fieldStyle = "flex flex-col md:flex-row gap-4";
 const headerStyle = "lg:text-lg text-base mb-2";
-const inputStyle = "w-full  lg:h-[56px] md:h-10  p-2 bg-gray-300 rounded-lg  autofill-input text-black";
+const inputStyle =
+  "w-full  lg:h-[56px] md:h-10  p-2 bg-gray-300 rounded-lg  autofill-input text-black";
 
 const Registration: React.FC = () => {
   const navigate = useNavigate();
@@ -86,7 +78,6 @@ const Registration: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [signatureEmpty, setSignatureEmpty] = useState(false);
-  const sigCanvasRef = useRef<SignatureCanvas | null>(null);
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
   const [branchList, setBranchList] = useState<
     { id: number; branch_code: string; branch: string }[]
@@ -125,7 +116,6 @@ const Registration: React.FC = () => {
   useEffect(() => {
     if (signature) {
       signature.toDataURL("image/png");
-   
     }
   }, [signature]);
   const {
@@ -156,7 +146,6 @@ const Registration: React.FC = () => {
 
       // Check if signature is empty
       if (signatureIsEmpty()) {
-   
         setSignatureEmpty(true);
         setLoading(false);
         return; // Exit function early if signature is empty
@@ -182,20 +171,19 @@ const Registration: React.FC = () => {
           employee_id: data.employee_id,
         }
       );
-    
+
       setErrorMessage(response.data.errors);
       if (response.data.status) {
-        
         setLoading(false);
         localStorage.setItem("token", response.data.token);
-          Swal.fire({
-            icon: "success",
-            title: response.data.message || "Registration Successful",
-            iconColor: "#007bff",
-            text: "You will be redirected to the login page",
-            confirmButtonText: "Close",
-            confirmButtonColor: "#007bff",
-          });
+        Swal.fire({
+          icon: "success",
+          title: response.data.message || "Registration Successful",
+          iconColor: "#007bff",
+          text: "You will be redirected to the login page",
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        });
         window.setTimeout(() => {
           navigate("/login"); // Navigate to login after successful registration
         }, 2000);
@@ -214,10 +202,12 @@ const Registration: React.FC = () => {
           icon: "error",
           title: "Registration Failed",
           iconColor: "#dc3545",
-          text: message.join(", ") || "An error occurred during the registration process. Please try again.",
+          text:
+            message.join(", ") ||
+            "An error occurred during the registration process. Please try again.",
           confirmButtonText: "Close",
           confirmButtonColor: "#dc3545",
-        })
+        });
 
         setLoading(false);
       }
@@ -230,13 +220,9 @@ const Registration: React.FC = () => {
         text: "An error occurred during the registration process. Please try again.",
         confirmButtonText: "Close",
         confirmButtonColor: "#dc3545",
-      })
+      });
       setLoading(false);
     }
-  };
-
-  const onSubmit = (data: UserCredentials) => {
-    submitData(data);
   };
 
   const handleBranchCodeChange = (selectedBranchId: number) => {
@@ -251,15 +237,14 @@ const Registration: React.FC = () => {
     }
   };
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-center text-black bg-[#FFFFFF]" >
+    <div className="flex flex-col lg:flex-row items-center justify-center text-black bg-[#FFFFFF]">
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <img
           className="hidden md:block absolute inset-0 object-cover w-full h-screen lg:hidden z-0"
           src={building}
-          alt="photo"
+          alt=""
         />
         <div className="w-full  bg-white   lg:p-8 p-4  lg:mt-0  mt-20 rounded-lg z-10 lg:m-0 m-10">
-          
           <h1 className="text-primary font-bold lg:text-[32px] md:text-2xl mb-6 text-left">
             ACCOUNT REGISTRATION
           </h1>
@@ -582,7 +567,7 @@ const Registration: React.FC = () => {
         </div>
       </div>
       <div className="hidden lg:block w-1/2  items-center justify-center">
-        <img className="object-cover h-screen w-full" src={Slice} alt="photo" />
+        <img className="object-cover h-screen w-full" src={Slice} alt="" />
       </div>
     </div>
   );

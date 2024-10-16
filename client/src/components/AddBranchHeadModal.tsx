@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
-import { set } from "react-hook-form";
 
 type User = {
   id: number;
@@ -35,7 +34,7 @@ const AddBranchHeadModal = ({
   entityType: string;
   refreshData: () => void;
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -65,9 +64,10 @@ const AddBranchHeadModal = ({
           }
         );
 
-        // Filter and map data to desired format
         const transformedData = response.data.data
-          .filter((item: User) => item.position.trim() === "Branch Supervisor/Manager")
+          .filter(
+            (item: User) => item.position.trim() === "Branch Supervisor/Manager"
+          )
           .map((item: User) => ({
             id: item.id,
             name: `${item.firstname} ${item.lastname}`,
@@ -80,6 +80,8 @@ const AddBranchHeadModal = ({
         setUsers(transformedData);
       } catch (error) {
         console.error("Error fetching users data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -87,6 +89,7 @@ const AddBranchHeadModal = ({
       fetchUsers();
     }
   }, [modalIsOpen]);
+
   useEffect(() => {
     const fetchBranches = async () => {
       try {
@@ -111,6 +114,8 @@ const AddBranchHeadModal = ({
         console.error("Error fetching branches:", error);
         setError("Failed to fetch branches");
         setBranches([]);
+      } finally{
+        setLoading(false);
       }
     };
 
@@ -163,7 +168,6 @@ const AddBranchHeadModal = ({
             headers,
           }
         );
-
         // Assuming successful, close modal or show success message
         setIsLoading(false);
         closeModal();
@@ -189,11 +193,7 @@ const AddBranchHeadModal = ({
   if (!modalIsOpen) {
     return null;
   }
-  const handleRemoveBranch = (branchIdToRemove: number) => {
-    setSelectedBranches(
-      selectedBranches.filter((id) => id !== branchIdToRemove)
-    );
-  };
+
   return (
     <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="p-4 w-10/12 sm:w-1/3 relative bg-primary flex justify-center mx-20 border-b rounded-t-[12px]">
@@ -208,7 +208,7 @@ const AddBranchHeadModal = ({
       <div className="relative w-10/12 overflow-y-auto bg-white sm:w-1/3 x-20 h-2/3">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <ClipLoader size={35} color={"#123abc"} loading={loading} />
+            <ClipLoader size={35} color={"#389df1"} loading={loading} />
           </div>
         ) : error ? (
           <div className="p-4 text-red-500">
@@ -228,30 +228,6 @@ const AddBranchHeadModal = ({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="p-2 mb-2 border border-gray-300 rounded-md "
                 />
-                {/* <div className="px-4 mt-4 mb-4">
-                  {selectedBranches.map((branchId) => {
-                    const branch = branches.find((b) => b.id === branchId);
-                    return (
-                      <Chip
-                        key={branchId}
-                        label={
-                          <div className="flex flex-col">
-                            <span className="text-white">
-                              {branch?.branch_code}
-                            </span>
-                          </div>
-                        }
-                        onDelete={() => handleRemoveBranch(branchId)}
-                        deleteIcon={<XMarkIcon className="w-4 h-4 stroke-white" />}
-                        sx={{
-                          marginBottom: "5px",
-                          marginRight: "2px",
-                          backgroundColor: "#389df1"
-                        }}
-                      />
-                    );
-                  })}
-                </div> */}
                 <div className="px-4">
                   {branches.length === 0 ? (
                     <ClipLoader size={35} color={"#123abc"} loading={loading} />
@@ -335,20 +311,24 @@ const AddBranchHeadModal = ({
           </div>
         )}
       </div>
-      <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 justify-end flex space-x-2">
-        <button
-          onClick={handleCancel}
-          className="h-12 px-4 py-2 font-bold text-white bg-gray-500 rounded cursor-pointer hover:bg-gray-600"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleConfirmSelection}
-          className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer hover:bg-blue-400 bg-primary"
-        >
-          {isLoading ? <ClipLoader color="#36d7b7" /> : "Add Branch Head"}
-        </button>
-      </div>
+      {isButtonVisible ? (
+        <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 justify-end flex space-x-2">
+          <button
+            onClick={handleCancel}
+            className="h-12 px-4 py-2 font-bold text-white bg-gray-500 rounded cursor-pointer hover:bg-gray-600"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleConfirmSelection}
+            className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer hover:bg-blue-400 bg-primary"
+          >
+            {isLoading ? <ClipLoader color="#36d7b7" /> : "Add Branch Head"}
+          </button>
+        </div>
+      ) : (
+        <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2" />
+      )}
     </div>
   );
 };

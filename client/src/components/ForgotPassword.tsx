@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Slice from "./assets/Slice.png";
 import building from "./assets/building.jpg";
 import { useNavigate } from "react-router-dom";
-import { EyeIcon, EyeSlashIcon, XCircleIcon } from "@heroicons/react/24/solid";
+import { XCircleIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import Swal from "sweetalert2";
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -23,7 +22,6 @@ const ForgotPassword: React.FC = () => {
     }
 
     try {
-      // Send a POST request to the password reset endpoint using axios
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/password/email`,
         {
@@ -45,8 +43,7 @@ const ForgotPassword: React.FC = () => {
         });
       }
     } catch (error: any) {
-      if(error)
-      {
+      if (error) {
         console.error(error.response.data.message);
         setError(error.response.data.message);
       }
@@ -55,8 +52,6 @@ const ForgotPassword: React.FC = () => {
     }
   };
 
-  const inputStyle =
-    "w-full lg:max-w-[417px] lg:h-[56px] md:h-10  p-2 bg-gray-300 rounded-lg";
   return (
     <div className="flex flex-row">
       <div className="relative flex items-center justify-center w-full p-8 bg-center bg-cover lg:w-1/2">

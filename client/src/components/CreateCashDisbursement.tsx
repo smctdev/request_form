@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Select from "react-select/dist/declarations/src/Select";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  CalendarIcon,
-  MinusCircleIcon,
-  PlusCircleIcon,
-  TrashIcon,
-} from "@heroicons/react/24/solid";
+import { PlusCircleIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import axios from "axios";
 import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -19,14 +12,6 @@ import Swal from "sweetalert2";
 
 type Props = {};
 
-type CustomApprover = {
-  id: number;
-  name: string;
-  approvers: {
-    noted_by: { name: string }[];
-    approved_by: { name: string }[];
-  };
-};
 interface Approver {
   id: number;
   firstName: string;
@@ -42,6 +27,7 @@ const requestType = [
   { title: "Request for Refund", path: "/request/rfr" },
   { title: "Discount Request", path: "/request/dr" },
 ];
+
 const schema = z.object({
   approver_list_id: z.number(),
   items: z.array(
@@ -56,28 +42,19 @@ const schema = z.object({
 });
 
 type FormData = z.infer<typeof schema>;
-const inputStyle =
-  "w-full  border-2 border-black rounded-[12px] pl-[10px] bg-white  autofill-input";
-const itemDiv = "flex flex-col ";
+
 const buttonStyle = "h-[45px] w-[150px] rounded-[12px] text-white";
 const tableStyle = "border border-black p-2 border-collapse";
 const inputStyle2 =
   "w-full   rounded-[12px] pl-[10px] bg-white  autofill-input focus:outline-0";
+
 const CreateCashDisbursement = (props: Props) => {
-  const [startDate, setStartDate] = useState(new Date());
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formData, setFormData] = useState<any>(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [customApprovers, setCustomApprovers] = useState<CustomApprover[]>([]);
-  const [selectedApproverList, setSelectedApproverList] = useState<
-    number | null
-  >(null);
   const [file, setFile] = useState<File[]>([]);
-  const [selectedApprover, setSelectedApprover] = useState<{ name: string }[]>(
-    []
-  );
   const {
     formState: { errors: formErrors },
   } = useForm<FormData>();
@@ -107,7 +84,7 @@ const CreateCashDisbursement = (props: Props) => {
     }[]
   >([
     {
-      quantity: "",
+      quantity: "1",
       description: "",
       unitCost: "",
       totalAmount: "",
@@ -116,48 +93,15 @@ const CreateCashDisbursement = (props: Props) => {
   ]);
 
   const {
-    register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const handleOpenConfirmationModal = () => {
-    setShowConfirmationModal(true);
-  };
 
   useEffect(() => {
     setInitialNotedBy(notedBy);
     setInitialApprovedBy(approvedBy);
   }, [notedBy, approvedBy]);
-  /*  const fetchCustomApprovers = async () => {
-    try {
-      const id = localStorage.getItem("id");
-      const token = localStorage.getItem("token");
-      if (!token || !id) {
-        console.error("Token or user ID is missing");
-        return;
-      }
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/custom-approvers/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (Array.isArray(response.data.data)) {
-        setCustomApprovers(response.data.data);
-      } else {
-        console.error("Unexpected response format:", response.data);
-        setCustomApprovers([]); // Ensure that customApprovers is always an array
-      }
-    } catch (error) {
-      console.error("Error fetching custom approvers:", error);
-      setCustomApprovers([]); // Ensure that customApprovers is always an array
-    }
-  }; */
-  // Function to close the confirmation modal
   const handleCloseConfirmationModal = () => {
     setShowConfirmationModal(false);
   };
@@ -253,16 +197,6 @@ const CreateCashDisbursement = (props: Props) => {
   const openAddCustomModal = () => {
     setIsModalOpen(true);
   };
-  const closeAddCustomModal = () => {
-    setIsModalOpen(false);
-  };
-  const handleOpenAddCustomModal = () => {
-    setShowAddCustomModal(true);
-  };
-
-  const handleCloseAddCustomModal = () => {
-    setShowAddCustomModal(false);
-  };
 
   const handleAddCustomData = (notedBy: Approver[], approvedBy: Approver[]) => {
     setNotedBy(notedBy);
@@ -309,13 +243,6 @@ const CreateCashDisbursement = (props: Props) => {
     }
   };
 
-  const handleCancelSubmit = () => {
-    // Close the confirmation modal
-    setShowConfirmationModal(false);
-    // Reset formData state
-    setFormData(null);
-  };
-
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
 
@@ -325,6 +252,7 @@ const CreateCashDisbursement = (props: Props) => {
   const handleFormSubmit = () => {
     setFormSubmitted(true);
   };
+
   const [selectedRequestType, setSelectedRequestType] =
     useState("/request/cdrs");
 
@@ -362,7 +290,7 @@ const CreateCashDisbursement = (props: Props) => {
     setItems([
       ...items,
       {
-        quantity: "",
+        quantity: "1",
         description: "",
         unitCost: "",
         totalAmount: "",
@@ -401,6 +329,7 @@ const CreateCashDisbursement = (props: Props) => {
       textarea.style.height = `${Math.max(textarea.scrollHeight, 100)}px`; // Set to scroll height or minimum 100px
     }
   };
+
   return (
     <div className="bg-graybg dark:bg-blackbg h-full pt-[15px] px-[30px] pb-[15px]">
       {loading && (

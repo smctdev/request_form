@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import SMCTLogo from "./assets/SMCT.png";
 import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
@@ -11,10 +10,7 @@ type PrintRefundProps = {
 };
 
 const PrintLiquidation: React.FC<PrintRefundProps> = ({ data }) => {
-  const location = useLocation();
-  const [printData, setPrintData] = useState<any>(null); // State to hold print data
-  const queryParams = new URLSearchParams(location.search);
-  const serializedData = queryParams.get("data");
+  const [printData, setPrintData] = useState<any>(null);
 
   let logo;
   if (printData?.user?.data?.branch === "Strong Motocentrum, Inc.") {
@@ -54,29 +50,6 @@ const PrintLiquidation: React.FC<PrintRefundProps> = ({ data }) => {
 
     return date.toLocaleDateString("en-US", options);
   };
-
-  // useEffect(() => {
-  //   // Retrieve the data from localStorage
-  //   const storedData = localStorage.getItem("printData");
-  //   if (storedData) {
-  //     const parsedData = JSON.parse(storedData);
-  //     setPrintData(parsedData); // Set the printData state
-  //   }
-
-  //   localStorage.removeItem("printData");
-  // }, []);
-
-  // const tableStyle = "border border-black  py-4";
-  // useEffect(() => {
-  //   if (printData !== null) {
-  //     window.print();
-
-  //     window.onafterprint = () => {
-  //       localStorage.removeItem("printData"); // Clean up after printing
-  //       window.close(); // Close the tab after printing or canceling
-  //     };
-  //   }
-  // }, [printData]);
 
   useEffect(() => {
     const storedData = localStorage.getItem("printData");
@@ -394,7 +367,7 @@ const PrintLiquidation: React.FC<PrintRefundProps> = ({ data }) => {
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}

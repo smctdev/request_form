@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { set, useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
 
 type Record = {
   id: number;
@@ -19,26 +14,6 @@ type Record = {
   contact: string;
   position: string;
 };
-
-type UserCredentials = z.infer<typeof schema>;
-const schema = z
-  .object({
-    email: z.string().email(),
-    password: z.string().min(5).max(20),
-    userName: z.string().min(5).max(20),
-    firstName: z.string().min(2).max(30),
-    lastName: z.string().min(2).max(30),
-    contact: z.string().refine((value) => /^\d{11}$/.test(value), {
-      message: "Contact number must be 11 digits",
-    }),
-    branchCode: z.string().nonempty(),
-    confirmPassword: z.string().min(5).max(20),
-    role: z.string().nonempty(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
 
 const AddApproverModal = ({
   modalIsOpen,
@@ -53,13 +28,13 @@ const AddApproverModal = ({
   entityType: string;
   refreshData: () => void;
 }) => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isLoading, setisLoading] = useState(false);
   const [users, setUsers] = useState<Record[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const [filterTerm, setFilterTerm] = useState("");
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -95,8 +70,11 @@ const AddApproverModal = ({
         setUsers(transformedData);
       } catch (error) {
         console.error("Error fetching users data:", error);
+      } finally{
+        setLoading(false);
       }
     };
+
 
     if (modalIsOpen) {
       fetchUsers();
@@ -135,15 +113,13 @@ const AddApproverModal = ({
         Authorization: `Bearer ${token}`,
       };
 
-      // Prepare the data to send to the backend
       const data = {
-        role: "approver", // Replace with the actual role value you want to update
-        userIds: selectedUsers, // Send selected user IDs to update
+        role: "approver",
+        userIds: selectedUsers,
       };
 
-      // Send PUT request to update roles
       const response = await axios.put(
-        `${process.env.REACT_APP_API_BASE_URL}/update-role`, // Assuming your API endpoint structure (no IDs in the URL)
+        `${process.env.REACT_APP_API_BASE_URL}/update-role`,
         data,
         { headers }
       );
@@ -156,7 +132,6 @@ const AddApproverModal = ({
     } catch (error) {
       setisLoading(false);
       console.error("Error updating role:", error);
-      // Handle error state or show error message to the user
     }
   };
 
@@ -196,7 +171,7 @@ const AddApproverModal = ({
         </div>
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <ClipLoader size={35} color={"#123abc"} loading={loading} />
+            <ClipLoader size={35} color={"#389df1"} loading={loading} />
           </div>
         ) : (
           <div className="">
@@ -239,7 +214,7 @@ const AddApproverModal = ({
             onClick={handleConfirmSelection}
             className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer bg-primary hover:bg-blue-400"
           >
-            {isLoading ? <ClipLoader color="#36d7b7" /> : "Add Approver"}
+            {isLoading ? "Adding..." : "Add Approver"}
           </button>
         </div>
       )}

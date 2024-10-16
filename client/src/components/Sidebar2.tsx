@@ -3,7 +3,6 @@ import Logo from "./assets/logo.png";
 import {
   ChartBarIcon,
   EnvelopeIcon,
-  BeakerIcon,
   DocumentCheckIcon,
   DocumentPlusIcon,
   UserGroupIcon,
@@ -14,13 +13,12 @@ import {
   MapIcon,
   SwatchIcon,
   UserPlusIcon,
+  BriefcaseIcon
 } from "@heroicons/react/24/solid";
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Echo from "../utils/Echo";
-import Swal from "sweetalert2";
 import axios from "axios";
-import { set } from "react-hook-form";
 import { useUser } from "../context/UserContext";
 
 type NavItem = {
@@ -78,6 +76,7 @@ const Sidebar2: React.FC<SidebarProps> = ({
       ? [
           { title: "Dashboard", icon: ChartBarIcon, path: "/dashboard" },
           { title: "User", icon: UserPlusIcon, path: "/setup/User" },
+          { title: "Position", icon: BriefcaseIcon, path: "/setup/Position" },
           { title: "Branch", icon: BuildingOfficeIcon, path: "/setup/Branch" },
           { title: "Approver", icon: UserIcon, path: "/setup/Approver" },
           { title: "AVP Staff", icon: UserGroupIcon, path: "/setup/AVP" },
@@ -154,7 +153,7 @@ const Sidebar2: React.FC<SidebarProps> = ({
         const filtered = response.data.request_forms.filter(
           (request: any) => request.status === "Pending"
         );
-          setPendingCounts(filtered.length);
+        setPendingCounts(filtered.length);
       } catch (error) {
         console.error("Error fetching requests data:", error);
       }
@@ -209,7 +208,6 @@ const Sidebar2: React.FC<SidebarProps> = ({
     navigate("/login");
     setIsAuthenticated(false);
   };
-  
 
   const listStyle =
     "relative mx-2 group flex items-center text-[18px] text-gray-400 font-medium py-2 pr-3 px-2 cursor-pointer rounded-lg";

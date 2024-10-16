@@ -25,7 +25,6 @@ import Help from '../components/Help';
 import HelpGuide from '../components/HelpGuide';
 import CustomRequest from '../components/CustomRequest';
 import RequestApprover from '../components/RequestApprover';
-import ApproversStock from '../components/ApproverStock';
 import PrintRefund from '../components/PrintRefund';
 import PrintStock from '../components/PrintStock';
 import PrintPurchase from '../components/PrintPurchase';
@@ -41,16 +40,12 @@ import CreateDiscount from '../components/CreateDiscount';
 import PrintDiscount from '../components/PrintDiscount';
 import Preloader from '../loader/PreLoader';
 import { useUser } from '../context/UserContext';
+import SetupPosition from '../components/SetupPosition';
+
 interface RouterProps {
   isdarkMode: boolean;
 }
 
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { isAuthenticated, loading } = useUser();
-
-  if (loading) return <Preloader />;
-  return isAuthenticated ? children : <Navigate to="/login" />;
-};
 const PublicRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated, loading } = useUser();
 
@@ -114,6 +109,9 @@ const Router: React.FC<RouterProps> = ({isdarkMode}) => {
           <Route path='/setup/User' element={<App isdarkMode={isdarkMode} />}>
             <Route index element={<SetupUser />} />
           </Route>
+          <Route path='/setup/Position' element={<App isdarkMode={isdarkMode} />}>
+            <Route index element={<SetupPosition />} />
+          </Route>
           <Route path='/setup/Branch' element={<App isdarkMode={isdarkMode} />}>
             <Route index element={<SetupBranch />} />
           </Route>
@@ -144,12 +142,6 @@ const Router: React.FC<RouterProps> = ({isdarkMode}) => {
           <Route path='/request/custom' element={<App isdarkMode={isdarkMode} />}>
             <Route index element={<CustomRequest />} />
           </Route>
-         {/*  <Route
-            path="/request/rfr/print"
-            element={<App isdarkMode={isdarkMode} />}
-          >
-            <Route index element={<PrintRefund />} />
-          </Route> */}
         <Route path="/print-refund" element={<PrintRefund />} />
         <Route path="/print-stock" element={<PrintStock />} />
         <Route path="/print-purchase" element={<PrintPurchase />} />

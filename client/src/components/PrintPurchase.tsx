@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from "react";
-import Avatar from "./assets/avatar.png"; // Example import for avatar
-import { useLocation } from "react-router-dom";
-import { table } from "console";
 import SMCTLogo from "./assets/SMCT.png";
 import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
 import HOLogo from "./assets/logo.png";
+
 type PrintRefundProps = {
   data?: any;
 };
 
 const PrintPurchase: React.FC<PrintRefundProps> = ({ data }) => {
-  const location = useLocation();
   const [printData, setPrintData] = useState<any>(null); // State to hold print data
-  const queryParams = new URLSearchParams(location.search);
-  const serializedData = queryParams.get("data");
   let logo;
   if (printData?.user?.data?.branch === "Strong Motocentrum, Inc.") {
     logo = <img src={SMCTLogo} alt="SMCT Logo" />;
@@ -53,28 +48,6 @@ const PrintPurchase: React.FC<PrintRefundProps> = ({ data }) => {
 
     return date.toLocaleDateString("en-US", options);
   };
-
-  // useEffect(() => {
-  //   // Retrieve the data from localStorage
-  //   const storedData = localStorage.getItem("printData");
-  //   if (storedData) {
-  //     const parsedData = JSON.parse(storedData);
-  //     setPrintData(parsedData); // Set the printData state
-  //   }
-
-  //   localStorage.removeItem("printData");
-  // }, []);
-
-  // useEffect(() => {
-  //   if (printData !== null) {
-  //     window.print();
-
-  //     window.onafterprint = () => {
-  //       localStorage.removeItem("printData"); // Clean up after printing
-  //       window.close(); // Close the tab after printing or canceling
-  //     };
-  //   }
-  // }, [printData]);
 
   useEffect(() => {
     const storedData = localStorage.getItem("printData");
@@ -144,18 +117,6 @@ const PrintPurchase: React.FC<PrintRefundProps> = ({ data }) => {
             <h1 className="text-sm font-semibold">BRANCH</h1>
           </div>
         </div>
-        {/* <div className="flex justify-end pr-6">
-          <p className="flex mb-2 text-sm font-medium ">
-            Date:{" "}
-            <p className="ml-2 font-normal underline">
-              {formatDate(printData?.id.created_at)}
-            </p>
-          </p>
-        </div> */}
-        {/*   
-      <p>Status: {printData.status}</p>
-      
-     <p>Date: {formatDate(data.date)}</p> */}
         <div className="flex justify-center w-full mt-2">
           <table className="w-full border-separate border-spacing-x-4">
             <thead className="">
@@ -206,9 +167,6 @@ const PrintPurchase: React.FC<PrintRefundProps> = ({ data }) => {
             </tbody>
           </table>
         </div>
-        {/* <p className="mt-2 ml-4 text-sm font-medium uppercase">
-          Grand Total: ₱ {printData?.id.form_data[0].grand_total}
-        </p> */}
 
         <div className="mt-4 ">
           <div className="flex flex-wrap justify-start ">
@@ -243,7 +201,7 @@ const PrintPurchase: React.FC<PrintRefundProps> = ({ data }) => {
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}

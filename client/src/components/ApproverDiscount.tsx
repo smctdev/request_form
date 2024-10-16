@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import ClipLoader from "react-spinners/ClipLoader";
-import { PencilIcon } from "@heroicons/react/24/solid";
 import PrintCash from "./PrintCash";
 import BeatLoader from "react-spinners/BeatLoader";
-import PrintPurchase from "./PrintPurchase";
 import SMCTLogo from "./assets/SMCT.png";
 import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
 import ApproveSuccessModal from "./ApproveSuccessModal";
 import Avatar from "./assets/avatar.png";
+
 type Props = {
   closeModal: () => void;
   record: Record;
   refreshData: () => void;
 };
+
 interface Approver {
   id: number;
   firstname: string;
@@ -30,6 +29,7 @@ interface Approver {
   status: string;
   branch: string;
 }
+
 type Record = {
   request_code: string;
   id: number;
@@ -50,6 +50,7 @@ type Record = {
   requested_by: string;
   requested_signature: string;
   requested_position: string;
+  completed_status: string;
 };
 
 type FormData = {
@@ -87,10 +88,9 @@ type Item = {
   spotcash: string;
   discountedPrice: string;
 };
+
 const tableInput = "break-words border border-black p-2";
 const inputStyle = "border border-black text-[12px] font-bold p-2 h-14";
-const tableStyle = "border border-black p-2";
-const tableCellStyle = `${inputStyle}  w-10`;
 const ApproverDiscount: React.FC<Props> = ({
   closeModal,
   record,
@@ -102,8 +102,6 @@ const ApproverDiscount: React.FC<Props> = ({
   const [newTotalHotel, setNewTotalHotel] = useState("");
   const [newTotalFare, setNewTotalFare] = useState("");
   const [newTotalContingency, setNewTotalContingency] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedDate, setEditedDate] = useState("");
   const [editedApprovers, setEditedApprovers] = useState<number>(
     record.approvers_id
   );
@@ -112,15 +110,12 @@ const ApproverDiscount: React.FC<Props> = ({
   const [position, setPosition] = useState("");
   const [commentMessage, setCommentMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [isFetchingApprovers, setisFetchingApprovers] = useState(false);
-  const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
 
   const [avpstaff, setAvpstaff] = useState<Approver[]>([]);
-  const [customApprovers, setCustomApprovers] = useState<any>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [comments, setComments] = useState("");
   const [approveLoading, setApprovedLoading] = useState(false);
@@ -216,8 +211,6 @@ const ApproverDiscount: React.FC<Props> = ({
 
   useEffect(() => {
     const currentUserId = localStorage.getItem("id");
-
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
     setNotedBy(record.noted_by);
     setApprovedBy(record.approved_by);
     setAvpstaff(record.avp_staff);
@@ -238,7 +231,10 @@ const ApproverDiscount: React.FC<Props> = ({
         // Handle the parsed attachment
         const fileUrls = parsedAttachment.map(
           (filePath: string) =>
-            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+              /\\/g,
+              "/"
+            )}`
         );
         setAttachmentUrl(fileUrls);
       } else {
@@ -394,11 +390,14 @@ const ApproverDiscount: React.FC<Props> = ({
         throw new Error("Token is missing");
       }
 
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setUser(response.data);
     } catch (error) {
@@ -407,34 +406,7 @@ const ApproverDiscount: React.FC<Props> = ({
       setisFetchingUser(false);
     }
   };
-  const fetchCustomApprovers = async (id: number) => {
-    setisFetchingApprovers(true);
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token is missing");
-      }
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/request-forms/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const { notedby, approvedby, avp_staff } = response.data;
-      setNotedBy(notedby);
-      setApprovedBy(approvedby);
-      setApprovers(approvers);
-      setAvpstaff(avp_staff);
-    } catch (error) {
-      console.error("Failed to fetch approvers:", error);
-    } finally {
-      setisFetchingApprovers(false);
-    }
-  };
   const handlePrint = () => {
     // Construct the data object to be passed
     const data = {
@@ -502,24 +474,25 @@ const ApproverDiscount: React.FC<Props> = ({
               <p className="pl-2 font-bold">{formatDate2(record.created_at)}</p>
             </div>
           </div>
-          <div className="flex items-center w-full md:w-1/2">
-            <p>Status:</p>
-            <p
-              className={`${
-                record.status.trim() === "Pending"
-                  ? "bg-yellow"
-                  : record.status.trim() === "Approved"
-                  ? "bg-green"
-                  : record.status.trim() === "Disapproved"
-                  ? "bg-pink"
-                  : "bg-pink"
-              } rounded-lg  py-1 w-1/3
-             font-medium text-[14px] text-center ml-2 text-white`}
-            >
-              {" "}
-              {record.status}
-            </p>
-          </div>
+          {record.completed_status !== "Completed" && (
+            <div className="flex items-center w-full md:w-1/2">
+              <p>Status:</p>
+              <p
+                className={`${
+                  record.status.trim() === "Pending"
+                    ? "bg-yellow"
+                    : record.status.trim() === "Approved"
+                    ? "bg-green"
+                    : record.status.trim() === "Disapproved"
+                    ? "bg-pink"
+                    : "bg-pink"
+                } rounded-lg  py-1 w-1/3 font-medium text-[14px] text-center ml-2 text-white`}
+              >
+                {" "}
+                {record.status}
+              </p>
+            </div>
+          )}
           <div className="w-full mt-4 overflow-x-auto">
             <div className="w-full border-collapse">
               <table className="w-full border border-collapse border-black lg:overflow-auto xl:table-fixed">

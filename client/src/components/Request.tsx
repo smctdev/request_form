@@ -8,11 +8,8 @@ import ViewCashDisbursementModal from "./Modals/ViewCashDisbursementModal";
 import ViewCashAdvanceModal from "./Modals/ViewCashAdvanceModal";
 import ViewLiquidationModal from "./Modals/ViewLiquidationModal";
 import ViewRequestModal from "./Modals/ViewRequestModal";
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import ViewDiscountModal from "./Modals/ViewDiscountModal";
-import { ClipLoader } from "react-spinners";
-import { text } from "stream/consumers";
 import Swal from "sweetalert2";
 import Echo from "../utils/Echo";
 type Props = {};
@@ -197,7 +194,6 @@ const Request = (props: Props) => {
   const [requests, setRequests] = useState<Record[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<Record | null>(null);
-  const [sortOrder, setSortOrder] = useState("desc");
   const userId = localStorage.getItem("id");
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
@@ -300,13 +296,59 @@ const Request = (props: Props) => {
     // Check if the status is not "Pending"
     if (record.status !== "Pending") {
       Swal.fire({
-        icon: "error",
-        title: "Cannot Delete",
-        text: "You cannot delete this request as it is already appr",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "Close",
+        icon: "info",
+        title: "Request Approved",
+        html:
+          `<strong>Are you sure you want to delete this request, even though it has already been approved?</strong> <br/>` +
+          "Request Code: " +
+          record.request_code +
+          " <br/> Request Type: " +
+          record.form_type,
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, Delete it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setLoading(true);
+          const token = localStorage.getItem("token");
+          if (!token) return;
+          const headers = { Authorization: `Bearer ${token}` };
+
+          axios
+            .delete(
+              `${process.env.REACT_APP_API_BASE_URL}/delete-request/${record.id}`,
+              {
+                headers,
+              }
+            )
+            .then(() => {
+              Swal.fire({
+                icon: "success",
+                title: "Deleted!",
+                text: `The request was successfully deleted.`,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Close",
+              });
+              refreshData();
+            })
+            .catch((error) => {
+              console.error("Error deleting request:", error);
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong!",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "Close",
+              });
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        }
       });
-      return; // Exit the function if the condition is not met
+
+      return;
     }
 
     Swal.fire({
@@ -369,7 +411,6 @@ const Request = (props: Props) => {
   const handleSearchRequest = (event: React.ChangeEvent<HTMLInputElement>) => {
     searchRequest(event.target.value.toLowerCase());
   };
-
   const filteredData = () => {
     let filteredRequests;
 
@@ -379,16 +420,21 @@ const Request = (props: Props) => {
         break;
       case 1:
         filteredRequests = requests.filter(
-          (item: Record) =>
-            item.status.trim() === "Pending" || item.status.trim() === "Ongoing"
+          (item: Record) => item.status.trim() === "Completed"
         );
         break;
       case 2:
         filteredRequests = requests.filter(
-          (item: Record) => item.status.trim() === "Approved"
+          (item: Record) =>
+            item.status.trim() === "Pending" || item.status.trim() === "Ongoing"
         );
         break;
       case 3:
+        filteredRequests = requests.filter(
+          (item: Record) => item.status.trim() === "Approved"
+        );
+        break;
+      case 4:
         filteredRequests = requests.filter(
           (item: Record) => item.status.trim() === "Disapproved"
         );
@@ -461,56 +507,6 @@ const Request = (props: Props) => {
       </tbody>
     </table>
   );
-  // const LoadingSpinner = () => {
-  //   const skeletonStyle = {
-  //     width: '100%',
-  //     height: '3rem', // h-12
-  //     backgroundColor: '#e2e8f0', // slate-200
-  //     animation: 'fade 1s infinite alternate',
-  //   };
-
-  //   return (
-  //     <table className="table" style={{ background: "white" }}>
-  //       <thead>
-  //         <tr>
-  //           <th className="w-[80px] py-6" style={{ color: "black", fontWeight: "500" }}>
-  //             Request ID
-  //           </th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Request Type</th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Date</th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Branch</th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Status</th>
-  //           <th style={{ color: "black", fontWeight: "500" }}>Action</th>
-  //         </tr>
-  //       </thead>
-  //       <tbody>
-  //         {Array.from({ length: 6 }).map((_, index) => (
-  //           <tr key={index}>
-  //             <td className="w-full border border-gray-200" colSpan={6}>
-  //               <div className="flex justify-center">
-  //                 <div className="flex flex-col w-full gap-4">
-  //                   <div style={skeletonStyle}></div>
-  //                 </div>
-  //               </div>
-  //             </td>
-  //           </tr>
-  //         ))}
-  //       </tbody>
-  //       <style>
-  //         {`
-  //           @keyframes fade {
-  //             0% {
-  //               background-color: #e2e8f0; /* slate-200 */
-  //             }
-  //             100% {
-  //               background-color: #d1d5db; /* gray-300 */
-  //             }
-  //           }
-  //         `}
-  //       </style>
-  //     </table>
-  //   );
-  // };
 
   const refreshData = () => {
     if (userId) {
@@ -578,7 +574,7 @@ const Request = (props: Props) => {
       name: "Status",
       selector: (row: Record) => row.status,
       sortable: true,
-      width: "320px",
+      minWidth: "150px",
       cell: (row: Record) => (
         <div className="relative flex items-center w-full group">
           {/* Status Badge */}
@@ -634,10 +630,12 @@ const Request = (props: Props) => {
 
   const items = [
     "All Requests",
+    "Completed Requests",
     "Pending Requests",
     "Approved Requests",
     "Unsuccessful Requests",
   ];
+  console.log(items);
 
   const closeModal = () => {
     setModalIsOpen(false);

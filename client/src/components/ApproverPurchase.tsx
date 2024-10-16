@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import BeatLoader from "react-spinners/BeatLoader";
-import EditStockModalSuccess from "./Modals/EditStockModalSuccess";
-import { set } from "react-hook-form";
 import PrintPurchase from "./PrintPurchase";
 import Avatar from "./assets/avatar.png";
 import SMCTLogo from "./assets/SMCT.png";
@@ -11,6 +9,7 @@ import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
 import ApproveSuccessModal from "./ApproveSuccessModal";
+
 type Props = {
   closeModal: () => void;
   record: Record;
@@ -52,6 +51,7 @@ type Record = {
   requested_by: string;
   requested_signature: string;
   requested_position: string;
+  completed_status: string;
 };
 
 type FormData = {
@@ -88,10 +88,8 @@ const ApproverPurchase: React.FC<Props> = ({
   const [editableRecord, setEditableRecord] = useState(record);
   const [newData, setNewData] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
-  const [cancelLoading, setCancelLoading] = useState(false);
   const [notedBy, setNotedBy] = useState<Approver[]>([]);
   const [approvedBy, setApprovedBy] = useState<Approver[]>([]);
-  const [editedDate, setEditedDate] = useState("");
   const [editedApprovers, setEditedApprovers] = useState<number>(
     record.approvers_id
   );
@@ -100,11 +98,9 @@ const ApproverPurchase: React.FC<Props> = ({
   const [position, setPosition] = useState("");
   const [printWindow, setPrintWindow] = useState<Window | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [approvers, setApprovers] = useState<Approver[]>([]);
   const [fetchingApprovers, setFetchingApprovers] = useState(false);
   const [newSupplier, setNewSupplier] = useState("");
   const [newAddress, setNewAddress] = useState("");
-  const [savedSuccessfully, setSavedSuccessfully] = useState(false);
   const [comments, setComments] = useState("");
   const [avpstaff, setAvpstaff] = useState<Approver[]>([]);
   const [isFetchingUser, setisFetchingUser] = useState(false);
@@ -201,8 +197,6 @@ const ApproverPurchase: React.FC<Props> = ({
   }, []);
 
   useEffect(() => {
-    const currentUserId = localStorage.getItem("id");
-    const userId = currentUserId ? parseInt(currentUserId) : 0;
     setNotedBy(record.noted_by);
     setApprovedBy(record.approved_by);
     setAvpstaff(record.avp_staff);
@@ -465,22 +459,25 @@ const ApproverPurchase: React.FC<Props> = ({
               <p className="pl-2 font-bold">{formatDate2(record.created_at)}</p>
             </div>
           </div>
-          <div className="flex items-center w-full md:w-1/2">
-            <p>Status:</p>
-            <p
-              className={`${
-                record.status.trim() === "Pending"
-                  ? "bg-yellow"
-                  : record.status.trim() === "Approved"
-                  ? "bg-green"
-                  : record.status.trim() === "Disapproved"
-                  ? "bg-pink"
-                  : "bg-pink"
-              } rounded-lg py-1 w-1/3 font-medium text-[14px] text-center ml-2 text-white`}
-            >
-              {record.status}
-            </p>
-          </div>
+          {record.completed_status !== "Completed" && (
+            <div className="flex items-center w-full md:w-1/2">
+              <p>Status:</p>
+              <p
+                className={`${
+                  record.status.trim() === "Pending"
+                    ? "bg-yellow"
+                    : record.status.trim() === "Approved"
+                    ? "bg-green"
+                    : record.status.trim() === "Disapproved"
+                    ? "bg-pink"
+                    : "bg-pink"
+                } rounded-lg  py-1 w-1/3 font-medium text-[14px] text-center ml-2 text-white`}
+              >
+                {" "}
+                {record.status}
+              </p>
+            </div>
+          )}
 
           <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2">
             <div className="w-full">

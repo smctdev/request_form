@@ -8,37 +8,21 @@ import ClipLoader from "react-spinners/ClipLoader";
 
 type Branch = z.infer<typeof schema>;
 const schema = z.object({
-  branchCode: z.string().nonempty(),
-  branch: z.string(),
-  branchNameInput: z.string(),
+  position: z.string()
 });
 
-const branchOptions = [
-  "Des Appliance, Inc.",
-  "Des Strong Motors, Inc.",
-  "Head Office",
-  "Honda Des, Inc.",
-  "Strong Moto Centrum, Inc.",
-];
-
-const AddBranchModal = ({
+const AddPositionModal = ({
   modalIsOpen,
-  closeModal,
-  openCompleteModal,
-  entityType,
-  refreshData,
+  closeModal
 }: {
   modalIsOpen: boolean;
   closeModal: any;
-  openCompleteModal: any;
-  entityType: string;
   refreshData: () => void;
 }) => {
   const [loading, setLoading] = useState(false);
   const [backendError, setBackendError] = useState("");
   const {
     reset,
-    register,
     handleSubmit,
     setValue,
     formState: { errors },
@@ -54,19 +38,15 @@ const AddBranchModal = ({
         Authorization: `Bearer ${token}`,
       };
       const requestData = {
-        branch: data.branch,
-        branch_code: data.branchCode,
-        branch_name: data.branchNameInput,
+        position: data.position
       };
       const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/add-branch`,
+        `${process.env.REACT_APP_API_BASE_URL}/add-position`,
         requestData,
         { headers }
       );
 
       if (response.status === 200 && response.data.status) {
-        openCompleteModal();
-        refreshData();
 
         setBackendError("");
         reset();
@@ -87,7 +67,7 @@ const AddBranchModal = ({
     <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="p-4 w-7/12 md:w-2/6 relative bg-primary flex justify-center mx-20 border-b rounded-t-[12px]">
         <h2 className="text-center text-xl md:text-[32px] font-bold text-white">
-          Add {entityType}
+          Add Position
         </h2>
         <XMarkIcon
           className="absolute text-black cursor-pointer size-6 right-3"
@@ -98,56 +78,15 @@ const AddBranchModal = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="gap-4 mt-10 md:mx-5">
             <div className="mb-4">
-              <p className="w-full font-medium">Branch</p>
-              <select
-                {...register("branch")}
-                className="w-full bg-[#F5F5F5] border select select-bordered border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                onChange={(e) => setValue("branch", e.target.value)}
-              >
-                <option value="" hidden>
-                  Select Branch
-                </option>
-                <option value="" disabled>
-                  Select Branch
-                </option>
-                {branchOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              {errors.branch && (
-                <span className="text-xs text-red-500">
-                  {errors.branch.message}
-                </span>
-              )}
-            </div>
-            <div className="mb-4">
-              <p className="w-full font-medium">Branch Code</p>
+              <p className="w-full font-medium">New Position</p>
               <input
                 type="text"
-                onChange={(e) => setValue("branchCode", e.target.value)}
+                onChange={(e) => setValue("position", e.target.value)}
                 className="w-full bg-[#F5F5F5] border input input-bordered border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
               />
-              {errors.branchCode && (
+              {errors.position && (
                 <span className="text-xs text-red-500">
-                  {errors.branchCode.message}
-                </span>
-              )}
-            </div>
-            <div className="mb-4">
-              <p className="w-full font-medium">Branch Name</p>
-              <input
-                type="text"
-                onChange={(e) => setValue("branchNameInput", e.target.value)}
-                className="w-full bg-[#F5F5F5] input input-bordered border border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-              />
-              {backendError && (
-                <span className="text-xs text-red-500">{backendError}</span>
-              )}
-              {errors.branchNameInput && (
-                <span className="text-xs text-red-500">
-                  {errors.branchNameInput.message}
+                  {errors.position.message}
                 </span>
               )}
             </div>
@@ -173,4 +112,4 @@ const AddBranchModal = ({
   ) : null;
 };
 
-export default AddBranchModal;
+export default AddPositionModal;
