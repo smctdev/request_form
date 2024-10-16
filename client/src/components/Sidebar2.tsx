@@ -181,6 +181,24 @@ const Sidebar2: React.FC<SidebarProps> = ({
   }, [user]);
 
   useEffect(() => {
+    const id = localStorage.getItem("id");
+    if (!id) return;
+    if (Echo) {
+      const channel = Echo.private(`App.Models.User.${id}`).notification(
+        (notification: any) => {
+          setnotificationReceived(true);
+        }
+      );
+
+      return () => {
+        channel.stopListening(
+          "IlluminateNotificationsEventsBroadcastNotificationCreated"
+        );
+      };
+    }
+  }, []);
+
+  useEffect(() => {
     if (notificationReceived) {
       setnotificationReceived(false);
     }

@@ -18,7 +18,7 @@ use App\Notifications\ReturnRequestNotification;
 use App\Notifications\PreviousReturnRequestNotification;
 use App\Events\NotificationEvent;
 use App\Models\Branch;
-
+use App\Notifications\CompletedNotification;
 
 class ApprovalProcessController extends Controller
 {
@@ -133,6 +133,10 @@ class ApprovalProcessController extends Controller
                     $nextApprover->notify(new ApprovalProcessNotification($nextApprovalProcess, $firstname, $requestForm, $requesterFirstname, $requesterLasttname));
                     event(new NotificationEvent(Auth::user()->id, $nextApprovalProcess->user->id));
 
+                    $user = User::where('id', $requestForm->user_id)->first();
+
+                    $user->notify(new OngoingNotification($requestForm, 'ongoing', $user->firstName, $requestForm->form_type,$request_code));
+
                     // Broadcast the notification count update
                     $message = 'You have a request form to approve';
                     $date = now();
@@ -152,7 +156,34 @@ class ApprovalProcessController extends Controller
                     $employee = $requestForm->user;
                     $firstname = $employee->firstName;
                     $employee->notify(new EmployeeNotification($requestForm, 'approved', $firstname, $formtype, $request_code, $comment));
+                    Log::warning($requestForm->user);
+                    if (!empty($requestForm->noted_by)) {
+                        foreach ($requestForm->noted_by as $notedById) {
+                            $notedByUser = User::find($notedById);
+                            if ($notedByUser) {
+                                $notedByUser->notify(new CompletedNotification());
+                            }
+                        }
+                    }
+                    $previousApprovalProcesses = ApprovalProcess::where('request_form_id', $request_form_id)
+                    ->where('status', 'Approved')
+                    ->orderBy('level', 'asc')
+                    ->get();
 
+                    foreach ($previousApprovalProcesses as $previousApprovalProcess) {
+                        $previousApprover = $previousApprovalProcess->user;
+                        $previousApprover->notify(new CompletedNotification());
+                    }
+
+                    // Notify the approved_by users
+                    if (!empty($requestForm->approved_by)) {
+                        foreach ($requestForm->approved_by as $approvedById) {
+                            $approvedByUser = User::find($approvedById);
+                            if ($approvedByUser) {
+                                $approvedByUser->notify(new CompletedNotification());
+                            }
+                        }
+                    }
                     // Broadcast the notification count update
                     $message = 'Your request has been ' . $requestForm->status;
                     $date = now();

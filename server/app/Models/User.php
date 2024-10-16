@@ -70,9 +70,9 @@ class User extends Authenticatable
         return $this->hasOne(Approver::class, 'user_id');
     }
 
-    public function approverStaff()
+    public function approverStaffs()
     {
-        return $this->belongsTo(AVPFinanceStaff::class, 'staff_id');
+        return $this->hasMany(AVPFinanceStaff::class, 'staff_id');
     }
     public function userApprover()
     {

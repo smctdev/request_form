@@ -139,10 +139,10 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
   if (!modalIsOpen) return null;
 
   return (
-    <div className="z-10 fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col">
-      <div className="bg-white w-10/12 sm:w-1/3 mx-20 flex flex-col rounded-lg shadow-lg">
-        <div className="p-4 bg-primary flex justify-center items-center rounded-t-lg">
-          <h2 className="text-center text-xl md:text-2xl font-bold text-white">
+    <div className="fixed top-0 left-0 z-10 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
+      <div className="flex flex-col w-10/12 mx-20 bg-white rounded-lg shadow-lg sm:w-1/3">
+        <div className="flex items-center justify-center p-4 rounded-t-lg bg-primary">
+          <h2 className="text-xl font-bold text-center text-white md:text-2xl">
             Add {entityType}
           </h2>
         </div>
@@ -150,14 +150,14 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
           <div className="relative flex items-center mb-4">
             <input
               type="text"
-              className="w-full bg-white border border-gray-300 rounded-md pl-10 pr-3 py-2"
+              className="w-full py-2 pl-10 pr-3 bg-white border border-gray-300 rounded-md"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search approvers"
             />
-            <MagnifyingGlassIcon className="h-5 w-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+            <MagnifyingGlassIcon className="absolute w-5 h-5 text-gray-500 transform -translate-y-1/2 pointer-events-none left-3 top-1/2" />
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 overflow-y-auto h-80">
+          <div className="grid grid-cols-1 gap-4 overflow-y-auto lg:grid-cols-2 h-80">
             <div>
               <h1 className="text-lg font-medium">Noted By</h1>
               {filteredApprovers.map((approver, index) => {
@@ -227,25 +227,25 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
             <div className="mt-4 text-red-500">{errorMessage}</div>
           )}
         </div>
-        <div className="p-4 flex-col md:flex-row gap-2 bg-gray-100 flex justify-end rounded-b-lg">
+        <div className="flex flex-col justify-end gap-2 p-4 bg-gray-100 rounded-b-lg md:flex-row">
         <button
             type="button"
             onClick={handleResetSelection}
-            className="bg-gray-300 px-2 hover:bg-gray-400 text-gray-800 font-medium py-2  rounded "
+            className="px-2 py-2 font-medium text-gray-800 bg-gray-300 rounded hover:bg-gray-400 "
           >
             Reset
           </button>
           <button
             type="button"
             onClick={handleCancel}
-            className="bg-gray-500 px-2  hover:bg-gray-400 text-white font-medium py-2  rounded"
+            className="px-2 py-2 font-medium text-white bg-gray-500 rounded hover:bg-gray-400"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleAddCustomRequest}
-            className="bg-primary px-2 hover:bg-blue-400 hover:bg-primary-dark text-white font-medium py-2  rounded "
+            className="px-2 py-2 font-medium text-white rounded bg-primary hover:bg-blue-400 hover:bg-primary-dark "
           >
             Save
           </button>
