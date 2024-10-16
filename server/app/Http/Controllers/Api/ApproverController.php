@@ -12,6 +12,7 @@ use App\Models\Branch;
 use App\Models\AVPFinance;
 use App\Models\AVPFinanceStaff;
 use Illuminate\Support\Arr;
+
 class ApproverController extends Controller
 {
     /**
@@ -39,7 +40,6 @@ class ApproverController extends Controller
                 'message' => 'Approvers retrieved successfully',
                 'HOApprovers' => $HOapprovers,
             ], 200);
-
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'User not found',
@@ -107,7 +107,7 @@ class ApproverController extends Controller
         $branchIds = is_array($branchIds) ? $branchIds : [$branchIds];
 
         // Retrieve branch codes based on branch IDs
-        
+
         // Prepare the response array
         $response = [
             'id' => $AVPStaff->id,
@@ -173,7 +173,6 @@ class ApproverController extends Controller
             return response()->json([
                 'message' => 'AVP Staff deleted successfully',
             ], 200);
-
         } catch (\Exception $e) {
             Log::error('An error occurred while deleting the AVP Staff: ' . $e->getMessage());
             return response()->json([
@@ -201,7 +200,6 @@ class ApproverController extends Controller
                 'message' => 'Approvers retrieved successfully',
                 'HOApprovers' => $HOapprovers,
             ], 200);
-
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json([
                 'message' => 'User not found',
@@ -217,7 +215,7 @@ class ApproverController extends Controller
     public function index()
     {
         try {
-            $approvers = User::where('role', 'approver')->get();
+            $approvers = User::with('approverStaffs')->where('role', 'approver')->doesntHave('approverStaffs')->get();
             return response()->json([
                 'message' => 'Approvers retrieved successfully',
                 'data' => $approvers,
@@ -243,7 +241,9 @@ class ApproverController extends Controller
 
             // Fetch approvers based on the branch ID
 
-            $HOapprovers = User::where('branch_code', $HObranchID)
+            $HOapprovers = User::with('approverStaffs')->where('branch_code', $HObranchID)
+
+                ->doesntHave('approverStaffs')
 
                 ->where('role', 'approver')
 
@@ -258,9 +258,11 @@ class ApproverController extends Controller
             $requesterBranch = (int) $requester->branch_code;
 
 
-            $sameBranchApprovers = User::where('branch_code', $requesterBranch)
+            $sameBranchApprovers = User::with('approverStaffs')->where('branch_code', $requesterBranch)
 
                 ->where('role', 'approver')
+
+                ->doesntHave('approverStaffs')
 
                 ->where('position', '!=', 'Area Manager')
 
@@ -269,15 +271,18 @@ class ApproverController extends Controller
                 ->get();
 
 
-            $areaManagerApprover = User::whereIn('id', function ($query) use ($requesterBranch) {
+            $areaManagerApprover = User::with('approverStaffs')->whereIn('id', function ($query) use ($requesterBranch) {
 
                 $query->select('user_id')
 
                     ->from('area_managers')
 
                     ->whereJsonContains('branch_id', $requesterBranch);
+            })
 
-            })->get(['id', 'firstName', 'lastName', 'role', 'position', 'branch_code']);
+                ->doesntHave('approverStaffs')
+
+                ->get(['id', 'firstName', 'lastName', 'role', 'position', 'branch_code']);
 
 
 
@@ -292,8 +297,6 @@ class ApproverController extends Controller
                 'areaManagerApprover' => $areaManagerApprover
 
             ], 200);
-
-
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
 
             return response()->json([
@@ -303,7 +306,6 @@ class ApproverController extends Controller
                 'error' => $e->getMessage(),
 
             ], 404);
-
         } catch (\Exception $e) {
 
             return response()->json([
@@ -313,9 +315,7 @@ class ApproverController extends Controller
                 'error' => $e->getMessage(),
 
             ], 500);
-
         }
-
     }
     /**
      * Display the specified approver.
@@ -399,11 +399,11 @@ class ApproverController extends Controller
 
             if ($exists) {
                 $branchCodes = Branch::whereIn('id', $branchId)
-            ->pluck('branch_code')
-            ->toArray();
+                    ->pluck('branch_code')
+                    ->toArray();
 
                 return response()->json([
-                    'message' =>  implode(',', $branchCodes).' branch has already been taken.'
+                    'message' =>  implode(',', $branchCodes) . ' branch has already been taken.'
                 ], 422);
             }
 
@@ -418,7 +418,6 @@ class ApproverController extends Controller
                 'message' => 'AVP-Finance staff with assigned branches created successfully',
                 'avp_staffs' => $avpFinanceStaff
             ], 201);
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while creating the AVP-Finance staff',
@@ -442,7 +441,6 @@ class ApproverController extends Controller
                 "status" => true,
                 'message' => 'Approver deleted and user role updated successfully',
             ], 200);
-
         } catch (\Exception $e) {
             Log::error('An error occurred while deleting the approver: ' . $e->getMessage());
             return response()->json([
@@ -451,5 +449,4 @@ class ApproverController extends Controller
             ], 500);
         }
     }
-
 }

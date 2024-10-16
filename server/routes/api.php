@@ -31,11 +31,11 @@ Route::post("login", [LoginController::class, "login"]);
 Route::get("get-role/{id}", [UserController::class, "getRole"])->name("get.user.role");
 Route::post("password/email", [UserController::class, "sendResetLinkEmail"])->name("password.forgot");
 Route::get("view-branch", [BranchController::class, "viewBranch"])->name('view.branch');
-Route::post("create-request", [RequestFormController::class, "createRequest"])->name('create.request');
 
 // PROTECTED
 // REQUEST FORM
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post("create-request", [RequestFormController::class, "createRequest"])->name('create.request');
     Route::get("view-user/{id}", [UserController::class, "viewUser"])->name('view.user');
     Route::get('/profile', [ProfileController::class, 'profile']);
     Route::get('request-forms/for-approval/{user_id}', [ApprovalProcessController::class, 'getRequestFormsForApproval'])->name('get.request.form.for.approval');

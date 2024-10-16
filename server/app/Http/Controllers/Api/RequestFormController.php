@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Branch;
+
 class RequestFormController extends Controller
 {
 
@@ -257,7 +258,6 @@ class RequestFormController extends Controller
 
                         if ($staffBranchAssignments) {
                             $staffBranches = json_decode($staffBranchAssignments, true); // Decode branch_id JSON
-                            Log::info($avpStaffs, $staffBranches);
                             // Check if the staff's branches include the request form branch
                             if (in_array($branchId, $staffBranches)) {
                                 $approvalProcesses[] = [
@@ -271,7 +271,6 @@ class RequestFormController extends Controller
                                 $level++;
                             }
                         }
-
                     }
                 }
 
@@ -313,21 +312,33 @@ class RequestFormController extends Controller
 
             // Notify the first approver (user 3 in this case)
             $firstApproverId = $notedByIds[0];
-            $firstApprover = User::find($firstApproverId);
+            $firstApprover = User::with('approverStaffs')->find($firstApproverId);
 
             if ($firstApprover) {
                 $firstApprovalProcess = ApprovalProcess::where('request_form_id', $requestFormData->id)
                     ->where('level', 1)
                     ->first();
-                Log::info($firstApprovalProcess);
 
-                $firstApprover->notify(new ApprovalProcessNotification(
-                    $firstApprovalProcess,
-                    $firstApprover->firstName,
-                    $requestFormData,
-                    $user->firstName,
-                    $user->lastName
-                ));
+                $staff = User::where('id', $firstApprovalProcess->user_id)->first();
+                if ($staff) {
+                    $staff->notify(new ApprovalProcessNotification(
+                        $firstApprovalProcess,
+                        $firstApprover->firstName,
+                        $requestFormData,
+                        $user->firstName,
+                        $user->lastName
+                    ));
+                } else {
+                    $firstApprover->notify(new ApprovalProcessNotification(
+                        $firstApprovalProcess,
+                        $firstApprover->firstName,
+                        $requestFormData,
+                        $user->firstName,
+                        $user->lastName
+                    ));
+                }
+
+
 
                 // Broadcast notification event
                 $message = 'You have a request form to approve';
@@ -342,7 +353,6 @@ class RequestFormController extends Controller
             return response()->json([
                 'message' => 'Request form created successfully',
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Request form creation failed', ['error' => $e->getMessage()]);
@@ -472,7 +482,6 @@ class RequestFormController extends Controller
                                 $level++;
                             }
                         }
-
                     }
                 }
 
@@ -507,7 +516,8 @@ class RequestFormController extends Controller
             // Notify first approver
             $firstApprover = $noted_by[0] ?? null;
             if ($firstApprover) {
-                $firstApproverUser = User::find($firstApprover);
+                $firstApproverUser = User::with('approverStaffs')->find($firstApprover);
+
                 if ($firstApproverUser) {
                     $firstApprovalProcess = ApprovalProcess::where('request_form_id', $request_data->id)
                         ->where('user_id', $firstApprover)
@@ -537,7 +547,6 @@ class RequestFormController extends Controller
             DB::commit(); // Commit transaction
 
             return response()->json(['message' => 'Request form updated successfully'], 200);
-
         } catch (ModelNotFoundException $e) {
             DB::rollBack(); // Rollback transaction on error
             return response()->json([
@@ -601,13 +610,11 @@ class RequestFormController extends Controller
                 'message' => 'Request form retrieved successfully',
                 'data' => $requestForm
             ], 200);
-
         } catch (\Exception $e) {
 
             return response()->json([
                 'message' => 'Request form not found',
             ], 404);
-
         } catch (\Exception $e) {
 
             return response()->json([
@@ -628,7 +635,7 @@ class RequestFormController extends Controller
 
             // Fetch request forms where user_id matches the current user's ID
             $requestForms = RequestForm::where('user_id', $currentUserId)
-                ->select('id', 'user_id', 'form_type', 'form_data', 'status', 'noted_by', 'approved_by', 'attachment', 'request_code', 'created_at','completed_code')
+                ->select('id', 'user_id', 'form_type', 'form_data', 'status', 'noted_by', 'approved_by', 'attachment', 'request_code', 'created_at', 'completed_code')
                 ->with('approvalProcess')
                 ->get();
 
@@ -796,13 +803,11 @@ class RequestFormController extends Controller
                 'totalDisapprovedRequest' => $totalDisapprovedRequest
 
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => "An error occured while counting the total request sent",
                 'error' => $e->getMessage()
             ]);
-
         }
     }
 
@@ -819,15 +824,12 @@ class RequestFormController extends Controller
                 'message' => "Total number of approved request counted successfully",
                 'totalApprovedRequest' => $totalApprovedRequests
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => "An error occured while counting the total number of approved request",
                 'error' => $e->getMessage()
             ]);
-
         }
-
     }
 
     //TOTAL PENDING REQUESTS BY USER
@@ -843,9 +845,7 @@ class RequestFormController extends Controller
                 'message' => "Total number of pending requests counted successfully",
                 'totalPendingRequest' => $totalPendingRequest
             ]);
-
         } catch (\Exception $e) {
-
         }
     }
 
