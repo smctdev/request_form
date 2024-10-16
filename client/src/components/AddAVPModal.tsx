@@ -439,6 +439,23 @@ const AddAVPModal = ({
       ) : (
         <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2" />
       )}
+      {isButtonVisible ?
+      <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2">
+        <button
+          onClick={handleCancel}
+          className="h-12 px-4 py-2 font-bold text-white bg-gray-500 rounded cursor-pointer hover:bg-gray-600"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleConfirmSelection}
+          className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer bg-primary hover:bg-blue-400"
+        >
+          {isLoading ? <ClipLoader color="#36d7b7" /> : "Add AVP Staff"}
+        </button>
+      </div> :
+      <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2"/>
+      }
     </div>
   );
 };
