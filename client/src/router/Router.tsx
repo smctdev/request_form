@@ -40,6 +40,7 @@ import CreateDiscount from '../components/CreateDiscount';
 import PrintDiscount from '../components/PrintDiscount';
 import Preloader from '../loader/PreLoader';
 import { useUser } from '../context/UserContext';
+import SetupPosition from '../components/SetupPosition';
 
 interface RouterProps {
   isdarkMode: boolean;
@@ -107,6 +108,9 @@ const Router: React.FC<RouterProps> = ({isdarkMode}) => {
           </Route>
           <Route path='/setup/User' element={<App isdarkMode={isdarkMode} />}>
             <Route index element={<SetupUser />} />
+          </Route>
+          <Route path='/setup/Position' element={<App isdarkMode={isdarkMode} />}>
+            <Route index element={<SetupPosition />} />
           </Route>
           <Route path='/setup/Branch' element={<App isdarkMode={isdarkMode} />}>
             <Route index element={<SetupBranch />} />

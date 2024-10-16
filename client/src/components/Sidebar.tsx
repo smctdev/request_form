@@ -97,6 +97,12 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, role }) => {
             path: "/setup/User",
           },
           {
+            title: "Position",
+            submenu: false,
+            icon: BeakerIcon,
+            path: "/setup/User",
+          },
+          {
             title: "Branch",
             submenu: false,
             icon: BeakerIcon,
