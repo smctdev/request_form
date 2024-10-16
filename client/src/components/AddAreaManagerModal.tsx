@@ -34,7 +34,7 @@ const AddAreaManagerModal = ({
   entityType: string;
   refreshData: () => void;
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -79,6 +79,8 @@ const AddAreaManagerModal = ({
         setUsers(transformedData);
       } catch (error) {
         console.error("Error fetching users data:", error);
+      } finally{
+        setLoading(false);
       }
     };
 
@@ -86,6 +88,7 @@ const AddAreaManagerModal = ({
       fetchUsers();
     }
   }, [modalIsOpen]);
+
   useEffect(() => {
     const fetchBranches = async () => {
       try {
@@ -206,11 +209,11 @@ const AddAreaManagerModal = ({
       <div className="relative w-10/12 overflow-y-auto bg-white sm:w-1/3 x-20 h-2/3">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <ClipLoader size={35} color={"#123abc"} loading={loading} />
+            <ClipLoader size={35} color={"#389df1"} loading={loading} />
           </div>
         ) : error ? (
           <div className="p-4 text-red-500">
-            <ClipLoader size={35} color={"#123abc"} />
+            <ClipLoader size={35} color={"#389df1"} />
           </div>
         ) : (
           <div>
@@ -331,6 +334,7 @@ const AddAreaManagerModal = ({
           </div>
         )}
       </div>
+      {isButtonVisible?
       <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2">
         <button
           onClick={handleCancel}
@@ -342,9 +346,11 @@ const AddAreaManagerModal = ({
           onClick={handleConfirmSelection}
           className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer bg-primary hover:bg-blue-400"
         >
-          {isLoading ? <ClipLoader color="#36d7b7" /> : "Add Area Manager"}
+          {isLoading ? "Adding..." : "Add Area Manager"}
         </button>
-      </div>
+      </div> :
+      <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2"/>
+      }
     </div>
   );
 };

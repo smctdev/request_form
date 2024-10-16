@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import SMCTLogo from "./assets/SMCT.png";
 import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
