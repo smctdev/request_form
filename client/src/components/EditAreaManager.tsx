@@ -54,7 +54,6 @@ const EditAreaManager = ({
   closeSuccessModal: any;
   refreshData: any;
 }) => {
-  const [loading, setLoading] = useState(true);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [selectedBranches, setSelectedBranches] = useState<number[]>([]);
   const [initialSelectedBranches, setInitialSelectedBranches] = useState<
@@ -271,6 +270,28 @@ const EditAreaManager = ({
               onChange={(e) => setSearchQuery(e.target.value)}
               className="p-2 mb-2 border border-gray-300 rounded-md "
             />
+            <div className="flex flex-wrap px-4 mt-4 mb-4">
+                  {selectedBranches.map((branchId) => {
+                    const branch = branches.find((b) => b.id === branchId);
+                    return (
+                      <div
+                        key={branchId}
+                        className="badge bg-[#389df1] border-none p-4 mb-1 mr-2 flex justify-between items-center"
+                      >
+                        <span className="text-white">
+                          {branch?.branch_code}
+                        </span>
+                        <button
+                          className="ml-2"
+                          onClick={() => handleRemoveBranch(branchId)}
+                          aria-label="Remove branch"
+                        >
+                          <XMarkIcon className="w-4 h-4 stroke-white" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
             <div className="h-auto px-4">
               {branches.length === 0 ? (
                 <ClipLoader size={35} color={"#123abc"} loading={true} />
@@ -309,27 +330,6 @@ const EditAreaManager = ({
             </div>
           </div>
         )}
-      </div>
-      <div className="flex flex-wrap w-10/12 gap-2 p-2 overflow-y-auto bg-white shadow-lg sm:w-1/3 bottom-4 right-4 max-h-48">
-        {selectedBranches.map((branchId) => {
-          const branch = branches.find((b) => b.id === branchId);
-          return (
-            <div
-              key={branchId}
-              className="relative p-3 mb-2 bg-gray-300 rounded-sm"
-            >
-              <XMarkIcon
-                className="absolute top-0 right-0 text-gray-500 cursor-pointer size-4"
-                onClick={() => handleRemoveBranch(branchId)}
-              />
-
-              <div>
-                <p>{branch?.branch}</p>
-                <p>{branch?.branch_code}</p>
-              </div>
-            </div>
-          );
-        })}
       </div>
       <div className="bg-white w-10/12 sm:w-1/3 justify-end rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex space-x-2">
         <button
