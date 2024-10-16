@@ -319,16 +319,21 @@ const RequestApprover = (props: Props) => {
         break;
       case 1:
         filteredRequests = requests.filter(
-          (item: Record) =>
-            item.status.trim() === "Pending" || item.status.trim() === "Ongoing"
+          (item: Record) => item.completed_status.trim() === "Completed"
         );
         break;
       case 2:
         filteredRequests = requests.filter(
-          (item: Record) => item.status.trim() === "Approved"
+          (item: Record) =>
+            item.status.trim() === "Pending" || item.status.trim() === "Ongoing"
         );
         break;
       case 3:
+        filteredRequests = requests.filter(
+          (item: Record) => item.status.trim() === "Approved" && item.completed_status.trim() !== "Completed"
+        );
+        break;
+      case 4:
         filteredRequests = requests.filter(
           (item: Record) => item.status.trim() === "Disapproved"
         );
@@ -487,6 +492,7 @@ const RequestApprover = (props: Props) => {
 
   const items = [
     "All Requests",
+    "Completed Requests",
     "Pending Requests",
     "Approved Requests",
     "Unsuccessful Requests",

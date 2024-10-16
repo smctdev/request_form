@@ -49,6 +49,7 @@ type Record = {
   requested_by: string;
   requested_signature: string;
   requested_position: string;
+  completed_status: string;
 };
 
 type FormData = {
@@ -223,7 +224,10 @@ const ApproverCashDisbursement: React.FC<Props> = ({
         // Handle the parsed attachment
         const fileUrls = parsedAttachment.map(
           (filePath: string) =>
-            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(/\\/g, "/")}`
+            `${process.env.REACT_APP_URL_STORAGE}/${filePath.replace(
+              /\\/g,
+              "/"
+            )}`
         );
         setAttachmentUrl(fileUrls);
       } else {
@@ -237,7 +241,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
       ) {
         const approvedAttachmentString = record.approved_attachment[0]; // Access the first element
         const parsedApprovedAttachment = JSON.parse(approvedAttachmentString); // Parse the string to get the actual array
-      
 
         if (
           Array.isArray(parsedApprovedAttachment) &&
@@ -246,7 +249,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
           // Access the first element of the array
           const formattedAttachment = parsedApprovedAttachment[0];
           setAttachment(formattedAttachment); // Set the state with the string
-         
         } else {
           console.warn(
             "Parsed approved attachment is not an array or is empty:",
@@ -313,7 +315,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
       requestData.append("comment", comments);
 
       // Log the contents of requestData for debugging
-    
+
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/request-forms/${record.id}/process`,
         requestData,
@@ -362,8 +364,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
     requestData.append("action", "approve");
     requestData.append("comment", comments);
 
- 
-   
     try {
       setApprovedLoading(true);
 
@@ -508,24 +508,25 @@ const ApproverCashDisbursement: React.FC<Props> = ({
               <p className="pl-2 font-bold">{formatDate2(record.created_at)}</p>
             </div>
           </div>
-          <div className="flex items-center w-full md:w-1/2">
-            <p>Status:</p>
-            <p
-              className={`${
-                record.status.trim() === "Pending"
-                  ? "bg-yellow"
-                  : record.status.trim() === "Approved"
-                  ? "bg-green"
-                  : record.status.trim() === "Disapproved"
-                  ? "bg-pink"
-                  : "bg-pink"
-              } rounded-lg  py-1 w-1/3
-             font-medium text-[14px] text-center ml-2 text-white`}
-            >
-              {" "}
-              {record.status}
-            </p>
-          </div>
+          {record.completed_status !== "Completed" && (
+            <div className="flex items-center w-full md:w-1/2">
+              <p>Status:</p>
+              <p
+                className={`${
+                  record.status.trim() === "Pending"
+                    ? "bg-yellow"
+                    : record.status.trim() === "Approved"
+                    ? "bg-green"
+                    : record.status.trim() === "Disapproved"
+                    ? "bg-pink"
+                    : "bg-pink"
+                } rounded-lg  py-1 w-1/3 font-medium text-[14px] text-center ml-2 text-white`}
+              >
+                {" "}
+                {record.status}
+              </p>
+            </div>
+          )}
           <div className="w-full mt-4 overflow-x-auto">
             <div className="w-full border-collapse ">
               <div className="table-container">
