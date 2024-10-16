@@ -201,7 +201,6 @@ const Request = (props: Props) => {
   const [notificationReceived, setnotificationReceived] = useState(false);
   const [search, searchRequest] = useState("");
 
-
   useEffect(() => {
     const fetchBranchData = async () => {
       try {
@@ -412,7 +411,6 @@ const Request = (props: Props) => {
   const handleSearchRequest = (event: React.ChangeEvent<HTMLInputElement>) => {
     searchRequest(event.target.value.toLowerCase());
   };
-
   const filteredData = () => {
     let filteredRequests;
 
@@ -422,16 +420,21 @@ const Request = (props: Props) => {
         break;
       case 1:
         filteredRequests = requests.filter(
-          (item: Record) =>
-            item.status.trim() === "Pending" || item.status.trim() === "Ongoing"
+          (item: Record) => item.status.trim() === "Completed"
         );
         break;
       case 2:
         filteredRequests = requests.filter(
-          (item: Record) => item.status.trim() === "Approved"
+          (item: Record) =>
+            item.status.trim() === "Pending" || item.status.trim() === "Ongoing"
         );
         break;
       case 3:
+        filteredRequests = requests.filter(
+          (item: Record) => item.status.trim() === "Approved"
+        );
+        break;
+      case 4:
         filteredRequests = requests.filter(
           (item: Record) => item.status.trim() === "Disapproved"
         );
@@ -571,7 +574,7 @@ const Request = (props: Props) => {
       name: "Status",
       selector: (row: Record) => row.status,
       sortable: true,
-      width: "320px",
+      minWidth: "150px",
       cell: (row: Record) => (
         <div className="relative flex items-center w-full group">
           {/* Status Badge */}
@@ -627,10 +630,12 @@ const Request = (props: Props) => {
 
   const items = [
     "All Requests",
+    "Completed Requests",
     "Pending Requests",
     "Approved Requests",
     "Unsuccessful Requests",
   ];
+  console.log(items);
 
   const closeModal = () => {
     setModalIsOpen(false);

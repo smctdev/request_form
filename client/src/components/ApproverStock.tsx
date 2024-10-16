@@ -47,6 +47,7 @@ type Record = {
   requested_by: string;
   requested_signature: string;
   requested_position: string;
+  completed_status: string;
 };
 
 type FormData = {
@@ -456,7 +457,8 @@ const ApproversStock: React.FC<Props> = ({
               <p className="pl-2 font-bold">{formatDate2(record.created_at)}</p>
             </div>
           </div>
-          <div className="flex items-center w-full md:w-1/2">
+          {record.completed_status !== "Completed" && (
+            <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
               className={`${
@@ -473,6 +475,7 @@ const ApproversStock: React.FC<Props> = ({
               {record.status}
             </p>
           </div>
+          )}
 
           <p className="font-medium text-[14px]">
             Purpose: {record.form_data[0].purpose}

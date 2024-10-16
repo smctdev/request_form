@@ -48,6 +48,7 @@ type Record = {
   requested_by: string;
   requested_signature: string;
   requested_position: string;
+  completed_status: string;
 };
 
 type FormData = {
@@ -507,7 +508,8 @@ const ApproverRefund: React.FC<Props> = ({
               <p className="pl-2 font-bold">{formatDate2(record.created_at)}</p>
             </div>
           </div>
-          <div className="flex items-center w-full md:w-1/2">
+          {record.completed_status !== "Completed" && (
+            <div className="flex items-center w-full md:w-1/2">
             <p>Status:</p>
             <p
               className={`${
@@ -518,13 +520,13 @@ const ApproverRefund: React.FC<Props> = ({
                   : record.status.trim() === "Disapproved"
                   ? "bg-pink"
                   : "bg-pink"
-              } rounded-lg  py-1 w-1/3
-             font-medium text-[14px] text-center ml-2 text-white`}
+              } rounded-lg  py-1 w-1/3 font-medium text-[14px] text-center ml-2 text-white`}
             >
               {" "}
               {record.status}
             </p>
           </div>
+          )}
 
           <div className="w-full mt-4 overflow-x-auto">
             <div className="w-full border-collapse ">
