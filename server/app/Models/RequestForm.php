@@ -29,6 +29,7 @@ class RequestForm extends Model
 
     protected $casts = [
         'attachment' => 'array',
+        'form_data' => 'array',
         'approved_by' => 'array',
         'noted_by' => 'array',
         'date'  => 'datetime',
