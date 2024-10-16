@@ -101,7 +101,7 @@ const AddAVPModal = ({
         setUsers(response.data.HOApprovers);
       } catch (error) {
         console.error("Error fetching users data:", error);
-      }finally{
+      } finally {
         setLoading(false);
       }
     };
@@ -318,7 +318,30 @@ const AddAVPModal = ({
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="p-2 mb-2 border border-gray-300 rounded-md"
                         />
-
+                        <div className="flex flex-wrap px-4 mt-4 mb-4">
+                          {selectedBranches.map((branchId) => {
+                            const branch = branches.find(
+                              (b) => b.id === branchId
+                            );
+                            return (
+                              <div
+                                key={branchId}
+                                className="badge bg-[#389df1] border-none p-4 mb-1 mr-2 flex justify-between items-center"
+                              >
+                                <span className="text-white">
+                                  {branch?.branch_code}
+                                </span>
+                                <button
+                                  className="ml-2"
+                                  onClick={() => handleRemoveBranch(branchId)}
+                                  aria-label="Remove branch"
+                                >
+                                  <XMarkIcon className="w-4 h-4 stroke-white" />
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
                         <div className="px-4">
                           {branches.length === 0 ? (
                             <ClipLoader
@@ -398,31 +421,23 @@ const AddAVPModal = ({
           </div>
         )}
       </div>
-      {/* Selected Branches Section */}
-      {selectedBranches.length > 0 && (
-        <div className="flex flex-col w-10/12 p-2 bg-white shadow-lg sm:w-1/3 bottom-4 right-4 ">
-          <div className="flex flex-wrap gap-2 ">
-            {selectedBranches.map((branchId) => {
-              const branch = branches.find((b) => b.id === branchId);
-              return (
-                <div
-                  key={branchId}
-                  className="relative p-3 mb-2 bg-gray-300 rounded-sm"
-                >
-                  <XMarkIcon
-                    className="absolute top-0 right-0 text-gray-500 cursor-pointer size-4"
-                    onClick={() => handleRemoveBranch(branchId)}
-                  />
-                  <div>
-                    <p>{branch?.branch}</p>
-                    <p>{branch?.branch_code}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div>{error && <p className="text-red-500">{error}</p>}</div>
+      {isButtonVisible ? (
+        <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2">
+          <button
+            onClick={handleCancel}
+            className="h-12 px-4 py-2 font-bold text-white bg-gray-500 rounded cursor-pointer hover:bg-gray-600"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleConfirmSelection}
+            className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer bg-primary hover:bg-blue-400"
+          >
+            {isLoading ? <ClipLoader color="#36d7b7" /> : "Add AVP Staff"}
+          </button>
         </div>
+      ) : (
+        <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2" />
       )}
       {isButtonVisible ?
       <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2">
