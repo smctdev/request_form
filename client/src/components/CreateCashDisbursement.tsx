@@ -84,7 +84,7 @@ const CreateCashDisbursement = (props: Props) => {
     }[]
   >([
     {
-      quantity: "",
+      quantity: "1",
       description: "",
       unitCost: "",
       totalAmount: "",
@@ -290,7 +290,7 @@ const CreateCashDisbursement = (props: Props) => {
     setItems([
       ...items,
       {
-        quantity: "",
+        quantity: "1",
         description: "",
         unitCost: "",
         totalAmount: "",
