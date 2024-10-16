@@ -71,9 +71,22 @@ type TableDataItem = {
   remarks: string;
 };
 
+const today = new Date();
+const cashDate = today.toISOString().split("T")[0];
+
+const day = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+][today.getDay()];
+
 const initialTableData: TableDataItem[] = Array.from({ length: 1 }, () => ({
-  cashDate: "",
-  day: "",
+  cashDate: cashDate,
+  day: day,
   from: "",
   to: "",
   activity: "",
@@ -137,8 +150,8 @@ const CreateApplicationCash = (props: Props) => {
     }[]
   >([
     {
-      cashDate: "",
-      day: "",
+      cashDate: new Date().toISOString().split("T")[0],
+      day: day,
       from: "",
       to: "",
       activity: "",
@@ -222,8 +235,8 @@ const CreateApplicationCash = (props: Props) => {
   useEffect(() => {
     setTableData([
       {
-        cashDate: "",
-        day: "",
+        cashDate: new Date().toISOString().split("T")[0],
+        day: day,
         from: "",
         to: "",
         activity: "",
@@ -259,12 +272,40 @@ const CreateApplicationCash = (props: Props) => {
 
   const handleAddItem = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevent form submission
+    const lastRow = tableData[tableData.length - 1];
+    let nextDate = new Date();
+
+    let nextDay = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ][nextDate.getDay()];
+
+    if (lastRow?.cashDate) {
+      const lastDate = new Date(lastRow.cashDate);
+      nextDate = new Date(lastDate.setDate(lastDate.getDate() + 1));
+      nextDay = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ][nextDate.getDay()];
+    }
+
+    const formattedNextDate = nextDate.toISOString().split("T")[0];
 
     setTableData([
       ...tableData,
       {
-        cashDate: "",
-        day: "",
+        cashDate: formattedNextDate,
+        day: nextDay,
         from: "",
         to: "",
         activity: "",

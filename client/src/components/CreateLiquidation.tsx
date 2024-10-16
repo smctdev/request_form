@@ -68,7 +68,7 @@ type TableDataItem = {
 };
 
 const initialTableData: TableDataItem[] = Array.from({ length: 1 }, () => ({
-  liquidationDate: "",
+  liquidationDate: new Date().toISOString().split("T")[0],
   from: "",
   to: "",
   transportation: "",
@@ -145,7 +145,7 @@ const CreateLiquidation = (props: Props) => {
     }[]
   >([
     {
-      liquidationDate: "",
+      liquidationDate: new Date().toISOString().split("T")[0],
       from: "",
       to: "",
       transportation: "",
@@ -160,6 +160,8 @@ const CreateLiquidation = (props: Props) => {
       grandTotal: "0",
     },
   ]);
+
+  console.log(new Date().toISOString().split("T")[0]);
   const [tableData, setTableData] = useState<TableDataItem[]>(initialTableData);
   const [selectedRequestType, setSelectedRequestType] =
     useState("/request/loae");
@@ -233,7 +235,7 @@ const CreateLiquidation = (props: Props) => {
   useEffect(() => {
     setTableData([
       {
-        liquidationDate: "",
+        liquidationDate: new Date().toISOString().split("T")[0],
         from: "",
         to: "",
         transportation: "",
@@ -250,10 +252,19 @@ const CreateLiquidation = (props: Props) => {
   }, [selectedRequestType]);
 
   const handleAddItem = () => {
+    const lastRow = tableData[tableData.length - 1];
+    let nextDate = new Date();
+
+    if (lastRow?.liquidationDate) {
+      const lastDate = new Date(lastRow.liquidationDate);
+      nextDate = new Date(lastDate.setDate(lastDate.getDate() + 1));
+    }
+
+    const formattedNextDate = nextDate.toISOString().split("T")[0];
     setTableData([
       ...tableData,
       {
-        liquidationDate: "",
+        liquidationDate: formattedNextDate,
         from: "",
         to: "",
         transportation: "",
