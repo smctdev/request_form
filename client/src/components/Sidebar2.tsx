@@ -13,6 +13,7 @@ import {
   MapIcon,
   SwatchIcon,
   UserPlusIcon,
+  BriefcaseIcon
 } from "@heroicons/react/24/solid";
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -75,6 +76,7 @@ const Sidebar2: React.FC<SidebarProps> = ({
       ? [
           { title: "Dashboard", icon: ChartBarIcon, path: "/dashboard" },
           { title: "User", icon: UserPlusIcon, path: "/setup/User" },
+          { title: "Position", icon: BriefcaseIcon, path: "/setup/Position" },
           { title: "Branch", icon: BuildingOfficeIcon, path: "/setup/Branch" },
           { title: "Approver", icon: UserIcon, path: "/setup/Approver" },
           { title: "AVP Staff", icon: UserGroupIcon, path: "/setup/AVP" },
