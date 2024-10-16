@@ -81,7 +81,6 @@ const SetupAreaManager = (props: Props) => {
   const [showDeletedSuccessModal, setShowDeletedSuccessModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
-  const [viewModalIsOpen, setViewModalIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Record | null>(null);
   const [areaManagerList, setAreaManagerList] = useState<Record[]>([]);
   const [filterTerm, setFilterTerm] = useState("");
@@ -446,8 +445,6 @@ const SetupAreaManager = (props: Props) => {
               data={filteredAreaManager}
               pagination
               striped
-              // progressPending={isLoading}
-              // progressComponent={<p>Loading...</p>}
               noDataComponent={
                 filteredAreaManager.length === 0 ? (
                   <p className="flex flex-col items-center justify-center h-64">

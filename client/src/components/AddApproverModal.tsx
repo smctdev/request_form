@@ -28,7 +28,7 @@ const AddApproverModal = ({
   entityType: string;
   refreshData: () => void;
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isLoading, setisLoading] = useState(false);
   const [users, setUsers] = useState<Record[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
@@ -70,8 +70,11 @@ const AddApproverModal = ({
         setUsers(transformedData);
       } catch (error) {
         console.error("Error fetching users data:", error);
+      } finally{
+        setLoading(false);
       }
     };
+
 
     if (modalIsOpen) {
       fetchUsers();
@@ -168,7 +171,7 @@ const AddApproverModal = ({
         </div>
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <ClipLoader size={35} color={"#123abc"} loading={loading} />
+            <ClipLoader size={35} color={"#389df1"} loading={loading} />
           </div>
         ) : (
           <div className="">
@@ -211,7 +214,7 @@ const AddApproverModal = ({
             onClick={handleConfirmSelection}
             className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer bg-primary hover:bg-blue-400"
           >
-            {isLoading ? <ClipLoader color="#36d7b7" /> : "Add Approver"}
+            {isLoading ? "Adding..." : "Add Approver"}
           </button>
         </div>
       )}

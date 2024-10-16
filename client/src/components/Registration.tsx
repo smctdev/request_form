@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Slice from "./assets/Slice.png";
 import building from "./assets/building.jpg";
@@ -242,7 +242,7 @@ const Registration: React.FC = () => {
         <img
           className="hidden md:block absolute inset-0 object-cover w-full h-screen lg:hidden z-0"
           src={building}
-          alt="photo"
+          alt=""
         />
         <div className="w-full  bg-white   lg:p-8 p-4  lg:mt-0  mt-20 rounded-lg z-10 lg:m-0 m-10">
           <h1 className="text-primary font-bold lg:text-[32px] md:text-2xl mb-6 text-left">
@@ -567,7 +567,7 @@ const Registration: React.FC = () => {
         </div>
       </div>
       <div className="hidden lg:block w-1/2  items-center justify-center">
-        <img className="object-cover h-screen w-full" src={Slice} alt="photo" />
+        <img className="object-cover h-screen w-full" src={Slice} alt="" />
       </div>
     </div>
   );
