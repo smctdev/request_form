@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import {
   PencilSquareIcon,
   TrashIcon,
   MagnifyingGlassIcon,
+  ExclamationCircleIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { ClipLoader } from "react-spinners";
 import AddPositionModal from "./AddPositionModal";
 import EditPositionModal from "./EditPositionModal";
+import axios from "axios";
+import { set } from "react-hook-form";
+import Swal from "sweetalert2";
 
 export type Branch = {
   id: number;
@@ -15,50 +20,28 @@ export type Branch = {
   user_id: number;
 };
 
-type Props = {};
-
 interface Position {
-    id: number;
-    position: string;
-  }
-  
-  const samplePositionData = [
-    { id: 1, position: "AVP Finance" },
-    { id: 2, position: "IT Staff" },
-    { id: 3, position: "Senior Developer" },
-    { id: 4, position: "Accounting Clerk" },
-    { id: 5, position: "Accounting Manager" },
-    { id: 6, position: "Accounting Staff" },
-    { id: 7, position: "Accounting Supervisor" },
-    { id: 8, position: "Area Manager" },
-    { id: 9, position: "Assistant Manager" },
-    { id: 10, position: "Assistant Web Developer" },
-    { id: 11, position: "Audit Manager" },
-    { id: 12, position: "Audit Staff" },
-    { id: 13, position: "Audit Supervisor" },
-    { id: 14, position: "Automation Staff" },
-    { id: 15, position: "AVP - Sales and Marketing" },
-    { id: 16, position: "Branch Supervisor/Manager" },
-    { id: 17, position: "Cashier" },
-    { id: 18, position: "CEO" },
-    { id: 19, position: "HR Manager" },
-    { id: 20, position: "HR Staff" },
-    { id: 21, position: "IT/Automation Manager" },
-    { id: 22, position: "Junior Web Developer" },
-    { id: 23, position: "Managing Director" },
-    { id: 24, position: "Payroll Manager" },
-    { id: 25, position: "Payroll Staff" },
-    { id: 26, position: "Sales Representative" },
-    { id: 27, position: "Senior Web Developer" },
-    { id: 28, position: "Vice President" },
-  ];
+  id: number;
+  value: string;
+  label: string;
+}
 
-const SetupPosition = (props: Props) => {
+const SetupPosition: React.FC = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [editModal, setEditModal] = useState(false);
   const userId = localStorage.getItem("id");
   const [filterTerm, setFilterTerm] = useState("");
-  const [positionData, setPositionData] = useState<Position[]>(samplePositionData);
+  const [positionData, setPositionData] = useState<Position[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isRefresh, setIsRefresh] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<Position>({
+    id: 0,
+    value: "",
+    label: "",
+  });
+  const [toDelete, setToDelete] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [toDeleteId, setToDeleteId] = useState(0);
 
   const filteredPosition = positionData.filter((position) =>
     Object.values(position).some((value) =>
@@ -66,22 +49,28 @@ const SetupPosition = (props: Props) => {
     )
   );
 
-  const refreshData = async () => {
-    try {
-      if (!userId) {
-        console.error("User ID is missing");
-        return;
+  useEffect(() => {
+    const fetchPositionData = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/positions`
+        );
+
+        if (response.status === 200) {
+          setPositionData(response.data.position);
+        }
+      } catch (error: any) {
+        console.error("Error fetching position data:", error);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setPositionData(samplePositionData);
-    } catch (error) {
-      console.error("Error fetching branch data:", error);
-    } finally {
-    }
-  };
-
+    fetchPositionData();
+  }, [isRefresh]);
   const editModalShow = (row: Position) => {
     setEditModal(true);
+    setSelectedUser(row);
   };
 
   const editModalClose = () => {
@@ -96,6 +85,21 @@ const SetupPosition = (props: Props) => {
     setModalIsOpen(false);
   };
 
+  const openDeleteModal = (row: any) => {
+    setToDelete(true);
+    setSelectedUser(row);
+    setToDeleteId(row.id);
+  };
+
+  const closeDeleteModal = () => {
+    setToDelete(false);
+    setSelectedUser({
+      id: 0,
+      value: "",
+      label: "",
+    });
+  };
+
   const columns = [
     {
       name: "ID",
@@ -106,7 +110,7 @@ const SetupPosition = (props: Props) => {
 
     {
       name: "Position",
-      selector: (row: Position) => row.position,
+      selector: (row: Position) => row.value,
       sortable: true,
     },
     {
@@ -120,11 +124,54 @@ const SetupPosition = (props: Props) => {
           />
           <TrashIcon
             className="text-[#A30D11] size-8 cursor-pointer"
+            onClick={() => openDeleteModal(row)}
           />
         </div>
       ),
     },
   ];
+
+  const handleDelete = async (toDeleteId: number) => {
+    setDeleteLoading(true);
+    setIsRefresh(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Token is missing");
+        return;
+      }
+
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      const response = await axios.delete(
+        `${process.env.REACT_APP_API_BASE_URL}/delete-position/${toDeleteId}`,
+        {
+          headers,
+        }
+      );
+      if (response.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "Deleted Position",
+          text: response.data.message,
+          timer: 6000,
+          toast: true,
+          position: "top-end",
+          timerProgressBar: true,
+          showCloseButton: true,
+          showConfirmButton: false,
+        });
+        setToDelete(false);
+        setToDeleteId(0);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setDeleteLoading(false);
+      setIsRefresh(false);
+    }
+  };
 
   return (
     <div className="w-full h-full px-4 pt-4 bg-graybg dark:bg-blackbg sm:px-10 md:px-10 lg:px-30 xl:px-30">
@@ -155,7 +202,7 @@ const SetupPosition = (props: Props) => {
               <MagnifyingGlassIcon className="absolute w-5 h-5 text-black transform -translate-y-1/2 pointer-events-none left-3 top-1/2" />
             </div>
           </div>
-          {/* {loading ? (
+          {loading ? (
             <table className="table" style={{ background: "white" }}>
               <thead>
                 <tr>
@@ -165,7 +212,9 @@ const SetupPosition = (props: Props) => {
                   >
                     ID
                   </th>
-                  <th style={{ color: "black", fontWeight: "bold" }}>Position</th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>
+                    Position
+                  </th>
                   <th style={{ color: "black", fontWeight: "bold" }}>Action</th>
                 </tr>
               </thead>
@@ -183,7 +232,7 @@ const SetupPosition = (props: Props) => {
                 ))}
               </tbody>
             </table>
-          ) : ( */}
+          ) : (
             <DataTable
               columns={columns}
               data={filteredPosition}
@@ -221,21 +270,62 @@ const SetupPosition = (props: Props) => {
                 },
               }}
             />
-          {/* )} */}
+          )}
         </div>
       </div>
       <AddPositionModal
-        refreshData={refreshData}
+        setIsRefresh={setIsRefresh}
         modalIsOpen={modalIsOpen}
         closeModal={closeModal}
       />
       <EditPositionModal
-        refreshData={refreshData}
         editModal={editModal}
         editModalClose={editModalClose}
         openSuccessModal={openModal}
-        selectedUser={openModal}
+        selectedUser={selectedUser}
+        setIsRefresh={setIsRefresh}
       />
+      {toDelete && (
+        <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50 ">
+          <div className=" p-4  w-1/2 md:w-1/3 bg-white flex flex-col justify-center rounded-[12px] shadow-lg">
+            <div className="flex justify-between w-full">
+              <div className="flex items-center">
+                <ExclamationCircleIcon className="text-red-500 rounded-lg cursor-pointer size-14 left-3" />
+                <p className="text-[18px] font-semibold ml-2 text-red-500">
+                  Confirm Delete
+                </p>
+              </div>
+              <div>
+                <XMarkIcon
+                  className="text-black cursor-pointer size-8 right-3"
+                  onClick={closeDeleteModal}
+                />
+              </div>
+            </div>
+
+            <p className="px-2 mt-6 text-gray-500">
+              Are you sure you want to delete{" "}
+              <strong>"{selectedUser?.value}"</strong>?
+            </p>
+            <div className="flex justify-center space-x-2 md:justify-end">
+              <button
+                className="w-full py-2 border border-gray-400 rounded-lg md:w-auto md:px-4"
+                onClick={closeDeleteModal}
+              >
+                Cancel
+              </button>
+              <button
+                disabled={deleteLoading}
+                type="button"
+                className="w-full py-2 text-white bg-red-500 border rounded-lg md:w-auto md:px-4"
+                onClick={() => handleDelete(toDeleteId)}
+              >
+                {deleteLoading ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -14,36 +14,11 @@ import Swal from "sweetalert2";
 
 type UserCredentials = z.infer<typeof schema>;
 
-const roleOptions = [
-  { label: "", value: "" },
-  { label: "Accounting Clerk", value: "Accounting Clerk" },
-  { label: "Accounting Manager", value: "Accounting Manager" },
-  { label: "Accounting Staff", value: "Accounting Staff" },
-  { label: "Accounting Supervisor", value: "Accounting Supervisor" },
-  { label: "Area Manager", value: "Area Manager" },
-  { label: "Assistant Manager", value: "Assistant Manager" },
-  { label: "Assistant Web Developer", value: "Assistant Web Developer" },
-  { label: "Audit Manager", value: "Audit Manager" },
-  { label: "Audit Staff", value: "Audit Staff" },
-  { label: "Audit Supervisor", value: "Audit Supervisor" },
-  { label: "Automation Staff", value: "Automation Staff" },
-  { label: "AVP - Finance", value: "AVP - Finance" },
-  { label: "AVP - Sales and Marketing", value: "AVP - Sales and Marketing" },
-  { label: "Branch Supervisor/Manager", value: "Branch Supervisor/Manager" },
-  { label: "Cashier", value: "Cashier" },
-  { label: "CEO", value: "CEO" },
-  { label: "HR Manager", value: "HR Manager" },
-  { label: "HR Staff", value: "HR Staff" },
-  { label: "IT Staff", value: "IT Staff" },
-  { label: "IT/Automation Manager", value: "IT/Automation Manager" },
-  { label: "Junior Web Developer", value: "Junior Web Developer" },
-  { label: "Managing Director", value: "Managing Director" },
-  { label: "Payroll Manager", value: "Payroll Manager" },
-  { label: "Payroll Staff", value: "Payroll Staff" },
-  { label: "Sales Representative", value: "Sales Representative" },
-  { label: "Senior Web Developer", value: "Senior Web Developer" },
-  { label: "Vice President", value: "Vice President" },
-];
+interface Position {
+  id: number;
+  value: string;
+  label: string;
+}
 
 const schema = z
   .object({
@@ -79,9 +54,29 @@ const Registration: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [signatureEmpty, setSignatureEmpty] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
+  const [roleOptions, setRoleOptions] = useState<Position[]>([]);
   const [branchList, setBranchList] = useState<
     { id: number; branch_code: string; branch: string }[]
   >([]);
+
+  useEffect(() => {
+    const fetchPositionData = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/positions`
+        );
+
+        if (response.status === 200) {
+          setRoleOptions(response.data.position);
+        }
+      } catch (error: any) {
+        console.error("Error fetching position data:", error);
+      }
+    };
+
+    fetchPositionData();
+  }, []);
+
   useEffect(() => {
     const fetchBranchData = async () => {
       try {
@@ -238,19 +233,19 @@ const Registration: React.FC = () => {
   };
   return (
     <div className="flex flex-col lg:flex-row items-center justify-center text-black bg-[#FFFFFF]">
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+      <div className="flex items-center justify-center w-full p-8 lg:w-1/2">
         <img
-          className="hidden md:block absolute inset-0 object-cover w-full h-screen lg:hidden z-0"
+          className="absolute inset-0 z-0 hidden object-cover w-full h-screen md:block lg:hidden"
           src={building}
           alt=""
         />
-        <div className="w-full  bg-white   lg:p-8 p-4  lg:mt-0  mt-20 rounded-lg z-10 lg:m-0 m-10">
+        <div className="z-10 w-full p-4 m-10 mt-20 bg-white rounded-lg lg:p-8 lg:mt-0 lg:m-0">
           <h1 className="text-primary font-bold lg:text-[32px] md:text-2xl mb-6 text-left">
             ACCOUNT REGISTRATION
           </h1>
           <form onSubmit={handleSubmit(submitData, () => setLoading(false))}>
             <div className={`${fieldStyle}`}>
-              <div className="w-full md:w-1/2 mb-4 ">
+              <div className="w-full mb-4 md:w-1/2 ">
                 <h1 className={`${headerStyle}`}>First Name</h1>
                 <input
                   type="text"
@@ -260,14 +255,14 @@ const Registration: React.FC = () => {
                 />
                 <div>
                   {errors.firstName && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {" "}
                       {errors.firstName.message}
                     </span>
                   )}
                 </div>
               </div>
-              <div className="w-full md:w-1/2 mb-4">
+              <div className="w-full mb-4 md:w-1/2">
                 <h1 className={`${headerStyle}`}>Last Name</h1>
                 <input
                   type="text"
@@ -276,7 +271,7 @@ const Registration: React.FC = () => {
                   className={`${inputStyle}`}
                 />
                 {errors.lastName && (
-                  <p className="text-red-500 text-xs">
+                  <p className="text-xs text-red-500">
                     {" "}
                     {errors.lastName.message}
                   </p>
@@ -284,7 +279,7 @@ const Registration: React.FC = () => {
               </div>
             </div>
             <div className={`${fieldStyle}`}>
-              <div className="w-full md:w-1/2 mb-4">
+              <div className="w-full mb-4 md:w-1/2">
                 <h1 className={`${headerStyle}`}>Username</h1>
                 <input
                   type="text"
@@ -294,7 +289,7 @@ const Registration: React.FC = () => {
                 />
                 <div>
                   {errors.userName && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {" "}
                       {errors.userName.message}
                     </span>
@@ -302,7 +297,7 @@ const Registration: React.FC = () => {
                 </div>
               </div>
 
-              <div className="w-full md:w-1/2 mb-4">
+              <div className="w-full mb-4 md:w-1/2">
                 <h1 className={`${headerStyle}`}>Email</h1>
                 <input
                   type="text"
@@ -312,7 +307,7 @@ const Registration: React.FC = () => {
                 />
                 <div>
                   {errors.email && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {" "}
                       {errors.email.message}
                     </span>
@@ -321,9 +316,9 @@ const Registration: React.FC = () => {
               </div>
             </div>
             <div className={`${fieldStyle}`}>
-              <div className="w-full md:w-1/2 mb-4">
+              <div className="w-full mb-4 md:w-1/2">
                 <h1 className={`${headerStyle}`}>Password</h1>
-                <div className=" flex justify-center items-center relative w-full ">
+                <div className="relative flex items-center justify-center w-full ">
                   <input
                     type={showPassword ? "text" : "password"}
                     {...register("password")}
@@ -344,16 +339,16 @@ const Registration: React.FC = () => {
                 </div>
                 <div>
                   {errors.password && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {" "}
                       {errors.password.message}
                     </span>
                   )}
                 </div>
               </div>
-              <div className="w-full md:w-1/2 mb-4">
+              <div className="w-full mb-4 md:w-1/2">
                 <h1 className={`${headerStyle}`}>Confirm Password</h1>
-                <div className=" flex justify-center items-center relative w-full ">
+                <div className="relative flex items-center justify-center w-full ">
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     {...register("confirmPassword")}
@@ -378,7 +373,7 @@ const Registration: React.FC = () => {
                 </div>
                 <div>
                   {errors.confirmPassword && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {" "}
                       {errors.confirmPassword.message}
                     </span>
@@ -387,7 +382,7 @@ const Registration: React.FC = () => {
               </div>
             </div>
             <div className={`${fieldStyle}`}>
-              <div className="w-full md:w-1/2 mb-4">
+              <div className="w-full mb-4 md:w-1/2">
                 <h1 className={`${headerStyle}`}>Contact</h1>
                 <input
                   type="text"
@@ -397,14 +392,14 @@ const Registration: React.FC = () => {
                 />
                 <div>
                   {errors.contact && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {" "}
                       {errors.contact.message}
                     </span>
                   )}
                 </div>
               </div>
-              <div className="w-full md:w-1/2 mb-4">
+              <div className="w-full mb-4 md:w-1/2">
                 <h1 className={`${headerStyle}`}>Position</h1>
                 <div className="relative">
                   <Controller
@@ -415,18 +410,27 @@ const Registration: React.FC = () => {
                         {...field}
                         className="w-full  lg:h-[56px] md:h-10 p-2 bg-gray-300 rounded-lg"
                       >
-                        <option value="">Select Position</option>
-                        {roleOptions.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
+                        <option value="" hidden>
+                          Select Position
+                        </option>
+                        <option value="" disabled>
+                          Select Position
+                        </option>
+                        {roleOptions.length === 0 ? (
+                          <option disabled>No position added yet</option>
+                        ) : (
+                          roleOptions.map((option) => (
+                            <option key={option.id} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))
+                        )}
                       </select>
                     )}
                   />
                   <div>
                     {errors.position && (
-                      <span className="text-red-500 text-xs">
+                      <span className="text-xs text-red-500">
                         {errors.position.message}
                       </span>
                     )}
@@ -435,7 +439,7 @@ const Registration: React.FC = () => {
               </div>
             </div>
             <div className={`${fieldStyle}`}>
-              <div className="w-full md:w-1/2 mb-4">
+              <div className="w-full mb-4 md:w-1/2">
                 <h1 className={`${headerStyle}`}>Branch Code</h1>
                 <div className="relative">
                   <Controller
@@ -450,7 +454,12 @@ const Registration: React.FC = () => {
                           handleBranchCodeChange(Number(e.target.value));
                         }}
                       >
-                        <option value="">Select branch</option>
+                        <option value="" hidden>
+                          Select branch
+                        </option>
+                        <option value="" disabled>
+                          Select branch
+                        </option>
                         {branchList.length > 0 ? (
                           branchList.map((branch) => (
                             <option key={branch.id} value={branch.id}>
@@ -466,13 +475,13 @@ const Registration: React.FC = () => {
                     )}
                   />
                   {errors.branchCode && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {errors.branchCode.message}
                     </span>
                   )}
                 </div>
               </div>
-              <div className="w-full md:w-1/2 mb-4">
+              <div className="w-full mb-4 md:w-1/2">
                 <h1 className={`${headerStyle}`}>Branch</h1>
                 <Controller
                   name="branch"
@@ -486,7 +495,7 @@ const Registration: React.FC = () => {
                   )}
                 />
                 {errors.branch && (
-                  <span className="text-red-500 text-xs">
+                  <span className="text-xs text-red-500">
                     {errors.branch.message}
                   </span>
                 )}
@@ -494,7 +503,7 @@ const Registration: React.FC = () => {
             </div>
 
             <div className={`${fieldStyle}`}>
-              <div className="w-full md:w-1/2 mb-4 flex flex-col">
+              <div className="flex flex-col w-full mb-4 md:w-1/2">
                 <h1 className={`${headerStyle}`}>Signature</h1>
                 <SignatureCanvas
                   penColor="black"
@@ -504,18 +513,18 @@ const Registration: React.FC = () => {
                   }}
                 />
                 {signatureEmpty && (
-                  <span className="text-red-500 text-xs">
+                  <span className="text-xs text-red-500">
                     Please provide a signature.
                   </span>
                 )}
                 <button
                   onClick={(e) => handleClear(e)}
-                  className="bg-gray-300 p-1 mt-2 rounded-lg"
+                  className="p-1 mt-2 bg-gray-300 rounded-lg"
                 >
                   Clear
                 </button>
               </div>
-              <div className="w-full md:w-1/2 mb-4">
+              <div className="w-full mb-4 md:w-1/2">
                 <h1 className={`${headerStyle}`}>Employee ID</h1>
                 <input
                   type="text"
@@ -525,7 +534,7 @@ const Registration: React.FC = () => {
                 />
                 <div>
                   {errors.employee_id && (
-                    <span className="text-red-500 text-xs">
+                    <span className="text-xs text-red-500">
                       {" "}
                       {errors.employee_id.message}
                     </span>
@@ -535,7 +544,7 @@ const Registration: React.FC = () => {
             </div>
             <div className="flex items-center justify-center">
               {Array.isArray(errorMessage) && errorMessage.length > 0 && (
-                <div className="text-red-500 text-xs">
+                <div className="text-xs text-red-500">
                   {errorMessage.map((message, index) => (
                     <p key={index}>{message}</p>
                   ))}
@@ -558,16 +567,16 @@ const Registration: React.FC = () => {
           </form>
           <Link to="/login">
             <div className="flex flex-row justify-center mt-4 ">
-              <p className="text-center italic">Already have an account? </p>
-              <p className="pl-2 italic font-bold text-primary underline">
+              <p className="italic text-center">Already have an account? </p>
+              <p className="pl-2 italic font-bold underline text-primary">
                 Log In
               </p>
             </div>
           </Link>
         </div>
       </div>
-      <div className="hidden lg:block w-1/2  items-center justify-center">
-        <img className="object-cover h-screen w-full" src={Slice} alt="" />
+      <div className="items-center justify-center hidden w-1/2 lg:block">
+        <img className="object-cover w-full h-screen" src={Slice} alt="" />
       </div>
     </div>
   );

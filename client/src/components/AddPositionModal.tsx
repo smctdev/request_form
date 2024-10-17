@@ -5,61 +5,76 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
+import Swal from "sweetalert2";
 
-type Branch = z.infer<typeof schema>;
+type Position = z.infer<typeof schema>;
 const schema = z.object({
-  position: z.string()
+  value: z.string(),
 });
 
 const AddPositionModal = ({
   modalIsOpen,
-  closeModal
+  closeModal,
+  setIsRefresh,
 }: {
   modalIsOpen: boolean;
+  setIsRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   closeModal: any;
-  refreshData: () => void;
 }) => {
   const [loading, setLoading] = useState(false);
-  const [backendError, setBackendError] = useState("");
+  const [backendError, setBackendError] = useState([]);
   const {
     reset,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<Branch>({
+  } = useForm<Position>({
     resolver: zodResolver(schema),
   });
 
-  const submitData = async (data: Branch) => {
+  const submitData = async (data: Position) => {
+    setLoading(true);
+    setIsRefresh(true);
     try {
-      setLoading(true);
       const token = localStorage.getItem("token");
       const headers = {
         Authorization: `Bearer ${token}`,
       };
       const requestData = {
-        position: data.position
+        value: data.value,
       };
       const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/add-position`,
+        `${process.env.REACT_APP_API_BASE_URL}/create-position`,
         requestData,
         { headers }
       );
 
-      if (response.status === 200 && response.data.status) {
-
-        setBackendError("");
+      if (response.status === 200) {
+        setBackendError([]);
+        closeModal();
         reset();
+        Swal.fire({
+          icon: "success",
+          title: "Position Added",
+          text: response.data.message,
+          timer: 6000,
+          toast: true,
+          position: "top-end",
+          timerProgressBar: true,
+          showCloseButton: true,
+          showConfirmButton: false,
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Registration Error:", error);
-      setBackendError("Branch Name must be uppercase");
+      setBackendError(error.response.data.errors.value[0]);
     } finally {
       setLoading(false);
+      setIsRefresh(false);
     }
   };
 
-  const onSubmit = (data: Branch) => {
+  const onSubmit = (data: Position) => {
     submitData(data);
   };
 
@@ -81,13 +96,16 @@ const AddPositionModal = ({
               <p className="w-full font-medium">New Position</p>
               <input
                 type="text"
-                onChange={(e) => setValue("position", e.target.value)}
+                onChange={(e) => setValue("value", e.target.value)}
                 className="w-full bg-[#F5F5F5] border input input-bordered border-[#E4E4E4] py-2 px-3 rounded-md text-sm text-[#333333] mt-2 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
               />
-              {errors.position && (
+              {errors.value && (
                 <span className="text-xs text-red-500">
-                  {errors.position.message}
+                  {errors.value.message}
                 </span>
+              )}
+              {backendError && (
+                <span className="text-xs text-red-500">{backendError}</span>
               )}
             </div>
           </div>
@@ -103,7 +121,7 @@ const AddPositionModal = ({
               type="submit"
               disabled={loading}
             >
-              {loading ? <ClipLoader color="#36d7b7" /> : "Add"}
+              {loading ? "Adding..." : "Add"}
             </button>
           </div>
         </form>
