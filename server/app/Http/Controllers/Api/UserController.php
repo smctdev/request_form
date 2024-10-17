@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResetPasswordMail;
-
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -434,6 +434,12 @@ class UserController extends Controller
         }
 
         if ($request->hasFile('profile_picture')) {
+            if ($user->profile_picture !== null) {
+                if (Storage::disk('public')->exists($user->profile_picture)) {
+                    Storage::disk('public')->delete($user->profile_picture);
+                }
+            }
+
             $file = $request->file('profile_picture');
             $path = $file->store('profile_pictures', 'public');
             $user->profile_picture = $path;
