@@ -334,6 +334,8 @@ const SetupUser = (props: Props) => {
           contact: item.contact,
           branch: item.branch,
           position: item.position,
+          email_verified_at: item.email_verified_at,
+          verification_status: item.verification_status,
         })
       );
 
