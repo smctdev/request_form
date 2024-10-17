@@ -29,6 +29,7 @@ class User extends Authenticatable
         'role',
         'employee_id',
         'branch',
+        'email_verified_at',
     ];
 
     /**

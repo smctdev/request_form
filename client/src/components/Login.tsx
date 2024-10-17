@@ -20,6 +20,7 @@ const schema = z.object({
 const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const { updateUser } = useUser();
   const {
     register,
@@ -78,17 +79,24 @@ const Login: React.FC = () => {
         });
         setLoading(false);
       }
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        iconColor: "#dc3545",
-        title: "Oops...",
-        text: "An error occurred while logging in. Please try again later.",
-        confirmButtonText: "Close",
-        confirmButtonColor: "#dc3545",
-      });
+    } catch (error: any) {
+      if (error && error.response.status === 403) {
+        Swal.fire({
+          icon: "error",
+          iconColor: "#dc3545",
+          title: "Not verified yet",
+          text: error.response.data.message,
+          confirmButtonText: "Close",
+          confirmButtonColor: "#dc3545",
+        });
+        setError(error.response.data.message);
+      }
       setLoading(false);
     }
+  };
+
+  const handleCloseAlert = () => {
+    setError("");
   };
 
   const inputStyle =
@@ -106,6 +114,33 @@ const Login: React.FC = () => {
           <h1 className="text-primary font-bold lg:text-[32px] md:text-2xl  mb-6 text-left lg:mt-0 ">
             ACCOUNT LOGIN
           </h1>
+          {error && (
+            <div
+              className="flex items-center px-4 py-5 mb-4 text-red-700 bg-red-100 border border-red-400 rounded"
+              role="alert"
+            >
+              <svg
+                className="w-6 h-6 mr-4 text-red-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2v6m0-6l2-2m-2 2l-2-2m2 2L2 6m16 12H5.414a1 1 0 01-.707-1.707L11.707 6h.01"
+                ></path>
+              </svg>
+              <div>
+                <strong className="font-bold">Error!</strong>
+                <span className="block ml-2 sm:inline">{error}</span>
+              </div>
+              <button onClick={handleCloseAlert}>&times;</button>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit(submitData, () => setLoading(false))}>
             <div className="mb-4">
               <h1 className="mb-2 text-base lg:text-lg">Email</h1>

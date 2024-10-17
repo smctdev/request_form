@@ -4,6 +4,8 @@ import {
   PencilSquareIcon,
   TrashIcon,
   MagnifyingGlassIcon,
+  ExclamationCircleIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import AddUserModal from "./AddUserModal";
 import EditUserModal from "./EditUserModal";
@@ -14,6 +16,7 @@ import DeleteModal from "./DeleteModal";
 import ViewUserModal from "./ViewUserModal";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
+import Swal from "sweetalert2";
 
 type Props = {};
 
@@ -30,6 +33,8 @@ type Record = {
   branch: string;
   position: string;
   profile_picture: string;
+  email_verified_at: string;
+  verification_status: string;
 };
 
 const SetupUser = (props: Props) => {
@@ -46,6 +51,11 @@ const SetupUser = (props: Props) => {
   const [branchList, setBranchList] = useState<any[]>([]);
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
   const [loading, setLoading] = useState(true);
+  const [toVerify, setToVerify] = useState(false);
+  const [toVerifyId, setToVerifyId] = useState<number>(0);
+  const [verifyingLoading, setVerifyingLoading] = useState<{
+    [key: number]: boolean;
+  }>({});
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -113,6 +123,8 @@ const SetupUser = (props: Props) => {
             branch: item.branch,
             position: item.position,
             profile_picture: item.profile_picture,
+            email_verified_at: item.email_verified_at,
+            verification_status: item.verification_status,
           })
         );
 
@@ -125,7 +137,7 @@ const SetupUser = (props: Props) => {
     };
 
     fetchUserData();
-  }, [userId]);
+  }, [userId, verifyingLoading]);
 
   const filteredUserList = userList.filter((user) =>
     Object.values(user).some((value) =>
@@ -233,6 +245,58 @@ const SetupUser = (props: Props) => {
     setSelectedUser(null);
     setViewModalIsOpen(false);
   };
+
+  const handleToVerify = (row: Record) => {
+    setToVerifyId(row.id);
+    setSelectedUser(row);
+    setToVerify(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setSelectedUser(null);
+    setToVerify(false);
+  };
+
+  const handleVerify = async (toVerifyId: number) => {
+    setVerifyingLoading((prev) => ({ ...prev, [toVerifyId]: true }));
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/verified-user/${toVerifyId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "Verified",
+          text: response.data.message,
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        });
+      }
+    } catch (error: any) {
+      console.error("Error verifying user:", error);
+      if (error.response.status === 409 || error.response.status === 404) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.response.data.message,
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        });
+      }
+    } finally {
+      setVerifyingLoading((prev) => ({ ...prev, [toVerifyId]: false }));
+      setToVerify(false);
+    }
+  };
   const refreshData = async () => {
     try {
       if (!userId) {
@@ -310,29 +374,90 @@ const SetupUser = (props: Props) => {
       sortable: true,
     },
     {
+      name: "Status",
+      selector: (row: Record) => row.verification_status,
+      cell: (row: Record) =>
+        row.verification_status === "Verified" ? (
+          <div className="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 rounded-md bg-blue-50 ring-1 ring-inset ring-blue-600/20">
+            {row.verification_status}
+          </div>
+        ) : (
+          <div className="inline-flex items-center px-2 py-1 text-xs font-medium text-red-700 rounded-md bg-red-50 ring-1 ring-inset ring-red-600/10">
+            {row.verification_status}
+          </div>
+        ),
+      sortable: true,
+    },
+    {
       name: "Action",
       sortable: true,
       cell: (row: Record) => (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
+          {/* Edit button */}
           <PencilSquareIcon
-            className="cursor-pointer text-primary size-12"
+            className="w-5 h-5 cursor-pointer text-primary"
             onClick={() => editModalShow(row)}
           />
+
+          {/* Delete button */}
           <TrashIcon
-            className="text-[#A30D11] size-12 cursor-pointer"
+            className="w-5 h-5 text-red-600 cursor-pointer"
             onClick={() => deleteModalShow(row)}
           />
+
+          {/* View button */}
           <button
-            className="bg-primary size-8  text-white w-full rounded-[12px]"
+            className="px-3 py-1 text-white transition duration-150 rounded-md bg-primary"
             onClick={() => viewModalShow(row)}
           >
-            View
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+              />
+            </svg>
           </button>
+
+          {/* Verify button */}
+          {row.email_verified_at === null && (
+            <button
+              key={row.id}
+              className="px-3 py-1 text-white transition duration-150 rounded-md bg-green"
+              onClick={() => handleToVerify(row)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"
+                />
+              </svg>
+            </button>
+          )}
         </div>
       ),
     },
   ];
-
   return (
     <div className="w-full h-full px-4 pt-4 bg-graybg dark:bg-blackbg sm:px-10 md:px-10 lg:px-30 xl:px-30">
       <div className="w-full h-auto rounded-lg drop-shadow-lg md:mr-4">
@@ -378,6 +503,7 @@ const SetupUser = (props: Props) => {
                   </th>
                   <th style={{ color: "black", fontWeight: "bold" }}>Email</th>
                   <th style={{ color: "black", fontWeight: "bold" }}>Role</th>
+                  <th style={{ color: "black", fontWeight: "bold" }}>Status</th>
                   <th style={{ color: "black", fontWeight: "bold" }}>Action</th>
                 </tr>
               </thead>
@@ -482,6 +608,50 @@ const SetupUser = (props: Props) => {
         closeModal={viewModalClose}
         user={selectedUser}
       />
+
+      {toVerify && (
+        <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50 ">
+          <div className=" p-4  w-1/2 md:w-1/3 bg-white flex flex-col justify-center rounded-[12px] shadow-lg">
+            <div className="flex justify-between w-full">
+              <div className="flex items-center">
+                <ExclamationCircleIcon className="size-14 rounded-lg text-[#007FFF]  left-3 cursor-pointer" />
+                <p className="text-[18px] font-semibold ml-2 text-[#007FFF]">
+                  Verifying
+                </p>
+              </div>
+              <div>
+                <XMarkIcon
+                  className="text-black cursor-pointer size-8 right-3"
+                  onClick={handleCloseDeleteModal}
+                />
+              </div>
+            </div>
+
+            <p className="px-2 mt-6 text-gray-500">
+              Are you sure you want to verify{" "}
+              <strong>
+                "{selectedUser?.firstname} {selectedUser?.lastname}"
+              </strong>
+              ?
+            </p>
+            <div className="flex justify-center space-x-2 md:justify-end">
+              <button
+                className="w-full py-2 border border-gray-400 rounded-lg md:w-auto md:px-4"
+                onClick={handleCloseDeleteModal}
+              >
+                Cancel
+              </button>
+              <button
+                disabled={verifyingLoading[toVerifyId]}
+                className="w-full py-2 text-white border rounded-lg bg-primary md:w-auto md:px-4"
+                onClick={() => handleVerify(toVerifyId)}
+              >
+                {verifyingLoading[toVerifyId] ? "Verifying..." : "Verify"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

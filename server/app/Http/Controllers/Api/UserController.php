@@ -284,7 +284,7 @@ class UserController extends Controller
     {
         try {
 
-            $users = User::select('id', 'firstname', 'lastname', 'branch_code', 'email', 'username', 'role', 'position', 'contact', 'employee_id', 'branch', 'profile_picture')->get();
+            $users = User::select('id', 'firstname', 'lastname', 'branch_code', 'email', 'username', 'role', 'position', 'contact', 'employee_id', 'branch', 'profile_picture', 'email_verified_at', DB::raw('IF(email_verified_at IS NULL, "Not Verified", "Verified") as verification_status'))->where('role', '!=', 'Admin')->get();
 
             return response()->json([
                 'message' => 'Users retrieved successfully',
@@ -541,5 +541,30 @@ class UserController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function verifiedUser($id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message'       =>          'User not found or already deleted.',
+            ], 404);
+        }
+
+        if ($user->email_verified_at !== null) {
+            return response()->json([
+                'message'       =>          'User is already verified.',
+            ], 409);
+        }
+
+        $user->update([
+            'email_verified_at'         =>          now(),
+        ]);
+
+        return response()->json([
+            'message'       =>          'User ' . $user->firstName . ' verified successfully.',
+        ], 200);
     }
 }
