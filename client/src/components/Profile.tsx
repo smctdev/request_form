@@ -58,6 +58,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
   const [signatureError, setSignatureError] = useState("");
   const [signatureLoading, setSignatureLoading] = useState(false);
   const [signatureSuccess, setSignatureSuccess] = useState(false);
+  const [loadingChange, setLoading] = useState(false);
   const { setProfile_picture } = useUser();
 
   const navigate = useNavigate();
@@ -346,6 +347,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
       )}`
     : Avatar2;
   const onSubmit = async () => {
+    setLoading(true);
     try {
       setSubmitting(true);
 
@@ -385,6 +387,9 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
       );
       setSubmitting(false);
       setShowSuccessModal(true);
+      if (response.status === 200) {
+        setNewProfilePic(null);
+      }
     } catch (error: any) {
       console.error(
         "Failed to update profile picture:",
@@ -392,6 +397,8 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
       );
       setSubmitting(false);
       setShowSuccessModal(true);
+    } finally {
+      setLoading(false);
     }
   };
   const saveSignature = () => {
@@ -512,8 +519,12 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
 
             {newProfilePic && (
               <div className="bg-black text-white w-full h-[48px] rounded-[12px] mt-4 flex items-center justify-center">
-                <button className="text-white" onClick={onSubmit}>
-                  Upload Profile Picture
+                <button
+                  disabled={loadingChange}
+                  className="text-white"
+                  onClick={onSubmit}
+                >
+                  {loadingChange ? "Uploading..." : "Upload Profile Picture"}
                 </button>
               </div>
             )}
