@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Position;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
@@ -12,38 +13,9 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         try {
-            $positionData = [
-                "Accounting Clerk",
-                "Accounting Manager",
-                "Accounting Staff",
-                "Accounting Supervisor",
-                "Admin",
-                "Area Manager",
-                "Assistant Manager",
-                "Assistant Web Developer",
-                "Audit Manager",
-                "Audit Staff",
-                "Audit Supervisor",
-                "Automation Staff",
-                "AVP - Finance",
-                "AVP - Sales and Marketing",
-                "Branch Supervisor/Manager",
-                "Cashier",
-                "CEO",
-                "HR Manager",
-                "HR Staff",
-                "IT Staff",
-                "IT/Automation Manager",
-                "Juinor Web Developer",
-                "Managing Director",
-                "Payroll Manager",
-                "Payroll Staff",
-                "Sales Representative",
-                "Senior Web Developer",
-                "Vice President",
-                "User"
-              ];
-              
+
+            $positionData = Position::all();
+
             $uservalidate = Validator::make($request->all(), [
                 "firstName" => 'required|string|max:255',
                 "lastName" => 'required|string|max:255',
@@ -52,11 +24,11 @@ class RegisterController extends Controller
                 "userName" => 'required|string|max:255',
                 "email" => "required|email|unique:users,email",
                 "password" => "required|min:5",
-                "position" => 'required|string|max:255|in:'.implode(',', $positionData),
+                "position" => 'required|string|max:255|in:'.implode(',', $positionData?->pluck('value')->toArray()),
                 "signature" => "sometimes",
                 "branch" => "required|string|max:255",
                 "employee_id" => "required|string|max:255|unique:users,employee_id",
-          
+
             ]);
 
             if ($uservalidate->fails()) {
