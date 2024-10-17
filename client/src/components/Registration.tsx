@@ -55,6 +55,7 @@ const Registration: React.FC = () => {
   const [signatureEmpty, setSignatureEmpty] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string[]>([]);
   const [roleOptions, setRoleOptions] = useState<Position[]>([]);
+  const [positionError, setPositionError] = useState("");
   const [branchList, setBranchList] = useState<
     { id: number; branch_code: string; branch: string }[]
   >([]);
@@ -183,6 +184,7 @@ const Registration: React.FC = () => {
           navigate("/login"); // Navigate to login after successful registration
         }, 2000);
       } else {
+        setPositionError(response.data.errors.position[0]);
         const errors = response.data.errors;
         const message = [];
 
@@ -231,6 +233,7 @@ const Registration: React.FC = () => {
       setValue("branch", "Honda Des, Inc.");
     }
   };
+  console.log(errorMessage);
   return (
     <div className="flex flex-col lg:flex-row items-center justify-center text-black bg-[#FFFFFF]">
       <div className="flex items-center justify-center w-full p-8 lg:w-1/2">
@@ -428,6 +431,12 @@ const Registration: React.FC = () => {
                       </select>
                     )}
                   />
+                  
+            {positionError && (
+              <div className="flex items-start justify-start text-red-500">
+                {positionError}
+              </div>
+            )}
                   <div>
                     {errors.position && (
                       <span className="text-xs text-red-500">
