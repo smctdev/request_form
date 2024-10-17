@@ -34,6 +34,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
   const token = localStorage.getItem("token");
   const id = localStorage.getItem("id");
   const [showCurrent, setShowCurrent] = useState(false);
@@ -381,23 +382,22 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
           },
         }
       );
-
-      setProfile_picture(
-        newProfilePic ? profilePictureUrl : user?.profile_picture
-      );
-      setSubmitting(false);
-      setShowSuccessModal(true);
       if (response.status === 200) {
+        setProfile_picture(
+          newProfilePic ? profilePictureUrl : user?.profile_picture
+        );
+        setSubmitting(false);
+        setShowSuccessModal(true);
         setNewProfilePic(null);
-        console.log(response)
+        setProfileError(null);
       }
     } catch (error: any) {
       console.error(
         "Failed to update profile picture:",
         error.response?.data || error.message
       );
+      setProfileError(error.response?.data.message);
       setSubmitting(false);
-      setShowSuccessModal(true);
     } finally {
       setLoading(false);
     }
@@ -482,6 +482,9 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
                 </p>
               </div>
             </div>
+            {profileError && (
+              <span className="text-red-500">{profileError}</span>
+            )}
             <h1 className="my-5 text-lg font-semibold md:text-xl lg:text-2xl">
               User Information
             </h1>
