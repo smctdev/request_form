@@ -18,6 +18,7 @@ use App\Http\Controllers\API\AreaManagerController;
 use App\Http\Controllers\API\ApprovalProcessController;
 use App\Http\Controllers\API\AttachmentController;
 use App\Http\Controllers\API\NotificationController;
+use App\Http\Controllers\Api\PositionController;
 use App\Http\Controllers\Test\PusherController;
 
 
@@ -31,6 +32,7 @@ Route::post("login", [LoginController::class, "login"]);
 Route::get("get-role/{id}", [UserController::class, "getRole"])->name("get.user.role");
 Route::post("password/email", [UserController::class, "sendResetLinkEmail"])->name("password.forgot");
 Route::get("view-branch", [BranchController::class, "viewBranch"])->name('view.branch');
+Route::get('/positions', [PositionController::class, 'index']);
 
 // PROTECTED
 // REQUEST FORM
@@ -102,7 +104,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete("delete-branch-head/{id}", [BranchHeadController::class, "deletebranchhead"])->name('delete.branch.head');
 
     // APPROVAL PROCESS
-    Route::post("request-forms/{request_form_id}/process", [ApprovalProcessController::class, 'processRequestForm'])->name('process.request.form');//APPROVAL PROCESS
+    Route::post("request-forms/{request_form_id}/process", [ApprovalProcessController::class, 'processRequestForm'])->name('process.request.form'); //APPROVAL PROCESS
 
     Route::get('request-forms/{request_form_id}', [ApprovalProcessController::class, 'viewSingleRequestForm'])->name('view.single.request.form.for.approval');
     Route::post("add-avpstaff", [ApproverController::class, "createAVPFinance"])->name('create.avp.finance.staff');
@@ -120,4 +122,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('notifications/{id}/count-unread-notification', [NotificationController::class, 'countUnreadNotifications'])->name('count.unread.notification');
     Route::put('notifications/mark-all-as-read/{userId}', [NotificationController::class, 'markAllAsRead'])->name('get.mark.all.as.read.notification');
 
+    // POSITION
+
+    Route::post('/create-position', [PositionController::class, 'store']);
+    Route::put('/update-position/{id}', [PositionController::class, 'update']);
+    Route::delete('/delete-position/{id}', [PositionController::class, 'destroy']);
 });
