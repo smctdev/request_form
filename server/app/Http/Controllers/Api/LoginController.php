@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;;
 use Illuminate\Support\Facades\Validator;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
- 
+
     public function login(Request $request)
     {
         try {
@@ -19,7 +20,7 @@ class LoginController extends Controller
                 'email'    => 'required|email',
                 'password' => 'required',
             ]);
-    
+
             // If validation fails, return errors
             if ($validator->fails()) {
                 return response()->json([
@@ -28,7 +29,18 @@ class LoginController extends Controller
                     'errors'  => $validator->errors(),
                 ]);
             }
-    
+
+            $user = User::where('email', $request->email)->first();
+
+
+            if($user->email_verified_at == null)
+            {
+                return response()->json([
+                    'status'        =>          false,
+                    'message'       =>          'Your email has not been verified yet. Please contact the administrator.',
+                ], 403);
+            }
+
             // Attempt to authenticate the user
             if (!Auth::attempt($request->only('email', 'password'))) {
                 return response()->json([
@@ -36,22 +48,22 @@ class LoginController extends Controller
                     'message' => 'Email or password does not match our records.',
                 ]);
             }
-    
+
             // Get the authenticated user
             $user = Auth::user();
-    
+
             // Generate a new token for the user
             $tokenResult = $user->createToken('API TOKEN');
             $token = $tokenResult->accessToken;
-    
-           
+
+
             $expiration = now()->addHours(8);
-    
+
             // Update the token's expiration time in the database
             DB::table('personal_access_tokens')
                 ->where('token', hash('sha256', $token))
                 ->update(['expires_at' => $expiration]);
-    
+
             // Return user data along with the token and expiration time
             return response()->json([
                 'status'           => true,
@@ -77,6 +89,6 @@ class LoginController extends Controller
             ], 500);
         }
     }
-    
+
 
 }

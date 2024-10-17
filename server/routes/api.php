@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('change-password/{id}', [ChangePasswordController::class, 'changePassword'])->name('change.password');
 
     Route::get("view-users", [UserController::class, "viewAllUsers"])->name('view.users');
+    Route::post('verified-user/{id}', [UserController::class, 'verifiedUser']);
     Route::post("update-profile/{id}", [UserController::class, "updateProfile"])->name('update.profile');
     Route::post("update-profilepic/{id}", [UserController::class, "updateProfilePic"])->name('update.profile');
     Route::put("update-role", [UserController::class, "updateRole"])->name('update.role');
