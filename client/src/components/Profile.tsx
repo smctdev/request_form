@@ -140,7 +140,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
     };
 
     fetchUserInformation();
-  }, [token, id, branchList, shouldRefresh]);
+  }, [token, id, branchList, shouldRefresh, loadingChange]);
 
   const handleClear = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -389,6 +389,7 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
       setShowSuccessModal(true);
       if (response.status === 200) {
         setNewProfilePic(null);
+        console.log(response)
       }
     } catch (error: any) {
       console.error(
