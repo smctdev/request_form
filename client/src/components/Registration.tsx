@@ -233,7 +233,6 @@ const Registration: React.FC = () => {
       setValue("branch", "Honda Des, Inc.");
     }
   };
-  console.log(errorMessage);
   return (
     <div className="flex flex-col lg:flex-row items-center justify-center text-black bg-[#FFFFFF]">
       <div className="flex items-center justify-center w-full p-8 lg:w-1/2">

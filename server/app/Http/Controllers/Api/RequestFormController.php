@@ -208,7 +208,7 @@ class RequestFormController extends Controller
                 $files = is_array($request->file('attachment')) ? $request->file('attachment') : [$request->file('attachment')];
 
                 foreach ($files as $file) {
-                    $filePath = $file->store('attachments', 'public');
+                    $filePath = $file->store('request_form_attachments', 'd_drive');
                     if (!$filePath) {
                         DB::rollBack();
                         return response()->json([
@@ -407,7 +407,7 @@ class RequestFormController extends Controller
 
             if ($request->hasFile('new_attachments')) {
                 foreach ($request->file('new_attachments') as $file) {
-                    $attachment_paths[] = $file->store('attachments', 'public'); // Add new file paths
+                    $attachment_paths[] = $file->store('request_form_attachments', 'd_drive'); // Add new file paths
                 }
             }
 
@@ -570,7 +570,7 @@ class RequestFormController extends Controller
 
         if ($request->hasFile('attachment')) {
             foreach ($request->file('attachment') as $file) {
-                $filePath = $file->store('attachments', 'public');
+                $filePath = $file->store('request_form_attachments', 'd_drive');
                 $fileName = $file->getClientOriginalName();
 
                 if (!$filePath) {

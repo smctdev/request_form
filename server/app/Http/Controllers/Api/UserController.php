@@ -345,7 +345,7 @@ class UserController extends Controller
             // Save the profile picture if provided
             if ($request->hasFile('profile_picture')) {
                 $profilePicture = $request->file('profile_picture');
-                $profilePicturePath = $profilePicture->store('profile_pictures', 'public');
+                $profilePicturePath = $profilePicture->store('request_form_profile_pictures, 'd_drive');
                 $user->profile_picture = $profilePicturePath; // Save only the path
             }
 
@@ -412,7 +412,7 @@ class UserController extends Controller
 
         if ($request->hasFile('profile_picture')) {
             $file = $request->file('profile_picture');
-            $path = $file->store('profile_pictures', 'public');
+            $path = $file->store('request_form_profile_pictures, 'd_drive');
             $user->profile_picture = $path;
         }
 
@@ -441,7 +441,7 @@ class UserController extends Controller
             }
 
             $file = $request->file('profile_picture');
-            $path = $file->store('profile_pictures', 'public');
+            $path = $file->store('request_form_profile_pictures, 'd_drive');
             $user->profile_picture = $path;
         }
 
