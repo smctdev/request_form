@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  MinusCircleIcon,
-  PlusCircleIcon,
-} from "@heroicons/react/24/solid";
+import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -93,12 +90,6 @@ const CreateDiscount = (props: Props) => {
     totalSpotCash: 0,
     totalDiscountedPrice: 0,
   });
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      // Convert FileList to array and set it
-      setFile(Array.from(e.target.files));
-    }
-  };
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -108,6 +99,7 @@ const CreateDiscount = (props: Props) => {
   const [initialNotedBy, setInitialNotedBy] = useState<Approver[]>([]);
   const [initialApprovedBy, setInitialApprovedBy] = useState<Approver[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
 
   const {
     formState: { errors: formErrors },
@@ -137,6 +129,46 @@ const CreateDiscount = (props: Props) => {
       discountedPrice: "",
     },
   ]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setFile((prevImages) => [...prevImages, ...files]);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const droppedFiles = Array.from(e.dataTransfer.files) as File[];
+    setFile((prevImages) => [...prevImages, ...droppedFiles]);
+    setIsHovering(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsHovering(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsHovering(false);
+  };
+
+  const handleRemoveImage = (imageName: string) => {
+    setFile((prevImages) =>
+      prevImages.filter((image) => image.name !== imageName)
+    );
+  };
+
+  const formatFileSize = (sizeInBytes: any) => {
+    const units = ["B", "KB", "MB", "GB", "TB"];
+    let size = sizeInBytes;
+    let unitIndex = 0;
+
+    while (size >= 1024 && unitIndex < units.length - 1) {
+      size /= 1024;
+      unitIndex++;
+    }
+
+    return `${size.toFixed(1)} ${units[unitIndex]}`;
+  };
 
   useEffect(() => {
     setInitialNotedBy(notedBy);
@@ -477,8 +509,8 @@ const CreateDiscount = (props: Props) => {
       <div className="bg-white w-full   mb-5 rounded-[12px] flex flex-col">
         <div className="border-b flex justify-between flex-col px-[30px] md:flex-row ">
           <div>
-            <h1 className="text-3xl text-left py-4 text-primary font-bold flex mr-2">
-              <span className="text-3xl mr-2 underline decoration-2 underline-offset-8">
+            <h1 className="flex py-4 mr-2 text-3xl font-bold text-left text-primary">
+              <span className="mr-2 text-3xl underline decoration-2 underline-offset-8">
                 Discount
               </span>{" "}
               Requisition Form
@@ -883,14 +915,96 @@ const CreateDiscount = (props: Props) => {
             </div>
             <div className="flex flex-col justify-between md:flex-row">
               <div className="w-full max-w-md p-4">
-                <p className="font-semibold">Attachments:</p>
-                <input
-                  id="file"
-                  type="file"
-                  multiple
-                  onChange={handleFileChange}
-                  className="w-full mt-2"
-                />
+                <p className="mb-3 font-semibold">Upload attachment:</p>
+                <div
+                  className={`relative w-full p-6 text-center border-2 border-gray-300 border-dashed rounded-lg cursor-pointer 
+                      ${isHovering ? "bg-gray-200" : "hover:bg-gray-100"}`}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onClick={() => document.getElementById("files")?.click()}
+                >
+                  <input
+                    type="file"
+                    id="files"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  <p className="text-gray-500">
+                    Drag and drop your images here <br /> or <br />
+                    <span className="text-blue-500">click to upload</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            {file.length > 0 && (
+              <div className="mt-4">
+                <p className="mb-3 font-semibold">Attachments:</p>
+                <button
+                  onClick={() => setFile([])}
+                  className="px-3 py-1 text-xs text-white bg-red-700 rounded-lg hover:bg-red-500"
+                >
+                  Remove All
+                </button>
+              </div>
+            )}
+            <div className="max-w-[500px] overflow-x-auto pb-3 ">
+              <div className="flex gap-1">
+                {file.map((fileItem) => (
+                  <div
+                    key={fileItem.name}
+                    className="relative p-2 bg-white rounded-lg shadow-md max-w-20"
+                  >
+                    <div className="relative">
+                      {fileItem.type.startsWith("image/") ? (
+                        // Display image preview if file is an image
+                        <img
+                          src={URL.createObjectURL(fileItem)}
+                          alt={fileItem.name}
+                          className="object-cover w-full h-20 rounded-md"
+                        />
+                      ) : (
+                        // Display document icon if file is not an image
+                        <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="size-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                            />
+                          </svg>
+                        </div>
+                      )}
+
+                      {/* Display File Name and Size */}
+                      <div className="mt-2">
+                        <p className="text-sm font-semibold truncate">
+                          {fileItem.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {formatFileSize(fileItem.size)}
+                        </p>
+                        <p key={fileItem.name}>
+                          <button
+                            onClick={() => handleRemoveImage(fileItem.name)}
+                            className="px-3 py-1 text-xs text-white bg-red-500 rounded-lg"
+                          >
+                            Remove
+                          </button>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
             <div className="mt-10 mb-4 ml-5">
