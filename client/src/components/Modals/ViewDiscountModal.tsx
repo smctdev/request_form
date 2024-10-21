@@ -138,6 +138,7 @@ const ViewDiscountModal: React.FC<Props> = ({
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
   const longPressTimeout = useRef<number | null>(null);
+  const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -255,16 +256,37 @@ const ViewDiscountModal: React.FC<Props> = ({
 
     setIsEditing(true);
   };
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setNewAttachments(Array.from(event.target.files));
-    }
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setNewAttachments((prevImages) => [...prevImages, ...files]);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const droppedFiles = Array.from(e.dataTransfer.files) as File[];
+    setNewAttachments((prevImages) => [...prevImages, ...droppedFiles]);
+    setIsHovering(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsHovering(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsHovering(false);
+  };
+
+  const handleRemoveImage = (imageName: string) => {
+    setNewAttachments((prevImages) =>
+      prevImages.filter((image) => image.name !== imageName)
+    );
   };
 
   const handleRemoveAttachment = (index: number) => {
     // Get the path of the attachment to be removed
     const attachmentPath = attachmentUrl[index].split(
-      "storage/attachments/"
+      "request-form-files/request_form_attachments/"
     )[1];
 
     // Add the path to the removedAttachments state
@@ -355,7 +377,7 @@ const ViewDiscountModal: React.FC<Props> = ({
 
       // Append existing attachments
       attachmentUrl.forEach((url, index) => {
-        const path = url.split("storage/attachments/")[1];
+        const path = url.split("request-form-files/request_form_attachments/")[1];
         formData.append(`attachment_url_${index}`, path);
       });
 
@@ -956,10 +978,46 @@ const ViewDiscountModal: React.FC<Props> = ({
             )}
           </div>
           <div className="w-full">
-            <h1 className="font-bold">Attachments:</h1>
+            {isEditing && (
+              <div className="w-full max-w-md p-4">
+                <p className="mb-3 font-semibold">Upload attachment:</p>
+                <div
+                  className={`relative w-full p-6 text-center border-2 border-gray-300 border-dashed rounded-lg cursor-pointer 
+                    ${isHovering ? "bg-gray-200" : "hover:bg-gray-100"}`}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onClick={() => document.getElementById("files")?.click()}
+                >
+                  <input
+                    type="file"
+                    id="files"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  <p className="text-gray-500">
+                    Drag and drop your images here <br /> or <br />
+                    <span className="text-blue-500">click to upload</span>
+                  </p>
+                </div>
+              </div>
+            )}
+            {newAttachments.length > 0 && (
+              <div className="mt-4">
+                <p className="mb-3 font-semibold">Attachments:</p>
+                <button
+                  onClick={() => setNewAttachments([])}
+                  className="px-3 py-1 text-xs text-white bg-red-700 rounded-lg hover:bg-red-500"
+                >
+                  Remove All
+                </button>
+              </div>
+            )}
             <div className="max-w-[500px] overflow-x-auto pb-3">
               <div className="flex gap-1">
-                {attachmentUrl.map((fileItem) => (
+                {attachmentUrl.map((fileItem, index) => (
                   <div
                     key={fileItem}
                     className="relative w-24 p-2 bg-white rounded-lg shadow-md"
@@ -974,34 +1032,96 @@ const ViewDiscountModal: React.FC<Props> = ({
                             className="object-cover w-full h-20 rounded-md"
                           />
 
-                          <div className="px-3 py-1 mt-2 text-xs text-center text-white rounded-lg bg-primary">
-                            <button
-                              onClick={() => handleViewImage(fileItem)}
-                              className="text-xs"
-                            >
-                              View
-                            </button>
-                          </div>
+                          {!isEditing ? (
+                            <div className="px-3 py-1 mt-2 text-xs text-center text-white rounded-lg bg-primary">
+                              <button
+                                onClick={() => handleViewImage(fileItem)}
+                                className="text-xs"
+                              >
+                                View
+                              </button>
+                            </div>
+                          ) : (
+                            <p key={index} className="text-center">
+                              <button
+                                onClick={() => handleRemoveAttachment(index)}
+                                className="px-3 py-1 mt-2 text-xs text-white bg-red-500 rounded-lg"
+                              >
+                                Remove
+                              </button>
+                            </p>
+                          )}
                         </>
                       ) : (
                         // Display document icon if file is not an image
                         <>
                           <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="" />
+                            <img
+                              src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png"
+                              alt=""
+                            />
                           </div>
                           <div className="mt-2">
-                            <a
-                              href={fileItem}
-                              download
-                              target="_blank"
-                              onClick={(e) => e.stopPropagation()}
-                              className="px-3 py-1 text-xs text-white rounded-lg bg-primary"
-                            >
-                              Download
-                            </a>
+                            {!isEditing ? (
+                              <a
+                                href={fileItem}
+                                download
+                                target="_blank"
+                                onClick={(e) => e.stopPropagation()}
+                                className="px-3 py-1 text-xs text-white rounded-lg bg-primary"
+                              >
+                                Download
+                              </a>
+                            ) : (
+                              <p key={index} className="text-center">
+                                <button
+                                  onClick={() => handleRemoveAttachment(index)}
+                                  className="px-3 py-1 text-xs text-white bg-red-500 rounded-lg"
+                                >
+                                  Remove
+                                </button>
+                              </p>
+                            )}
                           </div>
                         </>
                       )}
+                    </div>
+                  </div>
+                ))}
+                {newAttachments.map((fileItem) => (
+                  <div
+                    key={fileItem.name}
+                    className="relative w-24 p-2 bg-white rounded-lg shadow-md"
+                  >
+                    <div className="relative">
+                      {fileItem.type.startsWith("image/") ? (
+                        // Display image preview if file is an image
+                        <img
+                          src={URL.createObjectURL(fileItem)}
+                          alt={fileItem.name}
+                          className="object-cover w-full h-20 rounded-md"
+                        />
+                      ) : (
+                        // Display document icon if file is not an image
+                        <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
+                          <img
+                            src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png"
+                            alt=""
+                          />
+                        </div>
+                      )}
+
+                      {/* Display File Name and Size */}
+                      <div className="mt-2">
+                        <p key={fileItem.name} className="text-center">
+                          <button
+                            onClick={() => handleRemoveImage(fileItem.name)}
+                            className="px-3 py-1 text-xs text-white bg-red-500 rounded-lg"
+                          >
+                            Remove
+                          </button>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -1096,22 +1216,84 @@ const ViewDiscountModal: React.FC<Props> = ({
                     )}
                   </div>
                 ))}
+
               {attachmentUrl.filter(
                 (_, index) => !removedAttachments.includes(index)
               ).length === 0 && (
                 <p className="text-gray-500">No attachments available.</p>
               )}
             </div> */}
+          </div>
 
-            {isEditing && (
-              <div>
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleFileChange}
-                  className="mt-2"
-                />
-              </div>
+          <div className="w-full">
+            <h2 className="mb-2 text-lg font-bold">Comments</h2>
+
+            {/* Check if there are no comments in both notedBy and approvedBy */}
+            {notedBy.filter((user) => user.comment).length === 0 &&
+            approvedBy.filter((user) => user.comment).length === 0 ? (
+              <p className="text-gray-500">No comments yet.</p>
+            ) : (
+              <>
+                {/* Render Noted By comments */}
+                <ul className="flex flex-col w-full mb-4 space-y-4">
+                  {notedBy
+                    .filter((user) => user.comment)
+                    .map((user, index) => (
+                      <div className="flex" key={index}>
+                        <div>
+                          <img
+                            alt="avatar"
+                            className="hidden cursor-pointer sm:block"
+                            src={Avatar}
+                            height={35}
+                            width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
+                          />
+                        </div>
+                        <div className="flex flex-row w-full">
+                          <li className="flex flex-col justify-between pl-2">
+                            <h3 className="text-lg font-bold">
+                              {user.firstName} {user.lastName}
+                            </h3>
+                            <p>{user.comment}</p>
+                          </li>
+                        </div>
+                      </div>
+                    ))}
+                </ul>
+
+                {/* Render Approved By comments */}
+                <ul className="flex flex-col w-full mb-4 space-y-4">
+                  {approvedBy
+                    .filter((user) => user.comment)
+                    .map((user, index) => (
+                      <div className="flex" key={index}>
+                        <div>
+                          <img
+                            alt="avatar"
+                            className="hidden cursor-pointer sm:block"
+                            src={Avatar}
+                            height={35}
+                            width={45}
+                            draggable="false"
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
+                          />
+                        </div>
+                        <div className="flex flex-row w-full">
+                          <li className="flex flex-col justify-between pl-2">
+                            <h3 className="text-lg font-bold">
+                              {user.firstName} {user.lastName}
+                            </h3>
+                            <p>{user.comment}</p>
+                          </li>
+                        </div>
+                      </div>
+                    ))}
+                </ul>
+              </>
             )}
           </div>
 

@@ -289,7 +289,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
   const handleRemoveAttachment = (index: number) => {
     // Get the path of the attachment to be removed
     const attachmentPath = attachmentUrl[index].split(
-      "storage/attachments/"
+      "request-form-files/request_form_attachments/"
     )[1];
 
     // Add the path to the removedAttachments state
@@ -374,7 +374,7 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
 
       // Append existing attachments
       attachmentUrl.forEach((url, index) => {
-        const path = url.split("storage/attachments/")[1];
+        const path = url.split("request-form-files/request_form_attachments/")[1];
         formData.append(`attachment_url_${index}`, path);
       });
 
