@@ -760,7 +760,7 @@ const CreateCashDisbursement = (props: Props) => {
                         <p className="text-xs text-gray-500">
                           {formatFileSize(fileItem.size)}
                         </p>
-                        <p key={fileItem.name}>
+                        <p key={fileItem.name} className="text-center">
                           <button
                             onClick={() => handleRemoveImage(fileItem.name)}
                             className="px-3 py-1 text-xs text-white bg-red-500 rounded-lg"
