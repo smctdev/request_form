@@ -68,12 +68,18 @@ class ApprovalProcessController extends Controller
         DB::beginTransaction();
 
         try {
-            $requestForm = RequestForm::findOrFail($request_form_id);
+            $requestForm = RequestForm::find($request_form_id);
 
             $approvalProcess = ApprovalProcess::where('request_form_id', $request_form_id)
                 ->where('user_id', $user_id)
                 ->where('status', 'Pending')
                 ->first();
+
+            if (!$requestForm) {
+                return response()->json([
+                    'message' => 'Request form not found or Already deleted by the requester.',
+                ], 404);
+            }
 
             if (!$approvalProcess) {
                 return response()->json([
@@ -135,7 +141,7 @@ class ApprovalProcessController extends Controller
 
                     $user = User::where('id', $requestForm->user_id)->first();
 
-                    $user->notify(new OngoingNotification($requestForm, 'ongoing', $user->firstName, $requestForm->form_type,$request_code));
+                    $user->notify(new OngoingNotification($requestForm, 'ongoing', $user->firstName, $requestForm->form_type, $request_code));
 
                     // Broadcast the notification count update
                     $message = 'You have a request form to approve';
@@ -166,9 +172,9 @@ class ApprovalProcessController extends Controller
                         }
                     }
                     $previousApprovalProcesses = ApprovalProcess::where('request_form_id', $request_form_id)
-                    ->where('status', 'Approved')
-                    ->orderBy('level', 'asc')
-                    ->get();
+                        ->where('status', 'Approved')
+                        ->orderBy('level', 'asc')
+                        ->get();
 
                     foreach ($previousApprovalProcesses as $previousApprovalProcess) {
                         $previousApprover = $previousApprovalProcess->user;

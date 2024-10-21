@@ -9,6 +9,7 @@ import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
 import ApproveSuccessModal from "./ApproveSuccessModal";
 import PrintLiquidation from "./PrintLiquidation";
+import Swal from "sweetalert2";
 
 type Props = {
   closeModal: () => void;
@@ -360,7 +361,20 @@ const ApproverLiquidation: React.FC<Props> = ({
         error.message ||
         "Failed to update stock requisition.";
       console.error("Error disapproving request form:", errorMessage);
-      setCommentMessage(errorMessage);
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.response.data.message,
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        }).then(() => {
+          closeModal();
+          refreshData();
+        });
+      } else {
+        setCommentMessage(errorMessage);
+      }
     }
   };
   const handleApprove = async () => {
@@ -405,7 +419,20 @@ const ApproverLiquidation: React.FC<Props> = ({
         error.message ||
         "Failed to update stock requisition.";
       console.error("Error approving request form:", errorMessage);
-      setCommentMessage(errorMessage);
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.response.data.message,
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        }).then(() => {
+          closeModal();
+          refreshData();
+        });
+      } else {
+        setCommentMessage(errorMessage);
+      }
     }
   };
   const formatDate = (dateString: string) => {
