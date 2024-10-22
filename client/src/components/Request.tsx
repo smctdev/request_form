@@ -424,12 +424,12 @@ const Request = (props: Props) => {
       case 2:
         filteredRequests = requests.filter(
           (item: Record) =>
-            item.status.trim() === "Pending" || item.status.trim() === "Ongoing"
+            item.status.trim() === "Pending"
         );
         break;
       case 3:
         filteredRequests = requests.filter(
-          (item: Record) => item.status.trim() === "Approved"
+          (item: Record) => item.status.trim() === "Ongoing"
         );
         break;
       case 4:
@@ -630,7 +630,7 @@ const Request = (props: Props) => {
     "All Requests",
     "Completed Requests",
     "Pending Requests",
-    "Approved Requests",
+    "Ongoing Requests",
     "Unsuccessful Requests",
   ];
 

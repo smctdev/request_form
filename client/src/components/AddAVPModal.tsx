@@ -316,7 +316,7 @@ const AddAVPModal = ({
                           placeholder="Search branches..."
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="p-2 mb-2 border border-gray-300 rounded-md"
+                          className="p-2 mb-2 bg-white border border-black rounded-md"
                         />
                         <div className="flex flex-wrap px-4 mt-4 mb-4">
                           {selectedBranches.map((branchId) => {
