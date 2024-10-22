@@ -226,7 +226,7 @@ const AddBranchHeadModal = ({
                   placeholder="Search branches..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="p-2 mb-2 border border-gray-300 rounded-md "
+                  className="p-2 mb-2 bg-white border border-black rounded-md "
                 />
                 <div className="px-4">
                   {branches.length === 0 ? (

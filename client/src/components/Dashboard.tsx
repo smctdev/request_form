@@ -6,7 +6,7 @@ import {
   faCheck,
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import { ChartBarIcon } from "@heroicons/react/24/solid";
@@ -78,6 +78,9 @@ const Dashboard: React.FC = () => {
   const [totalApprovedRequests, setTotalApprovedRequests] = useState<
     number | null
   >(null);
+  const [totalCompletedRequests, setTotalCompletedRequests] = useState<
+  number | null
+>(null);
   const [totalPendingRequests, setTotalPendingRequests] = useState<
     number | null
   >(null);
@@ -89,6 +92,7 @@ const Dashboard: React.FC = () => {
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
   const firstName = localStorage.getItem("firstName");
   const userId = localStorage.getItem("id");
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -116,7 +120,7 @@ const Dashboard: React.FC = () => {
     fetchBranchData();
   }, []);
 
-  const linkTo = "/request";
+  const linkTo = useNavigate();
   const NoDataComponent = () => (
     <div className="flex items-center justify-center h-64 overflow-hidden text-gray-500">
       <p className="text-lg">No records found</p>
@@ -191,7 +195,9 @@ const Dashboard: React.FC = () => {
           }
         )
         .then((response) => {
+          console.log(response.data);
           setTotalRequestsSent(response.data.totalRequestSent);
+          setTotalCompletedRequests(response.data.totalCompletedRequest);
           setTotalPendingRequests(response.data.totalPendingRequest);
           setTotalApprovedRequests(response.data.totalApprovedRequest);
           setTotalDisapprovedRequests(response.data.totalDisapprovedRequest);
@@ -199,6 +205,9 @@ const Dashboard: React.FC = () => {
         })
         .catch((error) => {
           console.error("Error fetching total requests sent:", error);
+        })
+        .finally(() => {
+          setDataLoading(false);
         });
     }
   }, [userId]);
@@ -297,22 +306,42 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid w-full grid-cols-1 gap-8 mt-4 space-y-2 sm:w-full md:grid-cols-2 lg:grid-cols-4 md:space-y-0">
-        <div className={`${boxWhite} hover:-translate-y-1 hover:scale-110`}>
+      <div className="grid w-full grid-cols-1 gap-8 mt-4 space-y-2 sm:w-full md:grid-cols-2 lg:grid-cols-5 md:space-y-0">
+        <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-primary`}>
             <ChartBarIcon className={`${outerLogo} text-[#298DDE]`} />
             <div className={`${innerBox}`}>
               <ChartBarIcon className={`${innerLogo} text-primary`} />
             </div>
-            <p className="text-[16px] font-semibold mt-[30px] ml-[17px] absolute">
+            <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
               Total Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalRequestsSent}
+              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalRequestsSent}
             </p>
           </div>
         </div>
-        <div className={`${boxWhite} hover:-translate-y-1 hover:scale-110`}>
+        <div className={`${boxWhite} hover:-translate-y-1`}>
+          <div className={`${boxPink} bg-[#4abffd]`}>
+            <FontAwesomeIcon
+              icon={faCheck}
+              className={`${outerLogo} text-[#2a8bbf]`}
+            />
+            <div className={`${innerBox}`}>
+              <FontAwesomeIcon
+                icon={faCheck}
+                className={`${innerLogo} text-[#2ea7e8]`}
+              />
+            </div>
+            <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
+              Completed Requests
+            </p>
+            <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
+              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalCompletedRequests}
+            </p>
+          </div>
+        </div>
+        <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-green`}>
             <FontAwesomeIcon
               icon={faCheck}
@@ -324,15 +353,15 @@ const Dashboard: React.FC = () => {
                 className={`${innerLogo} text-green`}
               />
             </div>
-            <p className="text-[16px] font-semibold mt-[30px] ml-[17px] absolute">
+            <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
               Approved Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalApprovedRequests}
+              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalApprovedRequests}
             </p>
           </div>
         </div>
-        <div className={`${boxWhite} hover:-translate-y-1 hover:scale-110`}>
+        <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-yellow`}>
             <FontAwesomeIcon
               icon={faEnvelope}
@@ -344,15 +373,15 @@ const Dashboard: React.FC = () => {
                 className={`${innerLogo} text-yellow`}
               />
             </div>
-            <p className="text-[16px] font-semibold mt-[30px] ml-[17px] absolute">
+            <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
               Pending Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalPendingRequests}
+              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalPendingRequests}
             </p>
           </div>
         </div>
-        <div className={`${boxWhite} hover:-translate-y-1 hover:scale-110`}>
+        <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-pink`}>
             <FontAwesomeIcon
               icon={faPaperPlane}
@@ -364,11 +393,11 @@ const Dashboard: React.FC = () => {
                 className={`${innerLogo} text-pink`}
               />
             </div>
-            <p className="text-[16px] font-semibold mt-[30px] ml-[17px] absolute">
+            <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
               Unsuccessful Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalDisapprovedRequests}
+              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalDisapprovedRequests}
             </p>
           </div>
         </div>
@@ -382,11 +411,11 @@ const Dashboard: React.FC = () => {
           Recent requests
         </h1>
         <p className="flex justify-end px-[25px] -mt-10 mb-1">
-          <a href={linkTo}>
+          <button onClick={() => linkTo("/request")}>
             <span className="bg-primary px-3 py-1 rounded-[12px] text-white">
               See all
             </span>
-          </a>
+          </button>
         </p>
         <div>
           <DataTable

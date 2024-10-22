@@ -88,6 +88,9 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
   const [totalRequestsSent, setTotalRequestsSent] = useState<number | null>(
     null
   );
+  const [totalCompletedRequests, setTotalCompletedRequests] = useState<
+    number | null
+  >(null);
   const [totalApprovedRequests, setTotalApprovedRequests] = useState<
     number | null
   >(null);
@@ -125,6 +128,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
 
         .then((response) => {
           setTotalRequestsSent(response.data.totalRequestSent);
+          setTotalCompletedRequests(response.data.totalCompletedRequest);
           setTotalPendingRequests(response.data.totalPendingRequest);
           setTotalApprovedRequests(response.data.totalApprovedRequest);
           setTotalDisapprovedRequests(response.data.totalDisapprovedRequest);
@@ -330,14 +334,14 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
         </div>
       </div>
 
-      <div className="grid w-full grid-cols-1 gap-8 mt-4 space-y-2 sm:w-full md:grid-cols-2 lg:grid-cols-4 md:space-y-0">
-        <div className={`${boxWhite} hover:-translate-y-1 hover:scale-110`}>
+      <div className="grid w-full grid-cols-1 gap-8 mt-4 space-y-2 sm:w-full md:grid-cols-2 lg:grid-cols-5 md:space-y-0">
+        <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-primary`}>
             <ChartBarIcon className={`${outerLogo} text-[#298DDE]`} />
             <div className={`${innerBox}`}>
               <ChartBarIcon className={`${innerLogo} text-primary`} />
             </div>
-            <p className="text-[16px] font-semibold mt-[30px] ml-[17px] absolute">
+            <p className="text-[16px] font-semibold mt-[15px] ml-[17px] absolute">
               Total Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
@@ -345,7 +349,27 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
             </p>
           </div>
         </div>
-        <div className={`${boxWhite} hover:-translate-y-1 hover:scale-110`}>
+        <div className={`${boxWhite} hover:-translate-y-1`}>
+          <div className={`${boxPink} bg-[#4abffd]`}>
+            <FontAwesomeIcon
+              icon={faCheck}
+              className={`${outerLogo} text-[#2a8bbf]`}
+            />
+            <div className={`${innerBox}`}>
+              <FontAwesomeIcon
+                icon={faCheck}
+                className={`${innerLogo} text-[#2ea7e8]`}
+              />
+            </div>
+            <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
+              Completed Requests
+            </p>
+            <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
+              {totalCompletedRequests}
+            </p>
+          </div>
+        </div>
+        <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-green`}>
             <FontAwesomeIcon
               icon={faCheck}
@@ -357,7 +381,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
                 className={`${innerLogo} text-green`}
               />
             </div>
-            <p className="text-[16px] font-semibold mt-[30px] ml-[17px] absolute">
+            <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
               Approved Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
@@ -365,7 +389,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
             </p>
           </div>
         </div>
-        <div className={`${boxWhite} hover:-translate-y-1 hover:scale-110`}>
+        <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-yellow`}>
             <FontAwesomeIcon
               icon={faEnvelope}
@@ -377,7 +401,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
                 className={`${innerLogo} text-yellow`}
               />
             </div>
-            <p className="text-[16px] font-semibold mt-[30px] ml-[17px] absolute">
+            <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
               Pending Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
@@ -385,7 +409,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
             </p>
           </div>
         </div>
-        <div className={`${boxWhite} hover:-translate-y-1 hover:scale-110`}>
+        <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-pink`}>
             <FontAwesomeIcon
               icon={faPaperPlane}
@@ -397,7 +421,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
                 className={`${innerLogo} text-pink`}
               />
             </div>
-            <p className="text-[16px] font-semibold mt-[30px] ml-[17px] absolute">
+            <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
               Unsuccessful Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">

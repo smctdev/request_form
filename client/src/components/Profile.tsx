@@ -156,7 +156,8 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
     try {
       setChangePasswordLoading(true);
       if (newPassword !== confirmNewPassword) {
-        console.error("The new password fields confirmation does not match.");
+        setErrorMessage("The new password fields confirmation does not match.");
+        setChangePasswordLoading(false);
         return;
       }
 
@@ -183,13 +184,19 @@ const Profile = ({ isdarkMode }: { isdarkMode: boolean }) => {
       });
       // alert("Password changed successfully");
       setChangePasswordLoading(false);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setShowCurrent(false);
+      setShowPassword(false);
+      setShowConfirmPassword(false);
     } catch (error: any) {
       setChangePasswordLoading(false);
       console.error(
         "Failed to change password:",
         error.response?.data?.message || error.message
       );
-      setErrorMessage(error.response?.data?.message || error.message);
+      setErrorMessage(error.response?.data?.error || error.message);
     }
   };
 

@@ -10,6 +10,7 @@ import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
 import ApproveSuccessModal from "./ApproveSuccessModal";
+import Swal from "sweetalert2";
 
 type Props = {
   closeModal: () => void;
@@ -340,7 +341,20 @@ const ApproverCashDisbursement: React.FC<Props> = ({
         error.message ||
         "Failed to update stock requisition.";
       console.error("Error disapproving request form:", errorMessage);
-      setCommentMessage(errorMessage);
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.response.data.message,
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        }).then(() => {
+          closeModal();
+          refreshData();
+        });
+      } else {
+        setCommentMessage(errorMessage);
+      }
     }
   };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -391,7 +405,20 @@ const ApproverCashDisbursement: React.FC<Props> = ({
         error.message ||
         "Failed to update stock requisition.";
       console.error("Error approving request form:", errorMessage);
-      setCommentMessage(errorMessage);
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.response.data.message,
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        }).then(() => {
+          closeModal();
+          refreshData();
+        });
+      } else {
+        setCommentMessage(errorMessage);
+      }
     }
   };
 
@@ -418,7 +445,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
     if (field === "quantity" || field === "unitCost") {
       const quantity = parseFloat(newDataCopy[index].quantity);
       const unitCost = parseFloat(newDataCopy[index].unitCost);
-      newDataCopy[index].totalAmount = (quantity * unitCost).toString();
+      newDataCopy[index].totalAmount = (quantity * unitCost).toString() === "NaN" ? "0" : parseFloat((quantity * unitCost).toString()).toFixed(2);
     }
 
     // Calculate grandTotal
@@ -426,7 +453,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
     for (const item of newDataCopy) {
       total += parseFloat(item.totalAmount);
     }
-    const grandTotal = total.toString();
+    const grandTotal = parseFloat(total.toString()).toFixed(2);
 
     // Update the state with the modified newDataCopy and grandTotal
     setNewData(newDataCopy);
@@ -917,7 +944,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
                         // Display document icon if file is not an image
                         <>
                           <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="" />
+                            <img src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png" alt="" />
                           </div>
                           <div className="mt-2">
                             <a

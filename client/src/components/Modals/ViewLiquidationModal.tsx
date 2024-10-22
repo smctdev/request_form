@@ -338,6 +338,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
   if (!record) return null;
 
   const handleSaveChanges = async () => {
+    
     // Simple validation
     if (
       !newData.every(
@@ -355,12 +356,13 @@ const ViewLiquidationModal: React.FC<Props> = ({
     }
 
     // Check if cashAdvance is less than 1 or negative
-    if (parseFloat(newCashAdvance) < 1 || isNaN(parseFloat(newCashAdvance))) {
-      setErrorMessage(
-        "Cash advance must be a positive number greater than or equal to 1."
-      );
-      return;
-    }
+    // if (parseFloat(newCashAdvance) < 1 || isNaN(parseFloat(newCashAdvance))) {
+    //   setErrorMessage(
+    //     "Cash advance must be a positive number greater than or equal to 1."
+    //   );
+    //   console.log("aaaa");
+    //   return;
+    // }
 
     try {
       setLoading(true);
@@ -404,7 +406,9 @@ const ViewLiquidationModal: React.FC<Props> = ({
 
       // Append existing attachments
       attachmentUrl.forEach((url, index) => {
-        const path = url.split("request-form-files/request_form_attachments/")[1];
+        const path = url.split(
+          "request-form-files/request_form_attachments/"
+        )[1];
         formData.append(`attachment_url_${index}`, path);
       });
 
@@ -464,7 +468,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
     // Update the grandTotal in the newDataCopy
     newDataCopy[index] = {
       ...newDataCopy[index],
-      grandTotal: grandTotal.toString(),
+      grandTotal: parseFloat(grandTotal.toString()).toFixed(2),
     };
 
     // Calculate the totalExpense by summing up all the grandTotal values
@@ -533,7 +537,6 @@ const ViewLiquidationModal: React.FC<Props> = ({
   };
 
   const handleViewImage = (imageUrl: any) => {
-    console.log("");
     setCurrentImage(imageUrl);
     setIsImgModalOpen(true);
   };
@@ -568,13 +571,11 @@ const ViewLiquidationModal: React.FC<Props> = ({
     }
     setDragging(false);
   };
-  
+
   const handleMouseMove = (e: any) => {
     if (dragging) {
-      const clientX =
-        e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
-      const clientY =
-        e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+      const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
 
       setPosition({
         x: clientX - startPosition.x,
@@ -955,7 +956,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
                       <input
                         type="number"
                         value={newCashAdvance}
-                        onChange={(e) => setNewCashAdvance(e.target.value)}
+                        onChange={(e) => setNewCashAdvance(e.target.value === "" ? "0" : e.target.value)}
                         className="w-full font-bold text-right bg-white"
                         readOnly={!isEditing}
                       />
@@ -976,7 +977,14 @@ const ViewLiquidationModal: React.FC<Props> = ({
                       ? calculateShort(
                           parseFloat(editableRecord.form_data[0].totalExpense),
                           parseFloat(newCashAdvance)
-                        )
+                        ) === "NaN"
+                        ? "0.00"
+                        : calculateShort(
+                            parseFloat(
+                              editableRecord.form_data[0].totalExpense
+                            ),
+                            parseFloat(newCashAdvance)
+                          )
                       : parseFloat(editableRecord.form_data[0].short).toFixed(
                           2
                         )}
@@ -1336,7 +1344,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
                         <>
                           <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
                             <img
-                              src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png"
+                              src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png"
                               alt=""
                             />
                           </div>
@@ -1384,7 +1392,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
                         // Display document icon if file is not an image
                         <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
                           <img
-                            src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png"
+                            src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png"
                             alt=""
                           />
                         </div>

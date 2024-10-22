@@ -414,8 +414,8 @@ class RequestFormController extends Controller
             // Add existing attachment paths (from input)
             foreach ($request->input('attachment_urls', []) as $value) {
                 // Ensure the value is valid and not already in the list
-                if ($value && !in_array('attachments/' . $value, $attachment_paths)) {
-                    $attachment_paths[] = 'attachments/' . $value; // Add to list
+                if ($value && !in_array('request_form_attachments/' . $value, $attachment_paths)) {
+                    $attachment_paths[] = 'request_form_attachments/' . $value; // Add to list
                 }
             }
 
@@ -423,8 +423,8 @@ class RequestFormController extends Controller
             $removed_attachments = $request->input('removed_attachments', []);
             foreach ($removed_attachments as $path) {
                 // Delete the file from storage
-                if (Storage::disk('public')->exists('attachments/' . $path)) {
-                    Storage::disk('public')->delete('attachments/' . $path);
+                if (Storage::disk('d_drive')->exists('request_form_attachments/' . $path)) {
+                    Storage::disk('d_drive')->delete('request_form_attachments/' . $path);
                 }
                 // Remove from the attachment list as well
                 $attachment_paths = array_filter($attachment_paths, function ($existing_path) use ($path) {
@@ -790,14 +790,14 @@ class RequestFormController extends Controller
         try {
 
             $requestSent = RequestForm::where('user_id', $user_id)->count();
+            $totalCompletedRequest = RequestForm::where('user_id', $user_id)->where('status', 'Completed')->count();
             $totalApprovedRequests = RequestForm::where('user_id', $user_id)->where('status', 'Approved')->count();
-            $totalPendingRequest = RequestForm::where('user_id', $user_id)
-                ->whereIn('status', ['Pending', 'Ongoing'])
-                ->count();
+            $totalPendingRequest = RequestForm::where('user_id', $user_id)->whereIn('status', ['Pending', 'Ongoing'])->count();
             $totalDisapprovedRequest = RequestForm::where('user_id', $user_id)->where('status', 'Disapproved')->count();
             return response()->json([
                 'message' => "Total number of request sent counted successfully",
                 'totalRequestSent' => $requestSent,
+                'totalCompletedRequest' => $totalCompletedRequest,
                 'totalApprovedRequest' => $totalApprovedRequests,
                 'totalPendingRequest' => $totalPendingRequest,
                 'totalDisapprovedRequest' => $totalDisapprovedRequest
