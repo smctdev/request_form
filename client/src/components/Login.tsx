@@ -200,6 +200,7 @@ const Login: React.FC = () => {
               <button
                 className="bg-primary text-white px-4 rounded-lg w-full lg:max-w-[417px] lg:h-[56px] h-10"
                 type="submit"
+                disabled={loading || !!errors.email || !!errors.password}
               >
                 {!loading && "Log In"}
               </button>
