@@ -337,7 +337,7 @@ const Dashboard: React.FC = () => {
               Completed Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalCompletedRequests}
+              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalCompletedRequests}
             </p>
           </div>
         </div>
