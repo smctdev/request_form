@@ -31,8 +31,13 @@ const Login: React.FC = () => {
   });
 
   const submitData: SubmitHandler<UserCredentials> = async (data) => {
+    setLoading(true);
+    console.log("error", errors);
+    if (errors.email?.message === "Invalid email address") {
+      setLoading(false); // Reset loading if it's an invalid email
+      return; // Exit early
+  }
     try {
-      setLoading(true);
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/login`,
         {
@@ -75,7 +80,6 @@ const Login: React.FC = () => {
           confirmButtonText: "Close",
           confirmButtonColor: "#dc3545",
         });
-        setLoading(false);
       }
     } catch (error: any) {
       const errorMessage =
@@ -88,6 +92,7 @@ const Login: React.FC = () => {
         confirmButtonColor: "#dc3545",
       });
       setError(errorMessage);
+    }finally{
       setLoading(false);
     }
   };
@@ -195,7 +200,6 @@ const Login: React.FC = () => {
               <button
                 className="bg-primary text-white px-4 rounded-lg w-full lg:max-w-[417px] lg:h-[56px] h-10"
                 type="submit"
-                onClick={() => setLoading(!loading)}
               >
                 {!loading && "Log In"}
               </button>
