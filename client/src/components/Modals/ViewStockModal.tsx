@@ -402,7 +402,7 @@ const ViewStockModal: React.FC<Props> = ({
     if (field === "quantity" || field === "unitCost") {
       const quantity = parseFloat(newDataCopy[index].quantity);
       const unitCost = parseFloat(newDataCopy[index].unitCost);
-      newDataCopy[index].totalAmount = (quantity * unitCost).toString();
+      newDataCopy[index].totalAmount = (quantity * unitCost).toString() === "NaN" ? "0" : parseFloat((quantity * unitCost).toString()).toFixed(2);
     }
 
     // Calculate grandTotal
@@ -410,7 +410,7 @@ const ViewStockModal: React.FC<Props> = ({
     for (const item of newDataCopy) {
       total += parseFloat(item.totalAmount);
     }
-    const grandTotal = total.toString();
+    const grandTotal = parseFloat(total.toString()).toFixed(2);
 
     // Update the state with the modified newDataCopy and grandTotal
     setNewData(newDataCopy);

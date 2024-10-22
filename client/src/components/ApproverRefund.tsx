@@ -445,7 +445,7 @@ const ApproverRefund: React.FC<Props> = ({
     if (field === "quantity" || field === "unitCost") {
       const quantity = parseFloat(newDataCopy[index].quantity);
       const unitCost = parseFloat(newDataCopy[index].unitCost);
-      newDataCopy[index].totalAmount = (quantity * unitCost).toString();
+      newDataCopy[index].totalAmount = (quantity * unitCost).toString() === "NaN" ? "0" : parseFloat((quantity * unitCost).toString()).toFixed(2);
     }
 
     // Calculate grandTotal
@@ -453,7 +453,7 @@ const ApproverRefund: React.FC<Props> = ({
     for (const item of newDataCopy) {
       total += parseFloat(item.totalAmount);
     }
-    const grandTotal = total.toString();
+    const grandTotal = parseFloat(total.toString()).toFixed(2);
 
     // Update the state with the modified newDataCopy and grandTotal
     setNewData(newDataCopy);
@@ -946,7 +946,7 @@ const ApproverRefund: React.FC<Props> = ({
                         // Display document icon if file is not an image
                         <>
                           <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="" />
+                            <img src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png" alt="" />
                           </div>
                           <div className="mt-2">
                             <a

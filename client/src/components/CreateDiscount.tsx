@@ -968,7 +968,7 @@ const CreateDiscount = (props: Props) => {
                       ) : (
                         // Display document icon if file is not an image
                         <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
-                          <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="" />
+                          <img src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png" alt="" />
                         </div>
                       )}
 
