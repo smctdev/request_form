@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import BeatLoader from "react-spinners/BeatLoader";
@@ -9,6 +9,7 @@ import DSMLogo from "./assets/DSM.jpg";
 import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
 import ApproveSuccessModal from "./ApproveSuccessModal";
+import Swal from "sweetalert2";
 
 type Props = {
   closeModal: () => void;
@@ -133,6 +134,13 @@ const ApproverPurchase: React.FC<Props> = ({
   const hasDisapprovedInApprovedBy = approvedBy.some(
     (user) => user.status === "Disapproved"
   );
+  const [isImgModalOpen, setIsImgModalOpen] = useState(false);
+  const [currentImage, setCurrentImage] = useState(null);
+  const [zoom, setZoom] = useState(1);
+  const [dragging, setDragging] = useState(false);
+  const [positionImg, setPositionImg] = useState({ x: 0, y: 0 });
+  const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
+  const longPressTimeout = useRef<number | null>(null);
 
   useEffect(() => {
     const fetchUserInformation = async () => {
@@ -342,7 +350,20 @@ const ApproverPurchase: React.FC<Props> = ({
         error.message ||
         "Failed to update stock requisition.";
       console.error("Error approving request form:", error);
-      setCommentMessage(errorMessage);
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.response.data.message,
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        }).then(() => {
+          closeModal();
+          refreshData();
+        });
+      } else {
+        setCommentMessage(errorMessage);
+      }
     }
   };
   const handleDisapprove = async () => {
@@ -387,7 +408,20 @@ const ApproverPurchase: React.FC<Props> = ({
         error.message ||
         "Failed to update stock requisition.";
       console.error("Error disapproving request form:", errorMessage);
-      setCommentMessage(errorMessage);
+      if (error.response.status === 404) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.response.data.message,
+          confirmButtonText: "Close",
+          confirmButtonColor: "#007bff",
+        }).then(() => {
+          closeModal();
+          refreshData();
+        });
+      } else {
+        setCommentMessage(errorMessage);
+      }
     }
   };
   const handlePrint = () => {
@@ -410,6 +444,65 @@ const ApproverPurchase: React.FC<Props> = ({
       newWindow.focus();
     }
   };
+
+  const isImageFile = (fileUrl: any) => {
+    const imageExtensions = ["png", "jpg", "jpeg", "gif", "bmp", "svg", "webp"];
+    const extension = fileUrl.split(".").pop().toLowerCase();
+    return imageExtensions.includes(extension);
+  };
+
+  const handleViewImage = (imageUrl: any) => {
+    console.log("");
+    setCurrentImage(imageUrl);
+    setIsImgModalOpen(true);
+  };
+
+  const closeImgModal = () => {
+    setIsImgModalOpen(false);
+    setCurrentImage(null);
+  };
+
+  const zoomIn = () => setZoom((prevZoom) => Math.min(prevZoom + 0.2, 3));
+  const zoomOut = () => setZoom((prevZoom) => Math.max(prevZoom - 0.2, 1));
+  const resetZoom = () => {
+    setZoom(1);
+    setPositionImg({ x: 0, y: 0 });
+  };
+
+  const handleLongPressStart = (e: any) => {
+    if (zoom > 1) {
+      const startX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
+      const startY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
+      setStartPosition({
+        x: startX - positionImg.x,
+        y: startY - positionImg.y,
+      });
+
+      longPressTimeout.current = window.setTimeout(() => {
+        setDragging(true);
+      }, 500) as unknown as number;
+    }
+  };
+
+  const handleLongPressEnd = () => {
+    if (longPressTimeout.current !== null) {
+      clearTimeout(longPressTimeout.current);
+    }
+    setDragging(false);
+  };
+
+  const handleMouseMove = (e: any) => {
+    if (dragging) {
+      const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+
+      setPositionImg({
+        x: clientX - startPosition.x,
+        y: clientY - startPosition.y,
+      });
+    }
+  };
+
   return (
     <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="relative z-10 w-full p-4 mx-10 overflow-scroll bg-white border-black rounded-t-lg shadow-lg md:mx-0 md:w-1/2 space-y-auto h-3/4">
@@ -725,9 +818,125 @@ const ApproverPurchase: React.FC<Props> = ({
           </div>
           <div className="w-full">
             <h1 className="font-bold">Attachments:</h1>
-            <div>
-              {attachmentUrl.length > 0 ? (
-                attachmentUrl.map((url, index) => (
+            <div className="max-w-[500px] overflow-x-auto pb-3">
+              <div className="flex gap-1">
+                {attachmentUrl.map((fileItem) => (
+                  <div
+                    key={fileItem}
+                    className="relative w-24 p-2 bg-white rounded-lg shadow-md"
+                  >
+                    <div className="relative w-20">
+                      {isImageFile(fileItem) ? (
+                        // Display image preview if file is an image
+                        <>
+                          <img
+                            src={fileItem}
+                            alt="attachment"
+                            className="object-cover w-full h-20 rounded-md"
+                          />
+
+                          <div className="px-3 py-1 mt-2 text-xs text-center text-white rounded-lg bg-primary">
+                            <button
+                              onClick={() => handleViewImage(fileItem)}
+                              className="text-xs"
+                            >
+                              View
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        // Display document icon if file is not an image
+                        <>
+                          <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" alt="" />
+                          </div>
+                          <div className="mt-2">
+                            <a
+                              href={fileItem}
+                              download
+                              target="_blank"
+                              onClick={(e) => e.stopPropagation()}
+                              className="px-3 py-1 text-xs text-white rounded-lg bg-primary"
+                            >
+                              Download
+                            </a>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {isImgModalOpen && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center w-full bg-black bg-opacity-75"
+                  onClick={closeImgModal}
+                >
+                  <div
+                    className="relative rounded-lg"
+                    onClick={(e) => e.stopPropagation()}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleLongPressEnd}
+                    onTouchMove={handleMouseMove}
+                    onTouchEnd={handleLongPressEnd}
+                  >
+                    <div
+                      className="overflow-hidden"
+                      style={{
+                        cursor: dragging
+                          ? "grabbing"
+                          : zoom > 1
+                          ? "grab"
+                          : "default",
+                      }}
+                      onMouseDown={handleLongPressStart}
+                      onTouchStart={handleLongPressStart}
+                    >
+                      <img
+                        src={currentImage || ""}
+                        alt="Viewed"
+                        className="max-w-full max-h-screen transform"
+                        style={{
+                          transform: `scale(${zoom}) translate(${positionImg.x}px, ${positionImg.y}px)`,
+                        }}
+                      />
+                    </div>
+
+                    <div className="fixed flex w-10 h-10 gap-8 text-4xl text-white rounded-full right-48 top-4">
+                      <button
+                        onClick={resetZoom}
+                        className="w-10 h-10 text-lg text-white"
+                      >
+                        Reset
+                      </button>
+                      <button
+                        onClick={zoomOut}
+                        className="w-10 h-10 text-4xl text-white"
+                      >
+                        -
+                      </button>
+                      <button
+                        onClick={zoomIn}
+                        className="w-10 h-10 text-4xl text-white"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={closeImgModal}
+                      className="fixed w-10 h-10 text-4xl text-white right-4 top-4"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+            {/* <div>
+              {attachmentUrl
+                .filter((_, index) => !removedAttachments.includes(index))
+                .map((url, index) => (
                   <div key={index} className="flex items-center space-x-2">
                     <a
                       href={url}
@@ -737,12 +946,24 @@ const ApproverPurchase: React.FC<Props> = ({
                     >
                       {url.split("/").pop()}
                     </a>
+                    {isEditing && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAttachment(index)}
+                        className="text-red-500"
+                      >
+                        Remove
+                      </button>
+                    )}
                   </div>
-                ))
-              ) : (
-                <p className="text-gray-500">No attachments</p>
+                ))}
+
+              {attachmentUrl.filter(
+                (_, index) => !removedAttachments.includes(index)
+              ).length === 0 && (
+                <p className="text-gray-500">No attachments available.</p>
               )}
-            </div>
+            </div> */}
           </div>
           <div className="w-full">
             <h2 className="mb-2 text-lg font-bold">Comments:</h2>

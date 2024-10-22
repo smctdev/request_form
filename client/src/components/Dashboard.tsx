@@ -6,7 +6,7 @@ import {
   faCheck,
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import { ChartBarIcon } from "@heroicons/react/24/solid";
@@ -92,6 +92,7 @@ const Dashboard: React.FC = () => {
   const [branchMap, setBranchMap] = useState<Map<number, string>>(new Map());
   const firstName = localStorage.getItem("firstName");
   const userId = localStorage.getItem("id");
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -119,7 +120,7 @@ const Dashboard: React.FC = () => {
     fetchBranchData();
   }, []);
 
-  const linkTo = "/request";
+  const linkTo = useNavigate();
   const NoDataComponent = () => (
     <div className="flex items-center justify-center h-64 overflow-hidden text-gray-500">
       <p className="text-lg">No records found</p>
@@ -204,6 +205,9 @@ const Dashboard: React.FC = () => {
         })
         .catch((error) => {
           console.error("Error fetching total requests sent:", error);
+        })
+        .finally(() => {
+          setDataLoading(false);
         });
     }
   }, [userId]);
@@ -313,7 +317,7 @@ const Dashboard: React.FC = () => {
               Total Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalRequestsSent}
+              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalRequestsSent}
             </p>
           </div>
         </div>
@@ -353,7 +357,7 @@ const Dashboard: React.FC = () => {
               Approved Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalApprovedRequests}
+              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalApprovedRequests}
             </p>
           </div>
         </div>
@@ -373,7 +377,7 @@ const Dashboard: React.FC = () => {
               Pending Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalPendingRequests}
+              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalPendingRequests}
             </p>
           </div>
         </div>
@@ -393,7 +397,7 @@ const Dashboard: React.FC = () => {
               Unsuccessful Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalDisapprovedRequests}
+              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalDisapprovedRequests}
             </p>
           </div>
         </div>
@@ -407,11 +411,11 @@ const Dashboard: React.FC = () => {
           Recent requests
         </h1>
         <p className="flex justify-end px-[25px] -mt-10 mb-1">
-          <a href={linkTo}>
+          <button onClick={() => linkTo("/request")}>
             <span className="bg-primary px-3 py-1 rounded-[12px] text-white">
               See all
             </span>
-          </a>
+          </button>
         </p>
         <div>
           <DataTable

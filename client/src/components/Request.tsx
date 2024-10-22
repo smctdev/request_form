@@ -200,6 +200,7 @@ const Request = (props: Props) => {
   const [loading, setLoading] = useState(true);
   const [notificationReceived, setnotificationReceived] = useState(false);
   const [search, searchRequest] = useState("");
+  const [toDelete, setToDelete] = useState(false);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -285,7 +286,7 @@ const Request = (props: Props) => {
 
       fetchRequests();
     }
-  }, [userId, notificationReceived]);
+  }, [userId, notificationReceived, toDelete]);
 
   const handleView = (record: Record) => {
     setSelectedRecord(record);
@@ -294,6 +295,7 @@ const Request = (props: Props) => {
 
   const handleDelete = (record: Record) => {
     // Check if the status is not "Pending"
+    setToDelete(true);
     if (record.status !== "Pending") {
       Swal.fire({
         icon: "info",
@@ -310,7 +312,6 @@ const Request = (props: Props) => {
         confirmButtonText: "Yes, Delete it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          setLoading(true);
           const token = localStorage.getItem("token");
           if (!token) return;
           const headers = { Authorization: `Bearer ${token}` };
@@ -330,7 +331,6 @@ const Request = (props: Props) => {
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "Close",
               });
-              refreshData();
             })
             .catch((error) => {
               console.error("Error deleting request:", error);
@@ -343,7 +343,7 @@ const Request = (props: Props) => {
               });
             })
             .finally(() => {
-              setLoading(false);
+              setToDelete(false);
             });
         }
       });
@@ -365,7 +365,6 @@ const Request = (props: Props) => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        setLoading(true);
         const token = localStorage.getItem("token");
         if (!token) return;
         const headers = { Authorization: `Bearer ${token}` };
@@ -385,7 +384,6 @@ const Request = (props: Props) => {
               confirmButtonColor: "#3085d6",
               confirmButtonText: "Close",
             });
-            refreshData();
           })
           .catch((error) => {
             console.error("Error deleting request:", error);
@@ -398,7 +396,7 @@ const Request = (props: Props) => {
             });
           })
           .finally(() => {
-            setLoading(false);
+            setToDelete(false);
           });
       }
     });
