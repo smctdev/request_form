@@ -55,7 +55,6 @@ const Login: React.FC = () => {
         );
 
         localStorage.setItem("token", response.data.token);
-        // Save other relevant user data
         localStorage.setItem("id", response.data.id);
         localStorage.setItem("firstName", response.data.firstName);
         localStorage.setItem("lastName", response.data.lastName);
@@ -64,7 +63,6 @@ const Login: React.FC = () => {
         localStorage.setItem("signature", response.data.signature);
         localStorage.setItem("profile_picture", response.data.profile_picture);
         localStorage.setItem("employee_id", response.data.employee_id);
-
         localStorage.setItem("expires_at", response.data.expires_at);
 
         window.location.reload();
@@ -80,17 +78,16 @@ const Login: React.FC = () => {
         setLoading(false);
       }
     } catch (error: any) {
-      if (error && error.response.status === 403) {
-        Swal.fire({
-          icon: "error",
-          iconColor: "#dc3545",
-          title: "Not verified yet",
-          text: error.response.data.message,
-          confirmButtonText: "Close",
-          confirmButtonColor: "#dc3545",
-        });
-        setError(error.response.data.message);
-      }
+      const errorMessage =
+        error?.response?.data?.message || "An unexpected error occurred.";
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: errorMessage,
+        confirmButtonText: "Close",
+        confirmButtonColor: "#dc3545",
+      });
+      setError(errorMessage);
       setLoading(false);
     }
   };
@@ -141,7 +138,7 @@ const Login: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit(submitData, () => setLoading(false))}>
+          <form onSubmit={handleSubmit(submitData)}>
             <div className="mb-4">
               <h1 className="mb-2 text-base lg:text-lg">Email</h1>
               <input
@@ -174,8 +171,7 @@ const Login: React.FC = () => {
                 <label className="cursor-pointer label">
                   <input
                     type="checkbox"
-                    checked={showPassword}
-                    defaultChecked
+                    checked={showPassword} // Controlled component
                     className="checkbox checkbox-info checked:[--chkfg:white]"
                     onChange={() => setShowPassword(!showPassword)}
                   />
@@ -184,7 +180,6 @@ const Login: React.FC = () => {
               </div>
               {errors.password && (
                 <p className="text-xs text-red-500">
-                  {" "}
                   {errors.password.message}
                 </p>
               )}

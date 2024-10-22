@@ -790,14 +790,14 @@ class RequestFormController extends Controller
         try {
 
             $requestSent = RequestForm::where('user_id', $user_id)->count();
+            $totalCompletedRequest = RequestForm::where('user_id', $user_id)->where('status', 'Completed')->count();
             $totalApprovedRequests = RequestForm::where('user_id', $user_id)->where('status', 'Approved')->count();
-            $totalPendingRequest = RequestForm::where('user_id', $user_id)
-                ->whereIn('status', ['Pending', 'Ongoing'])
-                ->count();
+            $totalPendingRequest = RequestForm::where('user_id', $user_id)->whereIn('status', ['Pending', 'Ongoing'])->count();
             $totalDisapprovedRequest = RequestForm::where('user_id', $user_id)->where('status', 'Disapproved')->count();
             return response()->json([
                 'message' => "Total number of request sent counted successfully",
                 'totalRequestSent' => $requestSent,
+                'totalCompletedRequest' => $totalCompletedRequest,
                 'totalApprovedRequest' => $totalApprovedRequests,
                 'totalPendingRequest' => $totalPendingRequest,
                 'totalDisapprovedRequest' => $totalDisapprovedRequest

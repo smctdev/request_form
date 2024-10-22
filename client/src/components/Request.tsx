@@ -635,7 +635,6 @@ const Request = (props: Props) => {
     "Approved Requests",
     "Unsuccessful Requests",
   ];
-  console.log(items);
 
   const closeModal = () => {
     setModalIsOpen(false);
