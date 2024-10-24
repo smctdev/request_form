@@ -809,8 +809,56 @@ const ApproverLiquidation: React.FC<Props> = ({
                   <td className={`${input2Style} `}>
                     <p className="pl-2 font-semibold ">SIGNATURE</p>
                   </td>
-                  <td className={`${tableStyle}`}>
+                  {/* <td className={`${tableStyle}`}>
                     <img src={record.form_data[0].signature} />
+                  </td> */}
+                                    <td className={`${tableStyle} h-10`}>
+                    <div className="flex items-center justify-center overflow-hidden">
+                      <div className="relative">
+                        <img
+                          src={record.form_data[0].signature}
+                          alt="signature"
+                          draggable="false"
+                          className="h-24"
+                          onContextMenu={(e) => e.preventDefault()}
+                          style={{ filter: "blur(1px)" }}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <div
+                            className="text-gray-950 opacity-30"
+                            style={{
+                              backgroundImage:
+                                "repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) 100px)",
+                              backgroundSize: "400px 400px",
+                              width: "100%",
+                              height: "100%",
+                              fontSize: "1.2em",
+                              transform: "rotate(-12deg)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br /> SMCT Group of Companies SMCT Group of
+                            Companies
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies
+                            <br /> SMCT Group of Companies SMCT Group of
+                            Companies
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </td>
                 </tr>
                 <tr>
