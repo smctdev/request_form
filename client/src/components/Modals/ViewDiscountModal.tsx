@@ -5,8 +5,8 @@ import { PencilIcon } from "@heroicons/react/24/solid";
 import EditStockModalSuccess from "./EditStockModalSuccess";
 import BeatLoader from "react-spinners/BeatLoader";
 import Avatar from "../assets/avatar.png";
-import PrintCash from "../PrintCash";
 import AddCustomModal from "../EditCustomModal";
+import PrintDiscount from "../PrintDiscount";
 
 type Props = {
   closeModal: () => void;
@@ -566,7 +566,7 @@ const ViewDiscountModal: React.FC<Props> = ({
                 Print
               </button>
               {printWindow && (
-                <PrintCash
+                <PrintDiscount
                   data={{
                     id: record,
                     approvedBy: approvedBy,
