@@ -53,7 +53,10 @@ class AttachmentController extends Controller
         // Get the file content and mime type
         $file = File::get($fullPath);
         $type = File::mimeType($fullPath);
+        $filename = basename($fullPath);
 
-        return response($file, 200)->header("Content-Type", $type);
+        return response($file, 200)
+            ->header("Content-Type", $type)
+            ->header("Content-Disposition", "attachment; filename=\"$filename\"");
     }
 }
