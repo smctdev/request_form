@@ -57,7 +57,7 @@ const Nav: React.FC<NavProps> = ({
   const navigate = useNavigate();
   const { setIsAuthenticated } = useUser();
   const [profileLoading, setProfileLoading] = useState(true);
-  const { profile_picture } = useUser();
+  const { profile_picture, firstName: contextFirstName, lastName: contextLastName } = useUser();
 
   useEffect(() => {
     const checkAuth = () => {
@@ -393,7 +393,7 @@ const Nav: React.FC<NavProps> = ({
               <>
                 <img
                   alt="logo"
-                  className="cursor-pointer hidden sm:block rounded-full w-14 h-14"
+                  className="hidden rounded-full cursor-pointer sm:block w-14 h-14"
                   src={profilePictureUrl}
                   height={45}
                   width={45}
@@ -404,7 +404,7 @@ const Nav: React.FC<NavProps> = ({
                   className="pl-2 lg:text-[18px] text-[12px] dark:text-white cursor-pointer"
                   onClick={toggleProfileDropdown}
                 >
-                  {firstName} {lastName}
+                  {contextFirstName} {contextLastName}
                 </p>
               </>
             )}

@@ -39,38 +39,6 @@ const schema = z.object({
   position: z.string().nonempty("Position is required"),
 });
 
-const roleOptions = [
-  { label: "", value: "" },
-  { label: "Accounting Clerk", value: "Accounting Clerk" },
-  { label: "Accounting Manager", value: "Accounting Manager" },
-  { label: "Accounting Staff", value: "Accounting Staff" },
-  { label: "Accounting Supervisor", value: "Accounting Supervisor" },
-  { label: "Admin", value: "Admin" },
-  { label: "Area Manager", value: "Area Manager" },
-  { label: "Assistant Manager", value: "Assistant Manager" },
-  { label: "Assistant Web Developer", value: "Assistant Web Developer" },
-  { label: "Audit Manager", value: "Audit Manager" },
-  { label: "Audit Staff", value: "Audit Staff" },
-  { label: "Audit Supervisor", value: "Audit Supervisor" },
-  { label: "Automation Staff", value: "Automation Staff" },
-  { label: "AVP - Finance", value: "AVP - Finance" },
-  { label: "AVP - Sales and Marketing", value: "AVP - Sales and Marketing" },
-  { label: "Branch Supervisor/Manager", value: "Branch Supervisor/Manager" },
-  { label: "Cashier", value: "Cashier" },
-  { label: "CEO", value: "CEO" },
-  { label: "HR Manager", value: "HR Manager" },
-  { label: "HR Staff", value: "HR Staff" },
-  { label: "IT Staff", value: "IT Staff" },
-  { label: "IT/Automation Manager", value: "IT/Automation Manager" },
-  { label: "Junior Web Developer", value: "Junior Web Developer" },
-  { label: "Managing Director", value: "Managing Director" },
-  { label: "Payroll Manager", value: "Payroll Manager" },
-  { label: "Payroll Staff", value: "Payroll Staff" },
-  { label: "Sales Representative", value: "Sales Representative" },
-  { label: "Senior Web Developer", value: "Senior Web Developer" },
-  { label: "Vice - President", value: "Vice - President" },
-  { label: "User", value: "User" },
-];
 
 const pinputStyle =
   "font-medium border-2 border-black rounded-[12px] p-2 w-full";
@@ -111,6 +79,7 @@ const UpdateInformation = () => {
   const [branchList, setBranchList] = useState<
     { id: number; branch_code: string; branch: string }[]
   >([]);
+  const [roleOptions, setRoleOptions] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -147,6 +116,22 @@ const UpdateInformation = () => {
     };
 
     fetchBranchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchPosition = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/positions`
+        );
+  
+        setRoleOptions(response.data.position);
+      } catch (error) {
+        console.error("Error fetching branch data:", error);
+      }
+    };
+  
+    fetchPosition();
   }, []);
 
   useEffect(() => {
@@ -350,23 +335,23 @@ const UpdateInformation = () => {
     setNewProfilePic(file); // Store the selected file in state
   };
   return (
-    <div className="bg-graybg dark:bg-blackbg w-full h-screen pt-4 px-4 md:px-10 lg:px-30">
+    <div className="w-full h-screen px-4 pt-4 bg-graybg dark:bg-blackbg md:px-10 lg:px-30">
       <div className="bg-white rounded-[12px] flex flex-col md:flex-row w-full px-4 md:px-[88px] pt-[50px] space-y-6 md:space-x-6 md:space-y-0">
         <div className="mb-5 rounded-[12px] w-full flex flex-col md:flex-row justify-between">
           <div className="flex flex-col w-full">
-            <div className="mb-4 flex flex-col md:flex-row items-start ">
+            <div className="flex flex-col items-start mb-4 md:flex-row ">
               <img
                 alt="logo"
                 height={180}
                 width={180}
                 src={profilePictureUrl}
               />
-              <div className="flex flex-col ml-4 mt-4 ">
+              <div className="flex flex-col mt-4 ml-4 ">
                 <h1 className="font-bold text-lg md:text-[20px] text-left">
                   {user?.firstName} {user?.lastName}
                 </h1>
                 <div onClick={handleImageClick}>
-                  <p className="text-primary cursor-pointer">
+                  <p className="cursor-pointer text-primary">
                     Upload new picture
                   </p>
                   <input
@@ -385,8 +370,8 @@ const UpdateInformation = () => {
               </h1>
               {user && (
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
-                    <div className="w-full flex flex-col">
+                  <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
+                    <div className="flex flex-col w-full">
                       <p className="text-gray-400">First Name</p>
                       <Controller
                         name="firstName"
@@ -410,7 +395,7 @@ const UpdateInformation = () => {
                         </span>
                       )}
                     </div>
-                    <div className="w-full flex flex-col">
+                    <div className="flex flex-col w-full">
                       <p className="text-gray-400">Last Name</p>
                       <Controller
                         name="lastName"
@@ -434,7 +419,7 @@ const UpdateInformation = () => {
                         </span>
                       )}
                     </div>
-                    <div className="w-full flex flex-col">
+                    <div className="flex flex-col w-full">
                       <p className="text-gray-400">Email</p>
                       <Controller
                         name="email"
@@ -458,7 +443,7 @@ const UpdateInformation = () => {
                         </span>
                       )}
                     </div>
-                    <div className="w-full flex flex-col">
+                    <div className="flex flex-col w-full">
                       <p className="text-gray-400">Branch Code</p>
                       <Controller
                         name="branch_code"
@@ -514,7 +499,7 @@ const UpdateInformation = () => {
                         <p className="text-red-500">{errorMessage}</p>
                       )}
                     </div>
-                    <div className="w-full flex flex-col">
+                    <div className="flex flex-col w-full">
                       <p className="text-gray-400">Contact</p>
                       <Controller
                         name="contact"
@@ -538,7 +523,7 @@ const UpdateInformation = () => {
                         </span>
                       )}
                     </div>
-                    <div className="w-full flex flex-col">
+                    <div className="flex flex-col w-full">
                       <p className="text-gray-400">Username</p>
                       <Controller
                         name="userName"
@@ -562,7 +547,7 @@ const UpdateInformation = () => {
                         </span>
                       )}
                     </div>
-                    <div className="w-full flex flex-col">
+                    <div className="flex flex-col w-full">
                       <p className="text-gray-400">Position</p>
                       <Controller
                         name="position"
@@ -591,7 +576,7 @@ const UpdateInformation = () => {
                         </span>
                       )}
                     </div>
-                    <div className="w-full flex flex-col">
+                    <div className="flex flex-col w-full">
                       <p className="text-gray-400">Role</p>
                       <Controller
                         name="role"
@@ -629,19 +614,19 @@ const UpdateInformation = () => {
                 </form>
               )}
               {loading && (
-                <div className="flex justify-center items-center w-full">
-                  <PropogateLoader color="#ADD8E6" className=" " />
+                <div className="flex items-center justify-center w-full">
+                  <PropogateLoader color="#ADD8E6" className="" />
                 </div>
               )}
             </div>
           </div>
-          <div className="w-full md:w-1/2 mb-4 flex flex-col">
-            <h1 className="lg:text-lg text-base mb-2">Signature</h1>
+          <div className="flex flex-col w-full mb-4 md:w-1/2">
+            <h1 className="mb-2 text-base lg:text-lg">Signature</h1>
             {user?.signature ? (
               <img
                 src={user.signature}
                 alt="User Signature"
-                className="sigCanvas border border-black h-28 w-full"
+                className="w-full border border-black sigCanvas h-28"
               />
             ) : (
               <SignatureCanvas
@@ -653,7 +638,7 @@ const UpdateInformation = () => {
               />
             )}
             {signatureEmpty && (
-              <span className="text-red-500 text-xs">
+              <span className="text-xs text-red-500">
                 Please provide a signature.
               </span>
             )}
@@ -661,7 +646,7 @@ const UpdateInformation = () => {
               <div className="flex mt-2">
                 <button
                   onClick={handleClear}
-                  className="bg-gray-300 p-1 rounded-lg mr-2"
+                  className="p-1 mr-2 bg-gray-300 rounded-lg"
                 >
                   Clear
                 </button>
@@ -688,21 +673,21 @@ const UpdateInformation = () => {
       </div>
 
       {showSuccessModal && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col ">
-          <div className="bg-white relative w-1/4 flex flex-col items-center justify-center rounded-md ">
+        <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50 ">
+          <div className="relative flex flex-col items-center justify-center w-1/4 bg-white rounded-md ">
             <FontAwesomeIcon
               icon={faCircleCheck}
-              className="size-20 text-primary absolute -top-6  "
+              className="absolute size-20 text-primary -top-6 "
             />
             <div>
               <h1 className="mt-20 text-[28px] font-bold text-center">
                 Success
               </h1>
-              <p className="my-7  text-gray-400 font-semibold text-center">
+              <p className="font-semibold text-center text-gray-400 my-7">
                 User information updated!
               </p>
             </div>
-            <div className="bg-graybg w-full rounded-b-lg flex justify-center items-center p-4">
+            <div className="flex items-center justify-center w-full p-4 rounded-b-lg bg-graybg">
               <button
                 className=" bg-primary p-2 w-1/2 rounded-[12px] text-white font-extrabold"
                 onClick={closeSuccessModal}
@@ -714,21 +699,21 @@ const UpdateInformation = () => {
         </div>
       )}
       {signatureButton && (
-        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 flex-col ">
-          <div className="bg-white relative w-1/4 flex flex-col items-center justify-center rounded-md ">
+        <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50 ">
+          <div className="relative flex flex-col items-center justify-center w-1/4 bg-white rounded-md ">
             <FontAwesomeIcon
               icon={faCircleCheck}
-              className="size-20 text-primary absolute -top-6  "
+              className="absolute size-20 text-primary -top-6 "
             />
             <div>
               <h1 className="mt-20 text-[28px] font-bold text-center">
                 Success
               </h1>
-              <p className="my-7  text-gray-400 font-semibold text-center">
+              <p className="font-semibold text-center text-gray-400 my-7">
                 Signature Added!
               </p>
             </div>
-            <div className="bg-graybg w-full rounded-b-lg flex justify-center items-center p-4">
+            <div className="flex items-center justify-center w-full p-4 rounded-b-lg bg-graybg">
               <button
                 className=" bg-primary p-2 w-1/2 rounded-[12px] text-white font-extrabold"
                 onClick={closeSignatureSuccess}

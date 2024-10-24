@@ -57,8 +57,7 @@ return [
         ],
         'd_drive' => [
             'driver' => 'local',
-            // 'root' => '\\\\122.53.61.91\\requestUploads',  // Path to your D: drive folder
-            'root' => '\\\\136.239.196.178\\requestUploads',  // Path to your D: drive folder
+            'root' => '\\\\122.52.134.146\\requestUploads',  // Path to your D: drive folder
             'visibility' => 'private',  // Optional: use 'private' if needed
         ],
 

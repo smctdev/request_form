@@ -5,11 +5,13 @@ import {
   faPaperPlane,
   faCheck,
   faEnvelope,
+  faCheckDouble,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import { ChartBarIcon } from "@heroicons/react/24/solid";
+import { useUser } from "../context/UserContext";
 
 interface FormData {
   purpose: string;
@@ -79,8 +81,8 @@ const Dashboard: React.FC = () => {
     number | null
   >(null);
   const [totalCompletedRequests, setTotalCompletedRequests] = useState<
-  number | null
->(null);
+    number | null
+  >(null);
   const [totalPendingRequests, setTotalPendingRequests] = useState<
     number | null
   >(null);
@@ -93,6 +95,7 @@ const Dashboard: React.FC = () => {
   const firstName = localStorage.getItem("firstName");
   const userId = localStorage.getItem("id");
   const [dataLoading, setDataLoading] = useState(true);
+  const { role } = useUser();
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -195,7 +198,6 @@ const Dashboard: React.FC = () => {
           }
         )
         .then((response) => {
-          console.log(response.data);
           setTotalRequestsSent(response.data.totalRequestSent);
           setTotalCompletedRequests(response.data.totalCompletedRequest);
           setTotalPendingRequests(response.data.totalPendingRequest);
@@ -293,13 +295,15 @@ const Dashboard: React.FC = () => {
           <p className="text-[15px] hidden sm:block text-white mb-4">
             Request products and services
           </p>
-          <div>
-            <Link to="/request/sr">
-              <button className="bg-[#FF947D] text-[15px] w-full lg:h-[57px] h-[40px] rounded-[12px] font-semibold">
-                Create a Request
-              </button>
-            </Link>
-          </div>
+          {role !== 'Admin' && (
+            <div>
+              <Link to="/request/sr">
+                <button className="bg-[#FF947D] text-[15px] w-full lg:h-[57px] h-[40px] rounded-[12px] font-semibold">
+                  Create a Request
+                </button>
+              </Link>
+            </div>
+          )}
         </div>
         <div className="ml-4 mr-[29px]">
           <img alt="man" src={Man} width={320} height={176} />
@@ -317,19 +321,23 @@ const Dashboard: React.FC = () => {
               Total Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalRequestsSent}
+              {dataLoading ? (
+                <span className="font-bold loading loading-infinity loading-lg"></span>
+              ) : (
+                totalRequestsSent
+              )}
             </p>
           </div>
         </div>
         <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-[#4abffd]`}>
             <FontAwesomeIcon
-              icon={faCheck}
+              icon={faCheckDouble}
               className={`${outerLogo} text-[#2a8bbf]`}
             />
             <div className={`${innerBox}`}>
               <FontAwesomeIcon
-                icon={faCheck}
+                icon={faCheckDouble}
                 className={`${innerLogo} text-[#2ea7e8]`}
               />
             </div>
@@ -337,7 +345,11 @@ const Dashboard: React.FC = () => {
               Completed Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalCompletedRequests}
+              {dataLoading ? (
+                <span className="font-bold loading loading-infinity loading-lg"></span>
+              ) : (
+                totalCompletedRequests
+              )}
             </p>
           </div>
         </div>
@@ -357,7 +369,11 @@ const Dashboard: React.FC = () => {
               Approved Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalApprovedRequests}
+              {dataLoading ? (
+                <span className="font-bold loading loading-infinity loading-lg"></span>
+              ) : (
+                totalApprovedRequests
+              )}
             </p>
           </div>
         </div>
@@ -377,7 +393,11 @@ const Dashboard: React.FC = () => {
               Pending Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalPendingRequests}
+              {dataLoading ? (
+                <span className="font-bold loading loading-infinity loading-lg"></span>
+              ) : (
+                totalPendingRequests
+              )}
             </p>
           </div>
         </div>
@@ -397,7 +417,11 @@ const Dashboard: React.FC = () => {
               Unsuccessful Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {dataLoading ? <span className="font-bold loading loading-infinity loading-lg"></span> : totalDisapprovedRequests}
+              {dataLoading ? (
+                <span className="font-bold loading loading-infinity loading-lg"></span>
+              ) : (
+                totalDisapprovedRequests
+              )}
             </p>
           </div>
         </div>

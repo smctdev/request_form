@@ -21,6 +21,9 @@ type Record = {
   pending_approver: {
     approver_name: string;
   };
+  requested_by: string;
+  requested_signature: string;
+  requested_position: string;
   id: number;
   noted_by: {
     id: number;

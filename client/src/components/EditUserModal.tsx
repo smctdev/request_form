@@ -41,6 +41,7 @@ const EditUserModal = ({
   const [branchList, setBranchList] = useState<
     { id: number; branch_code: string; branch: string }[]
   >([]);
+  const [roleOptions, setRoleOptions] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchBranchData = async () => {
@@ -76,6 +77,23 @@ const EditUserModal = ({
     };
 
     fetchBranchData();
+  }, []);
+
+  
+  useEffect(() => {
+    const fetchPosition = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/positions`
+        );
+
+        setRoleOptions(response.data.position);
+      } catch (error) {
+        console.error("Error fetching branch data:", error);
+      }
+    };
+
+    fetchPosition();
   }, []);
 
   useEffect(() => {
@@ -169,7 +187,6 @@ const EditUserModal = ({
       (branch) => branch.id === selectedBranchId
     );
     setEditedBranchCode(selectedBranch?.id.toString() || "");
-    console.log("brancfh", selectedBranch);
     if (selectedBranch) {
       setEditedBranch(selectedBranch.branch.toString());
     } else {
@@ -363,37 +380,6 @@ const EditUserModal = ({
   const fields = fieldsConfig[entityType] || [];
   const pStyle = "font-medium w-full";
   const inputStyle = "input input-bordered bg-white w-full mt-2";
-  const roleOptions = [
-    { label: "Accounting Clerk", value: "Accounting Clerk" },
-    { label: "Accounting Manager", value: "Accounting Manager" },
-    { label: "Accounting Staff", value: "Accounting Staff" },
-    { label: "Accounting Supervisor", value: "Accounting Supervisor" },
-    { label: "Admin", value: "Admin" },
-    { label: "Area Manager", value: "Area Manager" },
-    { label: "Assistant Manager", value: "Assistant Manager" },
-    { label: "Assistant Web Developer", value: "Assistant Web Developer" },
-    { label: "Audit Manager", value: "Audit Manager" },
-    { label: "Audit Staff", value: "Audit Staff" },
-    { label: "Audit Supervisor", value: "Audit Supervisor" },
-    { label: "Automation Staff", value: "Automation Staff" },
-    { label: "AVP - Finance", value: "AVP - Finance" },
-    { label: "AVP - Sales and Marketing", value: "AVP - Sales and Marketing" },
-    { label: "Branch Supervisor/Manager", value: "Branch Supervisor/Manager" },
-    { label: "Cashier", value: "Cashier" },
-    { label: "CEO", value: "CEO" },
-    { label: "HR Manager", value: "HR Manager" },
-    { label: "HR Staff", value: "HR Staff" },
-    { label: "IT Staff", value: "IT Staff" },
-    { label: "IT/Automation Manager", value: "IT/Automation Manager" },
-    { label: "Junior Web Developer", value: "Junior Web Developer" },
-    { label: "Managing Director", value: "Managing Director" },
-    { label: "Payroll Manager", value: "Payroll Manager" },
-    { label: "Payroll Staff", value: "Payroll Staff" },
-    { label: "Sales Representative", value: "Sales Representative" },
-    { label: "Senior Web Developer", value: "Senior Web Developer" },
-    { label: "Vice - President", value: "Vice - President" },
-    { label: "User", value: "User" },
-  ];
 
   const branch = [
     "Des Appliance, Inc.",
@@ -408,6 +394,7 @@ const EditUserModal = ({
     { label: "User", value: "User" },
     { label: "Admin", value: "Admin" },
   ];
+
 
   return (
     <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">

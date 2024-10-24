@@ -36,7 +36,7 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
     window.innerWidth > 768
   );
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const { loading, setLoading } = useUser();
+  const { loading, setLoading, role } = useUser();
   const [userRole, setUserRole] = useState("");
   const id = localStorage.getItem("id");
   const navigate = useNavigate();
@@ -136,7 +136,7 @@ const App: React.FC<AppProps> = ({ isdarkMode }) => {
       >
         <Sidebar2
           darkMode={darkMode}
-          role={userRole}
+          role={role}
           open={isSidebarOpen}
           toggleSidebar={toggleSidebar}
         />

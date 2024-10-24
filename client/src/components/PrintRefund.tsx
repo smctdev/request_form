@@ -14,9 +14,13 @@ const PrintRefund: React.FC<PrintRefundProps> = ({ data }) => {
   let logo;
   if (printData?.user?.data?.branch.branch === "Strong Moto Centrum, Inc.") {
     logo = <img src={SMCTLogo} alt="SMCT Logo" />;
-  } else if (printData?.user?.data?.branch.branch === "Des Strong Motors, Inc.") {
+  } else if (
+    printData?.user?.data?.branch.branch === "Des Strong Motors, Inc."
+  ) {
     logo = <img src={DSMLogo} alt="DSM Logo" />;
-  } else if (printData?.user?.data?.branch.branch === "Des Appliance Plaza, Inc.") {
+  } else if (
+    printData?.user?.data?.branch.branch === "Des Appliance Plaza, Inc."
+  ) {
     logo = <img src={DAPLogo} alt="DAP Logo" />;
   } else if (printData?.user?.data?.branch.branch === "Honda Des, Inc.") {
     logo = <img src={HDILogo} alt="HDI Logo" />;
@@ -184,19 +188,38 @@ const PrintRefund: React.FC<PrintRefundProps> = ({ data }) => {
             <div className="flex-grow mb-4">
               <h3 className="mb-2 text-sm font-normal">Requested By:</h3>
               <div className="relative flex flex-col items-center justify-center pt-4">
-                <img
-                  className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
-                  src={printData?.user?.data?.signature}
-                  alt="avatar"
-                  width={120}
-                />
-                <p className="relative z-10 px-2 text-sm font-normal underline">
-                  {printData?.user?.data?.firstName}{" "}
-                  {printData?.user?.data?.lastName}
-                </p>
-                <p className="text-xs font-light text-center">
-                  {printData?.user?.data?.position}
-                </p>
+                {printData?.id ? (
+                  <>
+                    <img
+                      className="absolute transform -translate-x-1/2 pointer-events-none -top-4 left-1/2"
+                      src={printData?.id?.requested_signature}
+                      alt="avatar"
+                      width={120}
+                    />
+                    <p className="relative z-10 px-2 text-sm font-normal underline">
+                      {printData?.id?.requested_by}
+                    </p>
+                    <p className="text-xs font-light text-center">
+                      {printData?.id?.requested_position}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <img
+                      className="absolute transform -translate-x-1/2 pointer-events-none -top-1 left-1/2"
+                      src={printData?.user?.data?.signature}
+                      alt="avatar"
+                      width={120}
+                    />
+                    <p className="relative z-10 px-2 text-sm font-normal underline">
+                      {printData?.id?.data?.firstName}
+                      {printData?.id?.data?.lastName}
+                    </p>
+                    <p className="text-xs font-light text-center">
+                      {printData?.id?.data?.position}
+                    </p>
+                  </>
+                )}
               </div>
             </div>
 
@@ -211,7 +234,7 @@ const PrintRefund: React.FC<PrintRefundProps> = ({ data }) => {
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -top-1 left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}

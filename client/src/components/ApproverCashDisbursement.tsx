@@ -11,6 +11,8 @@ import DAPLogo from "./assets/DAP.jpg";
 import HDILogo from "./assets/HDI.jpg";
 import ApproveSuccessModal from "./ApproveSuccessModal";
 import Swal from "sweetalert2";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload, faEye } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
   closeModal: () => void;
@@ -255,7 +257,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
           parsedApprovedAttachment.length > 0
         ) {
           // Access the first element of the array
-          const formattedAttachment = parsedApprovedAttachment[0];
+          const formattedAttachment = parsedApprovedAttachment;
           setAttachment(formattedAttachment); // Set the state with the string
         } else {
           console.warn(
@@ -445,7 +447,10 @@ const ApproverCashDisbursement: React.FC<Props> = ({
     if (field === "quantity" || field === "unitCost") {
       const quantity = parseFloat(newDataCopy[index].quantity);
       const unitCost = parseFloat(newDataCopy[index].unitCost);
-      newDataCopy[index].totalAmount = (quantity * unitCost).toString() === "NaN" ? "0" : parseFloat((quantity * unitCost).toString()).toFixed(2);
+      newDataCopy[index].totalAmount =
+        (quantity * unitCost).toString() === "NaN"
+          ? "0"
+          : parseFloat((quantity * unitCost).toString()).toFixed(2);
     }
 
     // Calculate grandTotal
@@ -499,7 +504,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
   };
 
   const handleViewImage = (imageUrl: any) => {
-    console.log("");
     setCurrentImage(imageUrl);
     setIsImgModalOpen(true);
   };
@@ -548,6 +552,25 @@ const ApproverCashDisbursement: React.FC<Props> = ({
         y: clientY - startPosition.y,
       });
     }
+  };
+
+  const handleRemoveImage = (imageName: string) => {
+    setFile((prevImages) =>
+      prevImages.filter((image) => image.name !== imageName)
+    );
+  };
+
+  const formatFileSize = (sizeInBytes: any) => {
+    const units = ["B", "KB", "MB", "GB", "TB"];
+    let size = sizeInBytes;
+    let unitIndex = 0;
+
+    while (size >= 1024 && unitIndex < units.length - 1) {
+      size /= 1024;
+      unitIndex++;
+    }
+
+    return `${size.toFixed(1)} ${units[unitIndex]}`;
   };
 
   return (
@@ -944,7 +967,10 @@ const ApproverCashDisbursement: React.FC<Props> = ({
                         // Display document icon if file is not an image
                         <>
                           <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png" alt="" />
+                            <img
+                              src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png"
+                              alt=""
+                            />
                           </div>
                           <div className="mt-2">
                             <a
@@ -1079,7 +1105,8 @@ const ApproverCashDisbursement: React.FC<Props> = ({
             {/* Comments Section */}
             <ul className="flex flex-col w-full mb-4 space-y-4">
               {notedBy.filter((user) => user.comment).length > 0 ||
-              approvedBy.filter((user) => user.comment).length > 0 ? (
+              approvedBy.filter((user) => user.comment).length > 0 ||
+              avpstaff.filter((user) => user.comment).length > 0 ? (
                 <>
                   {notedBy
                     .filter((user) => user.comment)
@@ -1144,7 +1171,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
                         <div className="flex flex-row w-full" key={index}>
                           <li className="flex flex-col justify-between pl-2">
                             <h3 className="text-lg font-bold">
-                              {user.firstName} {user.lastName} - AVP STAFF
+                              {user.firstName} {user.lastName} - {user.position}
                             </h3>
                             <p>{user.comment}</p>
                           </li>
@@ -1157,7 +1184,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
               )}
             </ul>
           </div>
-          <div className="w-full max-w-md ">
+          <div className="w-full max-w-full ">
             <p className="font-semibold">Approved Attachment:</p>
 
             {record.approved_attachment.length === 0 &&
@@ -1171,16 +1198,110 @@ const ApproverCashDisbursement: React.FC<Props> = ({
                 className="w-full mt-2"
               />
             ) : record.approved_attachment.length > 0 && attachment ? (
-              <div className="mt-2">
-                <img
-                  src={`${process.env.REACT_APP_API_BASE_URL}/${attachment}`}
-                  alt="Approved Attachment"
-                  className="h-auto max-w-full rounded"
-                />
+              <div className="flex gap-2 mt-2 overflow-x-auto">
+                {attachment.map((attachmentItem: any) => (
+                  <div className="relative group">
+                    <img
+                      src={`${process.env.REACT_APP_URL_STORAGE}/${attachmentItem}`}
+                      alt="Approved Attachment"
+                      className="w-56 h-auto max-w-full rounded"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center transition-opacity bg-black opacity-0 bg-opacity-70 group-hover:opacity-100">
+                      <div className="flex items-center justify-center gap-10">
+                        <a
+                          className="tooltip tooltip-info tooltip-top"
+                          data-tip="Download"
+                          href={`${process.env.REACT_APP_URL_STORAGE}/${attachmentItem}`}
+                          download
+                          target="_blank"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <FontAwesomeIcon
+                            icon={faDownload}
+                            className="text-white w-7 h-7"
+                          />
+                        </a>
+
+                        <button
+                          onClick={() =>
+                            handleViewImage(
+                              `${process.env.REACT_APP_URL_STORAGE}/${attachmentItem}`
+                            )
+                          }
+                          className="focus:outline-none tooltip tooltip-info tooltip-top"
+                          data-tip="View"
+                        >
+                          <FontAwesomeIcon
+                            icon={faEye}
+                            className="text-white w-7 h-7"
+                          />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <p className="text-gray-500">No approved attachment available.</p>
             )}
+          </div>
+          {file.length > 0 && (
+            <div className="mt-4">
+              <p className="mb-3 font-semibold">Attachments:</p>
+              <button
+                onClick={() => setFile([])}
+                className="px-3 py-1 text-xs text-white bg-red-700 rounded-lg hover:bg-red-500"
+              >
+                Remove All
+              </button>
+            </div>
+          )}
+          <div className="max-w-[500px] overflow-x-auto pb-3 ">
+            <div className="flex gap-1">
+              {file.map((fileItem) => (
+                <div
+                  key={fileItem.name}
+                  className="relative w-24 p-2 bg-white rounded-lg shadow-md"
+                >
+                  <div className="relative">
+                    {fileItem.type.startsWith("image/") ? (
+                      // Display image preview if file is an image
+                      <img
+                        src={URL.createObjectURL(fileItem)}
+                        alt={fileItem.name}
+                        className="object-cover w-full h-20 rounded-md"
+                      />
+                    ) : (
+                      // Display document icon if file is not an image
+                      <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
+                        <img
+                          src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png"
+                          alt=""
+                        />
+                      </div>
+                    )}
+
+                    {/* Display File Name and Size */}
+                    <div className="mt-2">
+                      <p className="text-sm font-semibold truncate">
+                        {fileItem.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formatFileSize(fileItem.size)}
+                      </p>
+                      <p key={fileItem.name} className="text-center">
+                        <button
+                          onClick={() => handleRemoveImage(fileItem.name)}
+                          className="px-3 py-1 text-xs text-white bg-red-500 rounded-lg"
+                        >
+                          Remove
+                        </button>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
           {record.status === "Pending" && (
             <div className="flex items-center justify-between w-full space-x-2">

@@ -360,7 +360,6 @@ const ViewLiquidationModal: React.FC<Props> = ({
     //   setErrorMessage(
     //     "Cash advance must be a positive number greater than or equal to 1."
     //   );
-    //   console.log("aaaa");
     //   return;
     // }
 
@@ -1185,12 +1184,12 @@ const ViewLiquidationModal: React.FC<Props> = ({
                               className={`font-bold text-[12px] text-center mt-1 ${
                                 user.status === "Approved"
                                   ? "text-green"
-                                  : user.status === "Pending"
+                                  : user.status === "Pending" || !user.status
                                   ? "text-yellow"
                                   : ""
                               }`}
                             >
-                              {user.status}
+                              {user.status ? user.status : "Pending"}
                             </p>
                           )}
                         </div>
@@ -1248,12 +1247,12 @@ const ViewLiquidationModal: React.FC<Props> = ({
                               className={`font-bold text-[12px] text-center mt-1 ${
                                 user.status === "Approved"
                                   ? "text-green"
-                                  : user.status === "Pending"
+                                  : user.status === "Pending" || !user.status
                                   ? "text-yellow"
                                   : ""
                               }`}
                             >
-                              {user.status}
+                              {user.status ? user.status : "Pending"}
                             </p>
                           )}
                         </div>

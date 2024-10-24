@@ -29,7 +29,7 @@ type NavItem = {
 
 interface SidebarProps {
   darkMode: boolean;
-  role: string;
+  role: string | null;
   open: boolean;
   toggleSidebar: () => void;
 }
