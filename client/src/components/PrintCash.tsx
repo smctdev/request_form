@@ -16,9 +16,13 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
   let logo;
   if (printData?.user?.data?.branch.branch === "Strong Moto Centrum, Inc.") {
     logo = <img src={SMCTLogo} alt="SMCT Logo" />;
-  } else if (printData?.user?.data?.branch.branch === "Des Strong Motors, Inc.") {
+  } else if (
+    printData?.user?.data?.branch.branch === "Des Strong Motors, Inc."
+  ) {
     logo = <img src={DSMLogo} alt="DSM Logo" />;
-  } else if (printData?.user?.data?.branch.branch === "Des Appliance Plaza, Inc.") {
+  } else if (
+    printData?.user?.data?.branch.branch === "Des Appliance Plaza, Inc."
+  ) {
     logo = <img src={DAPLogo} alt="DAP Logo" />;
   } else if (printData?.user?.data?.branch.branch === "Honda Des, Inc.") {
     logo = <img src={HDILogo} alt="HDI Logo" />;
@@ -461,29 +465,31 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
           </table>
         </div>
         <div className="mt-2 ml-8">
-          <div className="flex flex-wrap justify-start ">
+          <div className="flex flex-wrap items-center justify-start ">
             {/* Requested By Section */}
             <div className="flex-grow mb-4">
               <h3 className="mb-2 text-sm font-normal">Requested By:</h3>
-              <div className="relative flex flex-col items-center justify-center pt-4">
-                <img
-                  className="absolute transform -translate-x-1/2 pointer-events-none -top-4 left-1/2"
-                  src={printData?.id?.requested_signature}
-                  alt="avatar"
-                  width={120}
-                />
-                <p className="relative z-10 px-2 text-sm font-normal underline">
-                  {printData?.id?.requested_by}
-                </p>
-                <p className="text-xs font-light text-center">
-                  {printData?.id?.requested_position}
-                </p>
+              <div className="flex flex-wrap justify-start">
+                <div className="relative flex flex-col items-center justify-center pt-3 mr-10">
+                  <img
+                    className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-full left-1/2"
+                    src={printData?.id?.requested_signature}
+                    alt="avatar"
+                    width={120}
+                  />
+                  <p className="relative z-10 text-xs font-medium text-center underline">
+                    {printData?.id?.requested_by}
+                  </p>
+                  <p className="text-xs font-light text-center">
+                    {printData?.id?.requested_position}
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* Noted By Section */}
-            <div className="flex-grow mb-3">
-              <h3 className="mb-3 text-xs font-normal">Noted By:</h3>
+            <div className="flex-grow mb-4">
+              <h3 className="mb-2 text-sm font-normal">Noted By:</h3>
               <div className="flex flex-wrap justify-start">
                 {printData?.notedBy.map((approver: any, index: number) => (
                   <div
@@ -492,9 +498,9 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 pointer-events-none -top-1 left-1/2"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-1/2 left-1/2"
                         src={approver.signature}
-                        alt=""
+                        alt="avatar"
                         width={120}
                       />
                     )}
@@ -510,17 +516,17 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
             </div>
 
             {/* Approved By Section */}
-            <div className="flex-grow mb-3">
-              <h3 className="mb-3 text-xs font-normal">Approved By:</h3>
+            <div className="flex-grow mb-4">
+              <h3 className="mb-2 text-sm font-normal">Approved By:</h3>
               <div className="flex flex-wrap justify-start">
                 {printData?.approvedBy.map((approver: any, index: number) => (
                   <div
                     key={index}
-                    className="relative flex flex-col items-center justify-start pt-3 mr-10"
+                    className="relative flex flex-col items-center justify-center pt-3 mr-10"
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 pointer-events-none -top-1 left-1/2"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-full left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}

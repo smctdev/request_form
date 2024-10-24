@@ -177,24 +177,26 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
           </table>
         </div>
 
-        <div className="mt-4 ">
+        <div className="mt-4 ml-8">
           <div className="flex flex-wrap justify-start ">
             {/* Requested By Section */}
             <div className="flex-grow mb-4">
               <h3 className="mb-2 text-sm font-normal">Requested By:</h3>
-              <div className="relative flex flex-col items-center justify-center pt-3">
-                <img
-                  className="absolute transform -translate-x-1/2 pointer-events-none -top-4 left-1/2"
-                  src={printData?.id?.requested_signature}
-                  alt="avatar"
-                  width={120}
-                />
-                <p className="relative z-10 px-2 text-sm font-normal underline">
-                  {printData?.id?.requested_by}
-                </p>
-                <p className="text-xs font-light text-center">
-                  {printData?.id?.requested_position}
-                </p>
+              <div className="flex flex-wrap justify-start">
+                <div className="relative flex flex-col items-center justify-center pt-3 mr-10">
+                  <img
+                    className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-full left-1/2"
+                    src={printData?.id?.requested_signature}
+                    alt="avatar"
+                    width={120}
+                  />
+                  <p className="relative z-10 text-xs font-medium text-center underline">
+                    {printData?.id?.requested_by}
+                  </p>
+                  <p className="text-xs font-light text-center">
+                    {printData?.id?.requested_position}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -209,13 +211,13 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 pointer-events-none -top-1 left-1/2"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-1/2 left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}
                       />
                     )}
-                    <p className="relative z-10 text-sm font-normal text-center underline">
+                    <p className="relative z-10 text-xs font-medium text-center underline">
                       {approver.firstName} {approver.lastName}
                     </p>
                     <p className="text-xs font-light text-center">
@@ -233,17 +235,17 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
                 {printData?.approvedBy.map((approver: any, index: number) => (
                   <div
                     key={index}
-                    className="relative flex flex-col items-center justify-start pt-3 mr-10"
+                    className="relative flex flex-col items-center justify-center pt-3 mr-10"
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 pointer-events-none -top-1 left-1/2"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-full left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}
                       />
                     )}
-                    <p className="relative z-10 text-sm font-normal text-center underline">
+                    <p className="relative z-10 text-xs font-medium text-center underline">
                       {approver.firstName} {approver.lastName}
                     </p>
                     <p className="text-xs font-light text-center">
