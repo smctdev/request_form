@@ -498,7 +498,6 @@ const ViewDiscountModal: React.FC<Props> = ({
   };
 
   const handleViewImage = (imageUrl: any) => {
-    console.log("");
     setCurrentImage(imageUrl);
     setIsImgModalOpen(true);
   };
@@ -898,12 +897,12 @@ const ViewDiscountModal: React.FC<Props> = ({
                               className={`font-bold text-[12px] text-center mt-1 ${
                                 user.status === "Approved"
                                   ? "text-green"
-                                  : user.status === "Pending"
+                                  : user.status === "Pending" || !user.status
                                   ? "text-yellow"
                                   : ""
                               }`}
                             >
-                              {user.status}
+                              {user.status ? user.status : "Pending"}
                             </p>
                           )}
                         </div>
@@ -961,12 +960,12 @@ const ViewDiscountModal: React.FC<Props> = ({
                               className={`font-bold text-[12px] text-center mt-1 ${
                                 user.status === "Approved"
                                   ? "text-green"
-                                  : user.status === "Pending"
+                                  : user.status === "Pending" || !user.status
                                   ? "text-yellow"
                                   : ""
                               }`}
                             >
-                              {user.status}
+                              {user.status ? user.status : "Pending"}
                             </p>
                           )}
                         </div>
@@ -1223,78 +1222,6 @@ const ViewDiscountModal: React.FC<Props> = ({
                 <p className="text-gray-500">No attachments available.</p>
               )}
             </div> */}
-          </div>
-
-          <div className="w-full">
-            <h2 className="mb-2 text-lg font-bold">Comments</h2>
-
-            {/* Check if there are no comments in both notedBy and approvedBy */}
-            {notedBy.filter((user) => user.comment).length === 0 &&
-            approvedBy.filter((user) => user.comment).length === 0 ? (
-              <p className="text-gray-500">No comments yet.</p>
-            ) : (
-              <>
-                {/* Render Noted By comments */}
-                <ul className="flex flex-col w-full mb-4 space-y-4">
-                  {notedBy
-                    .filter((user) => user.comment)
-                    .map((user, index) => (
-                      <div className="flex" key={index}>
-                        <div>
-                          <img
-                            alt="avatar"
-                            className="hidden cursor-pointer sm:block"
-                            src={Avatar}
-                            height={35}
-                            width={45}
-                            draggable="false"
-                            onContextMenu={(e) => e.preventDefault()}
-                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
-                          />
-                        </div>
-                        <div className="flex flex-row w-full">
-                          <li className="flex flex-col justify-between pl-2">
-                            <h3 className="text-lg font-bold">
-                              {user.firstName} {user.lastName}
-                            </h3>
-                            <p>{user.comment}</p>
-                          </li>
-                        </div>
-                      </div>
-                    ))}
-                </ul>
-
-                {/* Render Approved By comments */}
-                <ul className="flex flex-col w-full mb-4 space-y-4">
-                  {approvedBy
-                    .filter((user) => user.comment)
-                    .map((user, index) => (
-                      <div className="flex" key={index}>
-                        <div>
-                          <img
-                            alt="avatar"
-                            className="hidden cursor-pointer sm:block"
-                            src={Avatar}
-                            height={35}
-                            width={45}
-                            draggable="false"
-                            onContextMenu={(e) => e.preventDefault()}
-                            style={{ filter: "blur(1px)" }} // Optional: Apply a blur
-                          />
-                        </div>
-                        <div className="flex flex-row w-full">
-                          <li className="flex flex-col justify-between pl-2">
-                            <h3 className="text-lg font-bold">
-                              {user.firstName} {user.lastName}
-                            </h3>
-                            <p>{user.comment}</p>
-                          </li>
-                        </div>
-                      </div>
-                    ))}
-                </ul>
-              </>
-            )}
           </div>
 
           <div className="w-full">

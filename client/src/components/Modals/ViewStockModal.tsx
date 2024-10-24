@@ -37,6 +37,9 @@ type Record = {
   date: string;
   user_id: number;
   attachment: string;
+  requested_by: string;
+  requested_signature: string;
+  requested_position: string;
   noted_by: {
     id: number;
     firstName: string;
@@ -336,7 +339,9 @@ const ViewStockModal: React.FC<Props> = ({
 
       // Append existing attachments
       attachmentUrl.forEach((url, index) => {
-        const path = url.split("request-form-files/request_form_attachments/")[1];
+        const path = url.split(
+          "request-form-files/request_form_attachments/"
+        )[1];
         formData.append(`attachment_url_${index}`, path);
       });
 
@@ -402,7 +407,10 @@ const ViewStockModal: React.FC<Props> = ({
     if (field === "quantity" || field === "unitCost") {
       const quantity = parseFloat(newDataCopy[index].quantity);
       const unitCost = parseFloat(newDataCopy[index].unitCost);
-      newDataCopy[index].totalAmount = (quantity * unitCost).toString() === "NaN" ? "0" : parseFloat((quantity * unitCost).toString()).toFixed(2);
+      newDataCopy[index].totalAmount =
+        (quantity * unitCost).toString() === "NaN"
+          ? "0"
+          : parseFloat((quantity * unitCost).toString()).toFixed(2);
     }
 
     // Calculate grandTotal
@@ -468,7 +476,6 @@ const ViewStockModal: React.FC<Props> = ({
   };
 
   const handleViewImage = (imageUrl: any) => {
-    console.log("");
     setCurrentImage(imageUrl);
     setIsImgModalOpen(true);
   };
@@ -515,7 +522,6 @@ const ViewStockModal: React.FC<Props> = ({
       });
     }
   };
-
   return (
     <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="relative z-10 w-full p-4 mx-10 overflow-scroll bg-white border-black rounded-t-lg shadow-lg md:mx-0 md:w-1/2 space-y-auto h-3/4">
@@ -870,12 +876,12 @@ const ViewStockModal: React.FC<Props> = ({
                               className={`font-bold text-[12px] text-center mt-1 ${
                                 user.status === "Approved"
                                   ? "text-green"
-                                  : user.status === "Pending"
+                                  : user.status === "Pending" || !user.status
                                   ? "text-yellow"
                                   : ""
                               }`}
                             >
-                              {user.status}
+                              {user.status ? user.status : "Pending"}
                             </p>
                           )}
                         </div>
@@ -933,14 +939,15 @@ const ViewStockModal: React.FC<Props> = ({
                               className={`font-bold text-[12px] text-center mt-1 ${
                                 user.status === "Approved"
                                   ? "text-green"
-                                  : user.status === "Pending"
+                                  : user.status === "Pending" || !user.status
                                   ? "text-yellow"
                                   : ""
                               }`}
                             >
-                              {user.status}
+                              {user.status ? user.status : "Pending"}
                             </p>
                           )}
+                          
                         </div>
                       </li>
                     ))}

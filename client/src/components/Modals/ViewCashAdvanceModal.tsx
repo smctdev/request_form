@@ -522,7 +522,6 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
   };
 
   const handleViewImage = (imageUrl: any) => {
-    console.log("");
     setCurrentImage(imageUrl);
     setIsImgModalOpen(true);
   };
@@ -1085,12 +1084,12 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               className={`font-bold text-[12px] text-center mt-1 ${
                                 user.status === "Approved"
                                   ? "text-green"
-                                  : user.status === "Pending"
+                                  : user.status === "Pending" || !user.status
                                   ? "text-yellow"
                                   : ""
                               }`}
                             >
-                              {user.status}
+                              {user.status ? user.status : "Pending"}
                             </p>
                           )}
                         </div>
@@ -1148,12 +1147,12 @@ const ViewCashAdvanceModal: React.FC<Props> = ({
                               className={`font-bold text-[12px] text-center mt-1 ${
                                 user.status === "Approved"
                                   ? "text-green"
-                                  : user.status === "Pending"
+                                  : user.status === "Pending" || !user.status
                                   ? "text-yellow"
                                   : ""
                               }`}
                             >
-                              {user.status}
+                              {user.status ? user.status : "Pending"}
                             </p>
                           )}
                         </div>

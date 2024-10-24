@@ -32,7 +32,6 @@ const Login: React.FC = () => {
 
   const submitData: SubmitHandler<UserCredentials> = async (data) => {
     setLoading(true);
-    console.log("error", errors);
     if (errors.email?.message === "Invalid email address") {
       setLoading(false); // Reset loading if it's an invalid email
       return; // Exit early

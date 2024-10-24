@@ -188,7 +188,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
                 >
                   {approver.status === "Approved" && (
                     <img
-                      className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
+                      className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-0.5 left-1/2"
                       src={approver.signature}
                       alt=""
                       width={120}
@@ -216,7 +216,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
                 >
                   {approver.status === "Approved" && (
                     <img
-                      className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
+                      className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-1 left-1/2"
                       src={approver.signature}
                       alt=""
                       width={120}
@@ -271,7 +271,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
                 >
                   {approver.status === "Approved" && (
                     <img
-                      className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
+                      className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-0.5 left-1/2"
                       src={approver.signature}
                       alt=""
                       width={120}
@@ -299,7 +299,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
                 >
                   {approver.status === "Approved" && (
                     <img
-                      className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-3 left-1/2"
+                      className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none -top-1 left-1/2"
                       src={approver.signature}
                       alt=""
                       width={120}
@@ -467,17 +467,16 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
               <h3 className="mb-2 text-sm font-normal">Requested By:</h3>
               <div className="relative flex flex-col items-center justify-center pt-4">
                 <img
-                  className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
-                  src={printData?.user?.data?.signature}
+                  className="absolute transform -translate-x-1/2 pointer-events-none -top-4 left-1/2"
+                  src={printData?.id?.requested_signature}
                   alt="avatar"
                   width={120}
                 />
                 <p className="relative z-10 px-2 text-sm font-normal underline">
-                  {printData?.user?.data?.firstName}{" "}
-                  {printData?.user?.data?.lastName}
+                  {printData?.id?.requested_by}
                 </p>
                 <p className="text-xs font-light text-center">
-                  {printData?.user?.data?.position}
+                  {printData?.id?.requested_position}
                 </p>
               </div>
             </div>
@@ -493,7 +492,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -top-1 left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}
@@ -521,7 +520,7 @@ const PrintCash: React.FC<PrintRefundProps> = ({ data }) => {
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 pointer-events-none -top-3 left-1/2"
+                        className="absolute transform -translate-x-1/2 pointer-events-none -top-1 left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}

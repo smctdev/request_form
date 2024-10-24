@@ -376,11 +376,27 @@ class RequestFormController extends Controller
         ];
 
         if (isset($prefixes[$formType]) && $branchId) {
-            $count = RequestForm::where('form_type', $formType)
+            // Find the latest request for the specific form type and branch, ordered by the code
+            $lastRequest = RequestForm::where('form_type', $formType)
                 ->where('branch_code', $branchId)
-                ->count();
-            $nextNumber = str_pad($count + 1, 7, '0', STR_PAD_LEFT);
-            return $prefixes[$formType] . $nextNumber;
+                ->orderBy('request_code', 'desc') // Assumes unique_code is stored in the DB
+                ->first();
+
+            // Determine the next number
+            if ($lastRequest) {
+                // Extract the numeric part of the code (after the prefix)
+                $lastNumber = (int) substr($lastRequest->request_code, strlen($prefixes[$formType]));
+                $nextNumber = $lastNumber + 1;
+            } else {
+                // If no previous record, start from 1
+                $nextNumber = 1;
+            }
+
+            // Pad the next number with zeros to ensure it is 7 digits long
+            $nextNumberPadded = str_pad($nextNumber, 7, '0', STR_PAD_LEFT);
+
+            // Return the prefix along with the incremented number
+            return $prefixes[$formType] . $nextNumberPadded;
         }
 
         return null;
@@ -437,7 +453,7 @@ class RequestFormController extends Controller
                 'form_data' => $form_data_content,
                 'noted_by' => $noted_by,
                 'approved_by' => $approved_by,
-                'attachment' => json_encode($attachment_paths),
+                'attachment' => json_encode(array_values($attachment_paths)),
                 'status' => "Pending",
             ]);
 
@@ -719,6 +735,9 @@ class RequestFormController extends Controller
                     'status' => $requestForm->status,
                     'noted_by' => $formattedNotedBy,
                     'approved_by' => $formattedApprovedBy,
+                    'requested_by' => auth()->user()->firstName . ' ' . auth()->user()->firstName,
+                    'requested_signature' => auth()->user()->signature,
+                    'requested_position' => auth()->user()->position,
                     'attachment' => $requestForm->attachment,
                     'pending_approver' => $pendingApprover ? [
                         'approver_name' => "{$pendingApprover->firstName} {$pendingApprover->lastName}",

@@ -29,7 +29,7 @@ class ApprovalProcessController extends Controller
             'user_id' => 'required|exists:users,id',
             'action' => 'required|in:approve,disapprove',
             'comment' => 'nullable|string',
-            'attachment.*' => 'nullable|file|mimes:pdf,png,jpg,jpeg'
+            'attachment.*' => 'nullable|file|mimes:png,jpg,jpeg,webp,ico,gif'
         ]);
 
         if (DB::table('a_v_p_finance_staff')->where('staff_id', $request->user_id)->exists()) {
@@ -44,7 +44,7 @@ class ApprovalProcessController extends Controller
         if ($currentUser->position == 'Vice President') {
             $request->validate([
                 'attachment' => 'required|array', // Ensure it's an array
-                'attachment.*' => 'required|file|mimes:pdf,png,jpg,jpeg'
+                'attachment.*' => 'required|file|mimes:png,jpg,jpeg,webp,ico,gif'
             ]);
         }
 
@@ -55,7 +55,7 @@ class ApprovalProcessController extends Controller
             $attachmentPaths = []; // Initialize as an array if files exist
             foreach ($request->file('attachment') as $file) {
                 // Store each file and collect paths
-                $path = $file->store('attachments', 'public');
+                $path = $file->store('request_form_comment_attachments', 'd_drive');
                 $attachmentPaths[] = $path;
             }
         }

@@ -195,8 +195,6 @@ const CreateLiquidation = (props: Props) => {
       grandTotal: "0",
     },
   ]);
-
-  console.log(new Date().toISOString().split("T")[0]);
   const [tableData, setTableData] = useState<TableDataItem[]>(initialTableData);
   const [selectedRequestType, setSelectedRequestType] =
     useState("/request/loae");

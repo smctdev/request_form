@@ -166,7 +166,7 @@ const SetupPosition: React.FC = () => {
         setToDeleteId(0);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setDeleteLoading(false);
       setIsRefresh(false);
