@@ -1034,7 +1034,7 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                         // Display document icon if file is not an image
                         <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
                           <img
-                            src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png"
+                            src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png"
                             alt=""
                           />
                         </div>
@@ -1060,63 +1060,65 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                   className="fixed inset-0 z-50 flex items-center justify-center w-full bg-black bg-opacity-75"
                   onClick={closeImgModal}
                 >
-                  <div
-                    className="relative rounded-lg"
-                    onClick={(e) => e.stopPropagation()}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleLongPressEnd}
-                    onTouchMove={handleMouseMove}
-                    onTouchEnd={handleLongPressEnd}
-                  >
+                  <div className={zoom > 1 ? "w-4/5" : ""}>
                     <div
-                      className="overflow-hidden"
-                      style={{
-                        cursor: dragging
-                          ? "grabbing"
-                          : zoom > 1
-                          ? "grab"
-                          : "default",
-                      }}
-                      onMouseDown={handleLongPressStart}
-                      onTouchStart={handleLongPressStart}
+                      className="relative rounded-lg"
+                      onClick={(e) => e.stopPropagation()}
+                      onMouseMove={handleMouseMove}
+                      onMouseUp={handleLongPressEnd}
+                      onTouchMove={handleMouseMove}
+                      onTouchEnd={handleLongPressEnd}
                     >
-                      <img
-                        src={currentImage || ""}
-                        alt="Viewed"
-                        className="max-w-full max-h-screen transform"
+                      <div
+                        className="overflow-hidden"
                         style={{
-                          transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`,
+                          cursor: dragging
+                            ? "grabbing"
+                            : zoom > 1
+                            ? "grab"
+                            : "default",
                         }}
-                      />
-                    </div>
+                        onMouseDown={handleLongPressStart}
+                        onTouchStart={handleLongPressStart}
+                      >
+                        <img
+                          src={currentImage || ""}
+                          alt="Viewed"
+                          className="object-contain w-full max-h-screen transform"
+                          style={{
+                            transform: `scale(${zoom}) translate(${position.x}px, ${position.y}px)`,
+                          }}
+                        />
+                      </div>
 
-                    <div className="fixed flex w-10 h-10 gap-8 text-4xl text-white rounded-full right-48 top-4">
+                      <div className="fixed flex w-10 h-10 gap-8 text-4xl text-white rounded-full right-48 top-4">
+                        <button
+                          onClick={resetZoom}
+                          className="w-10 h-10 text-lg text-white"
+                        >
+                          Reset
+                        </button>
+                        <button
+                          onClick={zoomOut}
+                          className="w-10 h-10 text-4xl text-white"
+                        >
+                          -
+                        </button>
+                        <button
+                          onClick={zoomIn}
+                          className="w-10 h-10 text-4xl text-white"
+                        >
+                          +
+                        </button>
+                      </div>
+
                       <button
-                        onClick={resetZoom}
-                        className="w-10 h-10 text-lg text-white"
+                        onClick={closeImgModal}
+                        className="fixed w-10 h-10 text-4xl text-white right-4 top-4"
                       >
-                        Reset
-                      </button>
-                      <button
-                        onClick={zoomOut}
-                        className="w-10 h-10 text-4xl text-white"
-                      >
-                        -
-                      </button>
-                      <button
-                        onClick={zoomIn}
-                        className="w-10 h-10 text-4xl text-white"
-                      >
-                        +
+                        &times;
                       </button>
                     </div>
-
-                    <button
-                      onClick={closeImgModal}
-                      className="fixed w-10 h-10 text-4xl text-white right-4 top-4"
-                    >
-                      &times;
-                    </button>
                   </div>
                 </div>
               )}

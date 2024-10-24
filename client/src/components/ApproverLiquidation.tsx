@@ -809,8 +809,56 @@ const ApproverLiquidation: React.FC<Props> = ({
                   <td className={`${input2Style} `}>
                     <p className="pl-2 font-semibold ">SIGNATURE</p>
                   </td>
-                  <td className={`${tableStyle}`}>
+                  {/* <td className={`${tableStyle}`}>
                     <img src={record.form_data[0].signature} />
+                  </td> */}
+                                    <td className={`${tableStyle} h-10`}>
+                    <div className="flex items-center justify-center overflow-hidden">
+                      <div className="relative">
+                        <img
+                          src={record.form_data[0].signature}
+                          alt="signature"
+                          draggable="false"
+                          className="h-24"
+                          onContextMenu={(e) => e.preventDefault()}
+                          style={{ filter: "blur(1px)" }}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                          <div
+                            className="text-gray-950 opacity-30"
+                            style={{
+                              backgroundImage:
+                                "repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 255, 255, 0.3) 20px, rgba(255, 255, 255, 0.3) 100px)",
+                              backgroundSize: "400px 400px",
+                              width: "100%",
+                              height: "100%",
+                              fontSize: "1.2em",
+                              transform: "rotate(-12deg)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies{" "}
+                            <br /> SMCT Group of Companies SMCT Group of
+                            Companies
+                            <br />
+                            SMCT Group of Companies SMCT Group of Companies
+                            <br /> SMCT Group of Companies SMCT Group of
+                            Companies
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </td>
                 </tr>
                 <tr>
@@ -1070,63 +1118,65 @@ const ApproverLiquidation: React.FC<Props> = ({
                   className="fixed inset-0 z-50 flex items-center justify-center w-full bg-black bg-opacity-75"
                   onClick={closeImgModal}
                 >
-                  <div
-                    className="relative rounded-lg"
-                    onClick={(e) => e.stopPropagation()}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleLongPressEnd}
-                    onTouchMove={handleMouseMove}
-                    onTouchEnd={handleLongPressEnd}
-                  >
+                  <div className={zoom > 1 ? "w-4/5" : ""}>
                     <div
-                      className="overflow-hidden"
-                      style={{
-                        cursor: dragging
-                          ? "grabbing"
-                          : zoom > 1
-                          ? "grab"
-                          : "default",
-                      }}
-                      onMouseDown={handleLongPressStart}
-                      onTouchStart={handleLongPressStart}
+                      className="relative rounded-lg"
+                      onClick={(e) => e.stopPropagation()}
+                      onMouseMove={handleMouseMove}
+                      onMouseUp={handleLongPressEnd}
+                      onTouchMove={handleMouseMove}
+                      onTouchEnd={handleLongPressEnd}
                     >
-                      <img
-                        src={currentImage || ""}
-                        alt="Viewed"
-                        className="max-w-full max-h-screen transform"
+                      <div
+                        className="overflow-hidden"
                         style={{
-                          transform: `scale(${zoom}) translate(${positionImg.x}px, ${positionImg.y}px)`,
+                          cursor: dragging
+                            ? "grabbing"
+                            : zoom > 1
+                            ? "grab"
+                            : "default",
                         }}
-                      />
-                    </div>
+                        onMouseDown={handleLongPressStart}
+                        onTouchStart={handleLongPressStart}
+                      >
+                        <img
+                          src={currentImage || ""}
+                          alt="Viewed"
+                          className="object-contain w-full max-h-screen transform"
+                          style={{
+                            transform: `scale(${zoom}) translate(${positionImg.x}px, ${positionImg.y}px)`,
+                          }}
+                        />
+                      </div>
 
-                    <div className="fixed flex w-10 h-10 gap-8 text-4xl text-white rounded-full right-48 top-4">
+                      <div className="fixed flex w-10 h-10 gap-8 text-4xl text-white rounded-full right-48 top-4">
+                        <button
+                          onClick={resetZoom}
+                          className="w-10 h-10 text-lg text-white"
+                        >
+                          Reset
+                        </button>
+                        <button
+                          onClick={zoomOut}
+                          className="w-10 h-10 text-4xl text-white"
+                        >
+                          -
+                        </button>
+                        <button
+                          onClick={zoomIn}
+                          className="w-10 h-10 text-4xl text-white"
+                        >
+                          +
+                        </button>
+                      </div>
+
                       <button
-                        onClick={resetZoom}
-                        className="w-10 h-10 text-lg text-white"
+                        onClick={closeImgModal}
+                        className="fixed w-10 h-10 text-4xl text-white right-4 top-4"
                       >
-                        Reset
-                      </button>
-                      <button
-                        onClick={zoomOut}
-                        className="w-10 h-10 text-4xl text-white"
-                      >
-                        -
-                      </button>
-                      <button
-                        onClick={zoomIn}
-                        className="w-10 h-10 text-4xl text-white"
-                      >
-                        +
+                        &times;
                       </button>
                     </div>
-
-                    <button
-                      onClick={closeImgModal}
-                      className="fixed w-10 h-10 text-4xl text-white right-4 top-4"
-                    >
-                      &times;
-                    </button>
                   </div>
                 </div>
               )}

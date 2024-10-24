@@ -708,285 +708,304 @@ const ApproverCashAdvance: React.FC<Props> = ({
               </p>
             </div>
           )}
-
-          <div className="w-full mt-4 overflow-x-auto">
-            <div className="w-full border-collapse">
-              <div className="table-container">
-                <table className="w-full border space-x-auto">
-                  <thead className="border border-black h-1/3 bg-[#8EC7F7]">
-                    <tr>
-                      <th className={`${tableStyle}`}>Date</th>
-                      <th className={`${tableStyle}`}>Day</th>
-                      <th className={`${tableStyle}`}>Itinerary</th>
-                      <th className={`${tableStyle}`}>Activity</th>
-                      <th className={`${tableStyle}`}>Hotel</th>
-                      <th className={`${tableStyle}`}>Rate</th>
-                      <th className={`${tableStyle}`}>Amount</th>
-                      <th className={`${tableStyle}`}>Per Diem</th>
-                      <th className={`${tableStyle}`}>Remarks</th>
-                    </tr>
-                  </thead>
-                  <tbody className={`${tableCellStyle}`}>
-                    {isEditing
-                      ? newData.map((item, index) => (
-                          <tr key={index}>
-                            <td className={tableCellStyle}>
-                              <input
-                                type="date"
-                                value={item.cashDate}
-                                onChange={(e) =>
-                                  handleItemChange(
-                                    index,
-                                    "cashDate",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </td>
-                            <td className={tableCellStyle}>
-                              <input
-                                type="text"
-                                value={item.day}
-                                onChange={(e) =>
-                                  handleItemChange(index, "day", e.target.value)
-                                }
-                              />
-                            </td>
-                            <td className={tableCellStyle}>
-                              <input
-                                type="text"
-                                value={item.itinerary}
-                                onChange={(e) =>
-                                  handleItemChange(
-                                    index,
-                                    "itinerary",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </td>
-                            <td className={tableCellStyle}>
-                              <input
-                                type="text"
-                                value={item.activity}
-                                onChange={(e) =>
-                                  handleItemChange(
-                                    index,
-                                    "activity",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </td>
-                            <td className={tableCellStyle}>
-                              <input
-                                type="text"
-                                value={item.hotel}
-                                onChange={(e) =>
-                                  handleItemChange(
-                                    index,
-                                    "hotel",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </td>
-                            <td className={tableCellStyle}>
-                              <input
-                                type="text"
-                                value={item.rate}
-                                onChange={(e) =>
-                                  handleItemChange(
-                                    index,
-                                    "rate",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </td>
-                            <td className={tableCellStyle}>
-                              <input
-                                type="text"
-                                value={item.amount}
-                                onChange={(e) =>
-                                  handleItemChange(
-                                    index,
-                                    "amount",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </td>
-                            <td className={tableCellStyle}>
-                              <input
-                                type="text"
-                                value={item.perDiem}
-                                onChange={(e) =>
-                                  handleItemChange(
-                                    index,
-                                    "perDiem",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </td>
-                            <td className={tableCellStyle}>
-                              <input
-                                type="text"
-                                value={item.remarks}
-                                onChange={(e) =>
-                                  handleItemChange(
-                                    index,
-                                    "remarks",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </td>
-                          </tr>
-                        ))
-                      : editableRecord.form_data[0].items.map((item, index) => (
-                          <tr key={index}>
-                            <td className={tableCellStyle}>
-                              {formatDate(item.cashDate)}
-                            </td>
-                            <td className={tableCellStyle}>{item.day}</td>
-                            <td className={tableCellStyle}>{item.itinerary}</td>
-                            <td className={tableCellStyle}>{item.activity}</td>
-                            <td className={tableCellStyle}>{item.hotel}</td>
-                            <td className={tableCellStyle}>{item.rate}</td>
-                            <td className={tableCellStyle}>{item.amount}</td>
-                            <td className={tableCellStyle}>{item.perDiem}</td>
-                            <td className={tableCellStyle}>{item.remarks}</td>
-                          </tr>
-                        ))}
-                  </tbody>
-                </table>
+          <div className="flex space-x-2 w-full mt-2">
+            <div className="w-[70%] overflow-x-auto">
+              <div className="w-full border-collapse">
+                <div className="table-container">
+                  <table className="w-full border space-x-auto">
+                    <thead className="border border-black h-1/3 bg-[#8EC7F7]">
+                      <tr>
+                        <th className={`${tableStyle}`}>Date</th>
+                        <th className={`${tableStyle}`}>Day</th>
+                        <th className={`${tableStyle}`}>Itinerary</th>
+                        <th className={`${tableStyle}`}>Activity</th>
+                        <th className={`${tableStyle}`}>Hotel</th>
+                        <th className={`${tableStyle}`}>Rate</th>
+                        <th className={`${tableStyle}`}>Amount</th>
+                        <th className={`${tableStyle}`}>Per Diem</th>
+                        <th className={`${tableStyle}`}>Remarks</th>
+                      </tr>
+                    </thead>
+                    <tbody className={`${tableCellStyle}`}>
+                      {isEditing
+                        ? newData.map((item, index) => (
+                            <tr key={index}>
+                              <td className={tableCellStyle}>
+                                <input
+                                  type="date"
+                                  value={item.cashDate}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "cashDate",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td className={tableCellStyle}>
+                                <input
+                                  type="text"
+                                  value={item.day}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "day",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td className={tableCellStyle}>
+                                <input
+                                  type="text"
+                                  value={item.itinerary}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "itinerary",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td className={tableCellStyle}>
+                                <input
+                                  type="text"
+                                  value={item.activity}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "activity",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td className={tableCellStyle}>
+                                <input
+                                  type="text"
+                                  value={item.hotel}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "hotel",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td className={tableCellStyle}>
+                                <input
+                                  type="text"
+                                  value={item.rate}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "rate",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td className={tableCellStyle}>
+                                <input
+                                  type="text"
+                                  value={item.amount}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "amount",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td className={tableCellStyle}>
+                                <input
+                                  type="text"
+                                  value={item.perDiem}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "perDiem",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                              <td className={tableCellStyle}>
+                                <input
+                                  type="text"
+                                  value={item.remarks}
+                                  onChange={(e) =>
+                                    handleItemChange(
+                                      index,
+                                      "remarks",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </td>
+                            </tr>
+                          ))
+                        : editableRecord.form_data[0].items.map(
+                            (item, index) => (
+                              <tr key={index}>
+                                <td className={tableCellStyle}>
+                                  {formatDate(item.cashDate)}
+                                </td>
+                                <td className={tableCellStyle}>{item.day}</td>
+                                <td className={tableCellStyle}>
+                                  {item.itinerary}
+                                </td>
+                                <td className={tableCellStyle}>
+                                  {item.activity}
+                                </td>
+                                <td className={tableCellStyle}>{item.hotel}</td>
+                                <td className={tableCellStyle}>{item.rate}</td>
+                                <td className={tableCellStyle}>
+                                  {item.amount}
+                                </td>
+                                <td className={tableCellStyle}>
+                                  {item.perDiem}
+                                </td>
+                                <td className={tableCellStyle}>
+                                  {item.remarks}
+                                </td>
+                              </tr>
+                            )
+                          )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
 
-          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-          <div className="inline-block w-full">
-            <table className="border border-black">
-              <thead>
-                <tr>
-                  <th colSpan={2} className="bg-[#8EC7F7]">
-                    <p className="font-semibold text-[12px] p-2">
-                      SUMMARY OF EXPENSES TO BE INCURRED (for C/A)
-                    </p>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className={`${tableStyle}`}>
-                    <p className="font-semibold">BOAT FARE</p>
-                  </td>
-                  <td className={`${inputStyle}`}>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={newTotalBoatFare}
-                        onChange={(e) => setNewTotalBoatFare(e.target.value)}
-                        className="w-full bg-white"
-                        readOnly={!isEditing}
-                      />
-                    ) : (
-                      parseFloat(
-                        editableRecord.form_data[0].totalBoatFare
-                      ).toFixed(2)
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td className={`${tableStyle}`}>
-                    <p className="font-semibold">HOTEL</p>
-                  </td>
-                  <td className={`${inputStyle}`}>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={newTotalHotel}
-                        onChange={(e) => setNewTotalHotel(e.target.value)}
-                        className="w-full bg-white"
-                        readOnly={!isEditing}
-                      />
-                    ) : (
-                      parseFloat(
-                        editableRecord.form_data[0].totalHotel
-                      ).toFixed(2)
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td className={`${tableStyle}`}>
-                    <p className="font-semibold">PER DIEM</p>
-                  </td>
-                  <td className={`${inputStyle}`}>
-                    {/* Display calculated total per diem */}
-                    {newData.reduce(
-                      (totalPerDiem, item) =>
-                        totalPerDiem + Number(item.perDiem),
-                      0
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td className={`${tableStyle}`}>
-                    <p className="font-semibold">FARE</p>
-                  </td>
-                  <td className={`${inputStyle}`}>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={newTotalFare}
-                        onChange={(e) => setNewTotalFare(e.target.value)}
-                        className="w-full bg-white"
-                        readOnly={!isEditing}
-                      />
-                    ) : (
-                      parseFloat(editableRecord.form_data[0].totalFare).toFixed(
-                        2
-                      )
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td className={`${tableStyle}`}>
-                    <p className="font-semibold">CONTINGENCY</p>
-                  </td>
-                  <td className={`${inputStyle}`}>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={newTotalContingency}
-                        onChange={(e) => setNewTotalContingency(e.target.value)}
-                        className="w-full"
-                        readOnly={!isEditing}
-                      />
-                    ) : (
-                      parseFloat(
-                        editableRecord.form_data[0].totalContingency
-                      ).toFixed(2)
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <td className={`${tableStyle} h-8`}></td>
-                  <td className={`${tableStyle}`}></td>
-                </tr>
-                <tr>
-                  <td className={`${tableStyle} h-14 font-bold`}>TOTAL</td>
-                  <td className={`${tableStyle} text-center font-bold`}>
-                    ₱{" "}
-                    {isEditing
-                      ? calculateGrandTotal()
-                      : editableRecord.form_data[0].grand_total}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+            <div className="inline-block w-[30%]">
+              <table className="border border-black">
+                <thead>
+                  <tr>
+                    <th colSpan={2} className="bg-[#8EC7F7]">
+                      <p className="font-semibold text-[12px] p-2">
+                        SUMMARY OF EXPENSES TO BE INCURRED (for C/A)
+                      </p>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className={`${tableStyle}`}>
+                      <p className="font-semibold">BOAT FARE</p>
+                    </td>
+                    <td className={`${inputStyle}`}>
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          value={newTotalBoatFare}
+                          onChange={(e) => setNewTotalBoatFare(e.target.value)}
+                          className="w-full bg-white"
+                          readOnly={!isEditing}
+                        />
+                      ) : (
+                        parseFloat(
+                          editableRecord.form_data[0].totalBoatFare
+                        ).toFixed(2)
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className={`${tableStyle}`}>
+                      <p className="font-semibold">HOTEL</p>
+                    </td>
+                    <td className={`${inputStyle}`}>
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          value={newTotalHotel}
+                          onChange={(e) => setNewTotalHotel(e.target.value)}
+                          className="w-full bg-white"
+                          readOnly={!isEditing}
+                        />
+                      ) : (
+                        parseFloat(
+                          editableRecord.form_data[0].totalHotel
+                        ).toFixed(2)
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className={`${tableStyle}`}>
+                      <p className="font-semibold">PER DIEM</p>
+                    </td>
+                    <td className={`${inputStyle}`}>
+                      {/* Display calculated total per diem */}
+                      {newData.reduce(
+                        (totalPerDiem, item) =>
+                          totalPerDiem + Number(item.perDiem),
+                        0
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className={`${tableStyle}`}>
+                      <p className="font-semibold">FARE</p>
+                    </td>
+                    <td className={`${inputStyle}`}>
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          value={newTotalFare}
+                          onChange={(e) => setNewTotalFare(e.target.value)}
+                          className="w-full bg-white"
+                          readOnly={!isEditing}
+                        />
+                      ) : (
+                        parseFloat(
+                          editableRecord.form_data[0].totalFare
+                        ).toFixed(2)
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className={`${tableStyle}`}>
+                      <p className="font-semibold">CONTINGENCY</p>
+                    </td>
+                    <td className={`${inputStyle}`}>
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          value={newTotalContingency}
+                          onChange={(e) =>
+                            setNewTotalContingency(e.target.value)
+                          }
+                          className="w-full"
+                          readOnly={!isEditing}
+                        />
+                      ) : (
+                        parseFloat(
+                          editableRecord.form_data[0].totalContingency
+                        ).toFixed(2)
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className={`${tableStyle} h-8`}></td>
+                    <td className={`${tableStyle}`}></td>
+                  </tr>
+                  <tr>
+                    <td className={`${tableStyle} h-14 font-bold`}>TOTAL</td>
+                    <td className={`${tableStyle} text-center font-bold`}>
+                      ₱{" "}
+                      {isEditing
+                        ? calculateGrandTotal()
+                        : editableRecord.form_data[0].grand_total}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div className="flex-col items-center justify-center w-full">
@@ -1234,63 +1253,65 @@ const ApproverCashAdvance: React.FC<Props> = ({
                   className="fixed inset-0 z-50 flex items-center justify-center w-full bg-black bg-opacity-75"
                   onClick={closeImgModal}
                 >
-                  <div
-                    className="relative rounded-lg"
-                    onClick={(e) => e.stopPropagation()}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleLongPressEnd}
-                    onTouchMove={handleMouseMove}
-                    onTouchEnd={handleLongPressEnd}
-                  >
+                  <div className={zoom > 1 ? "w-4/5" : ""}>
                     <div
-                      className="overflow-hidden"
-                      style={{
-                        cursor: dragging
-                          ? "grabbing"
-                          : zoom > 1
-                          ? "grab"
-                          : "default",
-                      }}
-                      onMouseDown={handleLongPressStart}
-                      onTouchStart={handleLongPressStart}
+                      className="relative rounded-lg"
+                      onClick={(e) => e.stopPropagation()}
+                      onMouseMove={handleMouseMove}
+                      onMouseUp={handleLongPressEnd}
+                      onTouchMove={handleMouseMove}
+                      onTouchEnd={handleLongPressEnd}
                     >
-                      <img
-                        src={currentImage || ""}
-                        alt="Viewed"
-                        className="max-w-full max-h-screen transform"
+                      <div
+                        className="overflow-hidden"
                         style={{
-                          transform: `scale(${zoom}) translate(${positionImg.x}px, ${positionImg.y}px)`,
+                          cursor: dragging
+                            ? "grabbing"
+                            : zoom > 1
+                            ? "grab"
+                            : "default",
                         }}
-                      />
-                    </div>
+                        onMouseDown={handleLongPressStart}
+                        onTouchStart={handleLongPressStart}
+                      >
+                        <img
+                          src={currentImage || ""}
+                          alt="Viewed"
+                          className="object-contain w-full max-h-screen transform"
+                          style={{
+                            transform: `scale(${zoom}) translate(${positionImg.x}px, ${positionImg.y}px)`,
+                          }}
+                        />
+                      </div>
 
-                    <div className="fixed flex w-10 h-10 gap-8 text-4xl text-white rounded-full right-48 top-4">
+                      <div className="fixed flex w-10 h-10 gap-8 text-4xl text-white rounded-full right-48 top-4">
+                        <button
+                          onClick={resetZoom}
+                          className="w-10 h-10 text-lg text-white"
+                        >
+                          Reset
+                        </button>
+                        <button
+                          onClick={zoomOut}
+                          className="w-10 h-10 text-4xl text-white"
+                        >
+                          -
+                        </button>
+                        <button
+                          onClick={zoomIn}
+                          className="w-10 h-10 text-4xl text-white"
+                        >
+                          +
+                        </button>
+                      </div>
+
                       <button
-                        onClick={resetZoom}
-                        className="w-10 h-10 text-lg text-white"
+                        onClick={closeImgModal}
+                        className="fixed w-10 h-10 text-4xl text-white right-4 top-4"
                       >
-                        Reset
-                      </button>
-                      <button
-                        onClick={zoomOut}
-                        className="w-10 h-10 text-4xl text-white"
-                      >
-                        -
-                      </button>
-                      <button
-                        onClick={zoomIn}
-                        className="w-10 h-10 text-4xl text-white"
-                      >
-                        +
+                        &times;
                       </button>
                     </div>
-
-                    <button
-                      onClick={closeImgModal}
-                      className="fixed w-10 h-10 text-4xl text-white right-4 top-4"
-                    >
-                      &times;
-                    </button>
                   </div>
                 </div>
               )}
