@@ -2,10 +2,6 @@ import React, { useState, useEffect } from "react";
 import Man from "./assets/manComputer.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faPaperPlane,
-  faCheck,
-  faEnvelope,
-  faCheckDouble,
   faClockRotateLeft,
   faRotate,
   faFileLines,
@@ -191,6 +187,8 @@ const Dashboard: React.FC = () => {
         .catch((error) => {
           console.error("Error fetching requests data:", error);
           setLoading(false);
+        }).finally(() => {
+          setDataLoading(false);
         });
 
       // Fetch total requests sent

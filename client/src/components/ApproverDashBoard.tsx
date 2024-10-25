@@ -3,9 +3,11 @@ import axios from "axios";
 import Man from "./assets/manComputer.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faPaperPlane,
-  faCheck,
-  faEnvelope,
+  faClockRotateLeft,
+  faRotate,
+  faFileLines,
+  faFileCircleXmark,
+  faFileCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { format, startOfWeek, endOfMonth } from "date-fns";
 import { ChartBarIcon } from "@heroicons/react/24/solid";
@@ -91,7 +93,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
   const [totalCompletedRequests, setTotalCompletedRequests] = useState<
     number | null
   >(null);
-  const [totalApprovedRequests, setTotalApprovedRequests] = useState<
+  const [totalOngoingRequests, setTotalOngoingRequests] = useState<
     number | null
   >(null);
   const [totalPendingRequests, setTotalPendingRequests] = useState<
@@ -102,6 +104,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
   >(null);
   const firstName = localStorage.getItem("firstName");
   const userId = localStorage.getItem("id");
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     if (userId) {
@@ -130,7 +133,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
           setTotalRequestsSent(response.data.totalRequestSent);
           setTotalCompletedRequests(response.data.totalCompletedRequest);
           setTotalPendingRequests(response.data.totalPendingRequest);
-          setTotalApprovedRequests(response.data.totalApprovedRequest);
+          setTotalOngoingRequests(response.data.totalOngoingRequest);
           setTotalDisapprovedRequests(response.data.totalDisapprovedRequest);
           setLoading(false);
         })
@@ -138,6 +141,8 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
         .catch((error) => {
           console.error("Error fetching total requests sent:", error);
           setLoading(false);
+        }).finally(() => {
+          setDataLoading(false);
         });
     }
   }, [userId]);
@@ -335,29 +340,33 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
       </div>
 
       <div className="grid w-full grid-cols-1 gap-8 mt-4 space-y-2 sm:w-full md:grid-cols-2 lg:grid-cols-5 md:space-y-0">
-        <div className={`${boxWhite} hover:-translate-y-1`}>
+      <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-primary`}>
-            <ChartBarIcon className={`${outerLogo} text-[#298DDE]`} />
+            <FontAwesomeIcon icon={faFileLines} className={`${outerLogo} text-[#298DDE]`} />
             <div className={`${innerBox}`}>
-              <ChartBarIcon className={`${innerLogo} text-primary`} />
+              <FontAwesomeIcon icon={faFileLines} className={`${innerLogo} text-primary`} />
             </div>
-            <p className="text-[16px] font-semibold mt-[15px] ml-[17px] absolute">
+            <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
               Total Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalRequestsSent}
+              {dataLoading ? (
+                <span className="font-bold loading loading-infinity loading-lg"></span>
+              ) : (
+                totalRequestsSent
+              )}
             </p>
           </div>
         </div>
         <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-[#4abffd]`}>
             <FontAwesomeIcon
-              icon={faCheck}
+              icon={faFileCircleCheck}
               className={`${outerLogo} text-[#2a8bbf]`}
             />
             <div className={`${innerBox}`}>
               <FontAwesomeIcon
-                icon={faCheck}
+                icon={faFileCircleCheck}
                 className={`${innerLogo} text-[#2ea7e8]`}
               />
             </div>
@@ -365,39 +374,47 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
               Completed Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalCompletedRequests}
+              {dataLoading ? (
+                <span className="font-bold loading loading-infinity loading-lg"></span>
+              ) : (
+                totalCompletedRequests
+              )}
             </p>
           </div>
         </div>
         <div className={`${boxWhite} hover:-translate-y-1`}>
-          <div className={`${boxPink} bg-green`}>
+          <div className={`${boxPink} bg-[#32bfd5]`}>
             <FontAwesomeIcon
-              icon={faCheck}
-              className={`${outerLogo} text-[#4D9651]`}
+              icon={faRotate}
+              className={`${outerLogo} text-[#368a96]`}
             />
             <div className={`${innerBox}`}>
               <FontAwesomeIcon
-                icon={faCheck}
-                className={`${innerLogo} text-green`}
+                icon={faRotate}
+                className={`${innerLogo} text-[#2da6b9]`}
               />
             </div>
             <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
-              Approved Requests
+              Ongoing Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalApprovedRequests}
+              {dataLoading ? (
+                <span className="font-bold loading loading-infinity loading-lg"></span>
+              ) : (
+                totalOngoingRequests
+              )}
             </p>
           </div>
         </div>
         <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-yellow`}>
             <FontAwesomeIcon
-              icon={faEnvelope}
+              icon={faClockRotateLeft}
               className={`${outerLogo} text-[#D88A1B]`}
             />
             <div className={`${innerBox}`}>
               <FontAwesomeIcon
-                icon={faEnvelope}
+                icon={faClockRotateLeft}
                 className={`${innerLogo} text-yellow`}
               />
             </div>
@@ -405,19 +422,23 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
               Pending Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalPendingRequests}
+              {dataLoading ? (
+                <span className="font-bold loading loading-infinity loading-lg"></span>
+              ) : (
+                totalPendingRequests
+              )}
             </p>
           </div>
         </div>
         <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-pink`}>
             <FontAwesomeIcon
-              icon={faPaperPlane}
+              icon={faFileCircleXmark}
               className={`${outerLogo} text-[#C22158]`}
             />
             <div className={`${innerBox}`}>
               <FontAwesomeIcon
-                icon={faPaperPlane}
+                icon={faFileCircleXmark}
                 className={`${innerLogo} text-pink`}
               />
             </div>
@@ -425,7 +446,11 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
               Unsuccessful Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
-              {totalDisapprovedRequests}
+              {dataLoading ? (
+                <span className="font-bold loading loading-infinity loading-lg"></span>
+              ) : (
+                totalDisapprovedRequests
+              )}
             </p>
           </div>
         </div>

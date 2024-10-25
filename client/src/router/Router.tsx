@@ -47,10 +47,10 @@ interface RouterProps {
 }
 
 const PublicRoute = ({ children }: { children: JSX.Element }) => {
-  const { isAuthenticated, loading } = useUser();
+  const { isAuthenticated, loading, role } = useUser();
 
   if (loading) return <Preloader />;
-  return !isAuthenticated ? children : <Navigate to="/dashboard" />;
+  return !isAuthenticated ? children : role === 'approver' ? <Navigate to="/dashboard/approver" /> : <Navigate to="/dashboard" />;
 };
 
 const Router: React.FC<RouterProps> = ({isdarkMode}) => {
