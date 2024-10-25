@@ -2,18 +2,11 @@ import React, { useState, useEffect } from "react";
 import Man from "./assets/manComputer.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-<<<<<<< Updated upstream
-  faPaperPlane,
-  faCheck,
-  faEnvelope,
-  faCheckDouble,
-=======
   faClockRotateLeft,
   faRotate,
   faFileLines,
   faFileCircleXmark,
   faFileCircleCheck,
->>>>>>> Stashed changes
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -85,7 +78,7 @@ const Dashboard: React.FC = () => {
   const [totalRequestsSent, setTotalRequestsSent] = useState<number | null>(
     null
   );
-  const [totalApprovedRequests, setTotalApprovedRequests] = useState<
+  const [totalOngoingRequests, setTotalOngoingRequests] = useState<
     number | null
   >(null);
   const [totalCompletedRequests, setTotalCompletedRequests] = useState<
@@ -211,9 +204,10 @@ const Dashboard: React.FC = () => {
           setTotalRequestsSent(response.data.totalRequestSent);
           setTotalCompletedRequests(response.data.totalCompletedRequest);
           setTotalPendingRequests(response.data.totalPendingRequest);
-          setTotalApprovedRequests(response.data.totalApprovedRequest);
+          setTotalOngoingRequests(response.data.totalOngoingRequest);
           setTotalDisapprovedRequests(response.data.totalDisapprovedRequest);
           // setLoading(false);
+          console.log(response.data)
         })
         .catch((error) => {
           console.error("Error fetching total requests sent:", error);
@@ -323,9 +317,9 @@ const Dashboard: React.FC = () => {
       <div className="grid w-full grid-cols-1 gap-8 mt-4 space-y-2 sm:w-full md:grid-cols-2 lg:grid-cols-5 md:space-y-0">
         <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-primary`}>
-            <ChartBarIcon className={`${outerLogo} text-[#298DDE]`} />
+            <FontAwesomeIcon icon={faFileLines} className={`${outerLogo} text-[#298DDE]`} />
             <div className={`${innerBox}`}>
-              <ChartBarIcon className={`${innerLogo} text-primary`} />
+              <FontAwesomeIcon icon={faFileLines} className={`${innerLogo} text-primary`} />
             </div>
             <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
               Total Requests
@@ -342,12 +336,12 @@ const Dashboard: React.FC = () => {
         <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-[#4abffd]`}>
             <FontAwesomeIcon
-              icon={faCheckDouble}
+              icon={faFileCircleCheck}
               className={`${outerLogo} text-[#2a8bbf]`}
             />
             <div className={`${innerBox}`}>
               <FontAwesomeIcon
-                icon={faCheckDouble}
+                icon={faFileCircleCheck}
                 className={`${innerLogo} text-[#2ea7e8]`}
               />
             </div>
@@ -364,25 +358,25 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
         <div className={`${boxWhite} hover:-translate-y-1`}>
-          <div className={`${boxPink} bg-green`}>
+          <div className={`${boxPink} bg-[#32bfd5]`}>
             <FontAwesomeIcon
-              icon={faCheck}
-              className={`${outerLogo} text-[#4D9651]`}
+              icon={faRotate}
+              className={`${outerLogo} text-[#368a96]`}
             />
             <div className={`${innerBox}`}>
               <FontAwesomeIcon
-                icon={faCheck}
-                className={`${innerLogo} text-green`}
+                icon={faRotate}
+                className={`${innerLogo} text-[#2da6b9]`}
               />
             </div>
             <p className="text-[16px] font-semibold mt-[10px] ml-[17px] absolute">
-              Approved Requests
+              Ongoing Requests
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
               {dataLoading ? (
                 <span className="font-bold loading loading-infinity loading-lg"></span>
               ) : (
-                totalApprovedRequests
+                totalOngoingRequests
               )}
             </p>
           </div>
@@ -390,12 +384,12 @@ const Dashboard: React.FC = () => {
         <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-yellow`}>
             <FontAwesomeIcon
-              icon={faEnvelope}
+              icon={faClockRotateLeft}
               className={`${outerLogo} text-[#D88A1B]`}
             />
             <div className={`${innerBox}`}>
               <FontAwesomeIcon
-                icon={faEnvelope}
+                icon={faClockRotateLeft}
                 className={`${innerLogo} text-yellow`}
               />
             </div>
@@ -414,12 +408,12 @@ const Dashboard: React.FC = () => {
         <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-pink`}>
             <FontAwesomeIcon
-              icon={faPaperPlane}
+              icon={faFileCircleXmark}
               className={`${outerLogo} text-[#C22158]`}
             />
             <div className={`${innerBox}`}>
               <FontAwesomeIcon
-                icon={faPaperPlane}
+                icon={faFileCircleXmark}
                 className={`${innerLogo} text-pink`}
               />
             </div>
