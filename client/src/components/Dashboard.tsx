@@ -2,10 +2,18 @@ import React, { useState, useEffect } from "react";
 import Man from "./assets/manComputer.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+<<<<<<< Updated upstream
   faPaperPlane,
   faCheck,
   faEnvelope,
   faCheckDouble,
+=======
+  faClockRotateLeft,
+  faRotate,
+  faFileLines,
+  faFileCircleXmark,
+  faFileCircleCheck,
+>>>>>>> Stashed changes
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -186,6 +194,8 @@ const Dashboard: React.FC = () => {
         .catch((error) => {
           console.error("Error fetching requests data:", error);
           setLoading(false);
+        }).finally(() => {
+          setDataLoading(false);
         });
 
       // Fetch total requests sent
