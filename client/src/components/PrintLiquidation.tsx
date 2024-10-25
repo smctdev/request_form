@@ -159,47 +159,47 @@ const PrintLiquidation: React.FC<PrintRefundProps> = ({ data }) => {
           <table className="w-full text-xs border border-black">
             <thead className="border border-black">
               <tr className="border border-black">
-                <th className="font-medium border border-black">Date</th>
-                <th colSpan={4} className="font-medium border border-black">
-                  Transportation
+                <th className="font-medium border border-black"></th>
+                <th colSpan={4} className="px-2 py-1 font-bold border border-black">
+                  TRANSPORTATION
                 </th>
-                <th colSpan={3} className="font-medium border border-black">
-                  Hotel
+                <th colSpan={3} className="px-2 py-1 font-bold border border-black">
+                  HOTEL
                 </th>
-                <th colSpan={3} className="font-medium border border-black">
+                <th colSpan={3} className="px-2 py-1 font-bold border border-black whitespace-nowrap">
                   PER DIEM OTHER RELATED EXPENSES
                 </th>
                 <th className="font-medium border border-black"></th>
               </tr>
               <tr className="border border-black">
-                <th className="px-1 font-semibold border border-black">Date</th>
-                <th className="px-1 font-semibold border border-black">From</th>
-                <th className="px-1 font-semibold border border-black">To</th>
-                <th className="px-1 font-semibold border border-black">
-                  Transportation
+                <th className="px-2 py-1 font-semibold border border-black">Date</th>
+                <th className="px-2 py-1 font-semibold border border-black">From</th>
+                <th className="px-2 py-1 font-semibold border border-black">To</th>
+                <th className="px-2 py-1 font-semibold border border-black whitespace-nowrap">
+                  Type of Transportation
                 </th>
-                <th className="px-1 font-semibold border border-black">
+                <th className="px-2 py-1 font-semibold border border-black">
                   Amount
                 </th>
-                <th className="px-1 font-semibold border border-black">
-                  Hotel
+                <th className="px-2 py-1 font-semibold border border-black">
+                  Name
                 </th>
-                <th className="px-1 font-semibold border border-black">
+                <th className="px-2 py-1 font-semibold border border-black">
                   Place
                 </th>
-                <th className="px-1 font-semibold border border-black">
+                <th className="px-2 py-1 font-semibold border border-black">
                   Amount
                 </th>
-                <th className="px-1 font-semibold border border-black">
+                <th className="px-2 py-1 font-semibold border border-black">
                   Per Diem
                 </th>
-                <th className="px-1 font-semibold border border-black">
+                <th className="px-2 py-1 font-semibold border border-black">
                   Particulars
                 </th>
-                <th className="px-1 font-semibold border border-black">
+                <th className="px-2 py-1 font-semibold border border-black">
                   Amount
                 </th>
-                <th className="px-1 font-semibold border border-black">
+                <th className="px-2 py-1 font-semibold border border-black whitespace-nowrap">
                   Grand Total
                 </th>
               </tr>
@@ -209,34 +209,34 @@ const PrintLiquidation: React.FC<PrintRefundProps> = ({ data }) => {
                 <React.Fragment key={index}>
                   {formData.items.map((item: any, itemIndex: number) => (
                     <tr key={itemIndex} className="border border-black">
-                      <td className="border border-black">
+                      <td className=" px-2 border border-black whitespace-nowrap">
                         {formatDate(item.liquidationDate)}
                       </td>
-                      <td className="border border-black">{item.from}</td>
-                      <td className="border border-black">{item.to}</td>
-                      <td className="border border-black">
+                      <td className="px-2 border border-black text-center">{item.from}</td>
+                      <td className="px-2 border border-black text-center">{item.to}</td>
+                      <td className="px-2 border border-black text-center">
                         {item.transportation}
                       </td>
-                      <td className="text-center border border-black">
+                      <td className="text-center border border-black px-2">
                         {item.transportationAmount}
                       </td>
-                      <td className="border border-black">{item.hotel}</td>
-                      <td className="border border-black">
+                      <td className="border border-black px-2 text-center">{item.hotel}</td>
+                      <td className="border border-black px-2 text-center">
                         {item.hotelAddress}
                       </td>
-                      <td className="border border-black">
+                      <td className="border text-center border-black px-2">
                         {item.hotelAmount}
                       </td>
-                      <td className="text-center border border-black">
+                      <td className="px-2 text-center border border-black">
                         {item.perDiem}
                       </td>
-                      <td className="text-center border border-black">
+                      <td className="text-center border border-black px-2">
                         {item.particulars}
                       </td>
-                      <td className="text-center border border-black">
+                      <td className="text-center border border-black px-2">
                         {item.particularsAmount}
                       </td>
-                      <td className="text-center border border-black">
+                      <td className="text-center border border-black px-2">
                         {item.grandTotal}
                       </td>
                     </tr>
@@ -244,7 +244,7 @@ const PrintLiquidation: React.FC<PrintRefundProps> = ({ data }) => {
                   {[...Array(Math.max(2 - formData.items.length, 0))].map(
                     (_, emptyIndex) => (
                       <tr key={`empty-${index}-${emptyIndex}`}>
-                        <td className="py-6 border border-black"></td>
+                        <td className="py-3 border border-black"></td>
                         <td className="border border-black"></td>
                         <td className="border border-black"></td>
                         <td className="border border-black"></td>
