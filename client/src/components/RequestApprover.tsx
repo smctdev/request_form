@@ -130,6 +130,8 @@ type MyItem = {
   particulars: string;
   particularsAmount: string;
   destination: string;
+  from: string;
+  to: string;
   transportation: string;
   transportationAmount: string;
   hotelAmount: string;

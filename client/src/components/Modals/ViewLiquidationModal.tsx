@@ -95,10 +95,10 @@ type Item = {
 };
 const tableStyle2 = "bg-white p-2 text-center";
 const tableStyle = "border-2 border-black p-2 ";
-const inputStyle = "  border-2 border-black rounded-[12px] pl-[10px] text-sm";
+const inputStyle = "  border-2 border-black rounded-[12px] text-sm";
 const input2Style = "  border-2 border-black rounded-[12px] text-sm";
 const inputStyles =
-  "  border-2 border-black rounded-[12px] pl-[10px] text-end pr-10 font-bold text-sm";
+  "  border-2 border-black rounded-[12px] text-end font-bold text-sm";
 const tableCellStyle = "border-2 border-black  text-center p-2 text-sm";
 const ViewLiquidationModal: React.FC<Props> = ({
   closeModal,
@@ -665,40 +665,38 @@ const ViewLiquidationModal: React.FC<Props> = ({
                 <table className="w-full border-2 border-black ">
                   <thead className="">
                     <tr>
-                      <th className="border-2 w-10 border-black bg-[#8EC7F7]">
-                        Date
-                      </th>
+                      <th className="border-2 border-black bg-[#8EC7F7]"></th>
                       <th
                         colSpan={4}
-                        className="border-2 border-black bg-[#8EC7F7]"
+                        className="border-2 border-black bg-[#8EC7F7] py-2 text-center"
                       >
-                        Transportation
+                        TRANSPORTATION
                       </th>
                       <th
                         colSpan={3}
-                        className="border-2 border-black bg-[#8EC7F7] h-14"
+                        className="border-2 border-black bg-[#8EC7F7] text-center"
                       >
-                        Hotel
+                        HOTEL
                       </th>
                       <th
                         colSpan={3}
-                        className="border-2 border-black bg-[#8EC7F7] whitespace-nowrap px-2"
+                        className="border-2 border-black bg-[#8EC7F7] whitespace-nowrap px-2 text-center"
                       >
                         PER DIEM OTHER RELATED EXPENSES
                       </th>
                       <th className="bg-[#8EC7F7]"></th>
                     </tr>
                     <tr>
-                      <th className="w-1/12">Date</th>
+                      <th>Date</th>
 
-                      <th className={`${tableStyle}  w-2/12 `}>From</th>
-                      <th className={`${tableStyle}w-2/12 `}>To</th>
-                      <th className={`${tableStyle} w-1/12 whitespace-nowrap`}>
+                      <th className={`${tableStyle}`}>From</th>
+                      <th className={`${tableStyle}`}>To</th>
+                      <th className={`${tableStyle}whitespace-nowrap`}>
                         Type of Transportation
                       </th>
-                      <th className={`${tableStyle} w-10`}>Amount</th>
-                      <th className={`${tableStyle}  w-2/12`}>Hotel</th>
-                      <th className={`${tableStyle} w-2/12`}>Place</th>
+                      <th className={`${tableStyle}`}>Amount</th>
+                      <th className={`${tableStyle}`}>Name</th>
+                      <th className={`${tableStyle}`}>Place</th>
                       <th className={`${tableStyle}`}>Amount</th>
                       <th className={`${tableStyle}whitespace-nowrap`}>
                         Per Diem
@@ -714,7 +712,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
                     {isEditing
                       ? newData.map((item, index) => (
                           <tr key={index}>
-                            <td className={`${tableCellStyle} w-2/12`}>
+                            <td className={`${tableCellStyle}`}>
                               <input
                                 type="date"
                                 value={item.liquidationDate}
@@ -725,7 +723,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
                                     e.target.value
                                   )
                                 }
-                                className={`${tableStyle2}  w-20`}
+                                className={`${tableStyle2}`}
                               />
                             </td>
                             <td className={tableCellStyle}>
@@ -749,7 +747,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
                                 onChange={(e) =>
                                   handleItemChange(index, "to", e.target.value)
                                 }
-                                className={`${tableStyle2} w-20`}
+                                className={`${tableStyle2}`}
                               />
                             </td>
                             <td className={tableCellStyle}>
@@ -777,7 +775,7 @@ const ViewLiquidationModal: React.FC<Props> = ({
                                     e.target.value
                                   )
                                 }
-                                className={`${tableStyle2} w-10/12`}
+                                className={`${tableStyle2}`}
                               />
                             </td>
                             <td className={tableCellStyle}>
@@ -948,9 +946,9 @@ const ViewLiquidationModal: React.FC<Props> = ({
                 </tr>
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="pl-2 pr-20 font-semibold ">Cash Advance</p>
+                    <p className="pl-2 pr-20 font-semibold ">CASH ADVANCE</p>
                   </td>
-                  <td className={`${inputStyle} font-bold text-right pr-10`}>
+                  <td className={`${inputStyle} font-bold text-right`}>
                     {isEditing ? (
                       <input
                         type="number"

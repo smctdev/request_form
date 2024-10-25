@@ -81,6 +81,8 @@ type FormData = {
 
 type Item = {
   liquidationDate: string;
+  from: string;
+  to: string;
   destination: string;
   transportation: string;
   transportationAmount: string;
@@ -93,12 +95,12 @@ type Item = {
   grandTotal: string;
 };
 
-const tableStyle = "border-2 border-black p-2 text-xs ";
-const inputStyle = "  border-2 border-black rounded-[12px] pl-[10px]";
-const input2Style = "  border-2 border-black rounded-[12px] ";
-const inputStyles =
-  "  border-2 border-black rounded-[12px] pl-[10px] text-end pr-10 font-bold";
-const tableCellStyle = `${inputStyle} text-center  `;
+const tableStyle = "border-2 border-black py-2 text-base";
+const inputStyle = "border-2 border-black rounded-[12px] text-base";
+const input2Style = "border-2 border-black rounded-[12px]";
+const inputStyles = "border-2 border-black rounded-[12px] text-end font-bold";
+const tableCellStyle = `${inputStyle} px-2 text-center`;
+
 const ApproverLiquidation: React.FC<Props> = ({
   closeModal,
   record,
@@ -622,60 +624,58 @@ const ApproverLiquidation: React.FC<Props> = ({
             </div>
           )}
 
-          <div className="w-full mt-6 overflow-x-auto">
+          <div className="w-full pt-3 overflow-x-auto">
             <div className="w-full">
-              <table className="w-full border-2 border-collapse border-black xl:table-fixed">
+              <table className="w-full border-2 border-collapse border-black">
                 <thead>
                   <tr>
-                    <th className={`${tableStyle} w-16 bg-[#8EC7F7]`}>Date</th>
-                    <th colSpan={3} className={`${tableStyle} bg-[#8EC7F7]`}>
-                      Transportation
+                    <th className={`${tableStyle} bg-[#8EC7F7]`}></th>
+                    <th colSpan={4} className={`${tableStyle} bg-[#8EC7F7]`}>
+                      TRANSPORTATION
                     </th>
-                    <th
-                      colSpan={3}
-                      className={`${tableStyle} bg-[#8EC7F7] h-14`}
-                    >
-                      Hotel
+                    <th colSpan={3} className={`${tableStyle} bg-[#8EC7F7]`}>
+                      HOTEL
                     </th>
                     <th colSpan={3} className={`${tableStyle} bg-[#8EC7F7]`}>
                       PER DIEM OTHER RELATED EXPENSES
                     </th>
-                    <th className={`${tableStyle} w-16 bg-[#8EC7F7]`}></th>
+                    <th className={`${tableStyle} bg-[#8EC7F7]`}></th>
                   </tr>
                   <tr>
-                    <th className={`${tableStyle} w-16 whitespace-normal`}>
+                    <th
+                      className={`${tableStyle} whitespace-normal break-words`}
+                    >
                       Date
                     </th>
-                    <th className={`${tableStyle} w-32 whitespace-normal`}>
-                      Destination
+                    <th className={`${tableStyle} whitespace-normal`}>
+                      From
+                    </th>
+                    <th className={`${tableStyle} whitespace-normal`}>
+                      To
                     </th>
                     <th
-                      className={`${tableStyle} w-34 whitespace-normal  text-[9px]`}
+                      className={`${tableStyle} whitespace-nowrap  text-[9px]`}
                     >
-                      Transportation
+                      Type of Transportation
                     </th>
-                    <th className={`${tableStyle} w-14 whitespace-normal`}>
+                    <th className={`${tableStyle} whitespace-normal`}>
                       Amount
                     </th>
-                    <th className={`${tableStyle} w-32 whitespace-normal`}>
-                      Hotel
-                    </th>
-                    <th className={`${tableStyle} w-32 whitespace-normal`}>
-                      Place
-                    </th>
-                    <th className={`${tableStyle} w-24 whitespace-normal`}>
+                    <th className={`${tableStyle} whitespace-normal`}>Name</th>
+                    <th className={`${tableStyle} whitespace-normal`}>Place</th>
+                    <th className={`${tableStyle} whitespace-normal`}>
                       Amount
                     </th>
-                    <th className={`${tableStyle} w-32 whitespace-normal`}>
+                    <th className={`${tableStyle} whitespace-normal`}>
                       Per Diem
                     </th>
-                    <th className={`${tableStyle} w-32 whitespace-normal`}>
+                    <th className={`${tableStyle} whitespace-normal`}>
                       Particulars
                     </th>
-                    <th className={`${tableStyle} w-24 whitespace-normal`}>
+                    <th className={`${tableStyle} whitespace-normal`}>
                       Amount
                     </th>
-                    <th className={`${tableStyle} w-24 whitespace-normal`}>
+                    <th className={`${tableStyle} whitespace-normal`}>
                       Grand Total
                     </th>
                   </tr>
@@ -684,58 +684,61 @@ const ApproverLiquidation: React.FC<Props> = ({
                   {editableRecord.form_data[0].items.map((item, index) => (
                     <tr key={index}>
                       <td
-                        className={`${tableCellStyle} w-16 whitespace-normal break-words`}
+                        className={`${tableCellStyle} whitespace-normal break-words`}
                       >
                         {formatDate(item.liquidationDate)}
                       </td>
                       <td
-                        className={`${tableCellStyle} w-32 whitespace-normal break-words`}
+                        className={`${tableCellStyle} whitespace-normal break-words`}
                       >
-                        {item.destination}
+                        {item.from}
                       </td>
                       <td
-                        className={`${tableCellStyle} w-32 whitespace-normal break-words`}
+                        className={`${tableCellStyle} whitespace-normal break-words`}
+                      >
+                        {item.to}
+                      </td>
+                      <td
+                        className={`${tableCellStyle} whitespace-normal break-words`}
                       >
                         {item.transportation}
                       </td>
                       <td
-                        className={`${tableCellStyle} w-24 whitespace-normal break-words`}
+                        className={`${tableCellStyle} whitespace-normal break-words`}
                       >
                         {item.transportationAmount}
                       </td>
                       <td
-                        className={`${tableCellStyle} w-16 whitespace-normal break-words`}
+                        className={`${tableCellStyle} whitespace-normal break-words`}
                       >
                         {item.hotel}
                       </td>
                       <td
-                        className={`${tableCellStyle} w-32 whitespace-normal break-words`}
+                        className={`${tableCellStyle} whitespace-normal break-words`}
                       >
                         {item.hotelAddress}
                       </td>
                       <td
-                        className={`${tableCellStyle} w-24 whitespace-normal break-words`}
+                        className={`${tableCellStyle} whitespace-normal break-words`}
                       >
                         {item.hotelAmount}
                       </td>
                       <td
-                        className={`${tableCellStyle} w-32 whitespace-normal break-words`}
+                        className={`${tableCellStyle} whitespace-normal break-words`}
                       >
                         {item.perDiem}
                       </td>
                       <td
-                        className={`${tableCellStyle} w-32 whitespace-normal break-words`}
+                        className={`${tableCellStyle} whitespace-normal break-words`}
                       >
                         {item.particulars}
                       </td>
                       <td
-                        className={`${tableCellStyle} w-24 whitespace-normal break-words`}
+                        className={`${tableCellStyle}whitespace-normal break-words`}
                       >
                         {item.particularsAmount}
                       </td>
-                      <td
-                        className={`${tableCellStyle} w-24 whitespace-normal break-words`}
-                      >
+                      <td className={`${tableCellStyle}whitespace-nowrap`}>
                         {item.grandTotal}
                       </td>
                     </tr>
@@ -762,10 +765,10 @@ const ApproverLiquidation: React.FC<Props> = ({
                 </tr>
                 <tr>
                   <td className={`${tableStyle}`}>
-                    <p className="pl-2 pr-20 font-semibold ">Cash Advance</p>
+                    <p className="pl-2 pr-20 font-semibold ">CASH ADVANCE</p>
                   </td>
-                  <td className={`${tableStyle} text-lg font-bold text-[16px]`}>
-                    <p className="text-[16px] text-right pr-8">
+                  <td className={`${tableStyle} font-bold`}>
+                    <p className="text-right">
                       {parseFloat(
                         editableRecord.form_data[0].cashAdvance
                       ).toFixed(2)}
@@ -812,7 +815,7 @@ const ApproverLiquidation: React.FC<Props> = ({
                   {/* <td className={`${tableStyle}`}>
                     <img src={record.form_data[0].signature} />
                   </td> */}
-                                    <td className={`${tableStyle} h-10`}>
+                  <td className={`${tableStyle} h-10`}>
                     <div className="flex items-center justify-center overflow-hidden">
                       <div className="relative">
                         <img
