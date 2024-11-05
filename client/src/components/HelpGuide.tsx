@@ -1,23 +1,24 @@
 import React, { useState } from "react";
+import ReactPlayer from 'react-player/youtube';
 
 type Props = {};
 
 const videoOptions = [
   {
-    url: "https://drive.google.com/file/d/1M86DCE2_HU4DkShxDj3gxUOxLvbVMEJl/preview",
+    url: "https://www.youtube.com/watch?v=B4nkpQvQ_Hc&t=10s",
     title: "Setting Up Your Request and Create Request",
   },
   {
-    url: "https://drive.google.com/file/d/1FwDW0OcWFn97iGZh5KzSY3J0K62oNMKz/preview",
+    url: "https://www.youtube.com/watch?v=TirBBQSH3R4&t=9s",
     title: "How to edit request ",
   },
   {
-    url: "https://drive.google.com/file/d/1WO1vplGmRbfd3Xbjw5Fs_hk8xQ1lZ7ma/preview",
+    url: "https://www.youtube.com/watch?v=fWUlts5nTwI",
     title: "How to print request with Approved status",
   },
   {
-    url: "  https://drive.google.com/file/d/1grgaiZHLpRS-vs4PyfqHQNX-mkdaYUJV/preview",
-    title: "How to approve a request",
+    url: "https://www.youtube.com/watch?v=Ak95tZafP5k",
+    title: "How to approve or decline a request",
     role: "approver",
   },
 ];
@@ -37,12 +38,7 @@ const HelpGuide = (props: Props) => {
       </h1>
       <div className="bg-white w-full mb-5 rounded-[12px] flex flex-col p-10">
         <div className="flex justify-center items-center mb-4">
-          <iframe
-            src={currentVideo}
-            width="1280"
-            height="720"
-            allow="autoplay"
-          ></iframe>
+          <ReactPlayer url={currentVideo} width="1280px" height="720px" controls pip playing />
         </div>
         <p className="font-bold">{currentTitle}</p>
         <div className="mt-10">
