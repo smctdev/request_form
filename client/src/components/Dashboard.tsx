@@ -206,8 +206,6 @@ const Dashboard: React.FC = () => {
           setTotalPendingRequests(response.data.totalPendingRequest);
           setTotalOngoingRequests(response.data.totalOngoingRequest);
           setTotalDisapprovedRequests(response.data.totalDisapprovedRequest);
-          // setLoading(false);
-          console.log(response.data)
         })
         .catch((error) => {
           console.error("Error fetching total requests sent:", error);
