@@ -417,7 +417,7 @@ class RequestFormController extends Controller
             $form_data_content = json_decode($request->input('form_data'), true);
             $noted_by = json_decode($request->input('noted_by'), true);
             $approved_by = json_decode($request->input('approved_by'), true);
-
+            $currency = $request->input('currency');
             // Initialize attachment paths
             $existing_attachments = json_decode($request_data->attachment, associative: true) ?? [];
 
@@ -458,6 +458,7 @@ class RequestFormController extends Controller
                 'approved_by' => $approved_by,
                 'attachment' => json_encode(array_values($attachment_paths)),
                 'status' => "Pending",
+                'currency' => $currency
             ]);
 
             // Delete existing approval processes
