@@ -351,7 +351,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
               {dataLoading ? (
-                <span className="font-bold loading loading-infinity loading-lg"></span>
+                <div className="my-4 custom-loader bottom-6"></div>
               ) : (
                 totalRequestsSent
               )}
@@ -375,7 +375,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
               {dataLoading ? (
-                <span className="font-bold loading loading-infinity loading-lg"></span>
+                <div className="my-4 custom-loader bottom-6"></div>
               ) : (
                 totalCompletedRequests
               )}
@@ -399,7 +399,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
               {dataLoading ? (
-                <span className="font-bold loading loading-infinity loading-lg"></span>
+                <div className="my-4 custom-loader bottom-6"></div>
               ) : (
                 totalOngoingRequests
               )}
@@ -423,7 +423,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
               {dataLoading ? (
-                <span className="font-bold loading loading-infinity loading-lg"></span>
+                <div className="my-4 custom-loader bottom-6"></div>
               ) : (
                 totalPendingRequests
               )}
@@ -447,7 +447,7 @@ const ApproverDashboard: React.FC<Props> = ({}) => {
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
               {dataLoading ? (
-                <span className="font-bold loading loading-infinity loading-lg"></span>
+                <div className="my-4 custom-loader bottom-6"></div>
               ) : (
                 totalDisapprovedRequests
               )}
