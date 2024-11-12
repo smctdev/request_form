@@ -19,6 +19,7 @@ class RequestForm extends Model
         'approved_by',
         'branch_code',
         'request_code',
+        'currency',
         'status',
         'completed_code'
     ];

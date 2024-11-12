@@ -33,7 +33,7 @@ interface Approver {
   status: string;
   branch: string;
 }
-
+type CurrencyCode = "USD" | "EUR" | "GBP" | "JPY";
 type Record = {
   request_code: string;
   created_at: Date;
@@ -41,6 +41,7 @@ type Record = {
   status: string;
   approvers_id: number;
   form_data: FormData[];
+  currency: string;
   branch: string;
   date: string;
   user_id: number;
@@ -88,6 +89,11 @@ type Item = {
   unitCost: string;
   totalAmount: string;
   remarks: string;
+};
+const currencySymbols: { [key: string]: string } = {
+  USD: "$",
+  EUR: "€",
+  PHP: "₱",
 };
 const inputStyle = "border border-black text-[12px] font-bold p-2";
 const tableCellStyle = `${inputStyle} w-20`;
@@ -215,6 +221,10 @@ const ApproverCashDisbursement: React.FC<Props> = ({
 
     fetchBranchData();
   }, []);
+
+  const getCurrencySymbol = (currencyCode: string): string => {
+    return currencySymbols[currencyCode as keyof typeof currencySymbols] || currencyCode;
+  };
 
   useEffect(() => {
     const currentUserId = localStorage.getItem("id");
@@ -486,7 +496,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
       user: user,
       requested_branch: record?.branch,
     };
-
+    console.log(data);
     // Open a new window with PrintCashDisbursement component
     localStorage.setItem("printData", JSON.stringify(data));
     const newWindow = window.open(`/print-cashDisbursement`, "_blank");
@@ -745,7 +755,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
             <input
               type="text"
               className="w-full p-1 mt-2 font-bold bg-white border border-black rounded-md "
-              value={`₱ ${editableRecord.form_data[0].grand_total}`}
+              value={`${getCurrencySymbol(record.currency)} ${editableRecord.form_data[0].grand_total}`}
             />
           </div>
 

@@ -418,6 +418,7 @@ class ApprovalProcessController extends Controller
                 'status' => $approvalProcess->status, // Include the actual status of the approval process
                 'completed_status' => $requestForm?->status, // Include the actual status of the approval process
                 'created_at' => $approvalProcess->created_at,
+                'currency' => $requestForm?->currency,
                 'updated_at' => $approvalProcess->updated_at,
                 'user_id' => $requestForm?->user_id,
                 'requested_by' => ($requester ? "{$requester->firstName} {$requester->lastName}" : "Unknown"),

@@ -14,6 +14,10 @@ class PositionSeeder extends Seeder
     public function run(): void
     {
         $positions = [
+            ['label' => 'President', 'value' => 'President', 'created_at' => now(), 'updated_at' => now()],
+            ['label' => 'Vice President', 'value' => 'Vice President', 'created_at' => now(), 'updated_at' => now()],
+            ['label' => 'Managing Director', 'value' => 'Managing Director', 'created_at' => now(), 'updated_at' => now()],
+            ['label' => 'HR Consultant', 'value' => 'HR Consultant', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Accounting Clerk', 'value' => 'Accounting Clerk', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Accounting Manager', 'value' => 'Accounting Manager', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Accounting Staff', 'value' => 'Accounting Staff', 'created_at' => now(), 'updated_at' => now()],
@@ -39,6 +43,8 @@ class PositionSeeder extends Seeder
             ['label' => 'Automation Staff', 'value' => 'Automation Staff', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Automation Staff II', 'value' => 'Automation Staff II', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Automation Supervisor', 'value' => 'Automation Supervisor', 'created_at' => now(), 'updated_at' => now()],
+            ['label' => 'AVP - Finance', 'value' => 'AVP - Finance', 'created_at' => now(), 'updated_at' => now()],
+            ['label' => 'AVP - Sales & Marketing', 'value' => 'AVP - Sales & Marketing', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Bajaj Coordinator', 'value' => 'Bajaj Coordinator', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Benefit Staff II', 'value' => 'Benefit Staff II', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Bookkeeping Supervisor', 'value' => 'Bookkeeping Supervisor', 'created_at' => now(), 'updated_at' => now()],
@@ -115,7 +121,6 @@ class PositionSeeder extends Seeder
             ['label' => 'Management Trainee', 'value' => 'Management Trainee', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Manager (Surplus Cars Division)', 'value' => 'Manager (Surplus Cars Division)', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Manager At Large', 'value' => 'Manager At Large', 'created_at' => now(), 'updated_at' => now()],
-            ['label' => 'Managing Director', 'value' => 'Managing Director', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Marketing and Claims Admin', 'value' => 'Marketing and Claims Admin', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Marketing Coordinator', 'value' => 'Marketing Coordinator', 'created_at' => now(), 'updated_at' => now()],
             ['label' => 'Marketing Coordinator II', 'value' => 'Marketing Coordinator II', 'created_at' => now(), 'updated_at' => now()],

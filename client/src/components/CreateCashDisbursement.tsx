@@ -68,12 +68,26 @@ const CreateCashDisbursement = (props: Props) => {
   const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     setFile((prevImages) => [...prevImages, ...files]);
   };
 
+  const getCurrencySymbol = () => {
+    switch (selectedCurrency) {
+      case "PHP":
+        return "₱";
+      case "EUR":
+        return "€";
+      case "USD":
+        return "$";
+      default:
+        return "₱";
+    }
+  };
+  
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const droppedFiles = Array.from(e.dataTransfer.files) as File[];
@@ -199,7 +213,7 @@ const CreateCashDisbursement = (props: Props) => {
       formData.append("approved_by", JSON.stringify(approvedByIds));
       formData.append("form_type", "Cash Disbursement Requisition Slip");
       formData.append("user_id", userId);
-
+      formData.append("currency", selectedCurrency);
       formData.append(
         "form_data",
         JSON.stringify([
@@ -224,6 +238,7 @@ const CreateCashDisbursement = (props: Props) => {
       console.error("An error occurred while submitting the request:", error);
     } finally {
       setLoading(false);
+      console.log("Form submitted", selectedCurrency);
     }
   };
   const closeModal = () => {
@@ -268,7 +283,6 @@ const CreateCashDisbursement = (props: Props) => {
         }
       );
       setShowSuccessModal(true);
-
       setFormSubmitted(true);
       setLoading(false);
     } catch (error) {
@@ -400,7 +414,23 @@ const CreateCashDisbursement = (props: Props) => {
               Disbursement Requisition Slip
             </h1>
           </div>
-          <div className="my-2 ">
+          <div>
+            <label htmlFor="currency" className="mb-2 text-xl text-gray-700">
+              Select Currency &nbsp;
+            </label>
+            <select
+        id="currency"
+        className="p-2 my-3 transition-colors bg-gray-200 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        value={selectedCurrency}
+        onChange={(e) => setSelectedCurrency(e.target.value)}
+      >
+        <option value="PHP">₱ - Peso</option>
+        <option value="EUR">€ - Euro</option>
+        <option value="USD">$ - USD</option>
+      </select>
+          </div>
+
+          <div className="my-3 ">
             <button
               onClick={openAddCustomModal}
               className="p-2 text-white rounded bg-primary"
@@ -559,7 +589,7 @@ const CreateCashDisbursement = (props: Props) => {
                                   e.preventDefault();
                                 }
                               }}
-                              placeholder="₱"
+                              placeholder={getCurrencySymbol()}
                               className={`${inputStyle2}`}
                               style={{ minHeight: "50px", maxHeight: "400px" }}
                             />
@@ -598,7 +628,7 @@ const CreateCashDisbursement = (props: Props) => {
                                   e.target.value
                                 )
                               }
-                              placeholder="₱"
+                              placeholder={getCurrencySymbol()}
                               className={`${inputStyle2}`}
                               style={{ minHeight: "50px", maxHeight: "400px" }}
                               readOnly
@@ -674,7 +704,7 @@ const CreateCashDisbursement = (props: Props) => {
                           Grand Total:
                         </td>
                         <td className="p-2 font-bold text-center border border-black">
-                          ₱{calculateGrandTotal()}
+                        {getCurrencySymbol()} {calculateGrandTotal()}
                         </td>
                       </tr>
                     </tfoot>
@@ -748,7 +778,10 @@ const CreateCashDisbursement = (props: Props) => {
                       ) : (
                         // Display document icon if file is not an image
                         <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
-                          <img src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png" alt="" />
+                          <img
+                            src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png"
+                            alt=""
+                          />
                         </div>
                       )}
 

@@ -28,6 +28,7 @@ type Record = {
   status: string;
   approvers_id: number;
   form_data: FormData[];
+  currency: string;
   supplier?: string;
   address?: string;
   branch: string;
@@ -53,7 +54,6 @@ type Record = {
     status: string;
   }[];
 };
-
 type FormData = {
   approvers_id: number;
   approvers: {
@@ -76,6 +76,13 @@ type Item = {
   totalAmount: string;
   remarks: string;
 };
+
+const currencySymbols: { [key: string]: string } = {
+  USD: "$",
+  EUR: "€",
+  PHP: "₱",
+};
+
 const tableStyle2 = "bg-white p-2";
 const inputStyle = "border border-black text-[12px] font-bold p-2 h-14";
 const tableCellStyle = `${inputStyle} w-20`;
@@ -150,6 +157,13 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
 
     fetchBranchData();
   }, []);
+  
+
+  const getCurrencySymbol = (currencyCode: string): string => {
+    return currencySymbols[currencyCode as keyof typeof currencySymbols] || currencyCode;
+  };
+  
+
   // Get branch ID from record
   const branchId = parseInt(record.form_data[0].branch, 10);
   // Get branch name or default to "Unknown"
@@ -709,7 +723,7 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
             <input
               type="text"
               className="w-full p-1 mt-2 font-bold bg-white border border-black rounded-md "
-              value={`₱ ${editableRecord.form_data[0].grand_total}`}
+              value={`${getCurrencySymbol(record.currency)} ${editableRecord.form_data[0].grand_total}`}
               readOnly
             />
           </div>

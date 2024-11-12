@@ -36,6 +36,7 @@ class RequestFormController extends Controller
                 'form_data' => 'required|string', // Temporarily string for decoding
                 'noted_by' => 'required|string',
                 'approved_by' => 'required|string',
+                'currency' => 'required|string',
                 'attachment.*' => 'file|mimes:webp,pdf,png,jpg,jpeg,doc,docx,xls,xlsx,ppt,pptx,bmp,txt,zip,gif',
             ]);
 
@@ -44,6 +45,8 @@ class RequestFormController extends Controller
             $formDataArray = json_decode($validated['form_data'], true);
             $notedByIds = json_decode($validated['noted_by'], true);
             $approvedByIds = json_decode($validated['approved_by'], true);
+            $currency = $validated['currency'];
+
             /*    $formDataArray = $validated['form_data'];
                $notedByIds = $validated['noted_by'];
                $approvedByIds = $validated['approved_by']; */
@@ -221,12 +224,12 @@ class RequestFormController extends Controller
 
             $uniqueCode = $this->generateUniqueCode($formType, $branchCode);
 
-
             // Create the request form
             $requestFormData = RequestForm::create([
                 'user_id' => $userID,
                 'form_type' => $formType,
                 'form_data' => $encodedFormData, // Ensure it's JSON encoded,
+                'currency' => $currency,
                 'noted_by' => $notedByIds,
                 'approved_by' => $approvedByIds, // Ensure it's JSON encoded
                 'attachment' => json_encode($filePaths), // Ensure it's JSON encoded
@@ -651,7 +654,7 @@ class RequestFormController extends Controller
 
             // Fetch request forms where user_id matches the current user's ID
             $requestForms = RequestForm::where('user_id', $currentUserId)
-                ->select('id', 'user_id', 'form_type', 'form_data', 'status', 'noted_by', 'approved_by', 'attachment', 'request_code', 'created_at', 'completed_code')
+                ->select('id', 'user_id', 'form_type', 'form_data', 'status', 'currency', 'noted_by', 'approved_by', 'attachment', 'request_code', 'created_at', 'completed_code')
                 ->with('approvalProcess')
                 ->get();
 
@@ -664,7 +667,7 @@ class RequestFormController extends Controller
                 // Decode the approvers_id fields, defaulting to empty arrays if null
                 $notedByIds = $requestForm->noted_by ?? [];
                 $approvedByIds = $requestForm->approved_by ?? [];
-
+                $currency = $requestForm->currency;
                 $allApproversIds = array_merge($notedByIds, $approvedByIds);
 
                 // Fetch all approvers in one query
@@ -734,6 +737,7 @@ class RequestFormController extends Controller
                     'created_at' => $requestForm->created_at,
                     'status' => $requestForm->status,
                     'noted_by' => $formattedNotedBy,
+                    'currency' => $currency,
                     'approved_by' => $formattedApprovedBy,
                     'requested_by' => auth()->user()->firstName . ' ' . auth()->user()->firstName,
                     'requested_signature' => auth()->user()->signature,
@@ -764,7 +768,7 @@ class RequestFormController extends Controller
     {
         try {
 
-            $users = RequestForm::select('id', 'user_id', 'form_type', 'form_data', 'noted_by', 'approved_by', 'status', 'attachment')->get();
+            $users = RequestForm::select('id', 'user_id', 'form_type', 'form_data', 'currency', 'noted_by', 'approved_by', 'status', 'attachment')->get();
 
             return response()->json([
                 'message' => 'Request form retrieved successfully',
