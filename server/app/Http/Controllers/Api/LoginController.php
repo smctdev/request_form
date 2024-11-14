@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
 
 class LoginController extends Controller
 {
@@ -37,6 +38,19 @@ class LoginController extends Controller
                 'message'       =>          'We couldn\'t find an account with that email.',
             ], 403);
         }
+
+        if (RateLimiter::tooManyAttempts(
+            key: 'loginAttempts:' . $user->id,
+            maxAttempts: 5
+        )) {
+            $seconds = RateLimiter::availableIn('loginAttempts:' . $user->id);
+            return response()->json([
+                'status'  => false,
+                'message' => "You may try again in {$seconds} seconds."
+            ], 429);
+        }
+
+        RateLimiter::increment('loginAttempts:' . $user->id, amount: 1, decaySeconds: 30);
 
 
         if (!$user || $user->email_verified_at === null) {
