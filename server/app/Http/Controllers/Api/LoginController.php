@@ -39,32 +39,6 @@ class LoginController extends Controller
             ], 403);
         }
 
-
-        if (!$user || $user->email_verified_at === null) {
-            return response()->json([
-                'status'        =>          false,
-                'message'       =>          'Your email has not been verified yet. Please contact the administrator.',
-            ], 403);
-        }
-
-        // Attempt to authenticate the user
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json([
-                'status'  => false,
-                'message' => 'Email or password does not match our records.',
-            ]);
-        }
-
-        $user = User::where('email', $request->email)->first();
-
-
-        if (!$user) {
-            return response()->json([
-                'status'        =>          false,
-                'message'       =>          'We couldn\'t find an account with that email.',
-            ], 403);
-        }
-
         if (RateLimiter::tooManyAttempts(
             key: 'loginAttempts:' . $user->id,
             maxAttempts: 5
@@ -93,40 +67,6 @@ class LoginController extends Controller
                 'message' => 'Email or password does not match our records.',
             ]);
         }
-
-        // Get the authenticated user
-        $user = Auth::user();
-
-        // Generate a new token for the user
-        $tokenResult = $user->createToken('API TOKEN');
-        $token = $tokenResult->accessToken;
-
-        $expiration = now()->addHours(8);
-
-        // Update the token's expiration time in the database
-        DB::table('personal_access_tokens')
-            ->where('token', hash('sha256', $token))
-            ->update(['expires_at' => $expiration]);
-
-        // Return user data along with the token and expiration time
-        return response()->json([
-            'status'           => true,
-            'message'          => 'Login successful. Redirecting you to Dashboard.',
-            'token'            => $tokenResult->plainTextToken,
-            'expires_at'       => $expiration,
-            'role'             => $user->role,
-            'id'               => $user->id,
-            'firstName'        => $user->firstName,
-            'lastName'         => $user->lastName,
-            'branch_code'      => $user->branch_code,
-            'contact'          => $user->contact,
-            'signature'        => $user->signature,
-            'email'            => $user->email,
-            'profile_picture'  => $user->profile_picture,
-            'employee_id'      => $user->employee_id,
-        ]);
-    }
-
 
         // Get the authenticated user
         $user = Auth::user();

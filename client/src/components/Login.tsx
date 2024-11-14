@@ -23,7 +23,6 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [rateLimitError, setRateLimitError] = useState("");
   const { updateUser } = useUser();
   const {
     register,
@@ -82,8 +81,9 @@ const Login: React.FC = () => {
           confirmButtonText: "Close",
           confirmButtonColor: "#dc3545",
         });
+        setError(response.data.message);
+        console.log(response.data);
       }
-
     } catch (error: any) {
       if (error.response.status === 500) {
         const errorMessage = `${error.response.statusText}, Please contact the administrator.`;
@@ -109,9 +109,8 @@ const Login: React.FC = () => {
           confirmButtonColor: "#dc3545",
         });
       }
-
       if (error.response.status === 429) {
-        setRateLimitError(error.response.data.message);
+        setError(error?.response?.data?.message);
       }
     } finally {
       setLoading(false);
@@ -137,7 +136,7 @@ const Login: React.FC = () => {
           <h1 className="text-primary font-bold lg:text-[32px] md:text-2xl  mb-6 text-left lg:mt-0 ">
             ACCOUNT LOGIN
           </h1>
-          {(rateLimitError || error) && (
+          {error && (
             <div
               className="flex items-center px-4 py-5 mb-4 text-red-700 bg-red-100 border border-red-400 rounded"
               role="alert"
@@ -149,9 +148,7 @@ const Login: React.FC = () => {
               />
               <div>
                 <strong className="font-bold">Error!</strong>
-                <span className="block ml-2 sm:inline">
-                  {error || rateLimitError}
-                </span>
+                <span className="block ml-2 sm:inline">{error}</span>
               </div>
               <button
                 onClick={handleCloseAlert}
