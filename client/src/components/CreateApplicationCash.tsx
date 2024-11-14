@@ -9,6 +9,7 @@ import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ClipLoader from "react-spinners/ClipLoader";
 import AddCustomModal from "./AddCustomModal";
 import Swal from "sweetalert2";
+import { RequestType } from "../data/RequestType";
 
 interface Approver {
   id: number;
@@ -19,15 +20,6 @@ interface Approver {
 
 type Props = {};
 
-const requestType = [
-  { title: "Stock Requisition", path: "/request/sr" },
-  { title: "Purchase Order Requisition Slip", path: "/request/pors" },
-  { title: "Cash Disbursement Requisition Slip", path: "/request/cdrs" },
-  { title: "Application For Cash Advance", path: "/request/afca" },
-  { title: "Liquidation of Actual Expense", path: "/request/loae" },
-  { title: "Request for Refund", path: "/request/rfr" },
-  { title: "Discount Request", path: "/request/dr" },
-];
 const schema = z.object({
   department: z.string(),
   cashAmount: z.string(),
@@ -602,11 +594,13 @@ const CreateApplicationCash = (props: Props) => {
         <option value="" disabled>
           Type of request
         </option>
-        {requestType.map((item) => (
-          <option key={item.title} value={item.path}>
-            {item.title}
-          </option>
-        ))}
+        {
+          RequestType.map((item) => (
+            <option key={item.title} value={item.path}>
+              {item.title}
+            </option>
+          ))
+        }
       </select>
       <div className="bg-white w-full   mb-5 rounded-[12px] flex flex-col">
         <div className="border-b flex justify-between flex-col px-[30px] md:flex-row ">

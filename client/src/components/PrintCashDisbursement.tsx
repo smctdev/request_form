@@ -8,7 +8,11 @@ import HOLogo from "./assets/logo.png";
 type PrintRefundProps = {
   data?: any;
 };
-
+const currencySymbols: { [key: string]: string } = {
+  USD: "$",
+  EUR: "€",
+  PHP: "₱",
+};
 const PrintCashDisbursement: React.FC<PrintRefundProps> = ({ data }) => {
   const [printData, setPrintData] = useState<any>(null);
   let logo;
@@ -53,6 +57,10 @@ const PrintCashDisbursement: React.FC<PrintRefundProps> = ({ data }) => {
     return date.toLocaleDateString("en-US", options);
   };
 
+  const getCurrencySymbol = (currencyCode: string): string => {
+    return currencySymbols[currencyCode as keyof typeof currencySymbols] || currencyCode;
+  };
+
   useEffect(() => {
     const storedData = localStorage.getItem("printData");
     if (storedData) {
@@ -87,7 +95,7 @@ const PrintCashDisbursement: React.FC<PrintRefundProps> = ({ data }) => {
   }, [printData]);
 
   if (!printData) return <div>Loading...</div>;
-
+  
   const tableStyle = "border-b border-black text-sm font-normal";
   return (
     <div className="text-black bg-white h-lvh ">
@@ -167,7 +175,7 @@ const PrintCashDisbursement: React.FC<PrintRefundProps> = ({ data }) => {
                 </td>
                 <td></td>
                 <td className="pt-2 text-sm font-medium text-center">
-                  ₱ {printData?.id.form_data[0].grand_total}
+                  {getCurrencySymbol(printData.id?.currency)} {printData?.id.form_data[0].grand_total}
                 </td>
                 <td></td>
               </tr>
@@ -183,7 +191,7 @@ const PrintCashDisbursement: React.FC<PrintRefundProps> = ({ data }) => {
               <div className="flex flex-wrap justify-start">
                 <div className="relative flex flex-col items-center justify-center pt-3 mr-10">
                   <img
-                    className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-full left-1/2"
+                    className="absolute transform -translate-x-1/2 -translate-y-full pointer-events-none left-1/2"
                     src={printData?.id?.requested_signature}
                     alt="avatar"
                     width={120}
@@ -209,7 +217,7 @@ const PrintCashDisbursement: React.FC<PrintRefundProps> = ({ data }) => {
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-1/2 left-1/2"
+                        className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}
@@ -237,7 +245,7 @@ const PrintCashDisbursement: React.FC<PrintRefundProps> = ({ data }) => {
                   >
                     {approver.status === "Approved" && (
                       <img
-                        className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-full left-1/2"
+                        className="absolute transform -translate-x-1/2 -translate-y-full pointer-events-none left-1/2"
                         src={approver.signature}
                         alt=""
                         width={120}

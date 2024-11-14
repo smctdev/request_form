@@ -18,6 +18,7 @@ type Record = {
   total_labor: number;
   total_discount: number;
   total_spotcash: number;
+  currency: string;
   pending_approver: {
     approver_name: string;
   };
@@ -280,6 +281,7 @@ const Request = (props: Props) => {
             { headers }
           );
           setRequests(response.data.data);
+          console.log("requests", response.data.data);
         } catch (error) {
           console.error("Error fetching requests data:", error);
         } finally {
@@ -575,7 +577,7 @@ const Request = (props: Props) => {
       name: "Status",
       selector: (row: Record) => row.status,
       sortable: true,
-      minWidth: "150px",
+      width: "150px",
       cell: (row: Record) => (
         <div className="relative flex items-center w-full group">
           {/* Status Badge */}

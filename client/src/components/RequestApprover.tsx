@@ -28,6 +28,7 @@ type Record = {
   form_data: MyFormData[];
   date: Date;
   branch: string;
+  currency: string;
   status: string;
   purpose: string;
   totalBoatFare: string;

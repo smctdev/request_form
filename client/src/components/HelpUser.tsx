@@ -1,18 +1,19 @@
 import React, { useState } from "react";
+import ReactPlayer from "react-player/youtube";
 
 type Props = {};
 
 const videoOptions = [
   {
-    url: "https://drive.google.com/file/d/1MVcZbgov39rCjrGbM8o0eFCHm7X90fWQ/preview",
+    url: "https://www.youtube.com/watch?v=sIax0m7SQQY",
     title: "How to create an account",
   },
   {
-    url: "https://drive.google.com/file/d/1VDzqvB9m7VCviad_rPYpc1RXpQbgHDU4/preview",
+    url: "https://www.youtube.com/watch?v=AqaAZnFe8Ik",
     title: "How to update profile information and change password",
   },
   {
-    url: "https://drive.google.com/file/d/1WO1vplGmRbfd3Xbjw5Fs_hk8xQ1lZ7ma/preview",
+    url: "https://www.youtube.com/watch?v=fWUlts5nTwI",
     title: "How to print request with Approved status",
   },
 ];
@@ -33,12 +34,7 @@ const HelpUser = (props: Props) => {
       </h1>
       <div className="bg-white w-full mb-5 rounded-[12px] flex flex-col p-10">
         <div className="flex justify-center items-center mb-4">
-          <iframe
-            src={currentVideo}
-            width="1280"
-            height="720"
-            allow="autoplay"
-          ></iframe>
+          <ReactPlayer url={currentVideo} width="1280px" height="720px" controls pip playing />
         </div>
         <p className="font-bold">{currentTitle}</p>
         <div className="mt-10">

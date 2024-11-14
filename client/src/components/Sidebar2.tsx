@@ -13,7 +13,7 @@ import {
   MapIcon,
   SwatchIcon,
   UserPlusIcon,
-  BriefcaseIcon
+  BriefcaseIcon,
 } from "@heroicons/react/24/solid";
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -212,28 +212,29 @@ const Sidebar2: React.FC<SidebarProps> = ({
   const listStyle =
     "relative mx-2 group flex items-center text-[18px] text-gray-400 font-medium py-2 pr-3 px-2 cursor-pointer rounded-lg";
   const pStyle = "group-hover:text-primary font text-lg px-2 rounded-lg";
+  const pStyle2 = "font text-lg px-2 rounded-lg";
   const iconStyle = "size-[32px] group-hover:text-primary";
   const activeClass = "bg-[#D2E6F7] text-primary"; // Change to your preferred active color
   return (
     <div className={`${darkMode ? "dark" : "light"} dark:bg-blackD h-full`}>
       <div
-        className={`bg-white dark:bg-blackD ${open ? "w-60" : "w-20"} h-full`}
+        className={`bg-white dark:bg-black ${open ? "w-60" : "w-20"} h-full`}
       >
-        <div className="px-2 py-3 h-[68px] flex justify-between items-center border-b-[0.5px] border-gray">
+        <div className="px-2 py-3 h-[68px] flex justify-center items-center border-b-[0.5px]">
           <img
             src={Logo}
-            height={34}
-            width={75}
+            height={80}
+            width={120}
             className="cursor-pointer"
             onClick={toggleSidebar}
           />
-          <h1
+          {/* <h1
             className={`text-primary font-bold mr-7 ${
               open ? "visible" : "invisible"
             }`}
           >
             Request Form
-          </h1>
+          </h1> */}
         </div>
         <ul className="flex-1 w-full mt-6">
           <div className="w-full gap-2">
@@ -279,21 +280,63 @@ const Sidebar2: React.FC<SidebarProps> = ({
                 </li>
               </Link>
             ))}
-            <div
-              onClick={handleLogout}
-              className="flex items-center justify-center border-t cursor-pointer"
-            >
-              <div className="flex p-2 h-5/6">
-                <ArrowLeftStartOnRectangleIcon
-                  className={`${iconStyle} dark:text-white`}
-                />
-              </div>
-              <p
-                className={`${pStyle} ${!open ? "hidden" : ""} dark:text-white`}
-              >
-                Logout
-              </p>
-            </div>
+
+{open ? (
+  <div
+    onClick={handleLogout}
+    className="absolute flex hover:bg-[#ff7575] px-5 rounded-lg hover:text-black items-center justify-center w-full h-10 border-t cursor-pointer bottom-2"
+  >
+    <svg
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      className="text-gray-500 dark:text-gray-400"
+      style={{
+        transform: "rotate(-180deg)",
+        width: "25px",
+        height: "25px",
+      }} // Rotating 180 degrees to the left
+    >
+      <path d="M17 16l4-4m0 0l-4-4 m4 4h-14m5 8 H6a3 3 0 01-3-3V7a3 3 0 013-3h7"></path>
+    </svg>
+    <p
+      className={`${pStyle} text-gray-500 truncate p-1 ${!open ? "hidden" : ""} dark:text-gray-400`}
+    >
+      Logout
+    </p>
+  </div>
+) : (
+  <div
+    onClick={handleLogout}
+    className="absolute flex items-center justify-center w-full h-10 border-t cursor-pointer group bottom-2"
+  >
+    <svg
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      className="text-gray-500 hover:text-[#ff7575] dark:text-gray-400"
+      style={{
+        transform: "rotate(-180deg)",
+        width: "25px",
+        height: "25px",
+      }} // Rotating 180 degrees to the left
+    >
+      <path d="M17 16l4-4m0 0l-4-4 m4 4h-14m5 8 H6a3 3 0 01-3-3V7a3 3 0 013-3h7"></path>
+    </svg>
+    <p
+      className={`${pStyle2} truncate p-1 absolute left-full ml-2 top-1/2 transform -translate-y-1/2 bg-[#ff7575] text-black rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300`}
+    >
+      Logout
+    </p>
+  </div>
+)}
+
           </div>
         </ul>
       </div>

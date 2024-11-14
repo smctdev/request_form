@@ -206,8 +206,6 @@ const Dashboard: React.FC = () => {
           setTotalPendingRequests(response.data.totalPendingRequest);
           setTotalOngoingRequests(response.data.totalOngoingRequest);
           setTotalDisapprovedRequests(response.data.totalDisapprovedRequest);
-          // setLoading(false);
-          console.log(response.data)
         })
         .catch((error) => {
           console.error("Error fetching total requests sent:", error);
@@ -317,7 +315,7 @@ const Dashboard: React.FC = () => {
       <div className="grid w-full grid-cols-1 gap-8 mt-4 space-y-2 sm:w-full md:grid-cols-2 lg:grid-cols-5 md:space-y-0">
         <div className={`${boxWhite} hover:-translate-y-1`}>
           <div className={`${boxPink} bg-primary`}>
-            <FontAwesomeIcon icon={faFileLines} className={`${outerLogo} text-[#298DDE]`} />
+            <FontAwesomeIcon icon={faFileLines} className={`${outerLogo} text-[#298DDE] max-h-[78%]`} />
             <div className={`${innerBox}`}>
               <FontAwesomeIcon icon={faFileLines} className={`${innerLogo} text-primary`} />
             </div>
@@ -326,7 +324,7 @@ const Dashboard: React.FC = () => {
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
               {dataLoading ? (
-                <span className="font-bold loading loading-infinity loading-lg"></span>
+                <div className="my-4 custom-loader bottom-6"></div>
               ) : (
                 totalRequestsSent
               )}
@@ -350,7 +348,7 @@ const Dashboard: React.FC = () => {
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
               {dataLoading ? (
-                <span className="font-bold loading loading-infinity loading-lg"></span>
+                <div className="my-4 custom-loader bottom-6"></div>
               ) : (
                 totalCompletedRequests
               )}
@@ -374,7 +372,7 @@ const Dashboard: React.FC = () => {
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
               {dataLoading ? (
-                <span className="font-bold loading loading-infinity loading-lg"></span>
+                <div className="my-4 custom-loader bottom-6"></div>
               ) : (
                 totalOngoingRequests
               )}
@@ -398,7 +396,7 @@ const Dashboard: React.FC = () => {
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
               {dataLoading ? (
-                <span className="font-bold loading loading-infinity loading-lg"></span>
+                <div className="my-4 custom-loader bottom-6"></div>
               ) : (
                 totalPendingRequests
               )}
@@ -422,7 +420,7 @@ const Dashboard: React.FC = () => {
             </p>
             <p className="text-[40px] font-bold bottom-6 mx-5 absolute">
               {dataLoading ? (
-                <span className="font-bold loading loading-infinity loading-lg"></span>
+                <div className="my-4 custom-loader bottom-6"></div>
               ) : (
                 totalDisapprovedRequests
               )}

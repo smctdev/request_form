@@ -28,6 +28,7 @@ type Record = {
   status: string;
   approvers_id: number;
   form_data: FormData[];
+  currency: string;
   supplier?: string;
   address?: string;
   branch: string;
@@ -53,7 +54,6 @@ type Record = {
     status: string;
   }[];
 };
-
 type FormData = {
   approvers_id: number;
   approvers: {
@@ -76,6 +76,13 @@ type Item = {
   totalAmount: string;
   remarks: string;
 };
+
+const currencySymbols: { [key: string]: string } = {
+  USD: "$",
+  EUR: "€",
+  PHP: "₱",
+};
+
 const tableStyle2 = "bg-white p-2";
 const inputStyle = "border border-black text-[12px] font-bold p-2 h-14";
 const tableCellStyle = `${inputStyle} w-20`;
@@ -150,6 +157,24 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
 
     fetchBranchData();
   }, []);
+
+  const getCurrencySymbol = (currencyCode: string): string => {
+    return (
+      currencySymbols[currencyCode as keyof typeof currencySymbols] ||
+      currencyCode
+    );
+  };
+
+  const handleCurrencyChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { value } = event.target;
+    setEditableRecord((prevRecord) => ({
+      ...prevRecord,
+      currency: value,
+    }));
+  };
+
   // Get branch ID from record
   const branchId = parseInt(record.form_data[0].branch, 10);
   // Get branch name or default to "Unknown"
@@ -303,7 +328,10 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
     if (field === "quantity" || field === "unitCost") {
       const quantity = parseFloat(newDataCopy[index].quantity);
       const unitCost = parseFloat(newDataCopy[index].unitCost);
-      newDataCopy[index].totalAmount = (quantity * unitCost).toString() === "NaN" ? "0" : parseFloat((quantity * unitCost).toString()).toFixed(2);
+      newDataCopy[index].totalAmount =
+        (quantity * unitCost).toString() === "NaN"
+          ? "0"
+          : parseFloat((quantity * unitCost).toString()).toFixed(2);
     }
 
     // Calculate grandTotal
@@ -362,7 +390,8 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
         : [];
       formData.append("noted_by", JSON.stringify(notedByIds));
       formData.append("approved_by", JSON.stringify(approvedByIds));
-
+      console.log("Currency before appending:", editableRecord.currency);
+      formData.append("currency", editableRecord.currency);
       formData.append(
         "form_data",
         JSON.stringify([
@@ -580,13 +609,27 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
               {record.status}
             </p>
           </div>
-          <div className="grid w-full grid-cols-1 gap-2 md:grid-cols-2">
-            <div className="flex w-1/2 ">
+          <div className="grid w-full grid-cols-2 gap-2 md:grid-cols-2">
+            <div className="flex w-full">
               <h1 className="flex items-center">Branch: </h1>
-              <p className="w-full pl-1 font-bold bg-white rounded-md ">
+              <p className="inline-block w-full pl-1 font-bold align-middle bg-white rounded-md">
                 {branchName}
               </p>
             </div>
+            {isEditing && (
+              <div className="right-0 flex w-full">
+                <h1 className="">Change Currency: </h1>
+                <select
+                  value={editableRecord.currency}
+                  onChange={handleCurrencyChange} // No need to extract e.target.value here
+                  className="pl-1 font-bold bg-white rounded-md"
+                >
+                  <option value="PHP">₱ - Peso</option>
+                  <option value="EUR">€ - Euro</option>
+                  <option value="USD">$ - USD</option>
+                </select>
+              </div>
+            )}
           </div>
           <div className="w-full mt-4 overflow-x-auto">
             <div className="w-full border-collapse">
@@ -709,7 +752,9 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
             <input
               type="text"
               className="w-full p-1 mt-2 font-bold bg-white border border-black rounded-md "
-              value={`₱ ${editableRecord.form_data[0].grand_total}`}
+              value={`${getCurrencySymbol(editableRecord.currency)} ${
+                editableRecord.form_data[0].grand_total
+              }`}
               readOnly
             />
           </div>
@@ -988,7 +1033,10 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                         // Display document icon if file is not an image
                         <>
                           <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png" alt="" />
+                            <img
+                              src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png"
+                              alt=""
+                            />
                           </div>
                           <div className="mt-2">
                             {!isEditing ? (
