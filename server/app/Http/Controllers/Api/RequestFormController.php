@@ -36,7 +36,7 @@ class RequestFormController extends Controller
                 'form_data' => 'required|string', // Temporarily string for decoding
                 'noted_by' => 'required|string',
                 'approved_by' => 'required|string',
-                'currency' => 'required|string',
+                'currency' => 'required|string|in:PHP,USD,EURO',
                 'attachment.*' => 'file|mimes:webp,pdf,png,jpg,jpeg,doc,docx,xls,xlsx,ppt,pptx,bmp,txt,zip,gif',
             ]);
 
