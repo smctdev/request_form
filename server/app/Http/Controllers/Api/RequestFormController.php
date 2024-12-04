@@ -36,6 +36,7 @@ class RequestFormController extends Controller
                 'form_data' => 'required|string', // Temporarily string for decoding
                 'noted_by' => 'required|string',
                 'approved_by' => 'required|string',
+                'currency' => 'required|string|in:PHP,USD,EURO',
                 'attachment.*' => 'file|mimes:webp,pdf,png,jpg,jpeg,doc,docx,xls,xlsx,ppt,pptx,bmp,txt,zip,gif',
             ]);
 
@@ -44,6 +45,8 @@ class RequestFormController extends Controller
             $formDataArray = json_decode($validated['form_data'], true);
             $notedByIds = json_decode($validated['noted_by'], true);
             $approvedByIds = json_decode($validated['approved_by'], true);
+            $currency = $validated['currency'];
+
             /*    $formDataArray = $validated['form_data'];
                $notedByIds = $validated['noted_by'];
                $approvedByIds = $validated['approved_by']; */
@@ -221,12 +224,12 @@ class RequestFormController extends Controller
 
             $uniqueCode = $this->generateUniqueCode($formType, $branchCode);
 
-
             // Create the request form
             $requestFormData = RequestForm::create([
                 'user_id' => $userID,
                 'form_type' => $formType,
                 'form_data' => $encodedFormData, // Ensure it's JSON encoded,
+                'currency' => $currency,
                 'noted_by' => $notedByIds,
                 'approved_by' => $approvedByIds, // Ensure it's JSON encoded
                 'attachment' => json_encode($filePaths), // Ensure it's JSON encoded
@@ -414,7 +417,7 @@ class RequestFormController extends Controller
             $form_data_content = json_decode($request->input('form_data'), true);
             $noted_by = json_decode($request->input('noted_by'), true);
             $approved_by = json_decode($request->input('approved_by'), true);
-
+            $currency = $request->input('currency');
             // Initialize attachment paths
             $existing_attachments = json_decode($request_data->attachment, associative: true) ?? [];
 
@@ -455,6 +458,7 @@ class RequestFormController extends Controller
                 'approved_by' => $approved_by,
                 'attachment' => json_encode(array_values($attachment_paths)),
                 'status' => "Pending",
+                'currency' => $currency
             ]);
 
             // Delete existing approval processes
@@ -651,7 +655,7 @@ class RequestFormController extends Controller
 
             // Fetch request forms where user_id matches the current user's ID
             $requestForms = RequestForm::where('user_id', $currentUserId)
-                ->select('id', 'user_id', 'form_type', 'form_data', 'status', 'noted_by', 'approved_by', 'attachment', 'request_code', 'created_at', 'completed_code')
+                ->select('id', 'user_id', 'form_type', 'form_data', 'status', 'currency', 'noted_by', 'approved_by', 'attachment', 'request_code', 'created_at', 'completed_code')
                 ->with('approvalProcess')
                 ->get();
 
@@ -664,7 +668,7 @@ class RequestFormController extends Controller
                 // Decode the approvers_id fields, defaulting to empty arrays if null
                 $notedByIds = $requestForm->noted_by ?? [];
                 $approvedByIds = $requestForm->approved_by ?? [];
-
+                $currency = $requestForm->currency;
                 $allApproversIds = array_merge($notedByIds, $approvedByIds);
 
                 // Fetch all approvers in one query
@@ -734,6 +738,7 @@ class RequestFormController extends Controller
                     'created_at' => $requestForm->created_at,
                     'status' => $requestForm->status,
                     'noted_by' => $formattedNotedBy,
+                    'currency' => $currency,
                     'approved_by' => $formattedApprovedBy,
                     'requested_by' => auth()->user()->firstName . ' ' . auth()->user()->firstName,
                     'requested_signature' => auth()->user()->signature,
@@ -764,7 +769,7 @@ class RequestFormController extends Controller
     {
         try {
 
-            $users = RequestForm::select('id', 'user_id', 'form_type', 'form_data', 'noted_by', 'approved_by', 'status', 'attachment')->get();
+            $users = RequestForm::select('id', 'user_id', 'form_type', 'form_data', 'currency', 'noted_by', 'approved_by', 'status', 'attachment')->get();
 
             return response()->json([
                 'message' => 'Request form retrieved successfully',

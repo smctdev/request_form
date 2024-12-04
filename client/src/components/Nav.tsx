@@ -91,6 +91,12 @@ const Nav: React.FC<NavProps> = ({
     setIsOpen(false);
   };
 
+  const handleLogout = () => {
+    localStorage.clear(); // Clear all local storage
+    navigate("/login");
+    setIsAuthenticated(false);
+  };
+  
   const toggleProfileDropdown = () => {
     setIsOpen((prev) => !prev);
   };
@@ -424,7 +430,7 @@ const Nav: React.FC<NavProps> = ({
             {isOpen && (
               <div
                 ref={dropdownRef}
-                className="absolute z-50 w-full overflow-x-hidden bg-white border-b-2 border-x-2 top-11"
+                className="absolute z-50 w-full overflow-x-hidden bg-white top-[55px] rounded-b-lg shadow-sm"
                 style={{ zIndex: 1000 }}
               >
                 <ul>
@@ -434,6 +440,16 @@ const Nav: React.FC<NavProps> = ({
                   <Link to="/help" onClick={handleClose}>
                     <li className={`${listProfile}`}>Help</li>
                   </Link>
+                  <hr/>
+                  <li
+                    className={`${listProfile}`}
+                    onClick={() => {
+                      handleClose();
+                      handleLogout();
+                    }}
+                  >
+                    Logout
+                  </li>
                 </ul>
               </div>
             )}

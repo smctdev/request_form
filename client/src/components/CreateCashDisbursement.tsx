@@ -9,6 +9,7 @@ import RequestSuccessModal from "./Modals/RequestSuccessModal";
 import ClipLoader from "react-spinners/ClipLoader";
 import AddCustomModal from "./AddCustomModal";
 import Swal from "sweetalert2";
+import { RequestType } from "../data/RequestType";
 
 type Props = {};
 
@@ -18,15 +19,7 @@ interface Approver {
   lastName: string;
   position: string;
 }
-const requestType = [
-  { title: "Stock Requisition", path: "/request/sr" },
-  { title: "Purchase Order Requisition Slip", path: "/request/pors" },
-  { title: "Cash Disbursement Requisition Slip", path: "/request/cdrs" },
-  { title: "Application For Cash Advance", path: "/request/afca" },
-  { title: "Liquidation of Actual Expense", path: "/request/loae" },
-  { title: "Request for Refund", path: "/request/rfr" },
-  { title: "Discount Request", path: "/request/dr" },
-];
+ 
 
 const schema = z.object({
   approver_list_id: z.number(),
@@ -68,10 +61,24 @@ const CreateCashDisbursement = (props: Props) => {
   const [showAddCustomModal, setShowAddCustomModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState("");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     setFile((prevImages) => [...prevImages, ...files]);
+  };
+
+  const getCurrencySymbol = () => {
+    switch (selectedCurrency) {
+      case "PHP":
+        return "₱";
+      case "EUR":
+        return "€";
+      case "USD":
+        return "$";
+      default:
+        return "₱";
+    }
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -199,7 +206,7 @@ const CreateCashDisbursement = (props: Props) => {
       formData.append("approved_by", JSON.stringify(approvedByIds));
       formData.append("form_type", "Cash Disbursement Requisition Slip");
       formData.append("user_id", userId);
-
+      formData.append("currency", selectedCurrency);
       formData.append(
         "form_data",
         JSON.stringify([
@@ -224,6 +231,7 @@ const CreateCashDisbursement = (props: Props) => {
       console.error("An error occurred while submitting the request:", error);
     } finally {
       setLoading(false);
+      console.log("Form submitted", selectedCurrency);
     }
   };
   const closeModal = () => {
@@ -268,7 +276,6 @@ const CreateCashDisbursement = (props: Props) => {
         }
       );
       setShowSuccessModal(true);
-
       setFormSubmitted(true);
       setLoading(false);
     } catch (error) {
@@ -384,23 +391,41 @@ const CreateCashDisbursement = (props: Props) => {
         <option value="" disabled>
           Type of request
         </option>
-        {requestType.map((item) => (
-          <option key={item.title} value={item.path}>
-            {item.title}
-          </option>
-        ))}
+        {
+          RequestType.map((item) => (
+            <option key={item.title} value={item.path}>
+              {item.title}
+            </option>
+          ))
+        }
       </select>
       <div className="bg-white w-full mb-5 rounded-[12px] flex flex-col">
         <div className="border-b flex justify-between flex-col px-[30px] md:flex-row ">
           <div>
             <h1 className="flex py-4 mr-2 text-3xl font-bold text-left text-primary">
               <span className="mr-2 text-3xl underline decoration-2 underline-offset-8">
-                Cash
+                Cash/Card
               </span>{" "}
               Disbursement Requisition Slip
             </h1>
           </div>
-          <div className="my-2 ">
+          <div>
+            <label htmlFor="currency" className="mb-2 text-xl text-gray-700">
+              Select Currency &nbsp;
+            </label>
+            <select
+              id="currency"
+              className="p-2 my-3 transition-colors bg-gray-200 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={selectedCurrency}
+              onChange={(e) => setSelectedCurrency(e.target.value)}
+            >
+              <option value="PHP">₱ - Peso</option>
+              <option value="EUR">€ - Euro</option>
+              <option value="USD">$ - USD</option>
+            </select>
+          </div>
+
+          <div className="my-3 ">
             <button
               onClick={openAddCustomModal}
               className="p-2 text-white rounded bg-primary"
@@ -559,7 +584,7 @@ const CreateCashDisbursement = (props: Props) => {
                                   e.preventDefault();
                                 }
                               }}
-                              placeholder="₱"
+                              placeholder={getCurrencySymbol()}
                               className={`${inputStyle2}`}
                               style={{ minHeight: "50px", maxHeight: "400px" }}
                             />
@@ -598,7 +623,7 @@ const CreateCashDisbursement = (props: Props) => {
                                   e.target.value
                                 )
                               }
-                              placeholder="₱"
+                              placeholder={getCurrencySymbol()}
                               className={`${inputStyle2}`}
                               style={{ minHeight: "50px", maxHeight: "400px" }}
                               readOnly
@@ -674,7 +699,7 @@ const CreateCashDisbursement = (props: Props) => {
                           Grand Total:
                         </td>
                         <td className="p-2 font-bold text-center border border-black">
-                          ₱{calculateGrandTotal()}
+                          {getCurrencySymbol()} {calculateGrandTotal()}
                         </td>
                       </tr>
                     </tfoot>
@@ -748,7 +773,10 @@ const CreateCashDisbursement = (props: Props) => {
                       ) : (
                         // Display document icon if file is not an image
                         <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
-                          <img src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png" alt="" />
+                          <img
+                            src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png"
+                            alt=""
+                          />
                         </div>
                       )}
 

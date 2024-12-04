@@ -410,7 +410,7 @@ const Registration: React.FC = () => {
                     render={({ field }) => (
                       <select
                         {...field}
-                        className="w-full  lg:h-[56px] md:h-10 p-2 bg-gray-300 rounded-lg"
+                        className="w-full lg:h-[56px] md:h-10 p-2 bg-gray-300 rounded-lg"
                       >
                         <option value="" hidden>
                           Select Position
@@ -421,21 +421,30 @@ const Registration: React.FC = () => {
                         {roleOptions.length === 0 ? (
                           <option disabled>No position added yet</option>
                         ) : (
-                          roleOptions.map((option) => (
-                            <option key={option.id} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))
+                          roleOptions.map((option, index) => {
+                            return (
+                              <React.Fragment key={option.id}>
+                                <option value={option.value}>
+                                  {option.label}
+                                </option>
+                                {index === 3 && (
+                                  <hr/>
+
+
+                                )}
+                              </React.Fragment>
+                            );
+                          })
                         )}
                       </select>
                     )}
                   />
-                  
-            {positionError && (
-              <div className="flex items-start justify-start text-red-500">
-                {positionError}
-              </div>
-            )}
+
+                  {positionError && (
+                    <div className="flex items-start justify-start text-red-500">
+                      {positionError}
+                    </div>
+                  )}
                   <div>
                     {errors.position && (
                       <span className="text-xs text-red-500">

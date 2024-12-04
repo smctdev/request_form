@@ -9,6 +9,8 @@ import axios from "axios";
 import BounceLoader from "react-spinners/ClipLoader";
 import { useUser } from "../context/UserContext";
 import Swal from "sweetalert2";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 
 type UserCredentials = z.infer<typeof schema>;
 
@@ -35,7 +37,7 @@ const Login: React.FC = () => {
     if (errors.email?.message === "Invalid email address") {
       setLoading(false); // Reset loading if it's an invalid email
       return; // Exit early
-  }
+    }
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/login`,
@@ -79,19 +81,38 @@ const Login: React.FC = () => {
           confirmButtonText: "Close",
           confirmButtonColor: "#dc3545",
         });
+        setError(response.data.message);
+        console.log(response.data);
       }
     } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message || "An unexpected error occurred.";
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: errorMessage,
-        confirmButtonText: "Close",
-        confirmButtonColor: "#dc3545",
-      });
-      setError(errorMessage);
-    }finally{
+      if (error.response.status === 500) {
+        const errorMessage = `${error.response.statusText}, Please contact the administrator.`;
+
+        setError(errorMessage);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: errorMessage,
+          confirmButtonText: "Close",
+          confirmButtonColor: "#dc3545",
+        });
+      } else {
+        const errorMessage =
+          error?.response?.data?.message || "An unexpected error occurred.";
+
+        setError(errorMessage);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: errorMessage,
+          confirmButtonText: "Close",
+          confirmButtonColor: "#dc3545",
+        });
+      }
+      if (error.response.status === 429) {
+        setError(error?.response?.data?.message);
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -119,26 +140,23 @@ const Login: React.FC = () => {
             <div
               className="flex items-center px-4 py-5 mb-4 text-red-700 bg-red-100 border border-red-400 rounded"
               role="alert"
+              aria-live="assertive"
             >
-              <svg
+              <FontAwesomeIcon
                 className="w-6 h-6 mr-4 text-red-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2v6m0-6l2-2m-2 2l-2-2m2 2L2 6m16 12H5.414a1 1 0 01-.707-1.707L11.707 6h.01"
-                ></path>
-              </svg>
+                icon={faTriangleExclamation}
+              />
               <div>
                 <strong className="font-bold">Error!</strong>
                 <span className="block ml-2 sm:inline">{error}</span>
               </div>
-              <button onClick={handleCloseAlert}>&times;</button>
+              <button
+                onClick={handleCloseAlert}
+                className="ml-auto text-red-500 hover:text-red-700 focus:outline-none"
+                aria-label="Close alert"
+              >
+                &times;
+              </button>
             </div>
           )}
 
