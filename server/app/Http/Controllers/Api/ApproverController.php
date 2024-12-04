@@ -30,7 +30,7 @@ class ApproverController extends Controller
             // Fetch approvers from the HO branch, excluding the requester if they are an approver
             $HOapprovers = User::where('branch_code', $HObranchID)
                 ->where('role', 'approver')
-                ->where('position', '!=', 'AVP - Finance')
+                ->where('position', '!=', 'AVP - Finance Staff')
 
                 ->select('id', 'firstName', 'lastName', 'email', 'role', 'position', 'branch_code')
                 ->get();
@@ -191,7 +191,7 @@ class ApproverController extends Controller
             // Fetch approvers from the HO branch, excluding the requester if they are an approver
             $HOapprovers = User::where('branch_code', $HObranchID)
                 ->where('role', 'approver')
-                ->where('position', 'AVP - Finance')
+                ->where('position', 'AVP - Finance Staff')
                 ->select('id', 'firstName', 'lastName', 'email', 'role', 'position', 'branch_code')
                 ->get();
 
@@ -355,7 +355,7 @@ class ApproverController extends Controller
 
         $user = User::find($request->input('user_id'));
 
-        if ($user->position !== 'AVP - Finance') {
+        if ($user->position !== 'AVP - Finance Staff') {
             return response()->json([
                 'message' => 'The selected user is not an AVP-Finance.',
             ], 400);
@@ -385,7 +385,7 @@ class ApproverController extends Controller
 
             $user = User::find($request->input('user_id'));
 
-            if ($user->position !== 'AVP - Finance') {
+            if ($user->position !== 'AVP - Finance Staff') {
                 return response()->json([
                     'message' => 'The selected user is not an AVP-Finance.',
                 ], 400);

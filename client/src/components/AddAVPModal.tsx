@@ -415,6 +415,9 @@ const AddAVPModal = ({
                       </label>
                     </div>
                   ))}
+                  {avpList.length === 0 && (
+                    <p className="text-center">No AVP staff to select</p>
+                  )}
                 </div>
               </div>
             )}

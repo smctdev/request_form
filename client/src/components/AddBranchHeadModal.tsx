@@ -114,7 +114,7 @@ const AddBranchHeadModal = ({
         console.error("Error fetching branches:", error);
         setError("Failed to fetch branches");
         setBranches([]);
-      } finally{
+      } finally {
         setLoading(false);
       }
     };
@@ -172,6 +172,8 @@ const AddBranchHeadModal = ({
         setIsLoading(false);
         closeModal();
         openCompleteModal(); // Implement your completion modal or alert
+        setSelectedUser(null);
+        setSelectedBranches([]);
         refreshData(); // Refresh parent data if needed
       } catch (error) {
         console.error("Error creating branch head:", error);
@@ -284,25 +286,35 @@ const AddBranchHeadModal = ({
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {users.map((user) => (
-                        <tr
-                          key={user.id}
-                          className={`cursor-pointer hover:bg-gray-200  ${
-                            selectedUser === user.id ? "bg-blue-200" : ""
-                          }`}
-                          onClick={() => setSelectedUser(user)}
-                        >
-                          <td className="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-                            {user.id}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                            {`${user.name}`}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                            {user.email}
-                          </td>
-                        </tr>
-                      ))}
+                      {users.length === 0 ? (
+                        <>
+                          <tr>
+                            <td colSpan={3} className="text-center">
+                              No users found
+                            </td>
+                          </tr>
+                        </>
+                      ) : (
+                        users.map((user) => (
+                          <tr
+                            key={user.id}
+                            className={`cursor-pointer hover:bg-gray-200  ${
+                              selectedUser === user.id ? "bg-blue-200" : ""
+                            }`}
+                            onClick={() => setSelectedUser(user)}
+                          >
+                            <td className="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
+                              {user.id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                              {`${user.name}`}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                              {user.email}
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>

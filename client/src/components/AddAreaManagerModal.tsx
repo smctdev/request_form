@@ -79,7 +79,7 @@ const AddAreaManagerModal = ({
         setUsers(transformedData);
       } catch (error) {
         console.error("Error fetching users data:", error);
-      } finally{
+      } finally {
         setLoading(false);
       }
     };
@@ -170,6 +170,8 @@ const AddAreaManagerModal = ({
         closeModal();
         openCompleteModal(); // Implement your completion modal or alert
         refreshData(); // Refresh parent data if needed
+        setSelectedUser(null);
+        setSelectedBranches([]);
       } catch (error) {
         console.error("Error creating area manager:", error);
         setIsLoading(false);
@@ -307,25 +309,35 @@ const AddAreaManagerModal = ({
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {users.map((user) => (
-                        <tr
-                          key={user.id}
-                          className={`cursor-pointer hover:bg-gray-200  ${
-                            selectedUser === user.id ? "bg-blue-200" : ""
-                          }`}
-                          onClick={() => setSelectedUser(user)}
-                        >
-                          <td className="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-                            {user.id}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                            {`${user.name}`}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                            {user.email}
-                          </td>
-                        </tr>
-                      ))}
+                      {users.length === 0 ? (
+                        <>
+                          <tr>
+                            <td className="text-center" colSpan={3}>
+                              No users found
+                            </td>
+                          </tr>
+                        </>
+                      ) : (
+                        users.map((user) => (
+                          <tr
+                            key={user.id}
+                            className={`cursor-pointer hover:bg-gray-200  ${
+                              selectedUser === user.id ? "bg-blue-200" : ""
+                            }`}
+                            onClick={() => setSelectedUser(user)}
+                          >
+                            <td className="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
+                              {user.id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                              {`${user.name}`}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                              {user.email}
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -334,23 +346,24 @@ const AddAreaManagerModal = ({
           </div>
         )}
       </div>
-      {isButtonVisible?
-      <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2">
-        <button
-          onClick={handleCancel}
-          className="h-12 px-4 py-2 font-bold text-white bg-gray-500 rounded cursor-pointer hover:bg-gray-600"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleConfirmSelection}
-          className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer bg-primary hover:bg-blue-400"
-        >
-          {isLoading ? "Adding..." : "Add Area Manager"}
-        </button>
-      </div> :
-      <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2"/>
-      }
+      {isButtonVisible ? (
+        <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2">
+          <button
+            onClick={handleCancel}
+            className="h-12 px-4 py-2 font-bold text-white bg-gray-500 rounded cursor-pointer hover:bg-gray-600"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleConfirmSelection}
+            className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer bg-primary hover:bg-blue-400"
+          >
+            {isLoading ? "Adding..." : "Add Area Manager"}
+          </button>
+        </div>
+      ) : (
+        <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2" />
+      )}
     </div>
   );
 };
