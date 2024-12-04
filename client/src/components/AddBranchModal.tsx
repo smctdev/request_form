@@ -54,9 +54,9 @@ const AddBranchModal = ({
         Authorization: `Bearer ${token}`,
       };
       const requestData = {
-        branch: data.branchNameInput,
+        branch: data.branch,
         branch_code: data.branchCode,
-        branch_name: data.branch,
+        branch_name: data.branchNameInput,
       };
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/add-branch`,
