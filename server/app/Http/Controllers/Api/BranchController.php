@@ -28,7 +28,7 @@ class BranchController extends Controller
 
         $branch = Branch::create([
             'branch_code' => $request->branch_code,
-            'branch_name' => strtoupper($request->branch_code),
+            'branch_name' => strtoupper($request->branch_name),
             'branch' => $request->branch,
             'acronym' => match ($request->branch) {
                 "Strong Moto Centrum, Inc." => "SMCT",

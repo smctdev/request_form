@@ -501,12 +501,12 @@ const EditUserModal = ({
                 <input
                   className={`${inputStyle}`}
                   value={
-                    field === "BranchCode" ? editedBranchCode : editedBranch
+                    field === "BranchCode" ? editedBranchCode : editedBranchName
                   }
                   onChange={(e) =>
                     field === "BranchCode"
                       ? setEditedBranchCode(e.target.value)
-                      : setEditedBranch(e.target.value)
+                      : setEditedBranchName(e.target.value)
                   }
                 />
               ) : (
