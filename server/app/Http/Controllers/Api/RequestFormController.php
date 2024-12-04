@@ -45,7 +45,7 @@ class RequestFormController extends Controller
             $formDataArray = json_decode($validated['form_data'], true);
             $notedByIds = json_decode($validated['noted_by'], true);
             $approvedByIds = json_decode($validated['approved_by'], true);
-            $currency = $validated['currency'];
+            $currency = $validated['currency'] ?: "PHP";
 
             /*    $formDataArray = $validated['form_data'];
                $notedByIds = $validated['noted_by'];
