@@ -87,8 +87,6 @@ const AddApproverModal = ({
     )
   );
 
-  console.log(filteredApproverlist);
-
   useEffect(() => {
     // Check if at least one user is selected
     setIsButtonVisible(selectedUsers.length > 0);

@@ -8,12 +8,11 @@ type Props = {};
 
 const Help: React.FC<Props> = ({}) => {
   const { role } = useUser();
-  console.log(role);
   return (
     <div className="bg-graybg dark:bg-blackbg h-full py-[26px]  px-[35px] ">
       <div className="bg-primary w-full sm:w-full h-96 rounded-[12px] pl-[30px] flex flex-col justify-center items-center">
-        <p className="text-5xl text-white font-bold ">Help Center</p>
-        <p className="mt-2  ">
+        <p className="text-5xl font-bold text-white ">Help Center</p>
+        <p className="mt-2 ">
           Explore Our Categories to Quickly Access the Information You Need.
         </p>
       </div>

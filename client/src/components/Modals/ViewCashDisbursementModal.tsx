@@ -390,7 +390,6 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
         : [];
       formData.append("noted_by", JSON.stringify(notedByIds));
       formData.append("approved_by", JSON.stringify(approvedByIds));
-      console.log("Currency before appending:", editableRecord.currency);
       formData.append("currency", editableRecord.currency);
       formData.append(
         "form_data",

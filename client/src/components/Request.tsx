@@ -281,7 +281,6 @@ const Request = (props: Props) => {
             { headers }
           );
           setRequests(response.data.data);
-          console.log("requests", response.data.data);
         } catch (error) {
           console.error("Error fetching requests data:", error);
         } finally {

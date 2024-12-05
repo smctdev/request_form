@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 
 type User = {
   id: number;
@@ -48,6 +49,7 @@ const AddAVPModal = ({
   const [avpList, setAvpList] = useState<User[]>([]);
   const [selectedAVP, setSelectedAVP] = useState<User | null>(null);
   const [errorValidation, setErrorValidation] = useState<string | null>(null);
+  const [isWaiting, setIsWaiting] = useState(false);
 
   useEffect(() => {
     const fetchAVP = async () => {
@@ -72,6 +74,8 @@ const AddAVPModal = ({
         setAvpList(response.data.HOApprovers);
       } catch (error) {
         console.error("Error fetching users data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -81,6 +85,7 @@ const AddAVPModal = ({
   }, [modalIsOpen]);
   useEffect(() => {
     const fetchUsers = async () => {
+      setIsWaiting(true);
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -95,6 +100,9 @@ const AddAVPModal = ({
         const response = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/getStaff`,
           {
+            params: {
+              id: selectedAVP?.id,
+            },
             headers,
           }
         );
@@ -103,16 +111,17 @@ const AddAVPModal = ({
       } catch (error) {
         console.error("Error fetching users data:", error);
       } finally {
-        setLoading(false);
+        setIsWaiting(false);
       }
     };
 
-    if (modalIsOpen) {
+    if (selectedAVP && modalIsOpen) {
       fetchUsers();
     }
-  }, [modalIsOpen]);
+  }, [selectedAVP, modalIsOpen]);
   useEffect(() => {
     const fetchBranches = async () => {
+      setIsWaiting(true);
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -135,6 +144,8 @@ const AddAVPModal = ({
         console.error("Error fetching branches:", error);
         setError("Failed to fetch branches");
         setBranches([]);
+      } finally {
+        setIsWaiting(false);
       }
     };
 
@@ -237,6 +248,13 @@ const AddAVPModal = ({
     closeModal();
   };
 
+  const handleBack = () => {
+    setSelectedUser(null);
+    setSelectedBranches([]);
+    setSelectedAVP(null);
+    setErrorValidation(null);
+  };
+
   if (!modalIsOpen) {
     return null;
   }
@@ -248,6 +266,12 @@ const AddAVPModal = ({
   return (
     <div className="fixed top-0 left-0 flex flex-col items-center justify-center w-full h-full bg-black bg-opacity-50">
       <div className="p-4 w-10/12 sm:w-1/3 relative bg-primary flex justify-center mx-20 border-b rounded-t-[12px]">
+        {selectedAVP && (
+          <ArrowLeftIcon
+            className="absolute text-black cursor-pointer size-6 left-3"
+            onClick={handleBack}
+          />
+        )}
         <h2 className="text-center text-xl md:text-[32px] font-bold text-white">
           Add {entityType}
         </h2>
@@ -288,23 +312,35 @@ const AddAVPModal = ({
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {users.map((user: User) => (
-                          <tr
-                            key={user.id}
-                            className={`cursor-pointer hover:bg-gray-200 `}
-                            onClick={() => setSelectedUser(user)}
-                          >
-                            <td className="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
-                              {user.id}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                              {`${user.firstName} ${user.lastName}`}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                              {user.email}
-                            </td>
-                          </tr>
-                        ))}
+                        {isWaiting ? (
+                          <>
+                            {Array.from({ length: 10 }).map((_, index) => (
+                              <tr key={index}>
+                                <td colSpan={3}>
+                                  <p className="h-10 rounded-none bg-slate-300 skeleton"></p>
+                                </td>
+                              </tr>
+                            ))}
+                          </>
+                        ) : (
+                          users.map((user: User) => (
+                            <tr
+                              key={user.id}
+                              className={`cursor-pointer hover:bg-gray-200 `}
+                              onClick={() => setSelectedUser(user)}
+                            >
+                              <td className="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
+                                {user.id}
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                {`${user.firstName} ${user.lastName}`}
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                {user.email}
+                              </td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -353,14 +389,38 @@ const AddAVPModal = ({
                           })}
                         </div>
                         <div className="px-4">
-                          {branches.length === 0 ? (
-                            <ClipLoader
-                              size={35}
-                              color={"#123abc"}
-                              loading={loading}
-                            />
+                          {branches.length < 0 ? (
+                            <div className="flex items-center justify-between mb-2 bg-blue-100">
+                              <div className="flex items-center justify-center w-full p-4">
+                                <div>No branches found</div>
+                              </div>
+                            </div>
                           ) : (
-                            branches
+                            isWaiting ? (
+                              <>
+                              {Array.from({ length: 4 }).map((_, index) => (
+                                <div
+                                key={index}
+                                className="flex items-center justify-between mb-2 rounded-none bg-slate-300 skeleton"
+                              >
+                                <div className="flex items-center justify-between w-full p-4">
+                                  <div>
+                                    <p className="h-5 mb-4 w-52 bg-slate-400 skeletion"></p>
+                                    <p className="h-5 w-36 bg-slate-400 skeletion"></p>
+                                  </div>
+                                  <div>
+                                    <input
+                                      type="checkbox"
+                                      disabled
+                                      className="mx-1 text-blue-500 cursor-pointer size-5"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                              ))}
+                              </>
+                            ) : (
+                              branches
                               .filter((branch) => {
                                 const branchName = branch.branch.toLowerCase();
                                 const branchCode =
@@ -396,6 +456,7 @@ const AddAVPModal = ({
                                   </div>
                                 </div>
                               ))
+                            )
                           )}
                         </div>
                       </div>
