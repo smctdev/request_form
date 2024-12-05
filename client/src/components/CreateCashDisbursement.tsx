@@ -231,7 +231,6 @@ const CreateCashDisbursement = (props: Props) => {
       console.error("An error occurred while submitting the request:", error);
     } finally {
       setLoading(false);
-      console.log("Form submitted", selectedCurrency);
     }
   };
   const closeModal = () => {

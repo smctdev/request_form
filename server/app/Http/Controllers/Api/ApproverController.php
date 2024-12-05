@@ -20,9 +20,10 @@ class ApproverController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getStaff()
+    public function getStaff(Request $request)
     {
         try {
+            $avpId = $request->query('id');
 
             // Fetch the ID for the 'HO' branch
             $HObranchID = (int) Branch::where('branch_code', 'HO')->value('id');
@@ -30,6 +31,7 @@ class ApproverController extends Controller
             // Fetch approvers from the HO branch, excluding the requester if they are an approver
             $HOapprovers = User::where('branch_code', $HObranchID)
                 ->where('role', 'approver')
+                ->where('id', '!=', $avpId)
                 ->whereDoesntHave('approverStaffs')
                 ->select('id', 'firstName', 'lastName', 'email', 'role', 'position', 'branch_code')
                 ->get();
@@ -190,6 +192,7 @@ class ApproverController extends Controller
             // Fetch approvers from the HO branch, excluding the requester if they are an approver
             $HOapprovers = User::where('branch_code', $HObranchID)
                 ->where('role', 'approver')
+                ->where('position', 'AVP - Finance')
                 ->select('id', 'firstName', 'lastName', 'email', 'role', 'position', 'branch_code')
                 ->get();
 
@@ -351,9 +354,9 @@ class ApproverController extends Controller
 
         $user = User::with('branch')->find($request->input('user_id'));
 
-        if ($user->branch !== 'Head Office') {
+        if ($user->position !== 'AVP - Finance') {
             return response()->json([
-                'message' => 'The selected user is not from HEAD OFFICE.',
+                'message' => 'The selected user is not AVP - FINANCE.',
             ], 400);
         }
 

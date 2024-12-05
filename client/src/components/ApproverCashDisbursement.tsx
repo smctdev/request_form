@@ -496,7 +496,6 @@ const ApproverCashDisbursement: React.FC<Props> = ({
       user: user,
       requested_branch: record?.branch,
     };
-    console.log(data);
     // Open a new window with PrintCashDisbursement component
     localStorage.setItem("printData", JSON.stringify(data));
     const newWindow = window.open(`/print-cashDisbursement`, "_blank");

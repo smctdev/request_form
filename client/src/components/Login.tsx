@@ -82,7 +82,6 @@ const Login: React.FC = () => {
           confirmButtonColor: "#dc3545",
         });
         setError(response.data.message);
-        console.log(response.data);
       }
     } catch (error: any) {
       if (error.response.status === 500) {
