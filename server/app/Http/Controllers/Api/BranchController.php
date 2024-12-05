@@ -58,6 +58,10 @@ class BranchController extends Controller
 
                 // Fetch branches with specific IDs
                 $branches = Branch::whereIn('id', $idsArray)->orderBy('created_at', 'desc')->get();
+
+                $AVPStaff = AVPFinanceStaff::pluck('branch_id')->flatten();
+
+                $hasBranches = Branch::whereNotIn('id', $AVPStaff)->get();
             } else {
                 // Fetch all branches if no IDs are provided
                 $branches = Branch::all();
