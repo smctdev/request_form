@@ -155,7 +155,7 @@ const CreatePurchaseOrder = (props: Props) => {
         console.error("Token or userId not found");
         return;
       }
-      if (notedBy.length === 0 || approvedBy.length === 0) {
+      if (approvedBy.length === 0) {
         Swal.fire({
           icon: "error",
           title: "No approver selected",
@@ -201,6 +201,7 @@ const CreatePurchaseOrder = (props: Props) => {
       formData.append("noted_by", JSON.stringify(notedByIds));
       formData.append("approved_by", JSON.stringify(approvedByIds));
       formData.append("form_type", "Purchase Order Requisition Slip");
+      formData.append("currency", "PHP");
       formData.append("user_id", userId);
 
       formData.append(
@@ -259,7 +260,7 @@ const CreatePurchaseOrder = (props: Props) => {
     // Close the confirmation modal
     setShowConfirmationModal(false);
     const token = localStorage.getItem("token");
-    if (!notedBy && !approvedBy) {
+    if (!approvedBy) {
       Swal.fire({
         icon: "error",
         title: "No approver selected",

@@ -30,8 +30,7 @@ class ApproverController extends Controller
             // Fetch approvers from the HO branch, excluding the requester if they are an approver
             $HOapprovers = User::where('branch_code', $HObranchID)
                 ->where('role', 'approver')
-                ->where('position', '!=', 'AVP - Finance Staff')
-
+                ->whereDoesntHave('approverStaffs')
                 ->select('id', 'firstName', 'lastName', 'email', 'role', 'position', 'branch_code')
                 ->get();
 
@@ -191,7 +190,6 @@ class ApproverController extends Controller
             // Fetch approvers from the HO branch, excluding the requester if they are an approver
             $HOapprovers = User::where('branch_code', $HObranchID)
                 ->where('role', 'approver')
-                ->where('position', 'AVP - Finance Staff')
                 ->select('id', 'firstName', 'lastName', 'email', 'role', 'position', 'branch_code')
                 ->get();
 
@@ -242,8 +240,6 @@ class ApproverController extends Controller
             // Fetch approvers based on the branch ID
 
             $HOapprovers = User::with('approverStaffs')->where('branch_code', $HObranchID)
-
-                ->doesntHave('approverStaffs')
 
                 ->where('role', 'approver')
 
@@ -353,11 +349,11 @@ class ApproverController extends Controller
             'staff_id.*' => 'required|exists:users,id',
         ]);
 
-        $user = User::find($request->input('user_id'));
+        $user = User::with('branch')->find($request->input('user_id'));
 
-        if ($user->position !== 'AVP - Finance Staff') {
+        if ($user->branch !== 'Head Office') {
             return response()->json([
-                'message' => 'The selected user is not an AVP-Finance.',
+                'message' => 'The selected user is not from HEAD OFFICE.',
             ], 400);
         }
 
@@ -374,20 +370,18 @@ class ApproverController extends Controller
 
     public function createAVPFinanceStaff(Request $request)
     {
-        try {
 
             // Validate the incoming request
             $request->validate([
                 'user_id' => 'required|exists:users,id',
                 'staff_id' => 'required|exists:users,id',
-                'branch_id' => 'required|exists:branches,id',
+                'branch_id' => 'required',
             ]);
 
-            $user = User::find($request->input('user_id'));
-
-            if ($user->position !== 'AVP - Finance Staff') {
+            $user = User::with('branch')->find($request->input('user_id'));
+            if ($user->branch !== 'Head Office') {
                 return response()->json([
-                    'message' => 'The selected user is not an AVP-Finance.',
+                    'message' => 'The selected user is not from HEAD OFFICE.',
                 ], 400);
             }
 
@@ -418,12 +412,6 @@ class ApproverController extends Controller
                 'message' => 'AVP-Finance staff with assigned branches created successfully',
                 'avp_staffs' => $avpFinanceStaff
             ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'An error occurred while creating the AVP-Finance staff',
-                'error' => $e->getMessage()
-            ], 500);
-        }
     }
     public function deleteApprover($user_id)
     {

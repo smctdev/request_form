@@ -121,10 +121,13 @@ const AddCustomModal: React.FC<AddCustomModalProps> = ({
   };
 
   const handleAddCustomRequest = () => {
-    if (notedBy.length === 0 || approvedBy.length === 0) {
-      setErrorMessage(
-        "You must select at least one noted by and one approved by."
-      );
+    if (notedBy.length > 0 && approvedBy.length === 0) {
+      setErrorMessage("You must select at least one approved by if noted by is selected.");
+      return;
+    }
+    
+    if (approvedBy.length === 0) {
+      setErrorMessage("You must select at least one approved by.");
       return;
     }
 

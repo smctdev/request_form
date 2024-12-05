@@ -356,7 +356,7 @@ const CreateApplicationCash = (props: Props) => {
         console.error("Token or userId not found");
         return;
       }
-      if (notedBy.length === 0 || approvedBy.length === 0) {
+      if (approvedBy.length === 0) {
         Swal.fire({
           icon: "error",
           title: "No approver selected",
@@ -421,6 +421,7 @@ const CreateApplicationCash = (props: Props) => {
       formData.append("noted_by", JSON.stringify(notedByIds));
       formData.append("approved_by", JSON.stringify(approvedByIds));
       formData.append("form_type", "Application For Cash Advance");
+      formData.append("currency", "PHP");
       formData.append("user_id", userId);
 
       formData.append(
@@ -486,7 +487,7 @@ const CreateApplicationCash = (props: Props) => {
     setShowConfirmationModal(false);
     const token = localStorage.getItem("token");
 
-    if (!notedBy && !approvedBy) {
+    if (!approvedBy) {
       Swal.fire({
         icon: "error",
         title: "No approver selected",

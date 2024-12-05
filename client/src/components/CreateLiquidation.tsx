@@ -330,7 +330,7 @@ const CreateLiquidation = (props: Props) => {
         return;
       }
 
-      if (notedBy.length === 0 || approvedBy.length === 0) {
+      if (approvedBy.length === 0) {
         Swal.fire({
           icon: "error",
           title: "No approver selected",
@@ -387,6 +387,7 @@ const CreateLiquidation = (props: Props) => {
       formData.append("approved_by", JSON.stringify(approvedByIds));
       formData.append("form_type", "Liquidation of Actual Expense");
       formData.append("approvers_id", String(selectedApproverList));
+      formData.append("currency", "PHP");
       formData.append("user_id", userId);
 
       formData.append(
@@ -452,7 +453,7 @@ const CreateLiquidation = (props: Props) => {
     // Close the confirmation modal
     setShowConfirmationModal(false);
     const token = localStorage.getItem("token");
-    if (!notedBy && !approvedBy) {
+    if (!approvedBy) {
       Swal.fire({
         icon: "error",
         title: "No approver selected",

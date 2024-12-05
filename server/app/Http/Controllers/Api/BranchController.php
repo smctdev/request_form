@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\AVPFinanceStaff;
 use Illuminate\Http\Request;
 use App\Models\Branch;
 use Illuminate\Support\Facades\Validator;
@@ -45,7 +46,6 @@ class BranchController extends Controller
             'data' => $branch,
 
         ]);
-
     }
 
     // VIEW BRANCH
@@ -61,11 +61,15 @@ class BranchController extends Controller
             } else {
                 // Fetch all branches if no IDs are provided
                 $branches = Branch::all();
-            }
 
+                $AVPStaff = AVPFinanceStaff::pluck('branch_id')->flatten();
+
+                $hasBranches = Branch::whereNotIn('id', $AVPStaff)->get();
+            }
             return response()->json([
                 'message' => 'Branches retrieved successfully',
                 'data' => $branches,
+                'hasBranches' => $hasBranches,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -106,7 +110,6 @@ class BranchController extends Controller
                 'message' => 'Branch updated successfully',
                 'data' => $branch
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while updating the branch',

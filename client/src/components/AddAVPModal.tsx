@@ -47,6 +47,7 @@ const AddAVPModal = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [avpList, setAvpList] = useState<User[]>([]);
   const [selectedAVP, setSelectedAVP] = useState<User | null>(null);
+  const [errorValidation, setErrorValidation] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAVP = async () => {
@@ -129,7 +130,7 @@ const AddAVPModal = ({
           }
         );
 
-        setBranches(response.data.data);
+        setBranches(response.data.hasBranches);
       } catch (error) {
         console.error("Error fetching branches:", error);
         setError("Failed to fetch branches");
@@ -195,6 +196,8 @@ const AddAVPModal = ({
         refreshData(); // Refresh parent data if needed
         setSelectedAVP(null);
         setSelectedBranches([]);
+        setErrorValidation(null);
+        setSelectedUser(null);
       } catch (error: unknown) {
         setIsLoading(false); // Ensure loading state is cleared
 
@@ -203,6 +206,7 @@ const AddAVPModal = ({
           if (error.response) {
             // Log the full error for debugging purposes
             console.error("Error response data:", error.response.data);
+            setErrorValidation(error.response.data.message);
 
             // Set the error message from the backend
             setError(
@@ -229,6 +233,7 @@ const AddAVPModal = ({
     setSelectedUser(null);
     setSelectedBranches([]);
     setSelectedAVP(null);
+    setErrorValidation(null);
     closeModal();
   };
 
@@ -248,7 +253,7 @@ const AddAVPModal = ({
         </h2>
         <XMarkIcon
           className="absolute text-black cursor-pointer size-6 right-3"
-          onClick={closeModal}
+          onClick={handleCancel}
         />
       </div>
 
@@ -318,6 +323,11 @@ const AddAVPModal = ({
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="p-2 mb-2 bg-white border border-black rounded-md"
                         />
+                        {errorValidation && (
+                          <p className="p-3 text-red-600 bg-red-200 rounded">
+                            {errorValidation}
+                          </p>
+                        )}
                         <div className="flex flex-wrap px-4 mt-4 mb-4">
                           {selectedBranches.map((branchId) => {
                             const branch = branches.find(
@@ -442,7 +452,6 @@ const AddAVPModal = ({
       ) : (
         <div className="bg-white w-10/12 sm:w-1/3 rounded-b-[12px] shadow-lg p-2 bottom-4 right-4 flex justify-end space-x-2" />
       )}
-
     </div>
   );
 };

@@ -315,18 +315,7 @@ const CreateDiscount = (props: Props) => {
         console.error("Token or userId not found");
         return;
       }
-      if (notedBy.length === 0 || approvedBy.length === 0) {
-        Swal.fire({
-          icon: "error",
-          title: "No approver selected",
-          text: "Please select an approver. To proceed, click on 'Add Approver' button above and select an approver from list.",
-          confirmButtonText: "Close",
-          confirmButtonColor: "#007bff",
-        });
-        setLoading(false); // Stop loading state
-        return; // Prevent form submission
-      }
-      if (notedBy.length === 0 || approvedBy.length === 0) {
+      if (approvedBy.length === 0) {
         Swal.fire({
           icon: "error",
           title: "No approver selected",
@@ -352,6 +341,7 @@ const CreateDiscount = (props: Props) => {
       formData.append("noted_by", JSON.stringify(notedByIds));
       formData.append("approved_by", JSON.stringify(approvedByIds));
       formData.append("form_type", "Discount Requisition Form");
+      formData.append("currency", "PHP");
       formData.append("user_id", userId);
 
       formData.append(
@@ -408,7 +398,7 @@ const CreateDiscount = (props: Props) => {
     setShowConfirmationModal(false);
     const token = localStorage.getItem("token");
 
-    if (!notedBy && !approvedBy) {
+    if (!approvedBy) {
       Swal.fire({
         icon: "error",
         title: "No approver selected",

@@ -159,7 +159,7 @@ const CreateCashDisbursement = (props: Props) => {
         console.error("Token or userId not found");
         return;
       }
-      if (notedBy.length === 0 || approvedBy.length === 0) {
+      if (approvedBy.length === 0) {
         Swal.fire({
           icon: "error",
           title: "No approver selected",
@@ -251,7 +251,7 @@ const CreateCashDisbursement = (props: Props) => {
     setShowConfirmationModal(false);
     const token = localStorage.getItem("token");
 
-    if (!notedBy && !approvedBy) {
+    if (!approvedBy) {
       Swal.fire({
         icon: "error",
         title: "No approver selected",
