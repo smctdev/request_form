@@ -302,11 +302,11 @@ class RequestFormController extends Controller
                     ['type' => 'noted_by', 'ids' => $notedByIds],
                     ['type' => 'approved_by', 'ids' => $approvedByIds]
                 ];
-            }
-
+            } else {
             $approvers = [
                 ['type' => 'approved_by', 'ids' => $approvedByIds]
             ];
+            }
 
             // Process each approver (noted_by and approved_by)
             foreach ($approvers as $approverGroup) {

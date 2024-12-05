@@ -97,6 +97,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Branch::class, 'branch_code');
     }
+
+    public function areaManagers()
+    {
+        return $this->hasMany(AreaManager::class);
+    }
     /**
      * The default values for attributes.
      *
@@ -109,5 +114,4 @@ class User extends Authenticatable
      *
      * @var string
      */
-
 }

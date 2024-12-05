@@ -5,6 +5,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 
 type User = {
   id: number;
+  area_managers: string[];
   name: string;
   firstname: string;
   lastname: string;
@@ -64,9 +65,11 @@ const AddAreaManagerModal = ({
           }
         );
 
+        console.log(response.data.data);
+
         // Filter and map data to desired format
         const transformedData = response.data.data
-          .filter((item: User) => item.position.trim() === "Area Manager")
+          .filter((item: User) => item.position.trim() === "Area Manager" && item.area_managers.length === 0)
           .map((item: User) => ({
             id: item.id,
             name: `${item.firstname} ${item.lastname}`,

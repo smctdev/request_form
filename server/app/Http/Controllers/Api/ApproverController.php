@@ -32,6 +32,7 @@ class ApproverController extends Controller
             $HOapprovers = User::where('branch_code', $HObranchID)
                 ->where('role', 'approver')
                 ->where('id', '!=', $avpId)
+                ->where('position', '!=', 'AVP - Finance')
                 ->whereDoesntHave('approverStaffs')
                 ->select('id', 'firstName', 'lastName', 'email', 'role', 'position', 'branch_code')
                 ->get();
@@ -243,6 +244,7 @@ class ApproverController extends Controller
             // Fetch approvers based on the branch ID
 
             $HOapprovers = User::with('approverStaffs')->where('branch_code', $HObranchID)
+                ->whereDoesntHave('approverStaffs')
 
                 ->where('role', 'approver')
 
@@ -258,6 +260,7 @@ class ApproverController extends Controller
 
 
             $sameBranchApprovers = User::with('approverStaffs')->where('branch_code', $requesterBranch)
+                ->whereDoesntHave('approverStaffs')
 
                 ->where('role', 'approver')
 
@@ -279,7 +282,7 @@ class ApproverController extends Controller
                     ->whereJsonContains('branch_id', $requesterBranch);
             })
 
-                ->doesntHave('approverStaffs')
+                ->whereDoesntHave('approverStaffs')
 
                 ->get(['id', 'firstName', 'lastName', 'role', 'position', 'branch_code']);
 
@@ -374,47 +377,47 @@ class ApproverController extends Controller
     public function createAVPFinanceStaff(Request $request)
     {
 
-            // Validate the incoming request
-            $request->validate([
-                'user_id' => 'required|exists:users,id',
-                'staff_id' => 'required|exists:users,id',
-                'branch_id' => 'required',
-            ]);
+        // Validate the incoming request
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'staff_id' => 'required|exists:users,id',
+            'branch_id' => 'required',
+        ]);
 
-            $user = User::with('branch')->find($request->input('user_id'));
-            if ($user->branch !== 'Head Office') {
-                return response()->json([
-                    'message' => 'The selected user is not from HEAD OFFICE.',
-                ], 400);
-            }
+        $user = User::with('branch')->find($request->input('user_id'));
+        if ($user->branch !== 'Head Office') {
+            return response()->json([
+                'message' => 'The selected user is not from HEAD OFFICE.',
+            ], 400);
+        }
 
-            // Check if the branch ID already exists in the JSON column of a_v_p_finance_staff
-            $branchId = $request->input('branch_id');
-            $exists = DB::table('a_v_p_finance_staff')
-                ->whereJsonContains('branch_id', $branchId)
-                ->exists();
+        // Check if the branch ID already exists in the JSON column of a_v_p_finance_staff
+        $branchId = $request->input('branch_id');
+        $exists = DB::table('a_v_p_finance_staff')
+            ->whereJsonContains('branch_id', $branchId)
+            ->exists();
 
-            if ($exists) {
-                $branchCodes = Branch::whereIn('id', $branchId)
-                    ->pluck('branch_code')
-                    ->toArray();
-
-                return response()->json([
-                    'message' =>  implode(',', $branchCodes) . ' branch has already been taken.'
-                ], 422);
-            }
-
-            // Create a new AVP-Finance Staff with assigned branches
-            $avpFinanceStaff = AVPFinanceStaff::create([
-                'user_id' => $request->input('user_id'),
-                'staff_id' => $request->input('staff_id'),
-                'branch_id' => $branchId,
-            ]);
+        if ($exists) {
+            $branchCodes = Branch::whereIn('id', $branchId)
+                ->pluck('branch_code')
+                ->toArray();
 
             return response()->json([
-                'message' => 'AVP-Finance staff with assigned branches created successfully',
-                'avp_staffs' => $avpFinanceStaff
-            ], 201);
+                'message' =>  implode(',', $branchCodes) . ' branch has already been taken.'
+            ], 422);
+        }
+
+        // Create a new AVP-Finance Staff with assigned branches
+        $avpFinanceStaff = AVPFinanceStaff::create([
+            'user_id' => $request->input('user_id'),
+            'staff_id' => $request->input('staff_id'),
+            'branch_id' => $branchId,
+        ]);
+
+        return response()->json([
+            'message' => 'AVP-Finance staff with assigned branches created successfully',
+            'avp_staffs' => $avpFinanceStaff
+        ], 201);
     }
     public function deleteApprover($user_id)
     {

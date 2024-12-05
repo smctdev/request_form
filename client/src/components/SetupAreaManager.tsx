@@ -211,6 +211,7 @@ const SetupAreaManager = (props: Props) => {
             headers,
           }
         );
+        console.log(userResponse);
 
         const userInfo: Record = userResponse.data;
 

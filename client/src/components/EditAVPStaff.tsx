@@ -308,7 +308,7 @@ const EditAVPStaff = ({
           onClick={handleConfirmSelection}
           className="h-12 px-4 py-2 font-bold text-white rounded cursor-pointer hover:bg-blue-400 bg-primary"
         >
-          {isLoading ? <ClipLoader color="#36d7b7" /> : "Update Area Manager"}
+          {isLoading ? <ClipLoader color="#36d7b7" /> : "Update AVP"}
         </button>
       </div>
       {error && (
