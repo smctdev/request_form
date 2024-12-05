@@ -373,6 +373,7 @@ const ViewPurchaseModal: React.FC<Props> = ({
         : [];
       formData.append("noted_by", JSON.stringify(notedByIds));
       formData.append("approved_by", JSON.stringify(approvedByIds));
+      formData.append("currency", "PHP");
       formData.append(
         "form_data",
         JSON.stringify([

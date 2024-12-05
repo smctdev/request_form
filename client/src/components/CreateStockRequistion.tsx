@@ -37,7 +37,6 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 type Props = {};
- 
 
 const buttonStyle = "h-[45px] w-[150px] rounded-[12px] text-white";
 const tableStyle = "border border-black p-2 border-collapse";
@@ -154,7 +153,7 @@ const CreateStockRequistion = (props: Props) => {
         console.error("Token or userId not found");
         return;
       }
-      if (notedBy.length === 0 || approvedBy.length === 0) {
+      if (approvedBy.length === 0) {
         Swal.fire({
           icon: "error",
           title: "No approver selected",
@@ -201,6 +200,7 @@ const CreateStockRequistion = (props: Props) => {
         : [];
       formData.append("noted_by", JSON.stringify(notedByIds));
       formData.append("approved_by", JSON.stringify(approvedByIds));
+      formData.append("currency", "PHP");
       formData.append("user_id", userId);
       formData.append("form_type", "Stock Requisition Slip");
       formData.append(
@@ -244,7 +244,7 @@ const CreateStockRequistion = (props: Props) => {
     setShowConfirmationModal(false);
     const token = localStorage.getItem("token");
 
-    if (!notedBy || !approvedBy) {
+    if (!approvedBy) {
       Swal.fire({
         icon: "error",
         title: "No approver selected",
@@ -381,13 +381,11 @@ const CreateStockRequistion = (props: Props) => {
         <option value="" disabled>
           Type of request
         </option>
-        {
-          RequestType.map((item) => (
-            <option key={item.title} value={item.path}>
-              {item.title}
-            </option>
-          ))
-        }
+        {RequestType.map((item) => (
+          <option key={item.title} value={item.path}>
+            {item.title}
+          </option>
+        ))}
       </select>
 
       <div className="bg-white w-full  mb-5 rounded-[12px] flex flex-col ">
@@ -828,7 +826,10 @@ const CreateStockRequistion = (props: Props) => {
                       ) : (
                         // Display document icon if file is not an image
                         <div className="flex items-center justify-center w-full h-20 bg-gray-100 rounded-md">
-                          <img src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png" alt="" />
+                          <img
+                            src="https://cdn-icons-png.flaticon.com/512/3396/3396255.png"
+                            alt=""
+                          />
                         </div>
                       )}
 

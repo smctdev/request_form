@@ -34,18 +34,18 @@ class RequestFormController extends Controller
                 'user_id' => 'required|exists:users,id',
                 'form_type' => 'required|string',
                 'form_data' => 'required|string', // Temporarily string for decoding
-                'noted_by' => 'required|string',
+                'noted_by' => 'string',
+                'currency' => 'required_if:form_type,Cash Disbursement Requisition Slip|string|in:PHP,USD,EURO',
                 'approved_by' => 'required|string',
-                'currency' => 'required|string|in:PHP,USD,EURO',
                 'attachment.*' => 'file|mimes:webp,pdf,png,jpg,jpeg,doc,docx,xls,xlsx,ppt,pptx,bmp,txt,zip,gif',
             ]);
 
             $userID = $validated['user_id'];
             $formType = $validated['form_type'];
             $formDataArray = json_decode($validated['form_data'], true);
-            $notedByIds = json_decode($validated['noted_by'], true);
+            $notedByIds = !empty(json_decode($validated['noted_by'], true)) ? json_decode($validated['noted_by'], true) : null;
             $approvedByIds = json_decode($validated['approved_by'], true);
-            $currency = $validated['currency'] ?: "PHP";
+            $currency = $request->currency;
 
             /*    $formDataArray = $validated['form_data'];
                $notedByIds = $validated['noted_by'];
@@ -297,8 +297,14 @@ class RequestFormController extends Controller
             $approvalProcesses = [];
 
             // Combine noted_by and approved_by into one array with labels
+            if ($notedByIds !== null) {
+                $approvers = [
+                    ['type' => 'noted_by', 'ids' => $notedByIds],
+                    ['type' => 'approved_by', 'ids' => $approvedByIds]
+                ];
+            }
+
             $approvers = [
-                ['type' => 'noted_by', 'ids' => $notedByIds],
                 ['type' => 'approved_by', 'ids' => $approvedByIds]
             ];
 
@@ -314,7 +320,7 @@ class RequestFormController extends Controller
             ApprovalProcess::insert($approvalProcesses);
 
             // Notify the first approver (user 3 in this case)
-            $firstApproverId = $notedByIds[0];
+            $firstApproverId = $notedByIds !== null ? $notedByIds[0] : $approvedByIds[0];
             $firstApprover = User::with('approverStaffs')->find($firstApproverId);
 
             if ($firstApprover) {
@@ -415,7 +421,7 @@ class RequestFormController extends Controller
 
             // Decode JSON strings
             $form_data_content = json_decode($request->input('form_data'), true);
-            $noted_by = json_decode($request->input('noted_by'), true);
+            $noted_by = !empty(json_decode($request->input('noted_by'), true)) ? json_decode($request->input('noted_by'), true) : null;
             $approved_by = json_decode($request->input('approved_by'), true);
             $currency = $request->input('currency');
             // Initialize attachment paths
@@ -518,8 +524,15 @@ class RequestFormController extends Controller
             }
 
             // Process each approver (noted_by and approved_by)
+
+            if ($noted_by !== null) {
+                $approvers = [
+                    ['type' => 'noted_by', 'ids' => $noted_by],
+                    ['type' => 'approved_by', 'ids' => $approved_by]
+                ];
+            }
+
             $approvers = [
-                ['type' => 'noted_by', 'ids' => $noted_by],
                 ['type' => 'approved_by', 'ids' => $approved_by]
             ];
 
@@ -534,13 +547,13 @@ class RequestFormController extends Controller
             ApprovalProcess::insert($approvalProcesses);
 
             // Notify first approver
-            $firstApprover = $noted_by[0] ?? null;
+            $firstApprover = $noted_by !== null ? $noted_by[0] : $approved_by[0];
             if ($firstApprover) {
                 $firstApproverUser = User::with('approverStaffs')->find($firstApprover);
 
                 if ($firstApproverUser) {
                     $firstApprovalProcess = ApprovalProcess::where('request_form_id', $request_data->id)
-                        ->where('user_id', $firstApprover)
+                        ->where('level', 1)
                         ->first();
 
                     $requester = User::find($request_data->user_id);

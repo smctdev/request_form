@@ -13,4 +13,9 @@ class Branch extends Model
         return $this->hasMany(User::class);
     }
 
+    public function approverBranchStaffs()
+    {
+        return $this->hasMany(AVPFinanceStaff::class, 'branch_id');
+    }
+
 }
