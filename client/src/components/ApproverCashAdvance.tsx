@@ -708,7 +708,7 @@ const ApproverCashAdvance: React.FC<Props> = ({
               </p>
             </div>
           )}
-          <div className="flex space-x-2 w-full mt-2">
+          <div className="flex w-full mt-2 space-x-2">
             <div className="w-[70%] overflow-x-auto">
               <div className="w-full border-collapse">
                 <div className="table-container">
@@ -1066,7 +1066,8 @@ const ApproverCashAdvance: React.FC<Props> = ({
                   </ul>
                 </div>
 
-                <div className="mb-4 ml-5">
+                {notedBy.length > 0 && (
+                  <div className="mb-4 ml-5">
                   <h3 className="mb-3 font-bold">Noted By:</h3>
                   <ul className="flex flex-wrap gap-6">
                     {notedBy.map((user, index) => (
@@ -1128,6 +1129,7 @@ const ApproverCashAdvance: React.FC<Props> = ({
                     ))}
                   </ul>
                 </div>
+                )}
 
                 <div className="mb-4 ml-5">
                   <h3 className="mb-3 font-bold">Approved By:</h3>
