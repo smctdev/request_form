@@ -1170,26 +1170,30 @@ const ApproverCashDisbursement: React.FC<Props> = ({
                     ))}
                   {avpstaff
                     .filter((user) => user.comment)
-                    .map((user, index) => (
-                      <div className="flex">
-                        <div>
-                          <img
-                            alt="logo"
-                            className="hidden cursor-pointer sm:block"
-                            src={Avatar}
-                            height={35}
-                            width={45}
-                          />
+                    .map((userAvp, index) => (
+                      <>
+                        {(userAvp.id === user?.data?.id || user?.data?.position === "AVP - Finance") && (
+                          <div className="flex">
+                          <div>
+                            <img
+                              alt="logo"
+                              className="hidden cursor-pointer sm:block"
+                              src={Avatar}
+                              height={35}
+                              width={45}
+                            />
+                          </div>
+                          <div className="flex flex-row w-full" key={index}>
+                            <li className="flex flex-col justify-between pl-2">
+                              <h3 className="text-lg font-bold">
+                                {userAvp.firstName} {userAvp.lastName} - {userAvp.position}
+                              </h3>
+                              <p>{userAvp.comment}</p>
+                            </li>
+                          </div>
                         </div>
-                        <div className="flex flex-row w-full" key={index}>
-                          <li className="flex flex-col justify-between pl-2">
-                            <h3 className="text-lg font-bold">
-                              {user.firstName} {user.lastName} - {user.position}
-                            </h3>
-                            <p>{user.comment}</p>
-                          </li>
-                        </div>
-                      </div>
+                        )}
+                      </>
                     ))}
                 </>
               ) : (
