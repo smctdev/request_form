@@ -35,7 +35,7 @@ class RequestFormController extends Controller
                 'form_type' => 'required|string',
                 'form_data' => 'required|string', // Temporarily string for decoding
                 'noted_by' => 'string',
-                'currency' => 'required_if:form_type,Cash Disbursement Requisition Slip|string|in:PHP,USD,EURO',
+                'currency' => 'required_if:form_type,Cash Disbursement Requisition Slip|string|in:PHP,USD,EUR',
                 'approved_by' => 'required|string',
                 'attachment.*' => 'file|mimes:webp,pdf,png,jpg,jpeg,doc,docx,xls,xlsx,ppt,pptx,bmp,txt,zip,gif',
             ]);

@@ -727,68 +727,70 @@ const ApproverDiscount: React.FC<Props> = ({
                   </ul>
                 </div>
 
-                <div className="mb-4 ml-5">
-                  <h3 className="mb-3 font-bold">Noted By:</h3>
-                  <ul className="flex flex-wrap gap-6">
-                    {notedBy.map((user, index) => (
-                      <li
-                        className="relative flex flex-col items-center justify-center text-center"
-                        key={index}
-                      >
-                        <div className="relative flex flex-col items-center justify-center text-center">
-                          {/* Signature */}
-                          {(user.status === "Approved" ||
-                            (typeof user.status === "string" &&
-                              user.status.split(" ")[0] === "Rejected")) && (
-                            <div className="absolute -top-4">
-                              <img
-                                src={user.signature}
-                                alt="avatar"
-                                width={120}
-                                className="relative z-20 pointer-events-none"
-                                draggable="false"
-                                onContextMenu={(e) => e.preventDefault()}
-                                style={{ filter: "blur(1px)" }}
-                              />
-                            </div>
-                          )}
-                          {/* Name */}
-                          <p className="relative z-10 inline-block mt-4 font-medium text-center uppercase">
-                            <span className="relative z-10">
-                              {user.firstName} {user.lastName}
-                            </span>
-                            <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-black"></span>
-                          </p>
-                          {/* Position */}
-                          <p className="font-bold text-[12px] text-center mt-1">
-                            {user.position}
-                          </p>
-                          {/* Status */}
-                          {hasDisapprovedInApprovedBy ||
-                          hasDisapprovedInNotedBy ? (
-                            user.status === "Disapproved" ? (
-                              <p className="font-bold text-[12px] text-center text-red-500 mt-1">
-                                {user.status}
-                              </p>
-                            ) : null
-                          ) : (
-                            <p
-                              className={`font-bold text-[12px] text-center mt-1 ${
-                                user.status === "Approved"
-                                  ? "text-green"
-                                  : user.status === "Pending"
-                                  ? "text-yellow"
-                                  : ""
-                              }`}
-                            >
-                              {user.status}
-                            </p>
-                          )}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+               {notedBy.length > 0 && (
+                 <div className="mb-4 ml-5">
+                 <h3 className="mb-3 font-bold">Noted By:</h3>
+                 <ul className="flex flex-wrap gap-6">
+                   {notedBy.map((user, index) => (
+                     <li
+                       className="relative flex flex-col items-center justify-center text-center"
+                       key={index}
+                     >
+                       <div className="relative flex flex-col items-center justify-center text-center">
+                         {/* Signature */}
+                         {(user.status === "Approved" ||
+                           (typeof user.status === "string" &&
+                             user.status.split(" ")[0] === "Rejected")) && (
+                           <div className="absolute -top-4">
+                             <img
+                               src={user.signature}
+                               alt="avatar"
+                               width={120}
+                               className="relative z-20 pointer-events-none"
+                               draggable="false"
+                               onContextMenu={(e) => e.preventDefault()}
+                               style={{ filter: "blur(1px)" }}
+                             />
+                           </div>
+                         )}
+                         {/* Name */}
+                         <p className="relative z-10 inline-block mt-4 font-medium text-center uppercase">
+                           <span className="relative z-10">
+                             {user.firstName} {user.lastName}
+                           </span>
+                           <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-black"></span>
+                         </p>
+                         {/* Position */}
+                         <p className="font-bold text-[12px] text-center mt-1">
+                           {user.position}
+                         </p>
+                         {/* Status */}
+                         {hasDisapprovedInApprovedBy ||
+                         hasDisapprovedInNotedBy ? (
+                           user.status === "Disapproved" ? (
+                             <p className="font-bold text-[12px] text-center text-red-500 mt-1">
+                               {user.status}
+                             </p>
+                           ) : null
+                         ) : (
+                           <p
+                             className={`font-bold text-[12px] text-center mt-1 ${
+                               user.status === "Approved"
+                                 ? "text-green"
+                                 : user.status === "Pending"
+                                 ? "text-yellow"
+                                 : ""
+                             }`}
+                           >
+                             {user.status}
+                           </p>
+                         )}
+                       </div>
+                     </li>
+                   ))}
+                 </ul>
+               </div>
+               )}
 
                 <div className="mb-4 ml-5">
                   <h3 className="mb-3 font-bold">Approved By:</h3>

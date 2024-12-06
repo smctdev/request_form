@@ -825,7 +825,8 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                   </ul>
                 </div>
 
-                <div className="mb-4 ml-5">
+                {notedBy.length > 0 && (
+                  <div className="mb-4 ml-5">
                   <h3 className="mb-3 font-bold">Noted By:</h3>
                   <ul className="flex flex-wrap gap-6">
                     {notedBy.map((user, index) => (
@@ -887,6 +888,7 @@ const ViewCashDisbursementModal: React.FC<Props> = ({
                     ))}
                   </ul>
                 </div>
+                )}
 
                 <div className="mb-4 ml-5">
                   <h3 className="mb-3 font-bold">Approved By:</h3>
