@@ -1,7 +1,7 @@
 
 services:
   request-react:
-    container_name: request-react
+    container_name: request-client
     restart: unless-stopped
     build:
       context: .

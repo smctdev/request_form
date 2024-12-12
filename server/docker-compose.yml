@@ -4,7 +4,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     image: requestform
-    container_name: requestform
+    container_name: request-server
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
