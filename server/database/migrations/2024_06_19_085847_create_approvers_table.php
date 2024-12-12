@@ -17,10 +17,12 @@ return new class extends Migration
             $table->string('firstname');
             $table->string('lastname');
             $table->string('position');
-            $table->string('email', 191)->unique();
+            $table->string('email')->unique();
             $table->string('role');
             $table->string('branch_code');
             $table->longText('signature')->nullable();
+            $table->string('branch')->nullable();
+            $table->string('employee_id')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

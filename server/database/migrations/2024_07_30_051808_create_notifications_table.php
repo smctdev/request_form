@@ -18,13 +18,8 @@ return new class extends Migration
             $table->text('data');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
-            
-            // Define index with specific lengths
-            $table->index(['notifiable_type', 'notifiable_id'], 'notifications_notifiable_type_notifiable_id_index');
         });
     }
-    
-    
 
     /**
      * Reverse the migrations.

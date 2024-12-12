@@ -18,8 +18,8 @@ return new class extends Migration
             $table->json('branch_id');
             $table->timestamps();
 
-            $table->foreign('staff_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('staff_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
