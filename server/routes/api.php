@@ -18,7 +18,7 @@ use App\Http\Controllers\API\AreaManagerController;
 use App\Http\Controllers\API\ApprovalProcessController;
 use App\Http\Controllers\API\AttachmentController;
 use App\Http\Controllers\API\NotificationController;
-use App\Http\Controllers\Api\PositionController;
+use App\Http\Controllers\API\PositionController;
 use App\Http\Controllers\Test\PusherController;
 
 
