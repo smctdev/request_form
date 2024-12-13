@@ -1262,7 +1262,7 @@ const ApproverCashDisbursement: React.FC<Props> = ({
               <p className="text-gray-500">No approved attachment available.</p>
             )}
           </div>
-          {file.length > 0 && (
+          {file.length > 1 && (
             <div className="mt-4">
               <p className="mb-3 font-semibold">Attachments:</p>
               <button

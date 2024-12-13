@@ -192,7 +192,7 @@ const PrintRefund: React.FC<PrintRefundProps> = ({ data }) => {
                 {printData?.id ? (
                   <>
                     <img
-                    className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-full left-1/2"
+                    className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-1/2 left-1/2"
                       src={printData?.id?.requested_signature}
                       alt="avatar"
                       width={120}

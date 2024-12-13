@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use App\Notifications\ApprovalProcessNotification;
 use App\Events\NotificationEvent;
+use App\Models\AVPFinanceStaff;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -742,6 +743,29 @@ class RequestFormController extends Controller
                     ->orderBy('level')
                     ->first()?->user;
 
+                    
+                    $approverName = "No Pending Approver";
+
+                    if ($pendingApprover) {
+                        $approverFromFinanceStaff = AVPFinanceStaff::where('staff_id', $pendingApprover->id)->exists();
+        
+                        if ($approverFromFinanceStaff) {
+                            $avpUser = User::where('position', 'AVP - Finance')->first();
+        
+                            if ($avpUser) {
+                                $approverName = [
+                                    'approver_name' => "{$avpUser->firstName} {$avpUser->lastName}",
+                                ];
+                            } else {
+                                $approverName = "No AVP Found";
+                            }
+                        }else {
+                            $approverName = [
+                               'approver_name' => "{$pendingApprover->firstName} {$pendingApprover->lastName}",
+
+                            ];
+                        }
+                    }
 
                 return [
                     'id' => $requestForm->id,
@@ -757,9 +781,7 @@ class RequestFormController extends Controller
                     'requested_signature' => auth()->user()->signature,
                     'requested_position' => auth()->user()->position,
                     'attachment' => $requestForm->attachment,
-                    'pending_approver' => $pendingApprover ? [
-                        'approver_name' => "{$pendingApprover->firstName} {$pendingApprover->lastName}",
-                    ] : "No Pending Approver",
+                    'pending_approver' => $approverName,
                     'request_code' => "$branchName-$requestForm->request_code",
                     'completed_code' => $requestForm->completed_code
                 ];

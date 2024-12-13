@@ -185,7 +185,7 @@ const PrintStock: React.FC<PrintRefundProps> = ({ data }) => {
               <div className="flex flex-wrap justify-start">
                 <div className="relative flex flex-col items-center justify-center pt-3 mr-10">
                   <img
-                    className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-full left-1/2"
+                    className="absolute transform -translate-x-1/2 pointer-events-none -translate-y-1/2 left-1/2"
                     src={printData?.id?.requested_signature}
                     alt="avatar"
                     width={120}

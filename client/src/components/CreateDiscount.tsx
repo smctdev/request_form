@@ -922,7 +922,7 @@ const CreateDiscount = (props: Props) => {
                 </div>
               </div>
             </div>
-            {file.length > 0 && (
+            {file.length > 1 && (
               <div className="mt-4">
                 <p className="mb-3 font-semibold">Attachments:</p>
                 <button
