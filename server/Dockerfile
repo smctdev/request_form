@@ -21,11 +21,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . /var/www
 
 # Set file permissions (optional)
-RUN chown -R www-data:www-data /var/www
+#RUN chown -R www-data:www-data /var/www
 
 # Set up permissions for Laravel storage and cache directories
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+#RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
+    #&& chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 EXPOSE 8002
 
