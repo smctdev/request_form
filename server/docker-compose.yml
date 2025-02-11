@@ -12,7 +12,7 @@ services:
      # - ./bootstrap/cache:/var/www/bootstrap/cache
       - ./:/var/www
       - ./docker-compose/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - /mnt/requestUploads:/mnt/requestUploads
+      - /mnt/nvme0n1/requestUploads:/mnt/nvme0n1/requestUploads
     networks:
       - requestform
     environment:
