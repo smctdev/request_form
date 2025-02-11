@@ -30,7 +30,7 @@ services:
     ports:
       - 8002:8002
     volumes:
-      - ./docker-compose/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker-compose/nginx/default.conf:/etc/nginx/nginx.conf
       - ./:/var/www
       - /mnt/nvme0n1/requestUploads:/mnt/nvme0n1/requestUploads
     networks:
