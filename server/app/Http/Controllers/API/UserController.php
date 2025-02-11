@@ -442,6 +442,9 @@ class UserController extends Controller
 
             $file = $request->file('profile_picture');
             $path = $file->store('request_form_profile_pictures', 'd_drive');
+
+                // Log stored path
+            Log::info('Stored Path: ' . $path);
             $user->profile_picture = $path;
         }
 
