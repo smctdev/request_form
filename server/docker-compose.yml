@@ -33,6 +33,7 @@ services:
     volumes:
       - ./docker-compose/nginx/default.conf:/etc/nginx/nginx.conf
       - ./:/var/www
+      - /mnt/nvme0n1/requestUploads:/mnt/nvme0n1/requestUploads
 
     networks:
       - requestform
