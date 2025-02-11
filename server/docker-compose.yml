@@ -12,7 +12,7 @@ services:
      # - ./bootstrap/cache:/var/www/bootstrap/cache
       - ./:/var/www
       - ./docker-compose/nginx/default.conf:/etc/nginx/nginx.conf
-      - /mnt/nvme0n1/requestUploads:/var/www/storage/app/public
+      - /mnt/nvme0n1/requestUploads:/mnt/nvme0n1/requestUploads
 
     networks:
       - requestform
@@ -33,7 +33,7 @@ services:
     volumes:
       - ./docker-compose/nginx/default.conf:/etc/nginx/nginx.conf
       - ./:/var/www
-      - /mnt/nvme0n1/requestUploads:/var/www/storage/app/public
+      - /mnt/nvme0n1/requestUploads:/mnt/nvme0n1/requestUploads
 
     networks:
       - requestform
