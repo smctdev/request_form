@@ -1,5 +1,8 @@
 FROM php:8.2-fpm-alpine
 
+# Set the default umask for the container
+RUN echo "umask 0022" >> /etc/profile
+
 # Install system dependencies
 RUN apk --no-cache add \
     zlib-dev \
