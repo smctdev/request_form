@@ -526,16 +526,27 @@ class RequestFormController extends Controller
 
             // Process each approver (noted_by and approved_by)
 
-            if ($noted_by !== null) {
-                $approvers = [
-                    ['type' => 'noted_by', 'ids' => $noted_by],
-                    ['type' => 'approved_by', 'ids' => $approved_by]
-                ];
-            }
+            //if ($noted_by !== null) {
+                //$approvers = [
+                   // ['type' => 'noted_by', 'ids' => $noted_by],
+                   // ['type' => 'approved_by', 'ids' => $approved_by]
+               // ];
+           // }
 
-            $approvers = [
-                ['type' => 'approved_by', 'ids' => $approved_by]
-            ];
+            //$approvers = [
+              //  ['type' => 'approved_by', 'ids' => $approved_by]
+          //  ];
+
+        $approvers = [];
+                
+                if ($noted_by !== null) {
+                    $approvers[] = ['type' => 'noted_by', 'ids' => $noted_by];
+                }
+                
+                if ($approved_by !== null) {
+                    $approvers[] = ['type' => 'approved_by', 'ids' => $approved_by];
+                }
+            
 
             foreach ($approvers as $approverGroup) {
                 foreach ($approverGroup['ids'] as $approverId) {
